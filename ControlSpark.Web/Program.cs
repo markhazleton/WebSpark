@@ -1,5 +1,4 @@
 using ControlSpark.Core.Data;
-using ControlSpark.Core.Helpers;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.Web.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -61,18 +60,9 @@ builder.Services.AddMvc()
     .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
 // Setup Database and Seed (TEMP)
-var options = new DbContextOptionsBuilder<AppDbContext>()
-    .UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"])
-    .EnableSensitiveDataLogging(true)
-    .Options;
-using var cmsCtx = new AppDbContext(options);
-await cmsCtx.Database.EnsureDeletedAsync();
-await cmsCtx.Database.EnsureCreatedAsync();
-var seedDatabase = new SeedDatabase(cmsCtx);
-await seedDatabase.SeedDatabaseAsync();
-
-
 var app = builder.Build();
+await DbInitializer.SeedAsync(app);
+
 app.UseSession();
 app.Use(async (context, next) =>
 {

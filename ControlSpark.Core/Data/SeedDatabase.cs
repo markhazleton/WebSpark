@@ -2,8 +2,9 @@ using ControlSpark.Core.Data;
 using ControlSpark.Core.Infrastructure.BaseClasses;
 using System.IO;
 using System.Text.Json;
+using ControlSpark.Core.Helpers;
 
-namespace ControlSpark.Core.Helpers;
+namespace ControlSpark.Core.Data;
 
 public class SeedDatabase : IDisposable
 {

@@ -2,7 +2,6 @@ using ControlSpark.Core.Data;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.SwaggerCore.Extensions;
 using ControlSpark.WebMvc.Areas.Identity.Data;
-using ControlSpark.WebMvc.Models;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -46,7 +45,9 @@ builder.Services.AddBlogProviders();
 
 
 var app = builder.Build();
+await UserDbInitializer.SeedAsync(app);
 await DbInitializer.SeedAsync(app);
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
