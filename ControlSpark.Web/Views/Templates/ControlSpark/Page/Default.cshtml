@@ -1,0 +1,15 @@
+@model WebsiteVM
+@{
+    Layout = "../layouts/_Layout.cshtml";
+}
+@section Styles {
+
+}
+
+<markdown normalize-whitespace="false" sanitize-html="false">
+    @foreach (var item in Model.Menu.Where(w => w.Title == Model.PageTitle).ToArray())
+    {
+        @Html.Raw(item.PageContent)
+    }
+</markdown>
+

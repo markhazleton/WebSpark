@@ -1,0 +1,22 @@
+@model WebsiteVM
+@using System.Reflection;
+@{
+    var currentYear = DateTime.Now.Year.ToString();
+    var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3" style="float:left">
+            Version: @status.BuildVersion.ToString()
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12" style="text-align:center;">
+            @Model.WebsiteName is a <a href="https://www.linkedin.com/in/markhazleton"><i class="fab fa-linkedin"></i> Mark Hazleton</a> project.<br />
+            <i class="fa fa-copyright"></i> @DateTime.Now.Year - @Model.WebsiteName
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3" style="float:right">
+            Last Built: @status.BuildVersion.BuildDate.ToLocalTime().ToLongDateString() <br />
+        </div>
+    </div>
+</div>
+

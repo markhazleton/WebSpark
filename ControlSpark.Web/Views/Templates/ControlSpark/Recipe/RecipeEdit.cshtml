@@ -1,0 +1,62 @@
+@model ControlSpark.RecipeManager.Models.RecipeModel
+@using ControlSpark.Domain
+@{
+    Layout = "../layouts/_Layout.cshtml";
+    var cats = Model?.RecipeCategories?.Select(s => new SelectListItem() { Text = s.Text, Value = s.Value, Selected = Model?.RecipeCategory?.Id.ToString() == s.Value ? true : false });
+}
+
+<form asp-action="Edit" id="recipe-edit">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecipeCategoryID" class="control-label"></label>
+                <select asp-for="RecipeCategoryID" asp-items="cats" class="form-control" aria-label="Select category"></select>
+                <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <label asp-for="AuthorNM" class="control-label"></label>
+                <input asp-for="AuthorNM" class="form-control" />
+                <span asp-validation-for="AuthorNM" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label asp-for="Ingredients" class="control-label"></label>
+                <textarea asp-for="Ingredients" rows="15" class="form-control"></textarea>
+                <span asp-validation-for="Ingredients" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <label asp-for="Instructions" class="control-label"></label>
+                <textarea asp-for="Instructions" rows="15" class="form-control"></textarea>
+                <span asp-validation-for="Instructions" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

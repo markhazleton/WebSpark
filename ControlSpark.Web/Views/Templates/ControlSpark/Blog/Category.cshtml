@@ -1,0 +1,11 @@
+@using ControlSpark.Domain.Resources
+@using ControlSpark.Domain
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resource> _localizer
+@{
+    Layout = "../layouts/_main.cshtml";
+}
+
+<partial name="components/header.cshtml" />
+<h1 class="h3 mb-5">@_localizer["categories"]: <strong>@ViewBag.Category</strong></h1>
+<partial name="components/view-list.cshtml" />

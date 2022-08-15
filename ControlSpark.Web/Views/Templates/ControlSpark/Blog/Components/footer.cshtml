@@ -1,0 +1,24 @@
+@model WebsiteVM
+@using ControlSpark.Domain.Resources
+@using Microsoft.Extensions.Localization
+@using ControlSpark.Domain.Models;
+@using System.Reflection;
+@inject IStringLocalizer<Resource> _localizer
+@{
+    var currentYear = DateTime.Now.Year.ToString();
+    var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
+}
+@{
+    var siteTitle = Model.PageTitle;
+    var version = "3.0";
+}
+
+<div class="modal fade search-modal" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog mt-5">
+    <div class="modal-content">
+        <form id="searchForm" class="search-form" asp-controller="ControlSpark" asp-action="Search" method="post">
+            <input type="search" id="searchFormInput" name="term" class="form-control form-control-lg border-0 shadow-none" placeholder="@_localizer["search"]..." autocomplete="off" autofocus>
+        </form>
+    </div>
+  </div>
+</div>

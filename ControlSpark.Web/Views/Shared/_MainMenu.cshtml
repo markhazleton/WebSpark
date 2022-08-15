@@ -1,0 +1,92 @@
+@model WebsiteVM
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" style="padding-top:0px;padding-bottom:0px;">
+    <div class="container-fluid">
+        <a class="navbar-brand " href="/">@Model.WebsiteName</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                @foreach (var item in Model.Menu.Where(w => w.DomainID == Model.WebsiteId).Where(w => w.DisplayInNavigation).Where(w => w.ParentId == null).OrderBy(o => o.DisplayOrder))
+                {
+                    if (Model.Menu.Where(w => w.DisplayInNavigation).Where(w => w.ParentId == item.Id).Count() == 0)
+                    {
+                        <li>
+                            <a href="@item.Url" class="nav-link " aria-haspopup="true" aria-expanded="false">
+                                @if (item.Icon != string.Empty)
+                                {
+                                    <i class="fa @item.Icon"></i>
+                                }
+                                @item.Title
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item dropdown @Html.IsActive(item, true)">
+                            <a class="nav-link dropdown-toggle" href="#" id="nav_@item.Title" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                @if (item.Icon != string.Empty)
+                                {
+                                    <i class="fa @item.Icon"></i>
+                                }
+                                @item.Title
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="nav_@item.Title">
+                                <li class="nav-item  @Html.IsActive(item, false)">
+                                    @if (item.Controller == "Page")
+                                    {
+                                        <a class="dropdown-item " data-action="@item.Action" data-controller="@item.Controller" href="@item.Url">
+                                            @if (item.Icon != string.Empty)
+                                            {
+                                                <i class="fa @item.Icon"></i>
+                                            }@item.Title
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item " data-action="@item.Action" data-controller="@item.Controller" href="@item.Url">
+                                            @if (item.Icon != string.Empty)
+                                            {
+                                                <i class="fa @item.Icon"></i>
+                                            }  @item.Title
+                                        </a>
+                                    }
+                                </li>
+                                @foreach (var child in Model.Menu.Where(w => w.DisplayInNavigation).Where(w => w.ParentId == item.Id).OrderBy(o => o.DisplayOrder))
+                                {
+                                    <li class="nav-item @Html.IsActive(child, false)">
+                                        @if (child.Controller == "Page")
+                                        {
+                                            <a class="dropdown-item" href="@child.Url">
+                                                @if (child.Icon != string.Empty)
+                                                {
+                                                    <i class="fa @child.Icon"></i>
+                                                }  @child.Title
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="dropdown-item" href="@child.Url">
+                                                @if (child.Icon != string.Empty)
+                                                {
+                                                    <i class="fa @child.Icon"></i>
+                                                }  @child.Title
+                                            </a>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

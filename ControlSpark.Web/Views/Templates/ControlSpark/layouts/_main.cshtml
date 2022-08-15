@@ -1,0 +1,69 @@
+@model WebsiteVM
+@{
+    var request = Url.ActionContext.HttpContext.Request;
+    var absoluteUrl = $"{request.Scheme}://{request.Host.ToUriComponent()}{request.PathBase.ToUriComponent()}";
+    var siteTitle = Model.WebsiteName;
+    var pageTitle = Model.PageTitle;
+    var siteDesc = Model.MetaDescription;
+    var siteFeed = absoluteUrl + "/feed/rss";
+    var pageDesc = siteDesc;
+    var pageCanonical = absoluteUrl;
+    string themeUrl = Model.StyleList.Where(w => w.name == Model.WebsiteStyle).FirstOrDefault()?.cssCdn;
+    string themeName = Model?.WebsiteStyle;
+
+    var menu = Model?.Menu?.Where(w => w.Title == Model.PageTitle).FirstOrDefault();
+    if (menu == null)
+    {
+        menu = new MenuModel();
+    }
+    if (String.IsNullOrEmpty(themeUrl))
+    {
+        Random random = new Random();
+        int index = random.Next(Model.StyleList.Count());
+
+        themeUrl = Model.StyleList.ElementAt(index).cssCdn;
+        themeName = Model.StyleList.ElementAt(index).name;
+    }
+    string canonicalUrl = Model.SiteUrl + menu.Url;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@pageTitle</title>
+    <meta name="description" content="@pageDesc">
+    <link rel="alternate" type="application/rss+xml" title="@siteTitle" href="@siteFeed" />
+    <link rel="canonical" href="@pageCanonical" />
+
+    <link rel="stylesheet" href="@themeUrl" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/theme/mom/css/site.css" asp-append-version="true"/>
+       @RenderSection("Styles", required: false)
+    </style>
+
+    <link rel="stylesheet" href="~/themes/mom/css/styles.css" asp-append-version="true">
+
+    @Html.Raw(base.Model.HeaderScript)
+
+</head>
+
+
+<body>
+    <partial role="navigation" name="_MainMenu.cshtml"/>
+    
+    <main role="main" class="container pb-3 bg-body">
+        @RenderBody()
+    </main>
+
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/themes/mom/js/highlight.js" asp-append-version="true"></script>
+    <script src="~/themes/mom/js/scripts.js" asp-append-version="true"></script>
+    <script src="~/themes/mom/js/newsletter.js" asp-append-version="true"></script>
+    @Html.Raw(base.Model.FooterScript)
+</body>
+
+</html>
