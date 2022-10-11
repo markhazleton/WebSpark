@@ -328,12 +328,17 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             if (!int.TryParse(defaultSiteId ?? "1", out siteId))
                 siteId = 1;
 
-
-            var dom = await _context.Domain.Select(s => s).ToListAsync();
-
-
             bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == siteId)
                 .Include(i => i.Menus).FirstOrDefaultAsync());
+
+            if (bvm.WebsiteId == 0)
+            {
+                siteId = await _context.Domain.Select(s => s.Id).FirstOrDefaultAsync();
+                bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == siteId)
+                    .Include(i => i.Menus).FirstOrDefaultAsync());
+            }
+
+
         }
         return bvm;
     }
