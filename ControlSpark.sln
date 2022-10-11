@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Domain", "Cont
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Core", "ControlSpark.Core\ControlSpark.Core.csproj", "{C73254D1-9128-4343-904C-30451E447F4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Bootswatch", "ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj", "{FE9A917F-1B2A-4E79-B1D3-660FBB6BC657}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Web", "ControlSpark.Web\ControlSpark.Web.csproj", "{3BCC7138-AF77-4FFA-A7D6-4849F8600110}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.WebMvc", "ControlSpark.WebMvc\ControlSpark.WebMvc.csproj", "{CC14CFC7-DFA0-402F-9264-C7F9EB8AA9F2}"
@@ -17,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.RecipeManager"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.SwaggerCore", "ControlSpark.SwaggerCore\ControlSpark.SwaggerCore.csproj", "{91C8FAE4-7304-4F15-8FA2-70667B3AF47B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlSpark.MineralManager", "ControlSpark.MineralManager\ControlSpark.MineralManager.csproj", "{AE7D1713-2D96-42B6-A21C-4895281D2AF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.MineralManager", "ControlSpark.MineralManager\ControlSpark.MineralManager.csproj", "{AE7D1713-2D96-42B6-A21C-4895281D2AF3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Bootswatch", "..\ControlSpark.Bootswatch\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj", "{FD1AF267-34A9-434D-B470-0BA8D5DD7BF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		{C73254D1-9128-4343-904C-30451E447F4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C73254D1-9128-4343-904C-30451E447F4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C73254D1-9128-4343-904C-30451E447F4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE9A917F-1B2A-4E79-B1D3-660FBB6BC657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE9A917F-1B2A-4E79-B1D3-660FBB6BC657}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE9A917F-1B2A-4E79-B1D3-660FBB6BC657}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE9A917F-1B2A-4E79-B1D3-660FBB6BC657}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3BCC7138-AF77-4FFA-A7D6-4849F8600110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3BCC7138-AF77-4FFA-A7D6-4849F8600110}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BCC7138-AF77-4FFA-A7D6-4849F8600110}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +53,10 @@ Global
 		{AE7D1713-2D96-42B6-A21C-4895281D2AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE7D1713-2D96-42B6-A21C-4895281D2AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE7D1713-2D96-42B6-A21C-4895281D2AF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD1AF267-34A9-434D-B470-0BA8D5DD7BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD1AF267-34A9-434D-B470-0BA8D5DD7BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD1AF267-34A9-434D-B470-0BA8D5DD7BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD1AF267-34A9-434D-B470-0BA8D5DD7BF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
