@@ -16,6 +16,7 @@
     <AssemblyVersion>6.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
     <ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
     <PackageIcon>favicon.ico</PackageIcon>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ControlSpark.Bootswatch\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj" />
-    <ProjectReference Include="..\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj" />
     <ProjectReference Include="..\ControlSpark.Core\ControlSpark.Core.csproj" />
     <ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
     <ProjectReference Include="..\ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj" />

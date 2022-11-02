@@ -51,10 +51,9 @@ public interface IRecipeService
     /// Get RecipeVM
     /// </summary>
     /// <param name="host"></param>
-    /// <param name="defaultSiteId"></param>
     /// <param name="baseVM"></param>
     /// <returns></returns>
-    RecipeVM GetRecipeVMHostAsync(string host, string defaultSiteId, WebsiteVM baseVM);
+    RecipeVM GetRecipeVMHostAsync(string host, WebsiteVM baseVM);
 
     /// <summary>
     /// 

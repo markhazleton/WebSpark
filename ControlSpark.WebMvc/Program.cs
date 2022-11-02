@@ -45,9 +45,11 @@ builder.Services.AddBlogProviders();
 
 
 var app = builder.Build();
-await UserDbInitializer.SeedAsync(app);
-await DbInitializer.SeedAsync(app);
 
+// Initialize User Db (if necessary)
+await UserDbInitializer.SeedAsync(app);
+// Initialize CMS Db (if necessary)
+await DbInitializer.SeedAsync(app);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

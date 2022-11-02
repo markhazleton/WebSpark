@@ -1,5 +1,3 @@
-using ControlSpark.Domain.Models;
-
 namespace ControlSpark.Domain.ViewModels;
 /// <summary>
 /// Class ThemeVM.
@@ -20,13 +18,13 @@ public class ThemeVM : WebsiteVM
         WebsiteName = parent.WebsiteName;
         WebsiteStyle = parent.WebsiteStyle;
         SiteUrl = parent.SiteUrl;
-        StyleList = new List<StyleModel>();
-        Theme = new StyleModel();
+        StyleList = new List<ControlSpark.Bootswatch.Model.StyleModel>();
+        Theme = new ControlSpark.Bootswatch.Model.StyleModel();
     }
 
     /// <summary>
     /// Gets or sets the theme.
     /// </summary>
     /// <value>The theme.</value>
-    public StyleModel Theme { get; set; }
+    public ControlSpark.Bootswatch.Model.StyleModel Theme { get; set; }
 }

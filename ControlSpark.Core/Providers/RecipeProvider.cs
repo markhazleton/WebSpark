@@ -289,7 +289,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;RecipeModel&gt;.</returns>
     public IEnumerable<RecipeModel> Get()
     {
-        return Create(_context.Recipe.Include(r=>r.RecipeCategory).ToList());
+        return Create(_context.Recipe.Include(r => r.RecipeCategory).ToList());
     }
 
     /// <summary>
@@ -531,7 +531,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
         return GetRecipeCategoryById(saveItem.Id);
     }
 
-    public RecipeVM GetRecipeVMHostAsync(string host, string defaultSiteId, WebsiteVM baseVM)
+    public RecipeVM GetRecipeVMHostAsync(string host, WebsiteVM baseVM)
     {
         var recipeVM = new RecipeVM(baseVM)
         {

@@ -53,7 +53,7 @@ public class WebsiteVM : IBaseViewModel
     /// <summary>
     /// Gets The List of Themes
     /// </summary>
-    public IEnumerable<StyleModel> StyleList { get; set; }
+    public IEnumerable<ControlSpark.Bootswatch.Model.StyleModel> StyleList { get; set; }
 
     /// <summary>
     /// Gets or sets the theme URL.

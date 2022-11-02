@@ -38,7 +38,7 @@ public class RecipeController : BaseController
             {
                 var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
                 var x = HttpContext.Request.Host;
-                var task = Task.Run(() => _recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId, BaseVM));
+                var task = Task.Run(() => _recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, BaseVM));
                 _viewModel = task.GetAwaiter().GetResult();
 
                 HttpContext.Session.SetString(RecipeViewKey, JsonSerializer.Serialize(_viewModel, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
