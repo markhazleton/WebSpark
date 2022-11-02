@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ControlSpark.Bootswatch\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj" />
     <ProjectReference Include="..\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj" />
     <ProjectReference Include="..\ControlSpark.Core\ControlSpark.Core.csproj" />
     <ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
