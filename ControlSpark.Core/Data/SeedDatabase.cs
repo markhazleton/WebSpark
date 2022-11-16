@@ -1,8 +1,7 @@
-using ControlSpark.Core.Data;
+using ControlSpark.Core.Helpers;
 using ControlSpark.Core.Infrastructure.BaseClasses;
 using System.IO;
 using System.Text.Json;
-using ControlSpark.Core.Helpers;
 
 namespace ControlSpark.Core.Data;
 
@@ -30,7 +29,7 @@ public class SeedDatabase : IDisposable
             GalleryFolder = "/content/mom"
         };
 
-        Mom.Menus.Add(WebsiteHelper.GetMenuPage("Mom", "# Welcome to MechanicsOfMotherhood.com \n ## The Mechanics of being a Mom"));
+        Mom.Menus.Add(WebsiteHelper.GetMenuPage("Mom", "# Welcome to the Mechanics Of Motherhood \n ## The Mechanics of being a Mom \n\n\n\n\n"));
 
         var momPage = Mom.Menus.Where(w => w.Title == "Mom").FirstOrDefault();
         Mom.Menus.Add(WebsiteHelper.GetMenuPage(

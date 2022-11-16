@@ -7,25 +7,30 @@
         menu = new MenuModel();
     }
     string siteStyle = $"/site/mom/css/site.css";
-    string styleUrl = Model?.StyleList.Where(w => w.name == Model.WebsiteStyle).FirstOrDefault()?.cssCdn;
-    string themeName = Model?.WebsiteStyle;
-
-    if (String.IsNullOrEmpty(styleUrl))
+    string canonicalUrl = "";
+    string? styleUrl = Model?.StyleList.Where(w => w.name == Model.WebsiteStyle).FirstOrDefault()?.cssCdn;
+    string? themeName = Model?.WebsiteStyle;
+    string templateName = "mom";
+    if (Model is not null)
     {
-        Random random = new Random();
-        int index = random.Next(Model.StyleList.Count());
+        if (String.IsNullOrEmpty(styleUrl))
+        {
+            Random random = new Random();
+            int index = random.Next(Model.StyleList.Count());
 
-        styleUrl = Model.StyleList.ElementAt(index).cssCdn;
-        themeName = Model.StyleList.ElementAt(index).name;
+            styleUrl = Model.StyleList.ElementAt(index).cssCdn;
+            themeName = Model.StyleList.ElementAt(index).name;
+        }
+        canonicalUrl = Model.SiteUrl + menu.Url;
+        templateName = Model.Template;
     }
-    string canonicalUrl = Model.SiteUrl + menu.Url;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@Model.PageTitle - @Model.WebsiteName </title>
+    <title>@Model?.PageTitle - @Model?.WebsiteName </title>
     <link rel="canonical" href="@canonicalUrl" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="@styleUrl" />
@@ -47,6 +52,6 @@
     </footer>
 
     <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/theme/@Model.Template/js/site.js"></script>
+    <script src="~/theme/@templateName/js/site.js"></script>
 </body>
 </html>

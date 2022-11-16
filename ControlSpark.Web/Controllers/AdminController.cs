@@ -1,11 +1,20 @@
 namespace ControlSpark.Web.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
-        public async Task<IActionResult> Index()
+        public AdminController(
+            ILogger<AdminController> logger,
+            IConfiguration configuration,
+            IWebsiteService websiteService) : base(logger, configuration, websiteService)
         {
-            return await Task.FromResult(File("~/index.html", "text/html"));
         }
-
+        /// <summary>
+        /// Admin Home Page
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Index()
+        {
+            return View(BaseVM);
+        }
     }
 }

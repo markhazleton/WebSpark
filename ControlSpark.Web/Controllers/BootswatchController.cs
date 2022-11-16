@@ -12,7 +12,7 @@ public class BootswatchController : BaseController
     /// 
     /// </summary>
     /// <param name="configuration"></param>
-    public BootswatchController(ILogger<PageController> logger, IConfiguration config, IWebsiteService websiteService)
+    public BootswatchController(ILogger<BootswatchController> logger, IConfiguration config, IWebsiteService websiteService)
         : base(logger, config, websiteService)
     {
 

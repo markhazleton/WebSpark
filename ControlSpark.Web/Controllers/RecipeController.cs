@@ -1,4 +1,3 @@
-using ControlSpark.Bootswatch.Provider;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.RecipeManager.ViewModels;
 using ControlSpark.Web.Extensions;
@@ -19,7 +18,11 @@ public class RecipeController : BaseController
     /// 
     /// </summary>
     /// <param name="configuration"></param>
-    public RecipeController(ILogger<PageController> logger, IConfiguration config, IWebsiteService websiteService, IRecipeService recipeProvider)
+    public RecipeController(
+        ILogger<RecipeController> logger,
+        IConfiguration config,
+        IWebsiteService websiteService,
+        IRecipeService recipeProvider)
         : base(logger, config, websiteService)
     {
         _recipeProvider = recipeProvider;
