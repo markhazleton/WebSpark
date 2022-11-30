@@ -61,7 +61,7 @@ builder.Services.AddMvc()
 
 // Setup Database and Seed (TEMP)
 var app = builder.Build();
-await DbInitializer.SeedAsync(app);
+//await DbInitializer.SeedAsync(app);
 
 app.UseSession();
 app.Use(async (context, next) =>

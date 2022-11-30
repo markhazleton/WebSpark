@@ -299,8 +299,8 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>RecipeModel.</returns>
     public RecipeModel Get(int Id)
     {
-        var returnRecipe = new RecipeModel();
-        returnRecipe = Create(_context.Recipe.Where(w => w.Id == Id).Include(r => r.RecipeCategory).FirstOrDefault());
+        var returnRecipe = Create(_context.Recipe.Where(w => w.Id == Id).Include(r => r.RecipeCategory).FirstOrDefault());
+        returnRecipe.RecipeCategories = _context.RecipeCategory.Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
         return returnRecipe;
     }
 

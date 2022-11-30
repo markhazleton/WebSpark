@@ -1,4 +1,5 @@
-﻿using ControlSpark.Domain.Models;
+﻿using ControlSpark.Domain.EditModels;
+using ControlSpark.Domain.Models;
 
 namespace ControlSpark.Domain.Interfaces;
 /// <summary>
@@ -6,29 +7,9 @@ namespace ControlSpark.Domain.Interfaces;
 /// </summary>
 public interface IMenuService
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
     IEnumerable<MenuModel> GetAllMenuItems();
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="saveMenus"></param>
-    /// <returns></returns>
     List<MenuModel> Save(List<MenuModel> saveMenus);
-
-    /// <summary>
-    /// Saves the specified save item.
-    /// </summary>
-    /// <param name="saveItem">The save item.</param>
-    /// <returns>MenuModel.</returns>
     MenuModel Save(MenuModel saveItem);
-    /// <summary>
-    /// Gets the site menu.
-    /// </summary>
-    /// <param name="DomainId">The domain identifier.</param>
-    /// <returns>List&lt;MenuModel&gt;.</returns>
     List<MenuModel> GetSiteMenu(int DomainId);
-
+    Task<MenuEditModel> GetMenuEditAsync(int Id);
 }

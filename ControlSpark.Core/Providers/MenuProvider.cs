@@ -1,4 +1,4 @@
-using ControlSpark.Core.Data;
+using ControlSpark.Domain.EditModels;
 
 namespace ControlSpark.Core.Providers;
 
@@ -34,7 +34,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="menu">The menu.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel Create(Menu menu)
+    private static MenuModel Create(Menu menu)
     {
         if (menu == null) return new MenuModel();
 
@@ -44,17 +44,18 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
             Title = menu.Title,
             Url = menu.Url,
             Icon = menu.Icon,
-            DomainID = menu.Domain.Id,
+            DomainID = menu?.Domain?.Id ?? 0,
+            DomainName = menu?.Domain?.Name,
             Description = menu.Description,
             Controller = menu.Controller,
-            Action = menu.Action.ToLower(CultureInfo.CurrentCulture),
-            Argument = menu.Argument.ToLower(CultureInfo.CurrentCulture),
-            ParentId = menu.Parent != null ? menu.Parent.Id : null,
-            ParentController = menu.Parent != null ? menu.Parent.Controller : string.Empty,
-            ParentTitle = menu.Parent != null ? menu.Parent.Title : string.Empty,
+            Action = menu.Action?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
+            Argument = menu.Argument?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
+            ParentId = menu.Parent != null ? menu.Parent?.Id : null,
+            ParentController = menu.Parent != null ? menu.Parent?.Controller : string.Empty,
+            ParentTitle = menu.Parent != null ? menu.Parent?.Title : string.Empty,
             DisplayOrder = menu.DisplayOrder,
             PageContent = menu.PageContent,
-            VirtualPath = menu.Parent != null ? $"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}" : menu.Action.ToLower(CultureInfo.CurrentCulture)
+            VirtualPath = GetVirualPath(menu)
         };
 
         if (string.IsNullOrEmpty(item.Url))
@@ -67,6 +68,13 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         }
 
         return item;
+    }
+
+    private static string GetVirualPath(Menu menu)
+    {
+        return menu.Parent != null ?
+            $"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}" :
+            menu.Action.ToLower(CultureInfo.CurrentCulture);
     }
 
     /// <summary>
@@ -136,13 +144,47 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="Id"></param>
     /// <returns></returns>
+    public async Task<MenuEditModel> GetMenuEditAsync(int Id)
+    {
+        var returnMenu = new MenuEditModel(Create(await _context.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync()));
+        if (returnMenu == null)
+            returnMenu = new MenuEditModel();
+        returnMenu.Domains = Create(await _context.Set<WebSite>().ToListAsync());
+        return returnMenu;
+    }
     public async Task<MenuModel> GetMenuItemAsync(int Id)
     {
-        var returnMenu = Create(await _context.Set<Menu>().Where(w => w.Id == Id).FirstOrDefaultAsync());
-        // var returnMenu = Create(_context.Menu.Where(w => w.Id == Id).FirstOrDefault());
+        var returnMenu = Create(await _context.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync());
         if (returnMenu == null)
             returnMenu = new MenuModel();
         return returnMenu;
+    }
+
+    private List<WebsiteModel> Create(List<WebSite> list)
+    {
+        return list == null ? new List<WebsiteModel>() : list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
+    }
+    private WebsiteModel Create(WebSite domain)
+    {
+        if (domain == null)
+        {
+            return new WebsiteModel();
+        }
+
+        var item = new WebsiteModel()
+        {
+            Id = domain.Id,
+            Name = domain.Name,
+            Theme = domain.Style,
+            Description = domain.Description,
+            Template = domain.Template,
+            WebsiteTitle = domain.Title,
+            WebsiteUrl = domain.DomainUrl,
+            GalleryFolder = domain.GalleryFolder,
+            UseBreadCrumbURL = domain.UseBreadCrumbUrl,
+            VersionNo = domain.VersionNo
+        };
+        return item;
     }
 
 
@@ -246,7 +288,6 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
             try
             {
                 var dbMenu = _context.Menu.Where(w => w.Id == saveItem.Id).FirstOrDefault();
-                //var domain = _context.Domain.Where(w => w.Id == saveItem.DomainID).FirstOrDefault();
                 var parentMenu = _context.Menu.Where(w => w.Id == saveItem.ParentId).FirstOrDefault();
 
                 if (dbMenu != null)
@@ -284,4 +325,5 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     {
         ((IDisposable)_context).Dispose();
     }
+
 }

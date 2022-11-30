@@ -1,16 +1,12 @@
 ﻿using ControlSpark.WebMvc.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace ControlSpark.WebMvc.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<BaseController> logger) : base(logger)
         {
-            _logger = logger;
         }
 
         public IActionResult Index()

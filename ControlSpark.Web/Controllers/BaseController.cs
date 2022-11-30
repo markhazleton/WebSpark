@@ -18,6 +18,11 @@ public class BaseController : Controller
         _baseView = null;
     }
 
+    bool IsCacheEnabled()
+    {
+        return _config.GetSection("ControlSpark").GetValue<bool>("CacheEnabled");
+    }
+
     /// <summary>
     /// Base View for Page Rendering
     /// </summary>
@@ -50,5 +55,6 @@ public class BaseController : Controller
             }
             return _baseView;
         }
+
     }
 }

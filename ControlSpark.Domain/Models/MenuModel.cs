@@ -82,6 +82,12 @@ public class MenuModel
     /// </summary>
     [JsonPropertyName("domain_url")]
     public string DomainUrl { get; set; }
+
+    /// <summary>
+    /// Domain Name
+    /// </summary>
+    [JsonPropertyName("domain_name")]
+    public string DomainName { get; set; }
     /// <summary>
     /// Gets or sets the icon.
     /// </summary>
