@@ -34,16 +34,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Areas\Recipe\Views\Main\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\site\mom\RecipeList.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Recipe\Controllers\" />
     <Folder Include="Areas\Recipe\Data\" />
     <Folder Include="Areas\Recipe\Models\" />
-    <Folder Include="Areas\Recipe\Views\" />
   </ItemGroup>
 
 </Project>

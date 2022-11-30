@@ -8,19 +8,20 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = new ConfigurationBuilder()
-                            .AddJsonFile("appsettings.json", false, true)
-                            .AddEnvironmentVariables()
-                            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
-                            .Build();
+    .AddJsonFile("appsettings.json", false, true)
+    .AddEnvironmentVariables()
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
+    .Build();
+
 Log.Logger = new LoggerConfiguration()
-      .Enrich.FromLogContext()
-      .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-      .CreateLogger();
+    .Enrich.FromLogContext()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
-var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection") ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection")
+    ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
 
-builder.Services.AddDbContext<ControlSparkUserContext>(options =>
-    options.UseSqlite(connectionString)); ;
+builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString)); ;
 
 builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControlSparkUserContext>(); ;
@@ -67,6 +68,9 @@ app.UseAuthentication(); ;
 
 app.UseAuthorization();
 app.MapRazorPages();
+app.MapControllerRoute(
+    name: "MyArea",
+    pattern: "{area:exists}/{controller=Main}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
