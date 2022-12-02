@@ -1,4 +1,5 @@
 ﻿using ControlSpark.RecipeManager.Interfaces;
+using ControlSpark.RecipeManager.Models;
 
 namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 
@@ -26,13 +27,17 @@ public class RecipeCategoryController : RecipeBaseController
     // GET: RecipeCategoryController/Details/5
     public ActionResult Details(int id)
     {
-        return View();
+        var item = _RecipeService.GetRecipeCategoryList().Where(w => w.Id == id).FirstOrDefault();
+        if (item is null)
+            return RedirectToAction(nameof(Index));
+
+        return View(item);
     }
 
     // GET: RecipeCategoryController/Create
     public ActionResult Create()
     {
-        return View();
+        return View(new RecipeCategoryModel());
     }
 
     // POST: RecipeCategoryController/Create
@@ -53,7 +58,11 @@ public class RecipeCategoryController : RecipeBaseController
     // GET: RecipeCategoryController/Edit/5
     public ActionResult Edit(int id)
     {
-        return View();
+        var item = _RecipeService.GetRecipeCategoryList().Where(w => w.Id == id).FirstOrDefault();
+        if (item is null)
+            return RedirectToAction(nameof(Index));
+
+        return View(item);
     }
 
     // POST: RecipeCategoryController/Edit/5
