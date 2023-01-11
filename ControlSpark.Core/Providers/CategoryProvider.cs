@@ -1,8 +1,8 @@
-using ControlSpark.Core.Data;
+using Microsoft.Data.Sqlite;
 
 namespace ControlSpark.Core.Providers;
 
-public class CategoryProvider : ICategoryProvider
+public class CategoryProvider : ICategoryProvider, IDisposable
 {
     private readonly AppDbContext _db;
 
@@ -170,5 +170,11 @@ public class CategoryProvider : ICategoryProvider
         _db.Categories.Remove(category);
 
         return await _db.SaveChangesAsync() > 0;
+    }
+
+    public void Dispose()
+    {
+        SqliteConnection.ClearAllPools();
+        ((IDisposable)_db).Dispose();
     }
 }

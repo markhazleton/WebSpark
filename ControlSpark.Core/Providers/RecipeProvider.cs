@@ -1,5 +1,6 @@
 using ControlSpark.Core.Infrastructure;
 using ControlSpark.RecipeManager.Interfaces;
+using Microsoft.Data.Sqlite;
 
 namespace ControlSpark.Core.Providers;
 
@@ -280,6 +281,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
 
     public void Dispose()
     {
+        SqliteConnection.ClearAllPools();
         ((IDisposable)_context).Dispose();
     }
 
@@ -289,7 +291,10 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;RecipeModel&gt;.</returns>
     public IEnumerable<RecipeModel> Get()
     {
-        return Create(_context.Recipe.Include(r => r.RecipeCategory).ToList());
+        var theList = _context.Recipe.Include(r => r.RecipeCategory).ToList();
+        return Create(theList);
+
+        // return Create(_context.Recipe.Include(r => r.RecipeCategory).ToList());
     }
 
     /// <summary>

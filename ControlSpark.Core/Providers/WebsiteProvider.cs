@@ -1,4 +1,5 @@
 using ControlSpark.Core.Infrastructure;
+using Microsoft.Data.Sqlite;
 
 namespace ControlSpark.Core.Providers;
 
@@ -287,6 +288,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
 
     public void Dispose()
     {
+        SqliteConnection.ClearAllPools();
         ((IDisposable)_context).Dispose();
     }
 

@@ -1,8 +1,8 @@
-using ControlSpark.Core.Data;
+using Microsoft.Data.Sqlite;
 
 namespace ControlSpark.Core.Providers;
 
-public class BlogProvider : IBlogProvider
+public class BlogProvider : IBlogProvider, IDisposable
 {
     private readonly AppDbContext _db;
     private readonly IStorageProvider _storageProvider;
@@ -81,5 +81,11 @@ public class BlogProvider : IBlogProvider
             }
         }
         return values;
+    }
+
+    public void Dispose()
+    {
+        SqliteConnection.ClearAllPools();
+        ((IDisposable)_db).Dispose();
     }
 }

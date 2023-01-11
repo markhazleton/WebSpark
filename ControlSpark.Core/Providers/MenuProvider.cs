@@ -1,4 +1,5 @@
 using ControlSpark.Domain.EditModels;
+using Microsoft.Data.Sqlite;
 
 namespace ControlSpark.Core.Providers;
 
@@ -323,6 +324,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
 
     public void Dispose()
     {
+        SqliteConnection.ClearAllPools();
         ((IDisposable)_context).Dispose();
     }
 
