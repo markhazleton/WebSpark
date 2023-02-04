@@ -8,8 +8,10 @@ namespace ControlSpark.Domain.Extensions;
 
 public static class StringExtensions
 {
-
+    private static readonly Regex DashRemover = new Regex("-");
+    private static readonly Regex LeadingSlashRemover = new Regex("^/");
     private static readonly Regex RegexStripHtml = new Regex("<[^>]*>", RegexOptions.Compiled);
+    private static readonly Regex WhiteSpaceRemover = new Regex(" ");
 
     static string RemoveDiacritics(string text)
     {
@@ -124,6 +126,17 @@ public static class StringExtensions
                   numBytesRequested: 256 / 8);
 
         return Convert.ToBase64String(bytes);
+    }
+
+    public static bool IsMatch(this string str1, string str2)
+    {
+        str1 = LeadingSlashRemover.Replace(str1, string.Empty);
+        str1 = WhiteSpaceRemover.Replace(str1, string.Empty);
+        str1 = DashRemover.Replace(str1, string.Empty);
+        str2 = LeadingSlashRemover.Replace(str2, string.Empty);
+        str2 = WhiteSpaceRemover.Replace(str2, string.Empty);
+        str2 = DashRemover.Replace(str2, string.Empty);
+        return string.Equals(str1, str2, StringComparison.OrdinalIgnoreCase);
     }
 
     public static string MdToHtml(this string str)

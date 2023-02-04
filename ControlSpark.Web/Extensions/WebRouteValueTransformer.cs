@@ -28,6 +28,25 @@ public class WebRouteValueTransformer : DynamicRouteValueTransformer
     {
         var route = httpContext?.Request?.Path.Value?.ToLower();
 
+        // Check for file extensions
+        if (route.EndsWith(".js"))
+        {
+            _logger.LogWarning("JS File not found", new { route, values });
+            values["controller"] = "EmptyFiles";
+            values["action"] = "BlankJS";
+            values["id"] = string.Empty;
+            return new ValueTask<RouteValueDictionary>(values);
+        }
+        if (route.EndsWith(".css"))
+        {
+            _logger.LogWarning("CSS File not found", new { route, values });
+            values["controller"] = "EmptyFiles";
+            values["action"] = "BlankCss";
+            values["id"] = string.Empty;
+            return new ValueTask<RouteValueDictionary>(values);
+        }
+
+
         // Check for Blog Links
         if (route == "/blog")
         {
@@ -65,7 +84,7 @@ public class WebRouteValueTransformer : DynamicRouteValueTransformer
 
         var value = httpContext?.Session.GetString("BaseViewKey");
         var baseView = value == null ? default : JsonSerializer.Deserialize<WebsiteVM>(value);
-        var myPage = baseView?.Menu?.Where(w => w.Url.ToLower() == httpContext?.Request?.Path.Value?.ToLower()).FirstOrDefault();
+        var myPage = baseView?.Menu?.Where(w => w.Url == httpContext?.Request?.Path.Value).FirstOrDefault();
         if (myPage == null)
         {
             if (string.IsNullOrWhiteSpace(route?.Replace("/", string.Empty)))
@@ -83,16 +102,9 @@ public class WebRouteValueTransformer : DynamicRouteValueTransformer
                 return new ValueTask<RouteValueDictionary>(values);
             }
         }
-
-        //values["controller"] = myPage?.Controller ?? "Page";
-        //values["action"] = myPage?.Controller == "Page" ? "index" : splitAction is null ? "index" : splitAction[0];
-        //values["id"] = splitAction is null ? "index" : splitAction.Length > 1 ? splitAction[1] : myPage?.Controller == "Page" ? myPage?.Action : string.Empty;
-        //return new ValueTask<RouteValueDictionary>(values);
-
         values["controller"] = myPage?.Controller ?? "Page";
         values["action"] = myPage?.Action ?? "index";
         values["id"] = myPage?.Argument ?? myPage?.Action;
         return new ValueTask<RouteValueDictionary>(values);
-
     }
 }
