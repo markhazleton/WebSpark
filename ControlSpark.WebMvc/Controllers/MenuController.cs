@@ -67,6 +67,14 @@ namespace ControlSpark.WebMvc.Controllers
                 {
                     menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
                     menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
+                    menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
+                    menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;
+                    menuToUpdate.DomainUrl = item.DomainUrl ?? menuToUpdate.DomainUrl;
+                    menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                    menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
+                    menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
+                    menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
+                    menuToUpdate.DisplayOrder = item.DisplayOrder;
                     var saveResult = _menuService.Save(menuToUpdate);
                 }
                 return RedirectToAction(nameof(Index));
