@@ -6,7 +6,6 @@ namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 /// <summary>
 /// RecipeCategoryController 
 /// </summary>
-[Area("Recipe")]
 public class RecipeCategoryController : RecipeBaseController
 {
     /// <summary>

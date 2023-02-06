@@ -7,7 +7,6 @@ namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 /// <summary>
 /// MainController 
 /// </summary>
-[Area("Recipe")]
 public class MainController : RecipeBaseController
 {
     public MainController(ILogger<MainController> logger, IRecipeService RecipeService) : base(logger, RecipeService)

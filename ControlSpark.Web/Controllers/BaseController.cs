@@ -1,5 +1,4 @@
 using ControlSpark.Bootswatch.Provider;
-using ControlSpark.Web.Extensions;
 using System.Text.Json;
 
 namespace ControlSpark.Web.Controllers;
@@ -35,11 +34,11 @@ public class BaseController : Controller
     {
         get
         {
-            if (_baseView == null)
-            {
-                _baseView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.BaseViewKey);
-                _logger.LogInformation("Loaded BaseView From Session");
-            }
+            //if (_baseView == null)
+            //{
+            //    _baseView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.BaseViewKey);
+            //    _logger.LogInformation("Loaded BaseView From Session");
+            //}
             if (_baseView == null)
             {
                 var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");

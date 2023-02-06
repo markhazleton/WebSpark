@@ -1,7 +1,6 @@
 using ControlSpark.Domain.Models;
 
 namespace ControlSpark.Domain.EditModels;
-
 /// <summary>
 /// Class MenuModel.
 /// </summary>
@@ -12,13 +11,44 @@ public class MenuEditModel : MenuModel
     /// </summary>
     public MenuEditModel()
     {
-        DisplayOrder = 1;
-        DisplayInNavigation = true;
+        InitEditModel();
     }
-    public MenuEditModel(MenuModel? menu)
+
+    private void InitEditModel()
     {
         DisplayOrder = 1;
         DisplayInNavigation = true;
+        Controllers = new List<LookupModel>
+        {
+            new LookupModel { Text = "Page", Value = "Page", IsDefault = true, IsSelected = true },
+            new LookupModel { Text = "Blog", Value = "Blog", IsDefault = false, IsSelected = false },
+            new LookupModel { Text = "Recipe", Value = "Recipe", IsDefault = false, IsSelected = false },
+            new LookupModel { Text = "Bootswatch", Value = "Bootswatch", IsDefault = false, IsSelected = false }
+        };
+        Domains = new List<LookupModel>();
+        Parents = new List<LookupModel>();
+        Icons = new List<LookupModel>
+        {
+            new LookupModel { Text="Home", Value="fa-home" },
+            new LookupModel { Text="Heart", Value="fa-heart" },
+            new LookupModel { Text="Chevron >", Value="fa-chevron-right" },
+            new LookupModel { Text="Chevron <", Value="fa-chevron-left" },
+            new LookupModel { Text="Cog/Gears", Value="fa-cog" },
+            new LookupModel { Text="Bolt", Value="fa-bolt" },
+            new LookupModel { Text="Comment", Value="fa-comment" },
+            new LookupModel { Text="Coffee", Value="fa-coffee" },
+            new LookupModel { Text="Cutlery", Value="fa-cutlery" }
+        };
+        Actions = new List<LookupModel>
+        {
+            new LookupModel { Text = "Index", Value = "index" },
+            new LookupModel { Text = "Categories (Blog)", Value = "categories" }
+        };
+    }
+
+    public MenuEditModel(MenuModel? menu)
+    {
+        InitEditModel();
 
         if (menu == null) return;
         Action = menu.Action;
@@ -43,6 +73,9 @@ public class MenuEditModel : MenuModel
         VirtualPath = menu.VirtualPath;
     }
 
-    public List<WebsiteModel> Domains { get; set; } = new List<WebsiteModel>();
-
+    public List<LookupModel> Domains { get; set; }
+    public List<LookupModel> Parents { get; set; }
+    public List<LookupModel> Controllers { get; set; }
+    public List<LookupModel> Icons { get; set; }
+    public List<LookupModel> Actions { get; set; }
 }

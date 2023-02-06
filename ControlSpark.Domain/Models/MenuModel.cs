@@ -27,7 +27,7 @@ public class MenuModel
     /// </summary>
     /// <value>The Argument.</value>
     [JsonPropertyName("argument")]
-    public string Argument { get; set; }
+    public string? Argument { get; set; }
     /// <summary>
     /// Gets or sets the Api Url.
     /// </summary>
@@ -75,6 +75,7 @@ public class MenuModel
     /// Gets or sets the domain identifier.
     /// </summary>
     /// <value>The domain identifier.</value>
+    [DisplayName("Website Domain")]
     [JsonPropertyName("domain_id")]
     public int DomainID { get; set; }
     /// <summary>
@@ -115,7 +116,7 @@ public class MenuModel
     /// <value>The content of the page.</value>
     [JsonPropertyName("content")]
     [DisplayName("Page Content")]
-    public string PageContent { get; set; }
+    public string? PageContent { get; set; }
 
     /// <summary>
     /// Gets or sets the parent controller.

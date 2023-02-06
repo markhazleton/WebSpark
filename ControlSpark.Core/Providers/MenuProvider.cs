@@ -147,10 +147,15 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// <returns></returns>
     public async Task<MenuEditModel> GetMenuEditAsync(int Id)
     {
-        var returnMenu = new MenuEditModel(Create(await _context.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync()));
+        var menuList = _context.Menu.Include(i => i.Domain).ToList();
+        var returnMenu = new MenuEditModel(Create(menuList.Where(w => w.Id == Id).FirstOrDefault()));
         if (returnMenu == null)
             returnMenu = new MenuEditModel();
-        returnMenu.Domains = Create(await _context.Set<WebSite>().ToListAsync());
+
+        returnMenu.Parents = Create(menuList.Where(w => w.Parent == null).ToList()).Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Title }).ToList();
+        returnMenu.Parents.Insert(0, new LookupModel() { Value = string.Empty, Text = "None" });
+
+        returnMenu.Domains = (await _context.Set<WebSite>().ToListAsync()).Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
         return returnMenu;
     }
     public async Task<MenuModel> GetMenuItemAsync(int Id)

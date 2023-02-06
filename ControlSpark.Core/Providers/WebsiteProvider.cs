@@ -1,4 +1,5 @@
 using ControlSpark.Core.Infrastructure;
+using ControlSpark.Domain.EditModels;
 using Microsoft.Data.Sqlite;
 
 namespace ControlSpark.Core.Providers;
@@ -18,28 +19,30 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <summary>
     /// Returns Website Model from Website table
     /// </summary>
-    /// <param name="domain"></param>
+    /// <param name="website"></param>
     /// <returns></returns>
-    private WebsiteModel Create(WebSite domain)
+    private WebsiteModel Create(WebSite website)
     {
-        if (domain == null)
+        if (website == null)
         {
             return new WebsiteModel();
         }
 
         var item = new WebsiteModel()
         {
-            Id = domain.Id,
-            Name = domain.Name,
-            Theme = domain.Style,
-            Description = domain.Description,
-            Template = domain.Template,
-            WebsiteTitle = domain.Title,
-            WebsiteUrl = domain.DomainUrl,
-            GalleryFolder = domain.GalleryFolder,
-            UseBreadCrumbURL = domain.UseBreadCrumbUrl,
-            VersionNo = domain.VersionNo,
-            Menu = Create(domain.Menus, false)
+            Id = website.Id,
+            Name = website.Name,
+            Theme = website.Style,
+            Description = website.Description,
+            Template = website.Template,
+            WebsiteTitle = website.Title,
+            WebsiteUrl = website.DomainUrl,
+            GalleryFolder = website.GalleryFolder,
+            UseBreadCrumbURL = website.UseBreadCrumbUrl,
+            VersionNo = website.VersionNo,
+            Menu = Create(website.Menus, false),
+            ModifiedDT = website.UpdatedDate,
+            ModifiedID = website.UpdatedID ?? 99,
         };
         item.Menu.AddRange(CreateRecipeMenu());
         return item;
@@ -227,10 +230,10 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     }
 
     /// <summary>
-    /// Creates the domain menu.
+    /// Creates the website menu.
     /// </summary>
     /// <param name="list">The list.</param>
-    /// <param name="DomainID">The domain identifier.</param>
+    /// <param name="DomainID">The website identifier.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
     private List<MenuModel> CreateRecipeMenu()
     {
@@ -242,7 +245,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// Gets the menu item.
     /// </summary>
     /// <param name="recipe">The recipe.</param>
-    /// <param name="domain">The domain.</param>
+    /// <param name="domain">The website.</param>
     /// <returns>MenuModel.</returns>
     private MenuModel GetMenuItem(Recipe recipe)
     {
@@ -352,6 +355,13 @@ public class WebsiteProvider : IWebsiteService, IDisposable
 
         return bvm;
     }
+    public async Task<WebsiteEditModel> GetEditAsync(int id)
+    {
+        var website = new WebsiteEditModel(Create(await _context.Set<WebSite>()
+            .Where(w => w.Id == id)
+            .Include(i => i.Menus).FirstOrDefaultAsync()));
+        return website ??= new WebsiteEditModel();
+    }
 
     public List<MenuModel> GetSiteMenu(int DomainId)
     {
@@ -367,12 +377,12 @@ public class WebsiteProvider : IWebsiteService, IDisposable
 
         if (saveItem?.Id == 0)
         {
-            var saveDomain = Create(saveItem);
+            var saveWebsite = Create(saveItem);
             try
             {
-                _context.Domain.Add(saveDomain);
+                _context.Domain.Add(saveWebsite);
                 _context.SaveChanges();
-                saveItem.Id = saveDomain.Id;
+                saveItem.Id = saveWebsite.Id;
             }
             catch (Exception ex)
             {
@@ -385,18 +395,20 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         {
             try
             {
-                var dbDomain = _context.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault();
-                if (dbDomain != null)
+                var dbWebsite = _context.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+                if (dbWebsite != null)
                 {
-                    dbDomain.Name = saveItem.Name;
-                    dbDomain.Description = saveItem.Description;
-                    dbDomain.Style = saveItem.Theme;
-                    dbDomain.Template = saveItem.Template;
-                    dbDomain.Title = saveItem.WebsiteTitle;
-                    dbDomain.DomainUrl = saveItem.WebsiteUrl;
-                    dbDomain.GalleryFolder = saveItem.GalleryFolder;
-                    dbDomain.UseBreadCrumbUrl = saveItem.UseBreadCrumbURL;
-                    dbDomain.VersionNo++;
+                    dbWebsite.Name = saveItem.Name;
+                    dbWebsite.Description = saveItem.Description;
+                    dbWebsite.Style = saveItem.Theme;
+                    dbWebsite.Template = saveItem.Template;
+                    dbWebsite.Title = saveItem.WebsiteTitle;
+                    dbWebsite.DomainUrl = saveItem.WebsiteUrl;
+                    dbWebsite.GalleryFolder = saveItem.GalleryFolder;
+                    dbWebsite.UseBreadCrumbUrl = saveItem.UseBreadCrumbURL;
+                    dbWebsite.UpdatedID = saveItem.ModifiedID;
+                    dbWebsite.VersionNo = dbWebsite.VersionNo++;
+                    dbWebsite.UpdatedDate = DateTime.Now;
                     _context.SaveChanges();
                 }
             }

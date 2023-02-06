@@ -2,8 +2,7 @@
 
 namespace ControlSpark.WebMvc.Areas.Admin.Controllers;
 
-[Area("Admin")]
-public class MenuController : Controller
+public class MenuController : BaseAdminController
 {
     private readonly ILogger<MenuController> _logger;
     private readonly IScopeInformation _scopeInfo;
@@ -67,6 +66,7 @@ public class MenuController : Controller
             if (menuToUpdate != null)
             {
                 menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
+                menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
                 menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
                 menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
                 menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;

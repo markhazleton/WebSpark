@@ -49,7 +49,7 @@ public class WebsiteModel
     /// </summary>
     /// <value>The domain comment.</value>
     [Required]
-    [StringLength(10)]
+    [StringLength(20)]
     public string Template { get; set; }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class WebsiteModel
     /// </summary>
     /// <value>The gallery folder.</value>
     [Required]
-    [StringLength(250)]
+    [StringLength(20)]
     public string GalleryFolder { get; set; }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class WebsiteModel
     /// </summary>
     public List<MenuModel> Menu { get; set; }
     /// <summary>
-    /// Link to API 
+    /// Link to API for this website
     /// </summary>
     public string Url { get; set; }
 }

@@ -10,10 +10,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Theme)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Theme)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Template)
@@ -34,10 +34,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Theme)
+                    @Html.ActionLink(item.Name, "Edit", new {id=item.Id })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.Theme)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Template)

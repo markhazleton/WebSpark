@@ -1,8 +1,9 @@
 ﻿
-namespace ControlSpark.WebMvc.Areas.Admin.Controllers;
+using ControlSpark.Domain.EditModels;
+using Microsoft.AspNetCore.Authorization;
 
-[Area("Admin")]
-public class WebsiteController : Controller
+namespace ControlSpark.WebMvc.Areas.Admin.Controllers;
+public class WebsiteController : BaseAdminController
 {
     private readonly ILogger<WebsiteController> _logger;
     private readonly IScopeInformation _scopeInfo;
@@ -23,15 +24,16 @@ public class WebsiteController : Controller
     }
 
     // GET: WebsiteController/Details/5
-    public ActionResult Details(int id)
+    public async Task<ActionResult> Details(int id)
     {
-        return View();
+        var website = await _websiteService.GetEditAsync(id);
+        return View(website);
     }
 
     // GET: WebsiteController/Create
     public ActionResult Create()
     {
-        return View();
+        return View(new WebsiteEditModel());
     }
 
     // POST: WebsiteController/Create
@@ -50,18 +52,35 @@ public class WebsiteController : Controller
     }
 
     // GET: WebsiteController/Edit/5
-    public ActionResult Edit(int id)
+    public async Task<ActionResult> Edit(int id)
     {
-        return View();
+        var website = await _websiteService.GetEditAsync(id);
+        return View(website);
     }
 
     // POST: WebsiteController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
+    public async Task<ActionResult> Edit(int id, WebsiteEditModel website)
     {
         try
         {
+            var itemToUpdate = await _websiteService.GetAsync(id);
+
+            if (itemToUpdate != null)
+            {
+                itemToUpdate.Name = website.Name ?? itemToUpdate.Name;
+                itemToUpdate.Description = website.Description ?? itemToUpdate.Description;
+                itemToUpdate.Template = website.Template ?? itemToUpdate.Template;
+                itemToUpdate.Theme = website.Theme ?? itemToUpdate.Theme;
+                itemToUpdate.Message = website.Message ?? website.Message;
+                itemToUpdate.GalleryFolder = website.GalleryFolder ?? itemToUpdate.GalleryFolder;
+                itemToUpdate.WebsiteUrl = website.WebsiteUrl ?? itemToUpdate.WebsiteUrl;
+                itemToUpdate.WebsiteTitle = website.WebsiteTitle ?? itemToUpdate.WebsiteTitle;
+                itemToUpdate.UseBreadCrumbURL = website.UseBreadCrumbURL;
+                itemToUpdate.ModifiedID = 99;
+                var saveResult = _websiteService.Save(itemToUpdate);
+            }
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -69,6 +88,7 @@ public class WebsiteController : Controller
             return View();
         }
     }
+
 
     // GET: WebsiteController/Delete/5
     public ActionResult Delete(int id)

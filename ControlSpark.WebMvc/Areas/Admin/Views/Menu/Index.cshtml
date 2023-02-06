@@ -36,30 +36,31 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.ActionLink(item.Title, "Edit", new {id=item.Id })
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DisplayOrder)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.Title, "Edit", new {id=item.Id })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayOrder)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.DomainName) | @Html.DisplayFor(modelItem => item.DomainID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Icon)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Url)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VirtualPath)
-            </td>
-        </tr>
-}
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Icon)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ParentTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Url)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VirtualPath)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

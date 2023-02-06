@@ -48,7 +48,7 @@ builder.Services.AddBlogProviders();
 var app = builder.Build();
 
 // Initialize User Db (if necessary)
-//await UserDbInitializer.SeedAsync(app);
+// await UserDbInitializer.SeedAsync(app);
 // Initialize CMS Db (if necessary)
 //await DbInitializer.SeedAsync(app);
 

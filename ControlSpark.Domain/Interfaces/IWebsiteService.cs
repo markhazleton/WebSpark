@@ -1,3 +1,4 @@
+using ControlSpark.Domain.EditModels;
 using ControlSpark.Domain.Models;
 using ControlSpark.Domain.ViewModels;
 
@@ -26,7 +27,12 @@ public interface IWebsiteService
     /// <param name="id"></param>
     /// <returns></returns>
     Task<WebsiteModel> GetAsync(int id);
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<WebsiteEditModel> GetEditAsync(int id);
     /// <summary>
     /// 
     /// </summary>
