@@ -28,23 +28,42 @@ public class MenuController : BaseAdminController
     }
 
     // GET: MenuController/Create
-    public ActionResult Create()
+    public async Task<ActionResult> Create()
     {
-        return View();
+        var item = await _menuService.GetMenuEditAsync(0);
+        return View(item);
     }
 
     // POST: MenuController/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    public ActionResult Create(MenuEditModel item)
     {
+        var menuToUpdate = new MenuModel();
         try
         {
+            if (menuToUpdate != null)
+            {
+                menuToUpdate.DomainID = item.DomainID;
+                menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
+                menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
+                menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
+                menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
+                menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;
+                menuToUpdate.Url = item.Url ?? item.Title ?? "UNKNOWN";
+                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
+                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
+                menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
+                menuToUpdate.DisplayOrder = item.DisplayOrder;
+                var saveResult = _menuService.Save(menuToUpdate);
+            }
             return RedirectToAction(nameof(Index));
         }
         catch
         {
-            return View();
+            return View(menuToUpdate);
         }
     }
 

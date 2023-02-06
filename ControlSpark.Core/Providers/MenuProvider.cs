@@ -97,6 +97,10 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
             Argument = menu.Argument,
             DisplayOrder = menu.DisplayOrder,
             PageContent = menu.PageContent,
+            CreatedDate = DateTime.Now,
+            UpdatedDate = DateTime.Now,
+            UpdatedID = 99,
+            CreatedID = 99,
         };
         var dbDomain = _context.Domain.Where(w => w.Id == menu.DomainID).FirstOrDefault();
         dbMenu.Domain = dbDomain;
