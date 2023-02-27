@@ -51,10 +51,10 @@ public class MenuController : BaseAdminController
                 menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
                 menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;
                 menuToUpdate.Url = item.Url ?? item.Title ?? "UNKNOWN";
+                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
                 menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
                 menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
                 menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
-                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
                 menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
                 menuToUpdate.DisplayOrder = item.DisplayOrder;
                 var saveResult = _menuService.Save(menuToUpdate);
@@ -75,6 +75,12 @@ public class MenuController : BaseAdminController
     }
 
     // POST: MenuController/Edit/5
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="item"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult Edit(int id, MenuEditModel item)
@@ -84,17 +90,34 @@ public class MenuController : BaseAdminController
             var menuToUpdate = _menuService.GetAllMenuItems().Where(w => w.Id == id).FirstOrDefault();
             if (menuToUpdate != null)
             {
+                if (item.Controller == "Page")
+                {
+                    if (item.ParentId is null)
+                    {
+                        item.Url = item.Title.ToSlug();
+                        item.Argument = item.Title.ToSlug();
+                    }
+                    else
+                    {
+                        if (item.ParentId == menuToUpdate.ParentId)
+                        {
+                            item.Url =$"{menuToUpdate.ParentTitle.ToSlug()}/{item.Title.ToSlug()}" ;
+                            item.Argument = item.Url;
+                        }
+                    }
+                }
+
                 menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
                 menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
                 menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
-                menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
-                menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;
-                menuToUpdate.DomainUrl = item.DomainUrl ?? menuToUpdate.DomainUrl;
-                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
                 menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
-                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
                 menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
                 menuToUpdate.DisplayOrder = item.DisplayOrder;
+                menuToUpdate.ParentId = item.ParentId;
+                menuToUpdate.Url = item.Url;
+                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
+                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
                 var saveResult = _menuService.Save(menuToUpdate);
             }
             return RedirectToAction(nameof(Index));
