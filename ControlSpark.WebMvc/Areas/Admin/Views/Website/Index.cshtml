@@ -13,13 +13,13 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Theme)
+                @Html.DisplayNameFor(model => model.SiteStyle)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Template)
+                @Html.DisplayNameFor(model => model.SiteTemplate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.GalleryFolder)
+                @Html.DisplayNameFor(model => model.SiteName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.WebsiteUrl)
@@ -37,13 +37,13 @@
                     @Html.ActionLink(item.Name, "Edit", new {id=item.Id })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Theme)
+                    @Html.DisplayFor(modelItem => item.SiteStyle)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Template)
+                    @Html.DisplayFor(modelItem => item.SiteTemplate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.GalleryFolder)
+                    @Html.DisplayFor(modelItem => item.SiteName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.WebsiteUrl)

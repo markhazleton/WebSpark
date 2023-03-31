@@ -26,7 +26,7 @@ public class SeedDatabase : IDisposable
             Style = "mom",
             VersionNo = 1,
             UseBreadCrumbUrl = true,
-            GalleryFolder = "/content/mom"
+            GalleryFolder = "mom"
         };
 
         Mom.Menus.Add(WebsiteHelper.GetMenuPage("Mom", "# Welcome to the Mechanics Of Motherhood \n ## The Mechanics of being a Mom \n\n\n\n\n"));
@@ -92,7 +92,7 @@ public class SeedDatabase : IDisposable
             Style = "Slate",
             VersionNo = 1,
             UseBreadCrumbUrl = true,
-            GalleryFolder = "/content/pm"
+            GalleryFolder = "pm"
         };
 
         projectMechanics.Menus.Add(WebsiteHelper.GetMenuPage("ProjectMechanics",
@@ -120,7 +120,7 @@ public class SeedDatabase : IDisposable
             Style = "Zephyr",
             VersionNo = 1,
             UseBreadCrumbUrl = true,
-            GalleryFolder = "/content/texecon"
+            GalleryFolder = "texecon"
         };
 
         Texecon.Menus.Add(WebsiteHelper.GetMenuPage("TexEcon",

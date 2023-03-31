@@ -32,12 +32,12 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         {
             Id = website.Id,
             Name = website.Name,
-            Theme = website.Style,
+            SiteStyle = website.Style,
             Description = website.Description,
-            Template = website.Template,
+            SiteTemplate = website.Template,
             WebsiteTitle = website.Title,
             WebsiteUrl = website.DomainUrl,
-            GalleryFolder = website.GalleryFolder,
+            SiteName = website.GalleryFolder,
             UseBreadCrumbURL = website.UseBreadCrumbUrl,
             VersionNo = website.VersionNo,
             Menu = Create(website.Menus, false),
@@ -109,11 +109,11 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             Id = domain.Id,
             Name = domain.Name,
             Description = domain.Description,
-            Template = domain.Template,
-            Style = domain.Theme,
+            Template = domain.SiteTemplate,
+            Style = domain.SiteStyle,
             Title = domain.WebsiteTitle,
             DomainUrl = domain.WebsiteUrl,
-            GalleryFolder = domain.GalleryFolder,
+            GalleryFolder = domain.SiteName,
             UseBreadCrumbUrl = domain.UseBreadCrumbURL,
             VersionNo = domain.VersionNo
         };
@@ -219,6 +219,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             WebsiteId = domain.Id,
             WebsiteName = domain.Name,
             WebsiteStyle = domain.Style,
+            SiteName = domain.GalleryFolder,
             Template = domain.Template,
             MetaDescription = domain.Description,
             MetaKeywords = "TODO",
@@ -400,11 +401,11 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                 {
                     dbWebsite.Name = saveItem.Name;
                     dbWebsite.Description = saveItem.Description;
-                    dbWebsite.Style = saveItem.Theme;
-                    dbWebsite.Template = saveItem.Template;
+                    dbWebsite.Style = saveItem.SiteStyle;
+                    dbWebsite.Template = saveItem.SiteTemplate;
                     dbWebsite.Title = saveItem.WebsiteTitle;
                     dbWebsite.DomainUrl = saveItem.WebsiteUrl;
-                    dbWebsite.GalleryFolder = saveItem.GalleryFolder;
+                    dbWebsite.GalleryFolder = saveItem.SiteName;
                     dbWebsite.UseBreadCrumbUrl = saveItem.UseBreadCrumbURL;
                     dbWebsite.UpdatedID = saveItem.ModifiedID;
                     dbWebsite.VersionNo = dbWebsite.VersionNo++;

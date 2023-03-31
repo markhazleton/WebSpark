@@ -4,16 +4,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h1>Edit Website</h1>
-<hr/>
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<hr />
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-4 col-sm-12">
+            <h2>Site Look and Feel</h2>
             <div class="form-group">
-                <label asp-for="Theme" class="control-label"></label>
-                <input asp-for="Theme" class="form-control" />
-                <span asp-validation-for="Theme" class="text-danger"></span>
+                <label asp-for="SiteStyle" class="control-label"></label>
+                <input asp-for="SiteStyle" class="form-control" />
+                <span asp-validation-for="SiteStyle" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="SiteTemplate" class="control-label"></label>
+                <input asp-for="SiteTemplate" class="form-control" />
+                <span asp-validation-for="SiteTemplate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteName" class="control-label"></label>
+                <input asp-for="SiteName" class="form-control" />
+                <span asp-validation-for="SiteName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-8 col-sm-12">
             <div class="form-group">
                 <label asp-for="Id" class="control-label"></label>
                 <input asp-for="Id" class="form-control" />
@@ -30,16 +43,6 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Template" class="control-label"></label>
-                <input asp-for="Template" class="form-control" />
-                <span asp-validation-for="Template" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GalleryFolder" class="control-label"></label>
-                <input asp-for="GalleryFolder" class="form-control" />
-                <span asp-validation-for="GalleryFolder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="WebsiteUrl" class="control-label"></label>
                 <input asp-for="WebsiteUrl" class="form-control" />
                 <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
@@ -54,17 +57,23 @@
                     <input class="form-check-input" asp-for="UseBreadCrumbURL" /> @Html.DisplayNameFor(model => model.UseBreadCrumbURL)
                 </label>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -16,7 +16,8 @@ public class WebsiteVM : IBaseViewModel
     public WebsiteVM()
     {
     }
-
+    public string FooterScript { get; set; }
+    public string HeaderScript { get; set; }
     /// <summary>
     /// Gets the menu.
     /// </summary>
@@ -37,6 +38,7 @@ public class WebsiteVM : IBaseViewModel
     /// <value>The meta keywords.</value>
     [JsonPropertyName("meta_keywords")]
     public string MetaKeywords { get; set; }
+    public string PageCanonical { get; set; }
 
     /// <summary>
     /// Gets or sets the page title.
@@ -44,6 +46,7 @@ public class WebsiteVM : IBaseViewModel
     /// <value>The page title.</value>
     [JsonPropertyName("page_title")]
     public string PageTitle { get; set; }
+    public string SiteName { get; set; }
     /// <summary>
     /// Gets or sets the site URL.
     /// </summary>
@@ -88,10 +91,6 @@ public class WebsiteVM : IBaseViewModel
     /// <value>The website theme.</value>
     [JsonPropertyName("website_style")]
     public string WebsiteStyle { get; set; }
-
-    public string HeaderScript { get; set; }
-    public string FooterScript { get; set; }
-    public string PageCanonical { get; set; }
 
 
 }

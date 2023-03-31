@@ -71,10 +71,10 @@ public class WebsiteController : BaseAdminController
             {
                 itemToUpdate.Name = website.Name ?? itemToUpdate.Name;
                 itemToUpdate.Description = website.Description ?? itemToUpdate.Description;
-                itemToUpdate.Template = website.Template ?? itemToUpdate.Template;
-                itemToUpdate.Theme = website.Theme ?? itemToUpdate.Theme;
+                itemToUpdate.SiteTemplate = website.SiteTemplate ?? itemToUpdate.SiteTemplate;
+                itemToUpdate.SiteStyle = website.SiteStyle ?? itemToUpdate.SiteStyle;
                 itemToUpdate.Message = website.Message ?? website.Message;
-                itemToUpdate.GalleryFolder = website.GalleryFolder ?? itemToUpdate.GalleryFolder;
+                itemToUpdate.SiteName = website.SiteName ?? itemToUpdate.SiteName;
                 itemToUpdate.WebsiteUrl = website.WebsiteUrl ?? itemToUpdate.WebsiteUrl;
                 itemToUpdate.WebsiteTitle = website.WebsiteTitle ?? itemToUpdate.WebsiteTitle;
                 itemToUpdate.UseBreadCrumbURL = website.UseBreadCrumbURL;

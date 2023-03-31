@@ -578,7 +578,7 @@ public class WebDataGrid
                 break;
 
             case "CD":
-                newColumnName = $"{(StrFun.Left(myColName, myColName.Length - 2))} Template";
+                newColumnName = $"{(StrFun.Left(myColName, myColName.Length - 2))} SiteTemplate";
                 break;
 
             case "DS":

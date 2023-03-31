@@ -331,7 +331,7 @@ public static class Utility
     // template and replaces it with the
     // relevant information extracted from strDate
 
-    // Template items (example)
+    // SiteTemplate items (example)
     // %m Month as a decimal (02)
     // %B Full month name (February)
     // %b Abbreviated month name (Feb )

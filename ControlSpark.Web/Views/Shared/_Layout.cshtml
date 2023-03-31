@@ -6,7 +6,7 @@
     {
         menu = new MenuModel();
     }
-    string siteStyle = $"/site/mom/css/site.css";
+    string siteStyle = $"/site/{Model?.SiteName}/css/site.css";
     string canonicalUrl = "";
     string? styleUrl = Model?.StyleList.Where(w => w.name == Model.WebsiteStyle).FirstOrDefault()?.cssCdn;
     string? themeName = Model?.WebsiteStyle;

@@ -6,7 +6,8 @@
     {
         menu = new MenuModel();
     }
-    string siteStyle = $"/site/mom/css/site.css";
+    string siteStyle = $"/site/{Model?.SiteName}/css/site.css";
+    string siteJs = $"/site/{Model?.SiteName}/js/site.js";
     string styleUrl = Model?.StyleList.Where(w => w.name == Model.WebsiteStyle).FirstOrDefault()?.cssCdn;
     string themeName = Model?.WebsiteStyle;
         
@@ -47,6 +48,6 @@
     </footer>
 
     <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/theme/@Model.Template/js/site.js"></script>
+    <script src=@siteJs></script>
 </body>
 </html>

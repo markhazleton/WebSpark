@@ -9,15 +9,15 @@ using Westwind.AspNetCore.Markdown;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = new ConfigurationBuilder()
-                            .AddJsonFile("appsettings.json", false, true)
-                            .AddEnvironmentVariables()
-                            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
-                            .Build();
+    .AddJsonFile("appsettings.json", false, true)
+    .AddEnvironmentVariables()
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
+    .Build();
 
 Log.Logger = new LoggerConfiguration()
-      .Enrich.FromLogContext()
-      .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-      .CreateLogger();
+    .Enrich.FromLogContext()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -54,7 +54,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-// We need to use MVC so we can use a Razor Configuration Template
+// We need to use MVC so we can use a Razor Configuration SiteTemplate
 // have to let MVC know we have a controller
 builder.Services.AddMvc()
     .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);

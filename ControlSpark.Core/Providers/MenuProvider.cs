@@ -185,12 +185,12 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         {
             Id = domain.Id,
             Name = domain.Name,
-            Theme = domain.Style,
+            SiteStyle = domain.Style,
             Description = domain.Description,
-            Template = domain.Template,
+            SiteTemplate = domain.Template,
             WebsiteTitle = domain.Title,
             WebsiteUrl = domain.DomainUrl,
-            GalleryFolder = domain.GalleryFolder,
+            SiteName = domain.GalleryFolder,
             UseBreadCrumbURL = domain.UseBreadCrumbUrl,
             VersionNo = domain.VersionNo
         };

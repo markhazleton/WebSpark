@@ -18,12 +18,12 @@ public class WebsiteEditModel : WebsiteModel
     {
         if (website == null) return;
         Message = website.Message;
-        Theme = website.Theme;
+        SiteStyle = website.SiteStyle;
         Id = website.Id;
         Name = website.Name;
         Description = website.Description;
-        Template = website.Template;
-        GalleryFolder = website.GalleryFolder;
+        SiteTemplate = website.SiteTemplate;
+        SiteName = website.SiteName;
         WebsiteUrl = website.WebsiteUrl;
         WebsiteTitle = website.WebsiteTitle;
         UseBreadCrumbURL = website.UseBreadCrumbURL;

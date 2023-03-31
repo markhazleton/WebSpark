@@ -7,7 +7,7 @@ namespace ControlSpark.Core.Infrastructure.Middleware;
 public class ApiError
 {
     /// <summary>
-    /// Template 
+    /// SiteTemplate 
     /// </summary>
     public string? Code { get; set; }
     /// <summary>
