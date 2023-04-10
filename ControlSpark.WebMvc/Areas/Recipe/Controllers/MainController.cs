@@ -67,6 +67,7 @@ public class MainController : RecipeBaseController
                 RecipeToUpdate.AuthorNM = item.AuthorNM;
                 RecipeToUpdate.Description = item.Description;
                 RecipeToUpdate.Name = item.Name;
+                RecipeToUpdate.Servings = item.Servings;
                 RecipeToUpdate.Ingredients = item.Ingredients;
                 RecipeToUpdate.Instructions = item.Instructions;
                 var saveResult = _RecipeService.Save(RecipeToUpdate);

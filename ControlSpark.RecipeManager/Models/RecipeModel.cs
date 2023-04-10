@@ -95,6 +95,12 @@ public class RecipeModel
     public int RatingCount { get; set; }
 
     /// <summary>
+    /// The number of servings this recipe makes
+    /// </summary>
+    [DisplayName("Servings")]
+    public int Servings { get; set; }
+
+    /// <summary>
     /// RecipeCategory
     /// </summary>
     public RecipeCategoryModel RecipeCategory { get; set; }
@@ -148,8 +154,10 @@ public class RecipeModel
     /// <value>The recipe URL.</value>
     public string RecipeURL { get; set; }
 
+    public List<RecipeImageModel> Images { get; set; } = new List<RecipeImageModel>();
+
     /// <summary>
-    /// 
+    /// Lookup List of Recipe Categories
     /// </summary>
     public IEnumerable<LookupModel> RecipeCategories { get; set; }
 }

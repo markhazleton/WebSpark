@@ -72,7 +72,6 @@ public class RecipeController : BaseController
             viewModel.MetaKeywords = $"{viewModel.Category.Name}";
         }
         return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Category.cshtml", viewModel);
-        //return View(viewModel);
     }
 
     /// <summary>

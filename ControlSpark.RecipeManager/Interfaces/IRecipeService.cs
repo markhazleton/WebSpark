@@ -61,4 +61,10 @@ public interface IRecipeService
     /// <param name="saveItem"></param>
     /// <returns></returns>
     RecipeCategoryModel Save(RecipeCategoryModel saveItem);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    List<RecipeImageModel> GetRecipeImages();
 }

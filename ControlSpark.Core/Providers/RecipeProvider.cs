@@ -59,6 +59,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             Ingredients = Recipe.Ingredients,
             Instructions = Recipe.Instructions,
             Description = Recipe.Description,
+            Servings = Recipe.Servings,
             AuthorNM = Recipe.AuthorName,
             AverageRating = Recipe.AverageRating,
             IsApproved = Recipe.IsApproved,
@@ -291,7 +292,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;RecipeModel&gt;.</returns>
     public IEnumerable<RecipeModel> Get()
     {
-        var theList = _context.Recipe.Include(r => r.RecipeCategory).ToList();
+        var theList = _context.Recipe.Include(r => r.RecipeCategory).Include(i => i.RecipeImage).ToList();
         return Create(theList);
 
         // return Create(_context.Recipe.Include(r => r.RecipeCategory).ToList());
@@ -502,6 +503,8 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
                 saveRecipe.Description = saveItem.Description;
                 saveRecipe.Ingredients = saveItem.Ingredients;
                 saveRecipe.Instructions = saveItem.Instructions;
+                saveRecipe.Servings = saveItem.Servings;
+                saveRecipe.IsApproved = saveItem.IsApproved;
 
                 _context.SaveChanges();
             }
@@ -544,5 +547,34 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             RecipeList = Get().ToList(),
         };
         return recipeVM;
+    }
+
+    public List<RecipeImageModel> GetRecipeImages()
+    {
+        var dbRecipeImage = _context.RecipeImage.Include(i => i.Recipe).ToList();
+        return Create(dbRecipeImage);
+    }
+
+    private List<RecipeImageModel> Create(List<RecipeImage> dbRecipeImage)
+    {
+        var recipeImageList = new List<RecipeImageModel>();
+        foreach (var dbItem in dbRecipeImage)
+        {
+            recipeImageList.Add(Create(dbItem));
+        }
+        return recipeImageList;
+    }
+
+    private RecipeImageModel Create(RecipeImage dbItem)
+    {
+        var recipeImage = new RecipeImageModel()
+        {
+            Id = dbItem.Id,
+            Recipe = Create(dbItem.Recipe),
+            DisplayOrder = dbItem.DisplayOrder,
+            FileDescription = dbItem.FileDescription,
+            FileName = dbItem.FileName,
+        };
+        return recipeImage;
     }
 }

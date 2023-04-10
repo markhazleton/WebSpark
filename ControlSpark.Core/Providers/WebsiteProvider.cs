@@ -84,6 +84,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                 Ingredients = Recipe.Ingredients,
                 Instructions = Recipe.Instructions,
                 Description = string.IsNullOrEmpty(Recipe.Description) ? Recipe.Name : Recipe.Description,
+                Servings = Recipe.Servings,
                 AuthorNM = Recipe.AuthorName,
                 AverageRating = Recipe.AverageRating,
                 IsApproved = Recipe.IsApproved,

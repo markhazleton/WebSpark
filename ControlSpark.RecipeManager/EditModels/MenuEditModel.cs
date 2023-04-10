@@ -30,6 +30,7 @@ public class RecipeEditModel : RecipeModel
         Ingredients = Recipe.Ingredients;
         Instructions = Recipe.Instructions;
         ModifiedID = Recipe.ModifiedID;
+        Servings = Recipe.Servings;
         Name = Recipe.Name;
         RatingCount = Recipe.RatingCount;
         RecipeCategories = Recipe.RecipeCategories;
