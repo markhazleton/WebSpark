@@ -1,5 +1,3 @@
-using ControlSpark.Core.Data;
-using ControlSpark.Core.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ControlSpark.Core.Extensions

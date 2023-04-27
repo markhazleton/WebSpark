@@ -7,6 +7,8 @@ namespace ControlSpark.Domain.Models;
 /// </summary>
 public class MenuModel
 {
+    private DateTime? _lastModified;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuModel" /> class.
     /// </summary>
@@ -23,18 +25,18 @@ public class MenuModel
     [JsonPropertyName("action")]
     public string Action { get; set; }
     /// <summary>
-    /// Gets or sets the Argument for the controller action.
-    /// </summary>
-    /// <value>The Argument.</value>
-    [JsonPropertyName("argument")]
-    public string? Argument { get; set; }
-    /// <summary>
     /// Gets or sets the Api Url.
     /// </summary>
     /// <value>The URL.</value>
     [DisplayName("Api Url")]
     [JsonPropertyName("api_url")]
     public string ApiUrl { get; set; }
+    /// <summary>
+    /// Gets or sets the Argument for the controller action.
+    /// </summary>
+    /// <value>The Argument.</value>
+    [JsonPropertyName("argument")]
+    public string? Argument { get; set; }
 
     /// <summary>
     /// Gets or sets the controller.
@@ -78,17 +80,17 @@ public class MenuModel
     [DisplayName("Website Domain")]
     [JsonPropertyName("domain_id")]
     public int DomainID { get; set; }
-    /// <summary>
-    /// Domain Url for API
-    /// </summary>
-    [JsonPropertyName("domain_url")]
-    public string DomainUrl { get; set; }
 
     /// <summary>
     /// Domain Name
     /// </summary>
     [JsonPropertyName("domain_name")]
     public string DomainName { get; set; }
+    /// <summary>
+    /// Domain Url for API
+    /// </summary>
+    [JsonPropertyName("domain_url")]
+    public string DomainUrl { get; set; }
     /// <summary>
     /// Gets or sets the icon.
     /// </summary>
@@ -108,7 +110,34 @@ public class MenuModel
     /// </summary>
     /// <value>The last modified.</value>
     [JsonPropertyName("modified")]
-    public DateTime? LastModified { get; set; }
+    public DateTime? LastModified
+    {
+        get { return _lastModified; }
+        set { _lastModified = value; }
+    }
+
+    /// <summary>
+    /// Gets or sets the last modified in W3C Datetime format.
+    /// </summary>
+    /// <value>The last modified in W3C Datetime format.</value>
+    [JsonPropertyName("modified_w3c")]
+    public string LastModifiedW3C
+    {
+        get
+        {
+            if (_lastModified == null)
+            {
+                _lastModified = DateTime.Now;
+            }
+
+            return _lastModified.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+        set { _lastModified = DateTime.TryParse(value, out var result) ? result : (DateTime?)null; }
+    }
+
+
+
+
 
     /// <summary>
     /// Gets or sets the content of the page.

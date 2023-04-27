@@ -1,51 +1,34 @@
-
-using System.Xml.Linq;
-
 namespace ControlSpark.Web.Controllers;
 
-public class SitemapController : ControllerBase
+/// <summary>
+/// SiteMap Controller  
+/// </summary>
+public class SitemapController : BaseController
 {
-    private readonly IPostProvider _postProvider;
-
-    public SitemapController(IPostProvider postProvider)
+    /// <summary>
+    /// SiteMap Controller Constructor
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="config"></param>
+    /// <param name="websiteService"></param>
+    public SitemapController(ILogger<SitemapController> logger, IConfiguration config, IWebsiteService websiteService) : base(
+        logger,
+        config,
+        websiteService)
     {
-        _postProvider = postProvider;
     }
 
-    [Route("sitemap")]
+    /// <summary>
+    /// Return Sitemap.xml
+    /// </summary>
+    /// <returns></returns>
+    [Route("sitemap.xml")]
     [Produces("text/xml")]
-    public async Task<IActionResult> Sitemap()
+    public IActionResult Sitemap()
     {
-        var sitemapNamespace = XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
-
-        var posts = await _postProvider.GetPosts(PublishedStatus.Published, PostType.Post);
-
-        var doc = new XDocument(
-            new XDeclaration("1.0", "utf-8", null),
-            new XElement(sitemapNamespace + "urlset",
-                from post in posts
-                select new XElement(sitemapNamespace + "url",
-                    new XElement(sitemapNamespace + "loc", GetPostUrl(post)),
-                    new XElement(sitemapNamespace + "lastmod", GetPostDate(post)),
-                    new XElement(sitemapNamespace + "changefreq", "monthly")
-                )
-            )
-        );
-
-        return Content(doc.Declaration + Environment.NewLine + doc, "text/xml");
-    }
-
-    public string GetPostUrl(Post post)
-    {
-        string webRoot = Url.Content("~/");
-
-        var sitemapBaseUri = $"{Request.Scheme}://{Request.Host}{webRoot}";
-
-        return $"{sitemapBaseUri}posts/{post.Slug}";
-    }
-
-    public string GetPostDate(Post post)
-    {
-        return post.Published.ToString("yyyy-MM-ddTHH:mm:sszzz");
+        var sitemap = this.BaseVM.GenerateSitemapXDocument();
+        return Content(sitemap.Declaration + Environment.NewLine + sitemap, "text/xml");
     }
 }
+
+

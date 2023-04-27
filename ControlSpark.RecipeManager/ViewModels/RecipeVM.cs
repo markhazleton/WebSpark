@@ -12,8 +12,8 @@ public class RecipeVM : WebsiteVM
     /// <summary>
     /// 
     /// </summary>
-    public RecipeVM() 
-    { 
+    public RecipeVM()
+    {
     }
 
     /// <summary>

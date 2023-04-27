@@ -5,13 +5,13 @@ namespace ControlSpark.Web.Controllers
         [Route("/blank.js")]
         public ContentResult BlankJS()
         {
-            return Content("", "application/javascript");
+            return Content(string.Empty, "application/javascript");
         }
 
         [Route("/blank.css")]
         public ContentResult BlankCSS()
         {
-            return Content("", "text/css");
+            return Content(string.Empty, "text/css");
         }
     }
 }

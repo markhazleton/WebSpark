@@ -1,6 +1,4 @@
-
 namespace ControlSpark.Domain.Extensions;
-
 public static class DateTimeExtensions
 {
     public static string ToFriendlyDateTimeString(this DateTime Date)

@@ -101,7 +101,7 @@ public class MenuController : BaseAdminController
                     {
                         if (item.ParentId == menuToUpdate.ParentId)
                         {
-                            item.Url =$"{menuToUpdate.ParentTitle.ToSlug()}/{item.Title.ToSlug()}" ;
+                            item.Url = $"{menuToUpdate.ParentTitle.ToSlug()}/{item.Title.ToSlug()}";
                             item.Argument = item.Url;
                         }
                     }

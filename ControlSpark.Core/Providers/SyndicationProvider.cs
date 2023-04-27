@@ -1,4 +1,3 @@
-using ControlSpark.Core.Data;
 using Serilog;
 using System;
 using System.ServiceModel.Syndication;

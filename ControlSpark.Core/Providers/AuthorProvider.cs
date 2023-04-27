@@ -1,4 +1,3 @@
-using ControlSpark.Core.Data;
 using Serilog;
 
 namespace ControlSpark.Core.Providers;

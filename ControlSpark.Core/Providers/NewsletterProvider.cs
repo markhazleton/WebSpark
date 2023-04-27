@@ -1,5 +1,3 @@
-using ControlSpark.Core.Data;
-
 namespace ControlSpark.Core.Providers;
 
 public class NewsletterProvider : INewsletterProvider

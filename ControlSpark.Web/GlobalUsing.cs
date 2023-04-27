@@ -1,7 +1,6 @@
 global using ControlSpark.Core.Extensions;
 global using ControlSpark.Core.Infrastructure;
 global using ControlSpark.Core.Providers;
-global using ControlSpark.Domain.Entities;
 global using ControlSpark.Domain.Extensions;
 global using ControlSpark.Domain.Interfaces;
 global using ControlSpark.Domain.Models;

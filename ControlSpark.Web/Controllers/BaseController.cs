@@ -21,7 +21,11 @@ public class BaseController : Controller
     {
         return _config.GetSection("ControlSpark").GetValue<bool>("CacheEnabled");
     }
-
+    public static string ReplaceDoubleSlash(string input)
+    {
+        int startIndex = input.IndexOf("//") + 2; // Find the index of the first "//" and add 2 to skip over it
+        return input.Substring(0, startIndex) + input.Substring(startIndex).Replace("//", "/");
+    }
     /// <summary>
     /// Base View for Page Rendering
     /// </summary>

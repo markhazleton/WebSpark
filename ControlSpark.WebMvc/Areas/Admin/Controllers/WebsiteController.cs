@@ -1,6 +1,5 @@
 ﻿
 using ControlSpark.Domain.EditModels;
-using Microsoft.AspNetCore.Authorization;
 
 namespace ControlSpark.WebMvc.Areas.Admin.Controllers;
 public class WebsiteController : BaseAdminController
