@@ -44,7 +44,9 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             ModifiedDT = website.UpdatedDate,
             ModifiedID = website.UpdatedID ?? 99,
         };
-        item.Menu.AddRange(CreateRecipeMenu());
+
+        if (website.Id == 2) item.Menu.AddRange(CreateRecipeMenu());
+
         return item;
     }
     /// <summary>
@@ -227,7 +229,9 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             PageTitle = domain.Title,
             Menu = Create(domain.Menus, false),
         };
-        item.Menu.AddRange(CreateRecipeMenu());
+
+        if (domain.Id == 2) item.Menu.AddRange(CreateRecipeMenu());
+
         return item;
     }
 
