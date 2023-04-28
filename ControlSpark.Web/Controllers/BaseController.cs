@@ -1,14 +1,23 @@
 using ControlSpark.Bootswatch.Provider;
+using ControlSpark.Web.Extensions;
 using System.Text.Json;
 
 namespace ControlSpark.Web.Controllers;
+/// <summary>
+/// Base Controller for all Controllers
+/// </summary>
 public class BaseController : Controller
 {
-    public const string BaseViewKey = "BaseViewKey";
-
     protected readonly ILogger _logger;
     protected readonly IWebsiteService _websiteService;
     protected readonly IConfiguration _config;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="configuration"></param>
+    /// <param name="websiteService"></param>
     public BaseController(ILogger logger, IConfiguration configuration, IWebsiteService websiteService)
     {
         _websiteService = websiteService;
@@ -20,11 +29,6 @@ public class BaseController : Controller
     bool IsCacheEnabled()
     {
         return _config.GetSection("ControlSpark").GetValue<bool>("CacheEnabled");
-    }
-    public static string ReplaceDoubleSlash(string input)
-    {
-        int startIndex = input.IndexOf("//") + 2; // Find the index of the first "//" and add 2 to skip over it
-        return input.Substring(0, startIndex) + input.Substring(startIndex).Replace("//", "/");
     }
     /// <summary>
     /// Base View for Page Rendering
@@ -38,11 +42,12 @@ public class BaseController : Controller
     {
         get
         {
-            //if (_baseView == null)
-            //{
-            //    _baseView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.BaseViewKey);
-            //    _logger.LogInformation("Loaded BaseView From Session");
-            //}
+            if (IsCacheEnabled())
+            {
+                _baseView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.BaseViewKey);
+                _logger.LogInformation("Loaded BaseView From Session");
+            }
+
             if (_baseView == null)
             {
                 var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
@@ -53,7 +58,7 @@ public class BaseController : Controller
                 _baseView.StyleList = styleService.Get();
                 var curSiteRoot = ($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
                 _baseView.SiteUrl = new Uri(curSiteRoot);
-                HttpContext.Session.SetString(BaseViewKey, JsonSerializer.Serialize(_baseView, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
+                HttpContext.Session.SetString(SessionExtensionsKeys.BaseViewKey, JsonSerializer.Serialize(_baseView, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
                 _logger.LogInformation("Loaded BaseView From Database");
             }
             return _baseView;

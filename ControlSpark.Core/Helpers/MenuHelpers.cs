@@ -33,14 +33,14 @@ public static class MenuHelpers
                 BaseView.WebsiteName = "MoM";
                 BaseView.WebsiteStyle = "MOM";
                 BaseView.WebsiteId = 3;
-                BaseView.SiteUrl = new Uri("http://mechanicsofmotherhood.com");
+                BaseView.SiteUrl = new Uri("https://mechanicsofmotherhood.com");
                 break;
 
             case "texecon.com":
                 BaseView.WebsiteName = "TexEcon";
                 BaseView.WebsiteStyle = "TexEcon";
                 BaseView.WebsiteId = 2;
-                BaseView.SiteUrl = new Uri("http://texecon.com");
+                BaseView.SiteUrl = new Uri("https://texecon.com");
                 break;
             case "mytest.com":
                 BaseView.WebsiteName = "TexEcon";
@@ -53,14 +53,14 @@ public static class MenuHelpers
                 BaseView.WebsiteName = "TexEcon";
                 BaseView.WebsiteStyle = "TexEcon";
                 BaseView.WebsiteId = 2;
-                BaseView.SiteUrl = new Uri("http://texecon.frogsfolly.com");
+                BaseView.SiteUrl = new Uri("https://texecon.frogsfolly.com");
                 break;
 
             default:
                 BaseView.WebsiteName = "TexEcon";
                 BaseView.WebsiteStyle = "TexEcon";
                 BaseView.WebsiteId = 2;
-                BaseView.SiteUrl = new Uri("http://texecon.com");
+                BaseView.SiteUrl = new Uri("https://texecon.com");
                 break;
         }
         if (BaseView.Menu.Count == 0)

@@ -60,16 +60,6 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     }
 
     /// <summary>
-    /// Creates the specified list.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    /// <returns>List&lt;RecipeCategoryModel&gt;.</returns>
-    private List<RecipeCategoryModel> Create(IEnumerable<RecipeCategory> list)
-    {
-        return list == null ? new List<RecipeCategoryModel>() : list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
-    }
-
-    /// <summary>
     /// Creates the specified recipe.
     /// </summary>
     /// <param name="Recipe">The recipe.</param>
