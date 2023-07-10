@@ -6,6 +6,7 @@ namespace ControlSpark.RecipeManager.Models
         public string FileName { get; set; }
         public string FileDescription { get; set; }
         public int DisplayOrder { get; set; }
+        public byte[] ImageData { get; set; }
         public RecipeModel Recipe { get; set; } = new RecipeModel();
     }
 }

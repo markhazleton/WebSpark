@@ -200,12 +200,27 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         return item;
     }
 
+    public static Uri ValidateUrl(string url)
+    {
+        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+        {
+            return uriResult;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private WebsiteVM CreateBaseView(WebSite domain)
     {
         if (domain == null)
         {
             return new WebsiteVM();
         }
+
+        var siteURI = ValidateUrl(domain.DomainUrl);
 
         var item = new WebsiteVM()
         {
@@ -217,6 +232,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             MetaDescription = domain.Description,
             MetaKeywords = "TODO",
             PageTitle = domain.Title,
+            SiteUrl = siteURI,
             Menu = Create(domain.Menus, false),
         };
 
@@ -338,8 +354,6 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                 bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == siteId)
                     .Include(i => i.Menus).FirstOrDefaultAsync());
             }
-
-
         }
         return bvm;
     }

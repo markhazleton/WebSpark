@@ -52,7 +52,7 @@ public class WebsiteVM : IBaseViewModel
     /// </summary>
     /// <value>The site URL.</value>
     [JsonPropertyName("site_url")]
-    public Uri SiteUrl { get; set; }
+    public Uri? SiteUrl { get; set; }
     /// <summary>
     /// Gets The List of Themes
     /// </summary>
@@ -63,7 +63,7 @@ public class WebsiteVM : IBaseViewModel
     /// </summary>
     /// <value>The site URL.</value>
     [JsonPropertyName("style_url")]
-    public Uri StyleUrl { get; set; }
+    public Uri? StyleUrl { get; set; }
 
 
     /// <summary>

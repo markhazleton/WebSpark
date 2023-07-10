@@ -56,7 +56,11 @@ public class BaseController : Controller
                 _baseView = task.GetAwaiter().GetResult();
                 var styleService = new BootswatchStyleProvider();
                 _baseView.StyleList = styleService.Get();
-                var curSiteRoot = ($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
+
+                // 
+                var RequestScheme = "https"; // HttpContext.Request.Scheme;
+
+                var curSiteRoot = ($"{RequestScheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
                 _baseView.SiteUrl = new Uri(curSiteRoot);
                 HttpContext.Session.SetString(SessionExtensionsKeys.BaseViewKey, JsonSerializer.Serialize(_baseView, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
                 _logger.LogInformation("Loaded BaseView From Database");

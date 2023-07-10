@@ -41,6 +41,7 @@ builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
 builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
+builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddBlogDatabase(config);
 builder.Services.AddBlogProviders();
 
