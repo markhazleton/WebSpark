@@ -354,7 +354,7 @@ public static partial class Utility
     {
         ;
         var mySB = new StringBuilder(strFormat);
-        int int12HourPart = new int();
+        int int12HourPart = new();
         string str24HourPart = string.Empty;
         string strMinutePart = string.Empty;
         string strSecondPart = string.Empty;

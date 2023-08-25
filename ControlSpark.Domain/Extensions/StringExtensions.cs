@@ -8,10 +8,10 @@ namespace ControlSpark.Domain.Extensions;
 
 public static class StringExtensions
 {
-    private static readonly Regex DashRemover = new Regex("-");
-    private static readonly Regex LeadingSlashRemover = new Regex("^/");
-    private static readonly Regex RegexStripHtml = new Regex("<[^>]*>", RegexOptions.Compiled);
-    private static readonly Regex WhiteSpaceRemover = new Regex(" ");
+    private static readonly Regex DashRemover = new("-");
+    private static readonly Regex LeadingSlashRemover = new("^/");
+    private static readonly Regex RegexStripHtml = new("<[^>]*>", RegexOptions.Compiled);
+    private static readonly Regex WhiteSpaceRemover = new(" ");
 
     static string RemoveDiacritics(string text)
     {
@@ -178,7 +178,7 @@ public static class StringExtensions
 
     public static string RemoveScriptTags(this string str)
     {
-        Regex scriptRegex = new Regex(@"<script[^>]*>[\s\S]*?</script>");
+        Regex scriptRegex = new(@"<script[^>]*>[\s\S]*?</script>");
         return scriptRegex.Replace(str, string.Empty);
     }
 

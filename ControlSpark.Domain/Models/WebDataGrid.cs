@@ -210,7 +210,7 @@ public class WebDataGrid
         /// <summary>
         /// The col dictionary
         /// </summary>
-        private Dictionary<string, int> ColDictionary = new Dictionary<string, int>();
+        private Dictionary<string, int> ColDictionary = new();
 
         /// <summary>
         /// Updates the dictionary.
@@ -544,7 +544,7 @@ public class WebDataGrid
     /// <returns>System.String.</returns>
     public string GetDisplayTableHeader()
     {
-        StringBuilder myrow = new StringBuilder();
+        StringBuilder myrow = new();
         if (DetailFieldName != string.Empty)
         {
             if (DetailDisplayName != string.Empty)
@@ -616,7 +616,7 @@ public class WebDataGrid
     {
         Type objType = default(Type);
         PropertyInfo pInfo = default(PropertyInfo);
-        object PropValue = new object();
+        object PropValue = new();
         if (myCol.Name.Contains("."))
         {
             List<string> PropertyNameArray = myCol.Name.Split('.').ToList();
@@ -792,7 +792,7 @@ public class WebDataGrid
     /// <summary>
     /// The header items
     /// </summary>
-    public List<GridColumn> HeaderItems = new List<GridColumn>();
+    public List<GridColumn> HeaderItems = new();
 
     /// <summary>
     /// Adds the header item.
@@ -944,7 +944,7 @@ public class WebDataGrid
     /// <returns>System.String.</returns>
     public string GetCSV()
     {
-        StringBuilder csv = new StringBuilder();
+        StringBuilder csv = new();
         foreach (GridColumn column in GridColumns)
         {
             //Add the Header row for CSV file.
