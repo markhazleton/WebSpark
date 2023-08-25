@@ -7,7 +7,6 @@
     var name = Model?.Blog?.Title?.ToLower();
     var request = Url.ActionContext.HttpContext.Request;
     var absoluteUrl = $"{request.Scheme}://{request.Host.ToUriComponent()}{request.PathBase.ToUriComponent()}/{name}";
-
     var siteTitle = Model?.Blog?.Title ?? Model?.PageTitle;
     var siteDesc = Model?.Blog?.Description ?? Model?.MetaDescription;
 
@@ -16,6 +15,7 @@
     var siteLogo = "themes/mom/img/logo-black.png";
 }
 
+<br/><br/><br/>
 <header class="header">
     <div class="container d-md-flex align-items-md-center">
         <section class="header-sign py-4 py-md-0 text-center text-md-start me-md-auto">
@@ -35,7 +35,6 @@
                 <p class="header-desc">@siteDesc</p>
             }
         </section>
-
         <partial name="nav.cshtml" />
     </div>
 </header>

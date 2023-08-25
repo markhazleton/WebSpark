@@ -72,7 +72,7 @@ public class MainController : RecipeBaseController
                 RecipeToUpdate.Instructions = item.Instructions;
                 var saveResult = _RecipeService.Save(RecipeToUpdate);
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details","RecipeCategory", new { id = RecipeToUpdate.RecipeCategoryID });
         }
         catch
         {

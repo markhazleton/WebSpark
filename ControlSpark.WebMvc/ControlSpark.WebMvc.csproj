@@ -13,25 +13,17 @@
 		<ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Remove="Logs\**" />
-	  <Content Remove="Logs\**" />
-	  <EmbeddedResource Remove="Logs\**" />
-	  <None Remove="Logs\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.7" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.9" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\..\ControlSpark.Bootswatch\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj" />
 		<ProjectReference Include="..\ControlSpark.Core\ControlSpark.Core.csproj" />
@@ -39,17 +31,12 @@
 		<ProjectReference Include="..\ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj" />
 		<ProjectReference Include="..\ControlSpark.SwaggerCore\ControlSpark.SwaggerCore.csproj" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<Content Update="wwwroot\site\mom\RecipeList.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-
 	<ItemGroup>
-	  <Folder Include="Areas\Admin\Data\" />
-	  <Folder Include="Areas\Admin\Models\" />
-	  <Folder Include="Areas\Recipe\Data\" />
-	  <Folder Include="Areas\Recipe\Models\" />
+	  <Folder Include="wwwroot\lib\" />
 	</ItemGroup>
 </Project>

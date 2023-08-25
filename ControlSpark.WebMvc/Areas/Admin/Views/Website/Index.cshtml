@@ -34,7 +34,7 @@
         {
             <tr>
                 <td>
-                    @Html.ActionLink(item.Name, "Edit", new {id=item.Id })
+                    @Html.ActionLink(item.Name, "Details","Website", new {id=item.Id })
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SiteStyle)

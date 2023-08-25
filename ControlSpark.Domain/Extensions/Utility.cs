@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ControlSpark.Domain.Extensions;
-public static class Utility
+public static partial class Utility
 {
     public static string wpm_ApplyHTMLFormatting(string strInput)
     {
@@ -160,7 +160,7 @@ public static class Utility
     {
         string wpm_FormatDateRet = default;
         // Define local variables
-        var lObjRegExp = new Regex("([a-z][a-z]*[a-z])*[a-z]", RegexOptions.IgnoreCase);
+        var lObjRegExp = DatePartRegex();
         int lLngHour = Thread.CurrentThread.CurrentCulture.Calendar.GetHour(lDtmNow);
         int lLngWeekDay = (int)Thread.CurrentThread.CurrentCulture.Calendar.GetDayOfWeek(lDtmNow);
         int lLngSecond = Thread.CurrentThread.CurrentCulture.Calendar.GetSecond(lDtmNow);
@@ -698,7 +698,7 @@ public static class Utility
     public static string wpm_GetRFC822Date(object dbObject)
     {
         int offset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours;
-        string timeZone__1 = $"+{(offset.ToString().PadLeft(2, '0'))}";
+        string timeZone__1 = $"+{offset.ToString().PadLeft(2, '0')}";
         DateTime myDate;
         if (dbObject is DBNull)
         {
@@ -712,9 +712,9 @@ public static class Utility
         if (offset < 0)
         {
             int i = offset * -1;
-            timeZone__1 = $"-{(i.ToString().PadLeft(2, '0'))}";
+            timeZone__1 = $"-{i.ToString().PadLeft(2, '0')}";
         }
-        return myDate.ToString($"ddd, dd MMM yyyy HH:mm:ss {(timeZone__1.PadRight(5, '0'))}");
+        return myDate.ToString($"ddd, dd MMM yyyy HH:mm:ss {timeZone__1.PadRight(5, '0')}");
     }
     public static string wpm_GetStringValue(string myString)
     {
@@ -880,4 +880,6 @@ public static class Utility
         return Regex.Replace(sContent, @"~~(.|\n)+?~~", string.Empty);
     }
 
+    [GeneratedRegex("([a-z][a-z]*[a-z])*[a-z]", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex DatePartRegex();
 }

@@ -26,7 +26,7 @@ public class RecipeCategoryController : RecipeBaseController
     // GET: RecipeCategoryController/Details/5
     public ActionResult Details(int id)
     {
-        var item = _RecipeService.GetRecipeCategoryList().Where(w => w.Id == id).FirstOrDefault();
+        var item = _RecipeService.GetRecipeCategoryById(id);
         if (item is null)
             return RedirectToAction(nameof(Index));
 

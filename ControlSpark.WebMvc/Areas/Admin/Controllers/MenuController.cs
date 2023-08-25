@@ -120,7 +120,7 @@ public class MenuController : BaseAdminController
                 menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
                 var saveResult = _menuService.Save(menuToUpdate);
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Website", new { id = item.DomainID });
         }
         catch
         {

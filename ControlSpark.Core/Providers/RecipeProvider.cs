@@ -65,6 +65,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             IsApproved = Recipe.IsApproved,
             CommentCount = 0,
             RecipeCategory = Create(Recipe.RecipeCategory),
+            RecipeCategoryID = Recipe?.RecipeCategory?.Id ?? 0,
             RatingCount = Recipe.RatingCount,
             ViewCount = Recipe.ViewCount,
             LastViewDT = Recipe.LastViewDt,

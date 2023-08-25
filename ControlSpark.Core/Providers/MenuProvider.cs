@@ -311,8 +311,14 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
                     dbMenu.Url = saveItem.Url;
                     dbMenu.PageContent = saveItem.PageContent;
                     dbMenu.DisplayOrder = saveItem.DisplayOrder;
-                    if (parentMenu != null)
+                    if (parentMenu is null)
+                    { 
+                        dbMenu.Parent = null;
+                    }
+                    else
+                    { 
                         dbMenu.Parent = parentMenu;
+                    }
 
 
                     _context.SaveChanges();

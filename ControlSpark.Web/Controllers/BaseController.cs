@@ -50,14 +50,13 @@ public class BaseController : Controller
 
             if (_baseView == null)
             {
-                var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
+                var _DefaultSiteId = _config.GetSection("ControlSpark").GetValue<string>("DefaultSiteId");
                 var x = HttpContext.Request.Host;
                 var task = Task.Run(() => _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId));
                 _baseView = task.GetAwaiter().GetResult();
                 var styleService = new BootswatchStyleProvider();
                 _baseView.StyleList = styleService.Get();
 
-                // 
                 var RequestScheme = "https"; // HttpContext.Request.Scheme;
 
                 var curSiteRoot = ($"{RequestScheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
@@ -67,6 +66,5 @@ public class BaseController : Controller
             }
             return _baseView;
         }
-
     }
 }

@@ -1,0 +1,110 @@
+﻿@model ControlSpark.Domain.EditModels.WebsiteEditModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.Name Details</h1>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<div>
+    <div class="row">
+        <div class="col-6">
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.SiteStyle)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.SiteStyle)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.SiteTemplate)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.SiteTemplate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-6">
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.SiteName)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.SiteName)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.WebsiteTitle)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.WebsiteTitle)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.WebsiteUrl)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.WebsiteUrl)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+            </th>
+            <th>
+                DisplayOrder
+            </th>
+            <th>
+                Icon
+            </th>
+            <th>
+                Parent Title
+            </th>
+            <th>
+                Url
+            </th>
+            <th>
+                Virtual Path
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Menu.OrderBy(o=>o.DisplayOrder).ThenBy(t=>t.Title))
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.Title, "Edit","Menu", new {id=item.Id })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayOrder)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Icon)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ParentTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Url)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VirtualPath)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

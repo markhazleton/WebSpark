@@ -31,6 +31,6 @@ public class WebsiteEditModel : WebsiteModel
         ModifiedDT = website.ModifiedDT;
         VersionNo = website.VersionNo;
         Url = website.Url;
-
+        Menu = website.Menu.ToList();
     }
 }
