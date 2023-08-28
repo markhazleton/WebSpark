@@ -16,7 +16,8 @@ public class MainController : RecipeBaseController
     // GET: RecipeListController
     public ActionResult Index()
     {
-        return View(_RecipeService.Get());
+        var recipes = _RecipeService.Get().ToList();
+        return View(recipes);
     }
 
     // GET: RecipeListController/Details/5
@@ -72,7 +73,7 @@ public class MainController : RecipeBaseController
                 RecipeToUpdate.Instructions = item.Instructions;
                 var saveResult = _RecipeService.Save(RecipeToUpdate);
             }
-            return RedirectToAction("Details","RecipeCategory", new { id = RecipeToUpdate.RecipeCategoryID });
+            return RedirectToAction("Details", "RecipeCategory", new { id = RecipeToUpdate.RecipeCategoryID });
         }
         catch
         {

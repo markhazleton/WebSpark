@@ -4,6 +4,7 @@ using ControlSpark.SwaggerCore.Extensions;
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 // Add services to the container.
+builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerServices(builder.Configuration);
@@ -45,6 +47,16 @@ builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddBlogDatabase(config);
 builder.Services.AddBlogProviders();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(360);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+// We need to use MVC so we can use a Razor Configuration SiteTemplate
+// have to let MVC know we have a controller
+builder.Services.AddMvc()
+    .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
 var app = builder.Build();
 
@@ -60,7 +72,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseMarkdown();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSwaggerWithVersioning();

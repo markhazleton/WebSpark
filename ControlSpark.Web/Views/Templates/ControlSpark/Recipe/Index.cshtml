@@ -47,7 +47,7 @@
                                         <div class="card p-2 py-3 text-center">
                                             <div class="img mb-2"> <img src="https://i.imgur.com/LohyFIN.jpg" width="70" class="rounded-circle"> </div>
                                             <h5 class="mb-0">@cat.Name</h5>
-                                            <div class="mt-4 apointment"><a href="@cat.Url" class="">@cat.Name</a></div>
+                                            <div class="mt-4 "><a href="@cat.Url" class="">@cat.Name</a></div>
                                         </div>
                                     </div>
 
@@ -58,7 +58,7 @@
                                         <div class="card p-2 py-3 text-center">
                                             <h5 class="mb-0">@cat.Name</h5>
                                             <div class="ratings mt-2"> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> </div>
-                                            <div class="mt-4 apointment"> <a href="@cat.Url" class="">@cat.Name</a></div>
+                                            <div class="mt-4 "> <a href="@cat.Url" class="">@cat.Name</a></div>
                                         </div>
                                     </div>
 
@@ -71,7 +71,7 @@
                 {
                     <div class="recipe" id="recipe">
                         <h1>@Html.Raw(Model.Recipe.Name)</h1>
-                        <p>@Html.Raw(Model.Recipe.Description)</p>
+                        <markdown markdown="@Model.Recipe.Description" normalize-whitespace="false" sanitize-html="false" />
                         <p>by @Html.Raw(Model.Recipe.AuthorNM)</p>
                         <p>Serves: @Html.Raw(Model.Recipe.Servings)</p>
                         <div class="row">
