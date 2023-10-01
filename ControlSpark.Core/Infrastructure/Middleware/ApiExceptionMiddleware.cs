@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ControlSpark.Core.Infrastructure.Middleware;
 
@@ -50,9 +50,12 @@ public class ApiExceptionMiddleware
         var level = _options.DetermineLogLevel?.Invoke(exception) ?? LogLevel.Error;
         _logger.Log(level, exception, $"BADNESS!!! {innerExMessage} -- {{ErrorId}}.", error.Id);
 
-        var result = JsonConvert.SerializeObject(error);
+        var result = JsonSerializer.Serialize(error); // Using System.Text.Json
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        // Write the JSON result to the response stream
         return context.Response.WriteAsync(result);
     }
 

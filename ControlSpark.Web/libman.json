@@ -3,47 +3,8 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "provider": "cdnjs",
-      "library": "bootstrap@5.3.1",
-      "destination": "wwwroot/lib/bootstrap/",
-      "files": [
-        "js/bootstrap.min.js",
-        "js/bootstrap.min.js.map",
-        "js/bootstrap.js",
-        "js/bootstrap.js.map"
-      ]
-    },
-    {
-      "provider": "cdnjs",
-      "library": "bootstrap@5.3.1",
-      "destination": "wwwroot/lib/bootstrap/",
-      "files": [
-        "js/bootstrap.min.js",
-        "css/bootstrap.css",
-        "css/bootstrap.css.map",
-        "css/bootstrap.min.css",
-        "css/bootstrap.min.css.map",
-        "js/bootstrap.min.js.map",
-        "js/bootstrap.js.map",
-        "js/bootstrap.js",
-        "js/bootstrap.bundle.min.js"
-      ]
-    },
-    {
-      "provider": "unpkg",
-      "library": "font-awesome@4.7.0",
-      "destination": "wwwroot/lib/font-awesome/",
-      "files": [
-        "css/font-awesome.css",
-        "css/font-awesome.min.css",
-        "fonts/*"
-      ]
-
-    },
-    {
-      "provider": "cdnjs",
-      "library": "jquery@3.7.0",
-      "destination": "wwwroot/lib/jquery/"
+      "library": "font-awesome@6.4.2",
+      "destination": "wwwroot/lib/font-awesome/"
     }
   ]
 }

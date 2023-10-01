@@ -28,11 +28,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.12.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.11" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
@@ -66,7 +62,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Logs\" />
-	  <Folder Include="wwwroot\lib\" />
 	</ItemGroup>
 
 </Project>

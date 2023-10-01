@@ -12,9 +12,6 @@ namespace ControlSpark.Core.Extensions
             if (section.GetValue<string>("DbProvider") == "SQLite")
                 services.AddDbContext<AppDbContext>(o => o.UseSqlite(conn));
 
-            if (section.GetValue<string>("DbProvider") == "SqlServer")
-                services.AddDbContext<AppDbContext>(o => o.UseSqlServer(conn));
-
             services.AddDatabaseDeveloperPageExceptionFilter();
             return services;
         }
