@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.WebMvc", "Cont
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.RecipeManager", "ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj", "{5FBA0338-2D20-4618-B2C3-ED92E9156094}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.SwaggerCore", "ControlSpark.SwaggerCore\ControlSpark.SwaggerCore.csproj", "{91C8FAE4-7304-4F15-8FA2-70667B3AF47B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.MineralManager", "ControlSpark.MineralManager\ControlSpark.MineralManager.csproj", "{AE7D1713-2D96-42B6-A21C-4895281D2AF3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Bootswatch", "..\ControlSpark.Bootswatch\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj", "{98699D9D-AE7D-44FF-A078-A851723612DC}"
@@ -49,10 +47,6 @@ Global
 		{5FBA0338-2D20-4618-B2C3-ED92E9156094}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FBA0338-2D20-4618-B2C3-ED92E9156094}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FBA0338-2D20-4618-B2C3-ED92E9156094}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91C8FAE4-7304-4F15-8FA2-70667B3AF47B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91C8FAE4-7304-4F15-8FA2-70667B3AF47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91C8FAE4-7304-4F15-8FA2-70667B3AF47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91C8FAE4-7304-4F15-8FA2-70667B3AF47B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE7D1713-2D96-42B6-A21C-4895281D2AF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE7D1713-2D96-42B6-A21C-4895281D2AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE7D1713-2D96-42B6-A21C-4895281D2AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU

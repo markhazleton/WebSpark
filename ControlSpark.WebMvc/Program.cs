@@ -1,6 +1,5 @@
 using ControlSpark.Core.Data;
 using ControlSpark.RecipeManager.Interfaces;
-using ControlSpark.SwaggerCore.Extensions;
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -36,7 +35,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddSwaggerServices(builder.Configuration);
 
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
 builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
@@ -75,7 +73,6 @@ if (!app.Environment.IsDevelopment())
 app.UseMarkdown();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSwaggerWithVersioning();
 app.UseRouting();
 app.UseAuthentication(); ;
 

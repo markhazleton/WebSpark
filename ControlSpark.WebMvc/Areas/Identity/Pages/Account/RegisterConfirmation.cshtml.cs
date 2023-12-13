@@ -5,10 +5,8 @@
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using System;
 using System.Text;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
@@ -17,12 +15,10 @@ namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
     public class RegisterConfirmationModel : PageModel
     {
         private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly IEmailSender _sender;
 
-        public RegisterConfirmationModel(UserManager<ControlSparkUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<ControlSparkUser> userManager)
         {
             _userManager = userManager;
-            _sender = sender;
         }
 
         /// <summary>

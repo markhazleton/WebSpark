@@ -18,16 +18,13 @@ namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ControlSparkUser> _userManager;
         private readonly SignInManager<ControlSparkUser> _signInManager;
-        private readonly IEmailSender _emailSender;
 
         public EmailModel(
             UserManager<ControlSparkUser> userManager,
-            SignInManager<ControlSparkUser> signInManager,
-            IEmailSender emailSender)
+            SignInManager<ControlSparkUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -117,15 +114,6 @@ namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateChangeEmailTokenAsync(user, Input.NewEmail);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Page(
-                    "/Account/ConfirmEmailChange",
-                    pageHandler: null,
-                    values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
-                    protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
@@ -153,16 +141,6 @@ namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
             var email = await _userManager.GetEmailAsync(user);
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { area = "Identity", userId = userId, code = code },
-                protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();
         }
