@@ -343,4 +343,15 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         ((IDisposable)_context).Dispose();
     }
 
+    public async Task<bool> DeleteMenuAsync(int Id)
+    {
+        var dbMenu = _context.Menu.Where(w => w.Id == Id).FirstOrDefault();
+        if (dbMenu != null)
+        {
+            _context.Menu.Remove(dbMenu);
+            _context.SaveChanges();
+            return await Task.FromResult(true);
+        }   
+        return await Task.FromResult(false);
+    }
 }

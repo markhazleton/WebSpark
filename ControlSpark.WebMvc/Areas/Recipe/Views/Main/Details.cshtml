@@ -31,13 +31,13 @@
             @Html.DisplayNameFor(model => model.Ingredients)
         </dt>
         <dd class = "col-sm-10">
-            <markdown markdown="@Model.Ingredients" normalize-whitespace="false" sanitize-html="false" />
+            @Html.Raw(Model.Ingredients.ToHtmlFromMarkdown())
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Instructions)
         </dt>
         <dd class = "col-sm-10">
-            <markdown markdown="@Model.Instructions" normalize-whitespace="false" sanitize-html="false" />
+            @Html.Raw(Model.Instructions.ToHtmlFromMarkdown())
         </dd>
     </dl>
 </div>

@@ -86,6 +86,13 @@
 
 <div>
     <a asp-action="Index">Back to List</a>
+    @using (Html.BeginForm("Delete", "Menu", new { id = Model.Id, area = "Admin" }, FormMethod.Post))
+    {
+        <input type="submit" class="btn btn-warning" value="Delete" />
+    }
+
+
+
 </div>
 
 @section Scripts {

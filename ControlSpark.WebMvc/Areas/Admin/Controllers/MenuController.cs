@@ -129,18 +129,21 @@ public class MenuController : BaseAdminController
     }
 
     // GET: MenuController/Delete/5
-    public ActionResult Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-        return View();
+        var item = await _menuService.GetMenuEditAsync(id);
+        return View(item);
     }
 
     // POST: MenuController/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Delete(int id, IFormCollection collection)
+    public async Task<ActionResult> Delete(int id, IFormCollection collection)
     {
         try
         {
+            var deleteResult = await _menuService.DeleteMenuAsync(id);
+
             return RedirectToAction(nameof(Index));
         }
         catch

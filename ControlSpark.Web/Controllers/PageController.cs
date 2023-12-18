@@ -3,16 +3,21 @@ namespace ControlSpark.Web.Controllers;
 /// <summary>
 /// CMS Page Controller
 /// </summary>
-public class PageController : BaseController
+/// <remarks>
+/// PageController Constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="config"></param>
+/// <param name="websiteService"></param>
+public class PageController(
+    ILogger<PageController> logger, 
+    IConfiguration config, 
+    IWebsiteService websiteService) : 
+    BaseController(
+        logger, 
+        config, 
+        websiteService)
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="configuration"></param>
-    public PageController(ILogger<PageController> logger, IConfiguration config, IWebsiteService websiteService)
-        : base(logger, config, websiteService)
-    {
-    }
     /// <summary>
     /// Get Page
     /// </summary>

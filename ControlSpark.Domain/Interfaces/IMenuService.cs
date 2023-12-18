@@ -12,4 +12,6 @@ public interface IMenuService
     MenuModel Save(MenuModel saveItem);
     List<MenuModel> GetSiteMenu(int DomainId);
     Task<MenuEditModel> GetMenuEditAsync(int Id);
+    Task<bool> DeleteMenuAsync(int Id);
+
 }

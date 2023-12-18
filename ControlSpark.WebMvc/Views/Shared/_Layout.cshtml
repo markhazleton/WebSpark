@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using System.Reflection;
+@{
+    var currentYear = DateTime.Now.Year.ToString();
+    var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -44,9 +49,10 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-4 col-md-3 small mb-4 float-start">
+                        Version: @status.BuildVersion.ToString()
                     </div>
                     <div class="col-lg-4 col-md-6 mb-4">
-                        &copy; 2022 - ControlSpark.WebMvc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        &copy; 2022 - ControlSpark.Admin - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </div>
                     <div class="col-lg-4 col-md-3 mb-4 float-end">
                     </div>
