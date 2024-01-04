@@ -160,4 +160,5 @@ public class RecipeModel
     /// Lookup List of Recipe Categories
     /// </summary>
     public IEnumerable<LookupModel> RecipeCategories { get; set; }
+    public int DomainID { get; set; } = 1;
 }

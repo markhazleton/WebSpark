@@ -312,11 +312,11 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
                     dbMenu.PageContent = saveItem.PageContent;
                     dbMenu.DisplayOrder = saveItem.DisplayOrder;
                     if (parentMenu is null)
-                    { 
+                    {
                         dbMenu.Parent = null;
                     }
                     else
-                    { 
+                    {
                         dbMenu.Parent = parentMenu;
                     }
 
@@ -348,10 +348,23 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         var dbMenu = _context.Menu.Where(w => w.Id == Id).FirstOrDefault();
         if (dbMenu != null)
         {
-            _context.Menu.Remove(dbMenu);
-            _context.SaveChanges();
+            try
+            {
+                var childMenu = _context.Menu.Where(w => w.Parent.Id == Id);
+                foreach (var child in childMenu)
+                {
+                    child.Parent = null;
+                }
+                _context.Menu.Remove(dbMenu);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return await Task.FromResult(false);
+            }
             return await Task.FromResult(true);
-        }   
+        }
         return await Task.FromResult(false);
     }
 }

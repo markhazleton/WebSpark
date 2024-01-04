@@ -29,16 +29,24 @@ public class MainController : RecipeBaseController
     // GET: RecipeListController/Create
     public ActionResult Create()
     {
-        return View();
+        var model = _RecipeService.Get(0);
+        return View(model);
     }
 
-    // POST: RecipeListController/Create
+    /// <summary>
+    /// POST: RecipeListController/Create
+    /// </summary>
+    /// <param name="recipeModel"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    public ActionResult Create(RecipeModel recipeModel)
     {
+        recipeModel.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
         try
         {
+            var saveResult = _RecipeService.Save(recipeModel);
+
             return RedirectToAction(nameof(Index));
         }
         catch

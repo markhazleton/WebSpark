@@ -11,14 +11,8 @@ namespace ControlSpark.Core.Providers;
 /// </summary>
 /// <seealso cref="AppDbContext" />
 /// <seealso cref="IMenuProvider" />
-public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
+public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRecipeService, IDisposable
 {
-    private readonly AppDbContext _context;
-
-    public RecipeProvider(AppDbContext webDomainContext)
-    {
-        _context = webDomainContext;
-    }
 
     /// <summary>
     /// 
@@ -81,7 +75,9 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     {
         if (Recipe == null) return new Recipe();
 
-        var Category = _context.RecipeCategory.Where(w => w.Id == Recipe.RecipeCategory.Id).FirstOrDefault();
+        var Category = webDomainContext.RecipeCategory.Where(w => w.Id == Recipe.RecipeCategoryID).FirstOrDefault();
+        var Domain = webDomainContext.Domain.Where(w => w.Id == Recipe.DomainID).FirstOrDefault();
+
 
         return new Recipe()
         {
@@ -97,7 +93,8 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             RatingCount = Recipe.RatingCount,
             ViewCount = Recipe.ViewCount,
             LastViewDt = Recipe.LastViewDT,
-            RecipeCategory = Category
+            RecipeCategory = Category,
+            Domain = Domain
 
         };
     }
@@ -145,8 +142,8 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
 
         if (DomainID > 0)
         {
-            var webSite = _context.Domain.Where(w => w.Id == DomainID).FirstOrDefault();
-            var page = _context.Menu.Where(w => w.Id == DomainID).Where(w => w.Title == "Recipe").FirstOrDefault();
+            var webSite = webDomainContext.Domain.Where(w => w.Id == DomainID).FirstOrDefault();
+            var page = webDomainContext.Menu.Where(w => w.Id == DomainID).Where(w => w.Title == "Recipe").FirstOrDefault();
 
             if (webSite != null)
             {
@@ -271,11 +268,11 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     public bool Delete(int Id)
     {
-        var deleteItem = _context.Recipe.Where(w => w.Id == Id).FirstOrDefault();
+        var deleteItem = webDomainContext.Recipe.Where(w => w.Id == Id).FirstOrDefault();
         if (deleteItem != null)
         {
-            _context.Recipe.Remove(deleteItem);
-            _context.SaveChanges();
+            webDomainContext.Recipe.Remove(deleteItem);
+            webDomainContext.SaveChanges();
             return true;
         }
         return false;
@@ -284,7 +281,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     public void Dispose()
     {
         SqliteConnection.ClearAllPools();
-        ((IDisposable)_context).Dispose();
+        ((IDisposable)webDomainContext).Dispose();
     }
 
     /// <summary>
@@ -293,7 +290,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;RecipeModel&gt;.</returns>
     public IEnumerable<RecipeModel> Get()
     {
-        var theList = _context.Recipe.Include(r => r.RecipeCategory).Include(i => i.RecipeImage).ToList();
+        var theList = webDomainContext.Recipe.Include(r => r.RecipeCategory).Include(i => i.RecipeImage).ToList();
         return Create(theList);
 
         // return Create(_context.Recipe.Include(r => r.RecipeCategory).ToList());
@@ -306,8 +303,8 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>RecipeModel.</returns>
     public RecipeModel Get(int Id)
     {
-        var returnRecipe = Create(_context.Recipe.Where(w => w.Id == Id).Include(r => r.RecipeCategory).FirstOrDefault());
-        returnRecipe.RecipeCategories = _context.RecipeCategory.Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
+        var returnRecipe = Create(webDomainContext.Recipe.Where(w => w.Id == Id).Include(r => r.RecipeCategory).FirstOrDefault());
+        returnRecipe.RecipeCategories = webDomainContext.RecipeCategory.Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
         return returnRecipe;
     }
 
@@ -318,7 +315,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public List<MenuModel> GetAllMenuItems()
     {
-        return CreateMenu(_context.Recipe.ToList());
+        return CreateMenu(webDomainContext.Recipe.ToList());
     }
 
     /// <summary>
@@ -328,7 +325,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>MenuModel.</returns>
     public MenuModel GetMenuItem(int Id)
     {
-        return GetMenuItem(_context.Recipe.Where(w => w.Id == Id).FirstOrDefault());
+        return GetMenuItem(webDomainContext.Recipe.Where(w => w.Id == Id).FirstOrDefault());
     }
     /// <summary>
     /// 
@@ -337,7 +334,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns></returns>
     public async Task<MenuModel> GetMenuItemAsync(int Id)
     {
-        var returnMenu = GetMenuItem(await _context.Set<Recipe>().Where(w => w.Id == Id).FirstOrDefaultAsync());
+        var returnMenu = GetMenuItem(await webDomainContext.Set<Recipe>().Where(w => w.Id == Id).FirstOrDefaultAsync());
         if (returnMenu == null)
             returnMenu = new MenuModel();
         return returnMenu;
@@ -356,7 +353,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     public RecipeCategoryModel GetRecipeCategoryById(int Id)
     {
         var returnCategory = new RecipeCategoryModel();
-        returnCategory = Create(_context.RecipeCategory.Include(i => i.Recipe).Where(w => w.Id == Id).FirstOrDefault(), LoadRecipes: true);
+        returnCategory = Create(webDomainContext.RecipeCategory.Include(i => i.Recipe).Where(w => w.Id == Id).FirstOrDefault(), LoadRecipes: true);
         return returnCategory;
     }
 
@@ -366,7 +363,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;RecipeCategoryModel&gt;.</returns>
     public List<RecipeCategoryModel> GetRecipeCategoryList()
     {
-        return Create(_context.RecipeCategory.ToList());
+        return Create(webDomainContext.RecipeCategory.ToList());
     }
 
     /// <summary>
@@ -376,7 +373,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public List<MenuModel> GetSiteMenu(int domainId)
     {
-        return CreateDomainMenu(_context.Recipe.ToList(), domainId);
+        return CreateDomainMenu(webDomainContext.Recipe.ToList(), domainId);
     }
 
 
@@ -406,19 +403,19 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             {
                 var saveCategory = Create(saveItem);
                 saveCategory.UpdatedDate = DateTime.Now;
-                _context.RecipeCategory.Add(saveCategory);
-                _context.SaveChanges();
+                webDomainContext.RecipeCategory.Add(saveCategory);
+                webDomainContext.SaveChanges();
                 saveItem.Id = saveCategory.Id;
             }
             else
             {
-                var saveCategory = _context.RecipeCategory.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+                var saveCategory = webDomainContext.RecipeCategory.Where(w => w.Id == saveItem.Id).FirstOrDefault();
                 if (saveCategory != null)
                 {
                     saveCategory.Name = saveItem.Name;
                     saveCategory.Comment = saveItem.Description;
                     saveCategory.UpdatedDate = DateTime.Now;
-                    _context.SaveChanges();
+                    webDomainContext.SaveChanges();
                 }
             }
         }
@@ -456,16 +453,16 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             {
                 var saveRecipe = Create(saveItem);
                 saveRecipe.UpdatedDate = DateTime.Now;
-                _context.Recipe.Add(saveRecipe);
-                _context.SaveChanges();
+                webDomainContext.Recipe.Add(saveRecipe);
+                webDomainContext.SaveChanges();
                 saveItem.Id = saveRecipe.Id;
             }
             else
             {
-                var saveRecipe = _context.Recipe.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+                var saveRecipe = webDomainContext.Recipe.Where(w => w.Id == saveItem.Id).FirstOrDefault();
                 if (saveRecipe != null)
                 {
-                    _context.SaveChanges();
+                    webDomainContext.SaveChanges();
                 }
             }
         }
@@ -485,18 +482,18 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
         if (saveItem.Id == 0)
         {
             var saveRecipe = Create(saveItem);
-            _context.Recipe.Add(saveRecipe);
-            _context.SaveChanges();
+            webDomainContext.Recipe.Add(saveRecipe);
+            webDomainContext.SaveChanges();
             saveItem.Id = saveRecipe.Id;
         }
         else
         {
-            var saveRecipe = _context.Recipe.Where(w => w.Id == saveItem.Id).Include(i => i.RecipeCategory).FirstOrDefault();
+            var saveRecipe = webDomainContext.Recipe.Where(w => w.Id == saveItem.Id).Include(i => i.RecipeCategory).FirstOrDefault();
             if (saveRecipe != null)
             {
                 if (saveRecipe.RecipeCategory.Id != saveItem.RecipeCategoryID)
                 {
-                    saveRecipe.RecipeCategory = _context.RecipeCategory.Where(w => w.Id == saveItem.RecipeCategoryID).FirstOrDefault();
+                    saveRecipe.RecipeCategory = webDomainContext.RecipeCategory.Where(w => w.Id == saveItem.RecipeCategoryID).FirstOrDefault();
                 }
                 saveRecipe.Name = saveItem.Name;
                 saveRecipe.AuthorName = saveItem.AuthorNM;
@@ -507,7 +504,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
                 saveRecipe.Servings = saveItem.Servings;
                 saveRecipe.IsApproved = saveItem.IsApproved;
 
-                _context.SaveChanges();
+                webDomainContext.SaveChanges();
             }
         }
         return Get(saveItem.Id);
@@ -519,13 +516,13 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
         if (saveItem.Id == 0)
         {
             var saveCategory = Create(saveItem);
-            _context.RecipeCategory.Add(saveCategory);
-            _context.SaveChanges();
+            webDomainContext.RecipeCategory.Add(saveCategory);
+            webDomainContext.SaveChanges();
             saveItem.Id = saveCategory.Id;
         }
         else
         {
-            var saveCategory = _context.RecipeCategory.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+            var saveCategory = webDomainContext.RecipeCategory.Where(w => w.Id == saveItem.Id).FirstOrDefault();
             if (saveCategory != null)
             {
                 saveCategory.Name = saveItem.Name;
@@ -534,7 +531,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
                 saveCategory.IsActive = saveItem.IsActive;
 
 
-                _context.SaveChanges();
+                webDomainContext.SaveChanges();
             }
         }
         return GetRecipeCategoryById(saveItem.Id);
@@ -552,7 +549,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
 
     public List<RecipeImageModel> GetRecipeImages()
     {
-        var dbRecipeImage = _context.RecipeImage.Include(i => i.Recipe).ToList();
+        var dbRecipeImage = webDomainContext.RecipeImage.Include(i => i.Recipe).ToList();
         return Create(dbRecipeImage);
     }
 
