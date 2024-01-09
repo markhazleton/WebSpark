@@ -1,25 +1,49 @@
 ﻿using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.RecipeManager.Models;
-using ControlSpark.WebMvc.Areas.Recipe.Controllers;
 
-namespace ControlSpark.WebMvc.Areas.Recipe.Controllersl;
+namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 
+public class RecipeImageFileModel : RecipeImageModel
+{
+    public IFormFile UploadedImage { get; set; }
+}
+
+
+
+/// <summary>
+/// RecipeImageController
+/// </summary>
 public class RecipeImageController : RecipeBaseController
 {
     private readonly IRecipeImageService _recipeImageService;
 
+    /// <summary>
+    /// RecipeImageController Constructor
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="recipeService"></param>
+    /// <param name="recipeImageService"></param>
     public RecipeImageController(ILogger<MainController> logger, IRecipeService recipeService, IRecipeImageService recipeImageService)
         : base(logger, recipeService)
     {
         _recipeImageService = recipeImageService;
     }
 
+    /// <summary>
+    /// Index Page
+    /// </summary>
+    /// <returns></returns>
     public IActionResult Index()
     {
         var recipeImages = _recipeImageService.GetRecipeImages();
         return View(recipeImages);
     }
 
+    /// <summary>
+    /// Details page
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public IActionResult Details(int id)
     {
         var recipeImage = _recipeImageService.GetRecipeImageById(id);
@@ -31,16 +55,51 @@ public class RecipeImageController : RecipeBaseController
         return View(recipeImage);
     }
 
+    /// <summary>
+    /// Create RecipeImage Page
+    /// </summary>
+    /// <returns></returns>
     public IActionResult Create()
     {
-        return View();
+        return View(new RecipeImageFileModel());
     }
 
+    /// <summary>
+    /// Post Create RecipeImage 
+    /// </summary>
+    /// <param name="recipeImageModel"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(RecipeImageModel recipeImageModel)
+    public async Task<IActionResult> Create(RecipeImageFileModel recipeImageModel)
     {
+        if (recipeImageModel?.UploadedImage != null && recipeImageModel.UploadedImage.Length > 0)
+        {
+            try
+            {
+                var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images");
+                Directory.CreateDirectory(dirPath);
+                var filePath = Path.Combine(dirPath, recipeImageModel.UploadedImage.FileName);
 
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await recipeImageModel.UploadedImage.CopyToAsync(stream);
+
+                byte[] fileBytes;
+                using (var inputStream = new MemoryStream())
+                {
+                    // Copy the file stream to the memory stream
+                    await recipeImageModel.UploadedImage.CopyToAsync(inputStream);
+
+                    // Convert the memory stream to a byte array
+                    fileBytes = inputStream.ToArray();
+                    recipeImageModel.ImageData = fileBytes;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
         recipeImageModel.Recipe = _RecipeService.Get(1);
 
         if (ModelState.IsValid)

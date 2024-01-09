@@ -1,0 +1,16 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Recipes",
+      "url": "/Recipe/Main"
+    },
+    {
+      "text": "Images",
+      "url": "/Recipe/RecipeImage"
+    },
+    {
+      "text": "Category",
+      "url": "/Recipe/RecipeCategory"
+    }
+  ]
+}

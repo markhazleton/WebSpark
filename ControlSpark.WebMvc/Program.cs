@@ -1,9 +1,11 @@
-using ControlSpark.Core.Data;
+﻿using ControlSpark.Core.Data;
+using ControlSpark.MineralManager.Entities;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Westwind.AspNetCore.Markdown;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,9 @@ Log.Logger = new LoggerConfiguration()
 var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection")
     ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
 
-builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString)); ;
+builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString)); 
+builder.Services.AddQuickGridEntityFrameworkAdapter();;
+;
 
 builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControlSparkUserContext>(); ;
@@ -29,6 +33,11 @@ builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+});
+
+builder.Services.AddDbContext<MineralDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:MineralConnection"]);
 });
 
 // Add services to the container.

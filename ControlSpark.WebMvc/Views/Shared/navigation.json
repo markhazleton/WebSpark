@@ -1,0 +1,16 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "CMS",
+      "url": "/Admin/Website"
+    },
+    {
+      "text": "Recipes",
+      "url": "/Recipe/Main"
+    },
+    {
+      "text": "Minerals",
+      "url": "/MineralCollection/Minerals"
+    }
+  ]
+}

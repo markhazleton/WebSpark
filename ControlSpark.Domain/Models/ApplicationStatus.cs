@@ -7,7 +7,8 @@ namespace ControlSpark.Domain.Models;
 /// </summary>
 public class ApplicationStatus
 {
-    Assembly _assembly;
+    readonly Assembly _assembly;
+
     /// <summary>
     /// 
     /// </summary>
@@ -15,7 +16,9 @@ public class ApplicationStatus
     public ApplicationStatus(Assembly assembly)
     {
         _assembly = assembly;
-        var oVer = assembly?.GetName().Version;
+
+        var oVer = _assembly?.GetName().Version;
+        BuildDate = GetBuildDate(_assembly);
         BuildVersion = new BuildVersion()
         {
             MajorVersion = oVer.Major,
@@ -25,6 +28,7 @@ public class ApplicationStatus
             BuildDate = GetBuildDate()
         };
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -75,7 +79,29 @@ public class ApplicationStatus
         }
         return default;
     }
+    private static DateTime GetBuildDate(Assembly? assembly)
+    {
+        if (assembly == null) return DateTime.MinValue;
 
+        const string BuildVersionMetadataPrefix = "+build";
+        var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+        if (attribute?.InformationalVersion != null)
+        {
+            var value = attribute.InformationalVersion;
+            var index = value.IndexOf(BuildVersionMetadataPrefix);
+            if (index > 0)
+            {
+                value = value[(index + BuildVersionMetadataPrefix.Length)..];
+                if (DateTime.TryParseExact(value, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+                {
+                    return result;
+                }
+            }
+        }
+        return DateTime.MinValue;
+    }
+
+    public DateTime BuildDate { get; }
     /// <summary>
     /// 
     /// </summary>

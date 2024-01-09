@@ -1,0 +1,12 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Website",
+      "url": "/Admin/Website"
+    },
+{
+      "text": "Menu",
+      "url": "/Admin/Menu"
+    }
+  ]
+}
