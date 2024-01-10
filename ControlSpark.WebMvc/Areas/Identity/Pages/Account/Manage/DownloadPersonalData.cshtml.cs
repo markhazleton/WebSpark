@@ -11,18 +11,12 @@ using System.Text.Json;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
-    public class DownloadPersonalDataModel : PageModel
+    public class DownloadPersonalDataModel(
+        UserManager<ControlSparkUser> userManager,
+        ILogger<DownloadPersonalDataModel> logger) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly ILogger<DownloadPersonalDataModel> _logger;
-
-        public DownloadPersonalDataModel(
-            UserManager<ControlSparkUser> userManager,
-            ILogger<DownloadPersonalDataModel> logger)
-        {
-            _userManager = userManager;
-            _logger = logger;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly ILogger<DownloadPersonalDataModel> _logger = logger;
 
         public IActionResult OnGet()
         {

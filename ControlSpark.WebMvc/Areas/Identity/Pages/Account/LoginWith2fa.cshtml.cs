@@ -10,21 +10,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class LoginWith2faModel : PageModel
+    public class LoginWith2faModel(
+        SignInManager<ControlSparkUser> signInManager,
+        UserManager<ControlSparkUser> userManager,
+        ILogger<LoginWith2faModel> logger) : PageModel
     {
-        private readonly SignInManager<ControlSparkUser> _signInManager;
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly ILogger<LoginWith2faModel> _logger;
-
-        public LoginWith2faModel(
-            SignInManager<ControlSparkUser> signInManager,
-            UserManager<ControlSparkUser> userManager,
-            ILogger<LoginWith2faModel> logger)
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _logger = logger;
-        }
+        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly ILogger<LoginWith2faModel> _logger = logger;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

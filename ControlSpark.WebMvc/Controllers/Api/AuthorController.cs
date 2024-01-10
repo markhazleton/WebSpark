@@ -6,14 +6,9 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthorController : ControllerBase
+public class AuthorController(IAuthorProvider authorProvider) : ControllerBase
 {
-    private readonly IAuthorProvider _authorProvider;
-
-    public AuthorController(IAuthorProvider authorProvider)
-    {
-        _authorProvider = authorProvider;
-    }
+    private readonly IAuthorProvider _authorProvider = authorProvider;
 
     [Authorize]
     [HttpPost("add")]

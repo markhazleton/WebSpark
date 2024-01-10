@@ -3,23 +3,17 @@ namespace ControlSpark.WebMvc.Controllers.Api.Cms;
 /// <summary>
 /// Menu Controller
 /// </summary>
-public class MenuController : ApiBaseController
+/// <remarks>
+/// Menu controller constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="scopeInfo"></param>
+/// <param name="menuService"></param>
+public class MenuController(ILogger<MenuController> logger, IScopeInformation scopeInfo, IMenuProvider menuService) : ApiBaseController
 {
-    private readonly ILogger<MenuController> _logger;
-    private readonly IScopeInformation _scopeInfo;
-    private readonly IMenuProvider _menuService;
-    /// <summary>
-    /// Menu controller constructor
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="scopeInfo"></param>
-    /// <param name="menuService"></param>
-    public MenuController(ILogger<MenuController> logger, IScopeInformation scopeInfo, IMenuProvider menuService)
-    {
-        _menuService = menuService;
-        _logger = logger;
-        _scopeInfo = scopeInfo;
-    }
+    private readonly ILogger<MenuController> _logger = logger;
+    private readonly IScopeInformation _scopeInfo = scopeInfo;
+    private readonly IMenuProvider _menuService = menuService;
 
     /// <summary>
     /// Get List of Menu Items

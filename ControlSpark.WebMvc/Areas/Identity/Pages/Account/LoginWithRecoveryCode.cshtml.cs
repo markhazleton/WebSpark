@@ -9,21 +9,14 @@ using System;
 using System.ComponentModel.DataAnnotations;
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class LoginWithRecoveryCodeModel : PageModel
+    public class LoginWithRecoveryCodeModel(
+        SignInManager<ControlSparkUser> signInManager,
+        UserManager<ControlSparkUser> userManager,
+        ILogger<LoginWithRecoveryCodeModel> logger) : PageModel
     {
-        private readonly SignInManager<ControlSparkUser> _signInManager;
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
-
-        public LoginWithRecoveryCodeModel(
-            SignInManager<ControlSparkUser> signInManager,
-            UserManager<ControlSparkUser> userManager,
-            ILogger<LoginWithRecoveryCodeModel> logger)
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _logger = logger;
-        }
+        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly ILogger<LoginWithRecoveryCodeModel> _logger = logger;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

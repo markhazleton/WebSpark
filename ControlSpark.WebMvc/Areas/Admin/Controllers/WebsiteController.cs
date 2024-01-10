@@ -2,71 +2,95 @@
 using ControlSpark.Domain.EditModels;
 
 namespace ControlSpark.WebMvc.Areas.Admin.Controllers;
-public class WebsiteController : BaseAdminController
+
+/// <summary>
+/// Website Controller
+/// </summary>
+/// <remarks>
+/// Website Controller Constructor
+/// </remarks>
+/// <param name="service"></param>
+/// <param name="logger"></param>
+/// <param name="scopeInfo"></param>
+public class WebsiteController(
+    IWebsiteService service, 
+    ILogger<WebsiteController> logger, 
+    IScopeInformation scopeInfo) : BaseAdminController
 {
-    private readonly ILogger<WebsiteController> _logger;
-    private readonly IScopeInformation _scopeInfo;
-    private readonly IWebsiteService _websiteService;
-
-    public WebsiteController(IWebsiteService service, ILogger<WebsiteController> logger, IScopeInformation scopeInfo)
-    {
-        _websiteService = service;
-        _logger = logger;
-        _scopeInfo = scopeInfo;
-    }
 
 
-    // GET: WebsiteController
-    public ActionResult Index()
-    {
-        return View(_websiteService.Get());
-    }
+    /// <summary>
+    /// Index Action
+    /// </summary>
+    /// <returns></returns>
+    public ActionResult Index() { return View(service.Get()); }
 
-    // GET: WebsiteController/Details/5
+    
+    /// <summary>
+    /// Details Action
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<ActionResult> Details(int id)
     {
-        var website = await _websiteService.GetEditAsync(id);
+        var website = await service.GetEditAsync(id);
         return View(website);
     }
 
-    // GET: WebsiteController/Create
-    public ActionResult Create()
-    {
-        return View(new WebsiteEditModel());
-    }
+    /// <summary>
+    /// Create Action
+    /// </summary>
+    /// <returns></returns>
+    public ActionResult Create() { return View(new WebsiteEditModel()); }
 
-    // POST: WebsiteController/Create
+    /// <summary>
+    /// Create Post Action to create a new menu item
+    /// </summary>
+    /// <param name="collection"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    public ActionResult Create(WebsiteEditModel collection)
     {
+        if(collection == null)
+        {
+            return RedirectToAction(nameof(Index));
+        }   
         try
         {
             return RedirectToAction(nameof(Index));
-        }
-        catch
+        } catch
         {
             return View();
         }
     }
 
-    // GET: WebsiteController/Edit/5
-    public async Task<ActionResult> Edit(int id)
+    /// <summary>
+    /// Edit Action
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+   public async Task<ActionResult> Edit(int id)
     {
-        var website = await _websiteService.GetEditAsync(id);
+        var website = await service.GetEditAsync(id);
         return View(website);
     }
 
-    // POST: WebsiteController/Edit/5
+    /// <summary>
+    /// edit post action to update a menu item
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="website"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> Edit(int id, WebsiteEditModel website)
     {
         try
         {
-            var itemToUpdate = await _websiteService.GetAsync(id);
+            var itemToUpdate = await service.GetAsync(id);
 
-            if (itemToUpdate != null)
+            if(itemToUpdate != null)
             {
                 itemToUpdate.Name = website.Name ?? itemToUpdate.Name;
                 itemToUpdate.Description = website.Description ?? itemToUpdate.Description;
@@ -78,24 +102,28 @@ public class WebsiteController : BaseAdminController
                 itemToUpdate.WebsiteTitle = website.WebsiteTitle ?? itemToUpdate.WebsiteTitle;
                 itemToUpdate.UseBreadCrumbURL = website.UseBreadCrumbURL;
                 itemToUpdate.ModifiedID = 99;
-                var saveResult = _websiteService.Save(itemToUpdate);
+                var saveResult = service.Save(itemToUpdate);
             }
             return RedirectToAction(nameof(Index));
-        }
-        catch
+        } catch
         {
             return View();
         }
     }
 
+    /// <summary>
+    /// delete action
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public ActionResult Delete(int id) { return View(); }
 
-    // GET: WebsiteController/Delete/5
-    public ActionResult Delete(int id)
-    {
-        return View();
-    }
-
-    // POST: WebsiteController/Delete/5
+    /// <summary>
+    ///  delete post action to delete a menu item
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="collection"></param>
+    /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult Delete(int id, IFormCollection collection)
@@ -103,8 +131,7 @@ public class WebsiteController : BaseAdminController
         try
         {
             return RedirectToAction(nameof(Index));
-        }
-        catch
+        } catch
         {
             return View();
         }

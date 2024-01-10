@@ -12,14 +12,9 @@ using System.Text;
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
-    public class RegisterConfirmationModel : PageModel
+    public class RegisterConfirmationModel(UserManager<ControlSparkUser> userManager) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-
-        public RegisterConfirmationModel(UserManager<ControlSparkUser> userManager)
-        {
-            _userManager = userManager;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

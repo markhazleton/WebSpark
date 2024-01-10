@@ -3,20 +3,15 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 /// <summary>
 /// AboutController
 /// </summary>
+/// <remarks>
+/// AboutController
+/// </remarks>
+/// <param name="aboutProvider"></param>
 [Route("api/[controller]")]
 [ApiController]
-public class AboutController : ControllerBase
+public class AboutController(IAboutProvider aboutProvider) : ControllerBase
 {
-    private readonly IAboutProvider _aboutProvider;
-
-    /// <summary>
-    /// AboutController
-    /// </summary>
-    /// <param name="aboutProvider"></param>
-    public AboutController(IAboutProvider aboutProvider)
-    {
-        _aboutProvider = aboutProvider;
-    }
+    private readonly IAboutProvider _aboutProvider = aboutProvider;
 
     /// <summary>
     /// GetAbout

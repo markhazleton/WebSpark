@@ -4,20 +4,12 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class StorageController : ControllerBase
+public class StorageController(IStorageProvider storageProvider, IAuthorProvider authorProvider, IBlogProvider blogProvider, IPostProvider postProvider) : ControllerBase
 {
-    private readonly IAuthorProvider _authorProvider;
-    private readonly IBlogProvider _blogProvider;
-    private readonly IPostProvider _postProvider;
-    private readonly IStorageProvider _storageProvider;
-
-    public StorageController(IStorageProvider storageProvider, IAuthorProvider authorProvider, IBlogProvider blogProvider, IPostProvider postProvider)
-    {
-        _storageProvider = storageProvider;
-        _authorProvider = authorProvider;
-        _blogProvider = blogProvider;
-        _postProvider = postProvider;
-    }
+    private readonly IAuthorProvider _authorProvider = authorProvider;
+    private readonly IBlogProvider _blogProvider = blogProvider;
+    private readonly IPostProvider _postProvider = postProvider;
+    private readonly IStorageProvider _storageProvider = storageProvider;
 
     [Authorize]
     [HttpPut("exists")]

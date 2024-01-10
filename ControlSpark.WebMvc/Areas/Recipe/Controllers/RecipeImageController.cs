@@ -13,21 +13,15 @@ public class RecipeImageFileModel : RecipeImageModel
 /// <summary>
 /// RecipeImageController
 /// </summary>
-public class RecipeImageController : RecipeBaseController
+/// <remarks>
+/// RecipeImageController Constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="recipeService"></param>
+/// <param name="recipeImageService"></param>
+public class RecipeImageController(ILogger<MainController> logger, IRecipeService recipeService, IRecipeImageService recipeImageService) : RecipeBaseController(logger, recipeService)
 {
-    private readonly IRecipeImageService _recipeImageService;
-
-    /// <summary>
-    /// RecipeImageController Constructor
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="recipeService"></param>
-    /// <param name="recipeImageService"></param>
-    public RecipeImageController(ILogger<MainController> logger, IRecipeService recipeService, IRecipeImageService recipeImageService)
-        : base(logger, recipeService)
-    {
-        _recipeImageService = recipeImageService;
-    }
+    private readonly IRecipeImageService _recipeImageService = recipeImageService;
 
     /// <summary>
     /// Index Page

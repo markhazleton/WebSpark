@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 namespace ControlSpark.WebMvc.Areas.MineralCollection.Controllers;
 
 [Area("MineralCollection")]
-public class MineralsController : Controller
+public class MineralsController(MineralDbContext context) : Controller
 {
-    private readonly MineralDbContext _context;
-
-    public MineralsController(MineralDbContext context)
-    {
-        _context = context;
-    }
+    private readonly MineralDbContext _context = context;
 
     // GET: MineralCollection/Minerals
     public async Task<IActionResult> Index()

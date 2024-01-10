@@ -4,14 +4,9 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class NewsletterController : ControllerBase
+public class NewsletterController(INewsletterProvider newsletterProvider) : ControllerBase
 {
-    protected readonly INewsletterProvider _newsletterProvider;
-
-    public NewsletterController(INewsletterProvider newsletterProvider)
-    {
-        _newsletterProvider = newsletterProvider;
-    }
+    protected readonly INewsletterProvider _newsletterProvider = newsletterProvider;
 
     [Authorize]
     [HttpGet("mailsettings")]

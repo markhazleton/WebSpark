@@ -3,24 +3,18 @@ namespace ControlSpark.WebMvc.Controllers.Api.Cms;
 /// <summary>
 /// Domain API Controller
 /// </summary>
+/// <remarks>
+/// 
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="scopeInfo"></param>
+/// <param name="dbDomain"></param>
 [Route("api/[controller]")]
-public class DomainController : ApiBaseController
+public class DomainController(ILogger<DomainController> logger, IScopeInformation scopeInfo, IWebsiteService dbDomain) : ApiBaseController
 {
-    private readonly ILogger<DomainController> _logger;
-    private readonly IScopeInformation _scopeInfo;
-    private readonly IWebsiteService _dbDomain;
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="scopeInfo"></param>
-    /// <param name="dbDomain"></param>
-    public DomainController(ILogger<DomainController> logger, IScopeInformation scopeInfo, IWebsiteService dbDomain)
-    {
-        _dbDomain = dbDomain;
-        _logger = logger;
-        _scopeInfo = scopeInfo;
-    }
+    private readonly ILogger<DomainController> _logger = logger;
+    private readonly IScopeInformation _scopeInfo = scopeInfo;
+    private readonly IWebsiteService _dbDomain = dbDomain;
 
     /// <summary>
     /// Get All Domains

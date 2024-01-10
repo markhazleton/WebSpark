@@ -2,18 +2,11 @@
 
 namespace ControlSpark.WebMvc.Areas.Admin.Controllers;
 
-public class MenuController : BaseAdminController
+public class MenuController(ILogger<MenuController> logger, IScopeInformation scopeInfo, IMenuService menuService) : BaseAdminController
 {
-    private readonly ILogger<MenuController> _logger;
-    private readonly IScopeInformation _scopeInfo;
-    private readonly IMenuService _menuService;
-
-    public MenuController(ILogger<MenuController> logger, IScopeInformation scopeInfo, IMenuService menuService)
-    {
-        _menuService = menuService;
-        _logger = logger;
-        _scopeInfo = scopeInfo;
-    }
+    private readonly ILogger<MenuController> _logger = logger;
+    private readonly IScopeInformation _scopeInfo = scopeInfo;
+    private readonly IMenuService _menuService = menuService;
 
     // GET: MenuController
     public ActionResult Index()

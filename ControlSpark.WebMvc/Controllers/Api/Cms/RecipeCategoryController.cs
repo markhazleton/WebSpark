@@ -8,24 +8,18 @@ namespace ControlSpark.WebMvc.Controllers.Api.Cms;
 /// <summary>
 /// Recipe Category
 /// </summary>
+/// <remarks>
+/// Recipe Controller constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="scopeInfo"></param>
+/// <param name="dbRecipe"></param>
 [Route("api/Recipe/Category/")]
-public class RecipeCategoryController : ApiBaseController
+public class RecipeCategoryController(ILogger<RecipeCategoryController> logger, IScopeInformation scopeInfo, IRecipeService dbRecipe) : ApiBaseController
 {
-    private readonly ILogger<RecipeCategoryController> _logger;
-    private readonly IScopeInformation _scopeInfo;
-    private readonly IRecipeService _recipeService;
-    /// <summary>
-    /// Recipe Controller constructor
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="scopeInfo"></param>
-    /// <param name="dbRecipe"></param>
-    public RecipeCategoryController(ILogger<RecipeCategoryController> logger, IScopeInformation scopeInfo, IRecipeService dbRecipe)
-    {
-        _recipeService = dbRecipe;
-        _logger = logger;
-        _scopeInfo = scopeInfo;
-    }
+    private readonly ILogger<RecipeCategoryController> _logger = logger;
+    private readonly IScopeInformation _scopeInfo = scopeInfo;
+    private readonly IRecipeService _recipeService = dbRecipe;
 
     /// <summary>
     /// Get All Recipe Categories

@@ -6,22 +6,16 @@ namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 /// <summary>
 /// RecipeBaseController 
 /// </summary>
+/// <remarks>
+/// RecipeBaseController Constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="RecipeService"></param>
 
 [Authorize]
 [Area("Recipe")]
-public class RecipeBaseController : Controller
+public class RecipeBaseController(ILogger<MainController> logger, IRecipeService RecipeService) : Controller
 {
-    protected readonly ILogger<MainController> _logger;
-    protected readonly IRecipeService _RecipeService;
-
-    /// <summary>
-    /// RecipeBaseController Constructor
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="RecipeService"></param>
-    public RecipeBaseController(ILogger<MainController> logger, IRecipeService RecipeService)
-    {
-        _RecipeService = RecipeService;
-        _logger = logger;
-    }
+    protected readonly ILogger<MainController> _logger = logger;
+    protected readonly IRecipeService _RecipeService = RecipeService;
 }

@@ -4,14 +4,9 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CategoryController : ControllerBase
+public class CategoryController(ICategoryProvider categoryProvider) : ControllerBase
 {
-    private readonly ICategoryProvider _categoryProvider;
-
-    public CategoryController(ICategoryProvider categoryProvider)
-    {
-        _categoryProvider = categoryProvider;
-    }
+    private readonly ICategoryProvider _categoryProvider = categoryProvider;
 
     [Authorize]
     [HttpPost("{postId:int}/{tag}")]

@@ -11,21 +11,14 @@ using System.Linq;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
-    public class ExternalLoginsModel : PageModel
+    public class ExternalLoginsModel(
+        UserManager<ControlSparkUser> userManager,
+        SignInManager<ControlSparkUser> signInManager,
+        IUserStore<ControlSparkUser> userStore) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly SignInManager<ControlSparkUser> _signInManager;
-        private readonly IUserStore<ControlSparkUser> _userStore;
-
-        public ExternalLoginsModel(
-            UserManager<ControlSparkUser> userManager,
-            SignInManager<ControlSparkUser> signInManager,
-            IUserStore<ControlSparkUser> userStore)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _userStore = userStore;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly IUserStore<ControlSparkUser> _userStore = userStore;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

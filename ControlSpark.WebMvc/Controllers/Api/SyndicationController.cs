@@ -6,16 +6,10 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class SyndicationController : ControllerBase
+public class SyndicationController(AppDbContext dbContext, ISyndicationProvider syndicationProvider) : ControllerBase
 {
-    private readonly AppDbContext _dbContext;
-    private readonly ISyndicationProvider _syndicationProvider;
-
-    public SyndicationController(AppDbContext dbContext, ISyndicationProvider syndicationProvider)
-    {
-        _dbContext = dbContext;
-        _syndicationProvider = syndicationProvider;
-    }
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly ISyndicationProvider _syndicationProvider = syndicationProvider;
 
     [Authorize]
     [HttpGet("getitems")]

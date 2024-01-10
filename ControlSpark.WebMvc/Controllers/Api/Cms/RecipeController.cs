@@ -6,23 +6,17 @@ namespace ControlSpark.WebMvc.Controllers.Api.Cms;
 /// <summary>
 /// Recipe Controller
 /// </summary>
-public class RecipeController : ApiBaseController
+/// <remarks>
+/// Recipe Controller constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="scopeInfo"></param>
+/// <param name="dbRecipe"></param>
+public class RecipeController(ILogger<RecipeController> logger, IScopeInformation scopeInfo, IRecipeService dbRecipe) : ApiBaseController
 {
-    private readonly ILogger<RecipeController> _logger;
-    private readonly IScopeInformation _scopeInfo;
-    private readonly IRecipeService _dbRecipe;
-    /// <summary>
-    /// Recipe Controller constructor
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="scopeInfo"></param>
-    /// <param name="dbRecipe"></param>
-    public RecipeController(ILogger<RecipeController> logger, IScopeInformation scopeInfo, IRecipeService dbRecipe)
-    {
-        _dbRecipe = dbRecipe;
-        _logger = logger;
-        _scopeInfo = scopeInfo;
-    }
+    private readonly ILogger<RecipeController> _logger = logger;
+    private readonly IScopeInformation _scopeInfo = scopeInfo;
+    private readonly IRecipeService _dbRecipe = dbRecipe;
 
     /// <summary>
     /// Get All Recipes

@@ -4,14 +4,9 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PostController : ControllerBase
+public class PostController(IPostProvider postProvider) : ControllerBase
 {
-    private readonly IPostProvider _postProvider;
-
-    public PostController(IPostProvider postProvider)
-    {
-        _postProvider = postProvider;
-    }
+    private readonly IPostProvider _postProvider = postProvider;
 
     [Authorize]
     [HttpPost("add")]

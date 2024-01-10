@@ -11,16 +11,10 @@ using System.Text;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class ConfirmEmailChangeModel : PageModel
+    public class ConfirmEmailChangeModel(UserManager<ControlSparkUser> userManager, SignInManager<ControlSparkUser> signInManager) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly SignInManager<ControlSparkUser> _signInManager;
-
-        public ConfirmEmailChangeModel(UserManager<ControlSparkUser> userManager, SignInManager<ControlSparkUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

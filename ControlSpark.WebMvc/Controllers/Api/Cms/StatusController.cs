@@ -5,19 +5,14 @@ namespace ControlSpark.WebMvc.Controllers.Api.Cms;
 /// <summary>
 /// 
 /// </summary>
+/// <remarks>
+/// 
+/// </remarks>
+/// <param name="service"></param>
 [Route("/status")]
-public class StatusController : ApiBaseController
+public class StatusController(IWebsiteService service) : ApiBaseController
 {
-    private readonly IWebsiteService service;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="service"></param>
-    public StatusController(IWebsiteService service)
-    {
-        this.service = service;
-    }
+    private readonly IWebsiteService service = service;
 
     /// <summary>
     /// Returns Current Application Status

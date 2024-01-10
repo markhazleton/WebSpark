@@ -4,14 +4,9 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AnalyticsController : ControllerBase
+public class AnalyticsController(IAnalyticsProvider analyticsProvider) : ControllerBase
 {
-    private readonly IAnalyticsProvider _analyticsProvider;
-
-    public AnalyticsController(IAnalyticsProvider analyticsProvider)
-    {
-        _analyticsProvider = analyticsProvider;
-    }
+    private readonly IAnalyticsProvider _analyticsProvider = analyticsProvider;
 
     [Authorize]
     [HttpGet]

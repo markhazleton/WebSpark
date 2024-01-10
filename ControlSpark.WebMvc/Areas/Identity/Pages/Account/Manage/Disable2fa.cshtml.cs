@@ -9,18 +9,12 @@ using System;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
-    public class Disable2faModel : PageModel
+    public class Disable2faModel(
+        UserManager<ControlSparkUser> userManager,
+        ILogger<Disable2faModel> logger) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly ILogger<Disable2faModel> _logger;
-
-        public Disable2faModel(
-            UserManager<ControlSparkUser> userManager,
-            ILogger<Disable2faModel> logger)
-        {
-            _userManager = userManager;
-            _logger = logger;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly ILogger<Disable2faModel> _logger = logger;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

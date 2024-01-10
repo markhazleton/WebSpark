@@ -9,16 +9,10 @@ using System;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class LogoutModel : PageModel
+    public class LogoutModel(SignInManager<ControlSparkUser> signInManager, ILogger<LogoutModel> logger) : PageModel
     {
-        private readonly SignInManager<ControlSparkUser> _signInManager;
-        private readonly ILogger<LogoutModel> _logger;
-
-        public LogoutModel(SignInManager<ControlSparkUser> signInManager, ILogger<LogoutModel> logger)
-        {
-            _signInManager = signInManager;
-            _logger = logger;
-        }
+        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly ILogger<LogoutModel> _logger = logger;
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {

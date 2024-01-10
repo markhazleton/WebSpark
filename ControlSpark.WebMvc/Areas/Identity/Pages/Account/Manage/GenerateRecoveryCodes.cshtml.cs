@@ -10,18 +10,12 @@ using System.Linq;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
-    public class GenerateRecoveryCodesModel : PageModel
+    public class GenerateRecoveryCodesModel(
+        UserManager<ControlSparkUser> userManager,
+        ILogger<GenerateRecoveryCodesModel> logger) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-        private readonly ILogger<GenerateRecoveryCodesModel> _logger;
-
-        public GenerateRecoveryCodesModel(
-            UserManager<ControlSparkUser> userManager,
-            ILogger<GenerateRecoveryCodesModel> logger)
-        {
-            _userManager = userManager;
-            _logger = logger;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly ILogger<GenerateRecoveryCodesModel> _logger = logger;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

@@ -14,14 +14,9 @@ using System.Text.Encodings.Web;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class ForgotPasswordModel : PageModel
+    public class ForgotPasswordModel(UserManager<ControlSparkUser> userManager) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager;
-
-        public ForgotPasswordModel(UserManager<ControlSparkUser> userManager)
-        {
-            _userManager = userManager;
-        }
+        private readonly UserManager<ControlSparkUser> _userManager = userManager;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

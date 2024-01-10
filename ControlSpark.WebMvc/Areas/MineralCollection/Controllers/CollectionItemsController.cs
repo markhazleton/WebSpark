@@ -10,14 +10,9 @@ using ControlSpark.MineralManager.Entities;
 namespace ControlSpark.WebMvc.Areas.MineralCollection.Controllers
 {
     [Area("MineralCollection")]
-    public class CollectionItemsController : Controller
+    public class CollectionItemsController(MineralDbContext context) : Controller
     {
-        private readonly MineralDbContext _context;
-
-        public CollectionItemsController(MineralDbContext context)
-        {
-            _context = context;
-        }
+        private readonly MineralDbContext _context = context;
 
         // GET: MineralCollection/CollectionItems
         public async Task<IActionResult> Index()

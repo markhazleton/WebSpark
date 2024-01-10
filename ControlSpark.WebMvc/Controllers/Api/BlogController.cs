@@ -4,14 +4,9 @@ namespace ControlSpark.WebMvc.Controllers.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BlogController : ControllerBase
+public class BlogController(IBlogProvider blogProvider) : ControllerBase
 {
-    private readonly IBlogProvider _blogProvider;
-
-    public BlogController(IBlogProvider blogProvider)
-    {
-        _blogProvider = blogProvider;
-    }
+    private readonly IBlogProvider _blogProvider = blogProvider;
 
     [HttpGet]
     public async Task<Blog> GetBlog()

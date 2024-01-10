@@ -6,16 +6,13 @@ namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 /// <summary>
 /// RecipeCategoryController 
 /// </summary>
-public class RecipeCategoryController : RecipeBaseController
+/// <remarks>
+/// RecipeCategoryController 
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="RecipeService"></param>
+public class RecipeCategoryController(ILogger<MainController> logger, IRecipeService RecipeService) : RecipeBaseController(logger, RecipeService)
 {
-    /// <summary>
-    /// RecipeCategoryController 
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="RecipeService"></param>
-    public RecipeCategoryController(ILogger<MainController> logger, IRecipeService RecipeService) : base(logger, RecipeService)
-    {
-    }
 
     // GET: RecipeCategoryController
     public ActionResult Index()

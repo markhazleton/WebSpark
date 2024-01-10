@@ -3,13 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControlSpark.WebMvc.Areas.Identity.Data;
 
-public class ControlSparkUserContext : IdentityDbContext<ControlSparkUser>
+public class ControlSparkUserContext(DbContextOptions<ControlSparkUserContext> options) : IdentityDbContext<ControlSparkUser>(options)
 {
-    public ControlSparkUserContext(DbContextOptions<ControlSparkUserContext> options)
-        : base(options)
-    {
-    }
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

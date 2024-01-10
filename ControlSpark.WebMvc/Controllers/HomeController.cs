@@ -3,12 +3,8 @@ using System.Diagnostics;
 
 namespace ControlSpark.WebMvc.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController(ILogger<BaseController> logger) : BaseController(logger)
     {
-        public HomeController(ILogger<BaseController> logger) : base(logger)
-        {
-        }
-
         public IActionResult Index()
         {
             return View();
