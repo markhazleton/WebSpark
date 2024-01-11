@@ -1,19 +1,22 @@
-﻿using ControlSpark.Core.Data;
+﻿using Microsoft.Extensions.Configuration;
+using ControlSpark.Core.Data;
 using ControlSpark.MineralManager.Entities;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System;
 using Westwind.AspNetCore.Markdown;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
 
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", false, true)
-    .AddEnvironmentVariables()
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
-    .Build();
+//IConfigurationRoot config = new ConfigurationBuilder()
+//    .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
+//    .AddJsonFile("appsettings.json", false, true)
+//    .AddEnvironmentVariables()
+//    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
+//    .Build();
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -28,16 +31,19 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();;
 ;
 
 builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ControlSparkUserContext>(); ;
+    .AddEntityFrameworkStores<ControlSparkUserContext>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
 
+var mineralConnectionString = builder.Configuration.GetConnectionString("MineralContextConnection")
+    ?? throw new InvalidOperationException("Connection string 'MineralContextConnection' not found.");
+
 builder.Services.AddDbContext<MineralDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:MineralConnection"]);
+    options.UseSqlServer(mineralConnectionString);
 });
 
 // Add services to the container.
@@ -51,7 +57,7 @@ builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
-builder.Services.AddBlogDatabase(config);
+//builder.Services.AddBlogDatabase(config);
 builder.Services.AddBlogProviders();
 
 builder.Services.AddSession(options =>

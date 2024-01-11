@@ -22,13 +22,14 @@ public class ErrorController : BaseController
     public IActionResult NotFound(string slug = null)
     {
         _logger.LogWarning("Path Not Found");
+
         var errorModel = new ErrorVM(BaseVM, slug);
 
         var myPage = BaseVM?.Menu?.Where(w => w.Url.IsMatch(slug)).FirstOrDefault();
         if (myPage is not null) return Redirect(myPage.Url);
 
+        return View($"~/Views/Templates/{BaseVM.Template}/error/NotFound.cshtml", errorModel);
 
-        return View(errorModel);
     }
     /// <summary>
     /// 
@@ -39,6 +40,6 @@ public class ErrorController : BaseController
     {
         _logger.LogWarning("Default Error Page");
         var errorModel = new ErrorVM(BaseVM, slug);
-        return View(errorModel);
+        return View($"~/Views/Templates/{BaseVM.Template}/error/Index.cshtml", errorModel);
     }
 }

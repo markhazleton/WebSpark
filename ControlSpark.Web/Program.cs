@@ -28,7 +28,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
 builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
-builder.Services.AddScoped<IMenuService, MenuProvider>();
+// builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddSingleton<WebRouteValueTransformer>();
 builder.Services.AddDistributedMemoryCache();

@@ -154,14 +154,22 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     }
     private List<MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
     {
-        return list == null ? new List<MenuModel>() : list.Select(item => Create(item)).OrderBy(x => x.Title).ToList();
+        var menuList = list == null ? [] : list.Select(item => Create(item, LoadChild)).OrderBy(x => x.Title).ToList();
+        foreach(var menu in menuList.Where(w=>w.ParentId is null).OrderBy(o=>o.DisplayOrder))
+        {
+            menu.IsHomePage = true;
+            break;
+       
+        };
+
+        return menuList;
     }
     /// <summary>
     /// Creates the specified menu.
     /// </summary>
     /// <param name="menu">The menu.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel Create(Menu menu, bool LoadChild = false)
+    private static MenuModel Create(Menu menu, bool LoadChild = false)
     {
         if (menu == null)
         {
@@ -198,19 +206,6 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         }
         item.Url = $"/{item.Url}";
         return item;
-    }
-
-    public static Uri ValidateUrl(string url)
-    {
-        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult)
-            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
-        {
-            return uriResult;
-        }
-        else
-        {
-            return null;
-        }
     }
 
     private WebsiteVM CreateBaseView(WebSite domain)
@@ -373,11 +368,6 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         return website ??= new WebsiteEditModel();
     }
 
-    public List<MenuModel> GetSiteMenu(int DomainId)
-    {
-        return Create(_context.Menu.Where(w => w.Id == DomainId).OrderBy(o => o.DisplayOrder).ToList());
-    }
-
     public WebsiteModel Save(WebsiteModel saveItem)
     {
         if (saveItem == null)
@@ -430,5 +420,18 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             }
         }
         return Create(_context.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault());
+    }
+
+    public static Uri ValidateUrl(string url)
+    {
+        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+        {
+            return uriResult;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

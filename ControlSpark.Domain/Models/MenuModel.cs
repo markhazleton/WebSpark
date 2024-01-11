@@ -104,6 +104,7 @@ public class MenuModel
     /// <value>The identifier.</value>
     [JsonPropertyName("id")]
     public int Id { get; set; }
+    public bool IsHomePage { get; set; } = false;
 
     /// <summary>
     /// Gets or sets the last modified.

@@ -30,7 +30,8 @@ public class PageController(
         if (page == null || id == null)
         {
             page = BaseVM.Menu?.Where(w => w.ParentId == null).OrderBy(o => o.DisplayOrder).FirstOrDefault();
-            return Redirect($"{page?.Url}");
+
+            // return Redirect($"{page?.Url}");
         }
         // TODO: Find way to get absolute path to check for auto redirect
         //if (string.Compare(httpContext.Request.Url.AbsolutePath, ($"/{page.Url}"), StringComparison.Ordinal) != 0)

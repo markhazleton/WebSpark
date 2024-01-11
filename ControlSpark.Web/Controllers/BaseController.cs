@@ -51,9 +51,9 @@ public class BaseController : Controller
             if (_baseView == null)
             {
                 var _DefaultSiteId = _config.GetSection("ControlSpark").GetValue<string>("DefaultSiteId");
-                var x = HttpContext.Request.Host;
-                var task = Task.Run(() => _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId));
-                _baseView = task.GetAwaiter().GetResult();
+                
+                _baseView = _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId).GetAwaiter().GetResult();
+
                 var styleService = new BootswatchStyleProvider();
                 _baseView.StyleList = styleService.Get();
 
