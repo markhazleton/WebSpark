@@ -9,14 +9,14 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-4 col-md-3 small mb-4 float-start text-light">
-                Version: @status.BuildVersion.ToString()
+                @Html.Raw(status.BuildVersion.ToString()) 
             </div>
             <div class="col-lg-4 col-md-6 mb-4  text-light">
                 &copy; @currentYear @Model.WebsiteName  -
                 <a href="https://markhazleton.controlorigins.com" title="Mark Hazleton, Solutions Architect, Lifelong Learner, not sidetracked by sizzle" target="_blank">Mark Hazleton</a>
             </div>
             <div class="col-lg-4 col-md-3 mb-4 float-end  text-light">
-                Last Built: @status.BuildVersion.BuildDate.ToLocalTime().ToLongDateString() <br />
+                @DateTime.UtcNow.ToLocalTime().ToString("F")
             </div>
         </div>
     </div>

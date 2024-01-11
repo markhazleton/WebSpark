@@ -83,11 +83,12 @@ public static class MenuHelper
     /// <returns>System.String.</returns>
     public static string IsActive(this IHtmlHelper html, MenuModel item, bool IsParent)
     {
-        if (html == null)
+        if (html == null || item == null)
             return string.Empty;
 
-        if (item == null)
-            return string.Empty;
+        if (html?.ViewContext?.HttpContext?.Request?.Path.Value
+            ?.Equals(item?.Url, StringComparison.CurrentCultureIgnoreCase) ?? false)
+            return "active";
 
         var curPath = html.ViewContext.HttpContext.Request.Path.Value
             .ToLower(CultureInfo.CurrentCulture)
@@ -148,12 +149,34 @@ public static class MenuHelper
         if (html == null)
             return string.Empty;
 
-        var routeData = html.ViewContext.RouteData;
-        var routeAction = (string)routeData.Values["action"];
-        var routeControl = (string)routeData.Values["controller"];
+        var routeAction = html.GetRouteValueOrDefault("action","index");
+        var routeControl = html.GetRouteValueOrDefault("controller","home");
 
         // both must match
         var returnActive = control == routeControl && action == routeAction;
         return returnActive ? "active" : string.Empty;
     }
+
+    /// <summary>
+    /// Get route value or default
+    /// </summary>
+    /// <param name="html"></param>
+    /// <param name="routeKey"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static string GetRouteValueOrDefault(this IHtmlHelper html, string routeKey, string defaultValue = "Index")
+    {
+        if (html == null || string.IsNullOrEmpty(routeKey))
+        {
+            throw new ArgumentNullException(html == null ? nameof(html) : nameof(routeKey));
+        }
+
+        var routeValue = html.ViewContext.RouteData?.Values[routeKey] as string;
+        return string.IsNullOrEmpty(routeValue) ? defaultValue : routeValue;
+    }
+
+
+
+
 }

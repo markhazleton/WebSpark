@@ -62,6 +62,12 @@ public class BaseController : Controller
                 var curSiteRoot = ($"{RequestScheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
                 _baseView.SiteUrl = new Uri(curSiteRoot);
                 HttpContext.Session.SetString(SessionExtensionsKeys.BaseViewKey, JsonSerializer.Serialize(_baseView, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
+
+
+
+
+
+
                 _logger.LogInformation("Loaded BaseView From Database");
             }
             return _baseView;

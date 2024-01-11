@@ -48,7 +48,7 @@ public sealed class BuildVersion
     /// <returns></returns>
     public override string ToString()
     {
-        return $"{MajorVersion}.{MinorVersion}.{Build}.{Revision} - {BuildDate:F}";
+        return $"Version: {MajorVersion}.{MinorVersion}.{Build}.{Revision} <br/>{BuildDate:F}";
     }
     /// <summary>
     /// 

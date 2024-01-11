@@ -158,6 +158,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         foreach(var menu in menuList.Where(w=>w.ParentId is null).OrderBy(o=>o.DisplayOrder))
         {
             menu.IsHomePage = true;
+            menu.Url = "/";
             break;
        
         };
