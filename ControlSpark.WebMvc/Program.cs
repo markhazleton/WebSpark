@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using ControlSpark.Core.Data;
-using ControlSpark.MineralManager.Entities;
+﻿using ControlSpark.Core.Data;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,11 +37,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var mineralConnectionString = builder.Configuration.GetConnectionString("MineralContextConnection")
     ?? throw new InvalidOperationException("Connection string 'MineralContextConnection' not found.");
-
-builder.Services.AddDbContext<MineralDbContext>(options =>
-{
-    options.UseSqlServer(mineralConnectionString);
-});
 
 // Add services to the container.
 builder.Services.AddMarkdown();

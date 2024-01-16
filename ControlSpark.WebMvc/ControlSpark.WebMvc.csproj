@@ -30,7 +30,6 @@
 		<ProjectReference Include="..\..\ControlSpark.Bootswatch\ControlSpark.Bootswatch\ControlSpark.Bootswatch.csproj" />
 		<ProjectReference Include="..\ControlSpark.Core\ControlSpark.Core.csproj" />
 		<ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
-		<ProjectReference Include="..\ControlSpark.MineralManager\ControlSpark.MineralManager.csproj" />
 		<ProjectReference Include="..\ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -47,8 +46,6 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Areas\MineralCollection\Data\" />
-	  <Folder Include="Areas\MineralCollection\Models\" />
 	  <Folder Include="wwwroot\images\" />
 	  <Folder Include="wwwroot\lib\" />
 	</ItemGroup>
