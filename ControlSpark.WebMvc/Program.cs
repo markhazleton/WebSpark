@@ -8,13 +8,6 @@ using Westwind.AspNetCore.Markdown;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 
-//IConfigurationRoot config = new ConfigurationBuilder()
-//    .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
-//    .AddJsonFile("appsettings.json", false, true)
-//    .AddEnvironmentVariables()
-//    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
-//    .Build();
-
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
@@ -23,8 +16,8 @@ Log.Logger = new LoggerConfiguration()
 var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection")
     ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
 
-builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString)); 
-builder.Services.AddQuickGridEntityFrameworkAdapter();;
+builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddQuickGridEntityFrameworkAdapter(); ;
 ;
 
 builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -65,11 +58,6 @@ builder.Services.AddMvc()
 
 var app = builder.Build();
 
-// Initialize User Db (if necessary)
-// await UserDbInitializer.SeedAsync(app);
-// Initialize CMS Db (if necessary)
-//await DbInitializer.SeedAsync(app);
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -91,5 +79,4 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.Run();

@@ -1,44 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Authors>ControlSparkdotnet</Authors>
-    <Description>ControlSpark is an open-source publishing platform Written in ASP.NET and Blazor WebAssembly.</Description>
-    <Copyright>ControlSpark.Net</Copyright>
-    <PackageProjectUrl>https://ControlSpark.net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/ControlSparkdotnet/ControlSpark</RepositoryUrl>
-    <PackageTags>blog,ControlSpark,asp.net,.net core,ControlSpark.net,asp.net core</PackageTags>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Authors>Mark Hazleton, Control Origins</Authors>
+		<Description>ControlSpark is an open-source publishing platform Written in ASP.NET.</Description>
+		<Copyright>ControlSpark.Net</Copyright>
+		<PackageProjectUrl>https://ControlSpark.net</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/ControlSparkdotnet/ControlSpark</RepositoryUrl>
+		<PackageTags>blog,ControlSpark,asp.net,.net core,ControlSpark.net,asp.net core</PackageTags>
+		<Version>1.0.0</Version>
+		<PackageId>ControlOrigins.ControlSpark</PackageId>
+		<PackageReleaseNotes>Initial release of ControlSpark.</PackageReleaseNotes>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<AssemblyVersion>8.0.0.0</AssemblyVersion>
+		<FileVersion>8.0.0.0</FileVersion>
+		<NeutralLanguage>en</NeutralLanguage>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <Deterministic>false</Deterministic>
-    <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
-    <AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Deterministic>false</Deterministic>
+		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="RecipeList.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="RecipeList.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.1" />
-    <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
-    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
-    <PackageReference Include="ReverseMarkdown" Version="4.1.0" />
-    <PackageReference Include="Markdig" Version="0.34.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.1" />
+		<PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
+		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
+		<PackageReference Include="ReverseMarkdown" Version="4.1.0" />
+		<PackageReference Include="Markdig" Version="0.34.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
-    <ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
-    <ProjectReference Include="..\ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
+		<ProjectReference Include="..\ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj" />
+	</ItemGroup>
 
 </Project>
