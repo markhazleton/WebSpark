@@ -34,9 +34,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
 
-var mineralConnectionString = builder.Configuration.GetConnectionString("MineralContextConnection")
-    ?? throw new InvalidOperationException("Connection string 'MineralContextConnection' not found.");
-
 // Add services to the container.
 builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();

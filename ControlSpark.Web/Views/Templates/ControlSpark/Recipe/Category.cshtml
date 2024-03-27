@@ -36,7 +36,7 @@
                 {
                     Model.Category = new RecipeCategoryModel();
                     <div class="container mt-5 mb-5">
-                        <div class="d-flex justify-content-between mb-3"> <span>Categories</span> <button class="btn btn-success add">Add Category</button> </div>
+                        <div class="d-flex justify-content-between mb-3"> <span>Categories</span></div>
                         <div class="row g-2">
                             @foreach (var cat in Model.CategoryList)
                             {
@@ -63,7 +63,7 @@
                     <h1>@Html.Raw(Model.Category.Name)</h1>
                     <div class="container mt-5 mb-5">
                         <div class="d-flex justify-content-between mb-3">
-                            <span>Recipes</span><button class="btn btn-success add">Add @Model.Category.Name Recipe</button>
+                            <span>Recipes</span>
                         </div>
                         <div class="row g-2">
                             @foreach (var recipe in Model.RecipeList.Where(w => w.RecipeCategory.Id == Model.Category.Id).ToArray())

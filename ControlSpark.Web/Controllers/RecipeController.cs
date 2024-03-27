@@ -8,25 +8,14 @@ namespace ControlSpark.Web.Controllers;
 /// <summary>
 /// 
 /// </summary>
-public class RecipeController : BaseController
+public class RecipeController(
+    ILogger<RecipeController> logger,
+    IConfiguration config,
+    IWebsiteService websiteService,
+    IRecipeService recipeProvider) : BaseController(logger, config, websiteService)
 {
     private RecipeVM? _viewModel;
-    public const string RecipeViewKey = "RecipeViewKey";
-    private readonly IRecipeService _recipeProvider;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="configuration"></param>
-    public RecipeController(
-        ILogger<RecipeController> logger,
-        IConfiguration config,
-        IWebsiteService websiteService,
-        IRecipeService recipeProvider)
-        : base(logger, config, websiteService)
-    {
-        _recipeProvider = recipeProvider;
-    }
+    private const string RecipeViewKey = "RecipeViewKey";
 
     private RecipeVM viewModel
     {
@@ -42,7 +31,7 @@ public class RecipeController : BaseController
             {
                 var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
                 var x = HttpContext.Request.Host;
-                var task = Task.Run(() => _recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, BaseVM));
+                var task = Task.Run(() => recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, BaseVM));
                 _viewModel = task.GetAwaiter().GetResult();
 
                 HttpContext.Session.SetString(RecipeViewKey, JsonSerializer.Serialize(_viewModel, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
