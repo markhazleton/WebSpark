@@ -13,7 +13,7 @@ public class WebsiteAdminVM : WebsiteVM
     public WebsiteAdminVM()
     {
         Item = new WebsiteModel();
-        ItemCollection = new List<WebsiteModel>();
+        ItemCollection = [];
     }
 
     /// <summary>

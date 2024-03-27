@@ -3,15 +3,21 @@ using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.WebMvc.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Extensions.Logging;
 using Westwind.AspNetCore.Markdown;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 
+builder.Logging.ClearProviders();
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(@"C:\temp\controlsparkadmin-log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
+builder.Logging.AddProvider(new SerilogLoggerProvider(Log.Logger));
+Log.Information("Logger setup complete. This is a test log entry.");
 
 var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection")
     ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
@@ -42,7 +48,6 @@ builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
-//builder.Services.AddBlogDatabase(config);
 builder.Services.AddBlogProviders();
 
 builder.Services.AddSession(options =>

@@ -47,7 +47,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
             Icon = menu.Icon,
             DomainID = menu?.Domain?.Id ?? 0,
             DomainName = menu?.Domain?.Name,
-            Description = menu.Description,
+            Description = menu.Description ?? menu.Title,
             Controller = menu.Controller,
             Action = menu.Action?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
             Argument = menu.Argument?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
@@ -67,7 +67,6 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         {
             item.Url = item.Url.ToLower(CultureInfo.CurrentCulture).Replace(" ", string.Empty);
         }
-
         return item;
     }
 
@@ -168,33 +167,6 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         if (returnMenu == null)
             returnMenu = new MenuModel();
         return returnMenu;
-    }
-
-    private List<WebsiteModel> Create(List<WebSite> list)
-    {
-        return list == null ? new List<WebsiteModel>() : list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
-    }
-    private WebsiteModel Create(WebSite domain)
-    {
-        if (domain == null)
-        {
-            return new WebsiteModel();
-        }
-
-        var item = new WebsiteModel()
-        {
-            Id = domain.Id,
-            Name = domain.Name,
-            SiteStyle = domain.Style,
-            Description = domain.Description,
-            SiteTemplate = domain.Template,
-            WebsiteTitle = domain.Title,
-            WebsiteUrl = domain.DomainUrl,
-            SiteName = domain.GalleryFolder,
-            UseBreadCrumbURL = domain.UseBreadCrumbUrl,
-            VersionNo = domain.VersionNo
-        };
-        return item;
     }
 
 

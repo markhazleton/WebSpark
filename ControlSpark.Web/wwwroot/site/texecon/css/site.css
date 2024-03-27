@@ -1,6 +1,4 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
 
-body {
-    background: url('/site/texecon/img/background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    padding-top: 2.6em;
-}
+

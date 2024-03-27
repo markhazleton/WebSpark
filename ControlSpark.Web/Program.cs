@@ -4,9 +4,19 @@ using ControlSpark.Web.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Extensions.Logging;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
+
+builder.Logging.ClearProviders();
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.File(@"C:\temp\controlspark-log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+builder.Logging.AddProvider(new SerilogLoggerProvider(Log.Logger));
+Log.Information("Logger setup complete. This is a test log entry.");
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false, true)
@@ -14,10 +24,10 @@ var config = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
     .Build();
 
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
+
+
+
+
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -28,7 +38,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
 builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
-// builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddSingleton<WebRouteValueTransformer>();
 builder.Services.AddDistributedMemoryCache();
@@ -89,12 +98,10 @@ app.UseCors("ControlSparkPolicy");
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-    endpoints.MapControllerRoute(
+app.MapRazorPages();
+app.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Page}/{action=Index}/{id?}");
-    endpoints.MapDynamicControllerRoute<WebRouteValueTransformer>("{**slug}");
-});
+        pattern: "{controller=Page}/{action=Index}/{id?}"); 
+app.MapDynamicControllerRoute<WebRouteValueTransformer>("{**slug}");
+
 app.Run();

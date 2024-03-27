@@ -6,34 +6,30 @@ namespace ControlSpark.Web.Controllers;
 /// <summary>
 /// Base Controller for all Controllers
 /// </summary>
-public class BaseController : Controller
+/// <remarks>
+/// Constructor
+/// </remarks>
+/// <param name="logger"></param>
+/// <param name="configuration"></param>
+/// <param name="websiteService"></param>
+public class BaseController(ILogger logger, IConfiguration configuration, IWebsiteService websiteService) : Controller
 {
-    protected readonly ILogger _logger;
-    protected readonly IWebsiteService _websiteService;
-    protected readonly IConfiguration _config;
+    protected readonly ILogger _logger = logger;
+    protected readonly IWebsiteService _websiteService = websiteService;
+    protected readonly IConfiguration _config = configuration;
 
     /// <summary>
-    /// Constructor
+    /// Is Cache Enabled
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="configuration"></param>
-    /// <param name="websiteService"></param>
-    public BaseController(ILogger logger, IConfiguration configuration, IWebsiteService websiteService)
-    {
-        _websiteService = websiteService;
-        _config = configuration;
-        _logger = logger;
-        _baseView = null;
-    }
-
-    bool IsCacheEnabled()
+    /// <returns></returns>
+    protected bool IsCacheEnabled()
     {
         return _config.GetSection("ControlSpark").GetValue<bool>("CacheEnabled");
     }
     /// <summary>
     /// Base View for Page Rendering
     /// </summary>
-    private WebsiteVM? _baseView;
+    private WebsiteVM? _baseView = null;
 
     /// <summary>
     /// 
@@ -62,12 +58,6 @@ public class BaseController : Controller
                 var curSiteRoot = ($"{RequestScheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
                 _baseView.SiteUrl = new Uri(curSiteRoot);
                 HttpContext.Session.SetString(SessionExtensionsKeys.BaseViewKey, JsonSerializer.Serialize(_baseView, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
-
-
-
-
-
-
                 _logger.LogInformation("Loaded BaseView From Database");
             }
             return _baseView;

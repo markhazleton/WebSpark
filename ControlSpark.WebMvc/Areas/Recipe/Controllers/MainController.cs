@@ -13,6 +13,7 @@ public class MainController(ILogger<MainController> logger, IRecipeService Recip
     // GET: RecipeListController
     public ActionResult Index()
     {
+        _logger.LogInformation("Recipe List Controller Index");
         var recipes = _RecipeService.Get().ToList();
         return View(recipes);
     }
@@ -46,8 +47,9 @@ public class MainController(ILogger<MainController> logger, IRecipeService Recip
 
             return RedirectToAction(nameof(Index));
         }
-        catch
+        catch(Exception ex)
         {
+            _logger.LogError(ex, "Error Saving Recipe with Create Method");
             return View();
         }
     }

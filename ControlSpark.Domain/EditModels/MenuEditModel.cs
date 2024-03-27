@@ -18,17 +18,17 @@ public class MenuEditModel : MenuModel
     {
         DisplayOrder = 1;
         DisplayInNavigation = true;
-        Controllers = new List<LookupModel>
-        {
+        Controllers =
+        [
             new LookupModel { Text = "Page", Value = "Page", IsDefault = true, IsSelected = true },
             new LookupModel { Text = "Blog", Value = "Blog", IsDefault = false, IsSelected = false },
             new LookupModel { Text = "Recipe", Value = "Recipe", IsDefault = false, IsSelected = false },
             new LookupModel { Text = "Bootswatch", Value = "Bootswatch", IsDefault = false, IsSelected = false }
-        };
-        Domains = new List<LookupModel>();
-        Parents = new List<LookupModel>();
-        Icons = new List<LookupModel>
-        {
+        ];
+        Domains = [];
+        Parents = [];
+        Icons =
+        [
             new LookupModel { Text="Home", Value="fa-home" },
             new LookupModel { Text="Heart", Value="fa-heart" },
             new LookupModel { Text="Chevron >", Value="fa-chevron-right" },
@@ -38,12 +38,12 @@ public class MenuEditModel : MenuModel
             new LookupModel { Text="Comment", Value="fa-comment" },
             new LookupModel { Text="Coffee", Value="fa-coffee" },
             new LookupModel { Text="Cutlery", Value="fa-cutlery" }
-        };
-        Actions = new List<LookupModel>
-        {
+        ];
+        Actions =
+        [
             new LookupModel { Text = "Index", Value = "index" },
             new LookupModel { Text = "Categories (Blog)", Value = "categories" }
-        };
+        ];
     }
 
     public MenuEditModel(MenuModel? menu)

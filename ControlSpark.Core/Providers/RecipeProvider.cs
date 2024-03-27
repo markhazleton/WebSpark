@@ -21,8 +21,8 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <returns></returns>
     private List<RecipeModel> Create(List<Recipe> list)
     {
-        if (list == null) return new List<RecipeModel>();
-        return list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
+        if (list == null) return [];
+        return [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <returns>List&lt;RecipeCategoryModel&gt;.</returns>
     private List<RecipeCategoryModel> Create(List<RecipeCategory> list)
     {
-        if (list == null) return new List<RecipeCategoryModel>();
-        return list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
+        if (list == null) return [];
+        return [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -50,9 +50,9 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             RecipeURL = FormatHelper.GetRecipeURL(Recipe.Name),
             Id = Recipe.Id,
             Name = Recipe.Name,
-            Ingredients = Recipe.Ingredients,
-            Instructions = Recipe.Instructions,
-            Description = Recipe.Description,
+            Ingredients = Recipe?.Ingredients?? Recipe.Name,
+            Instructions = Recipe?.Instructions?? Recipe.Name,
+            Description = Recipe?.Description ?? Recipe.Name,
             Servings = Recipe.Servings,
             AuthorNM = Recipe.AuthorName,
             AverageRating = Recipe.AverageRating,
@@ -98,7 +98,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
 
         };
     }
-    private RecipeCategory Create(RecipeCategoryModel s)
+    private static RecipeCategory Create(RecipeCategoryModel s)
     {
         return new RecipeCategory()
         {
@@ -108,6 +108,29 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             Id = s.Id,
             Name = s.Name
         };
+    }
+
+    private List<RecipeImageModel> Create(List<RecipeImage> dbRecipeImage)
+    {
+        var recipeImageList = new List<RecipeImageModel>();
+        foreach (var dbItem in dbRecipeImage)
+        {
+            recipeImageList.Add(Create(dbItem));
+        }
+        return recipeImageList;
+    }
+
+    private RecipeImageModel Create(RecipeImage dbItem)
+    {
+        var recipeImage = new RecipeImageModel()
+        {
+            Id = dbItem.Id,
+            Recipe = Create(dbItem.Recipe),
+            DisplayOrder = dbItem.DisplayOrder,
+            FileDescription = dbItem.FileDescription,
+            FileName = dbItem.FileName,
+        };
+        return recipeImage;
     }
 
     /// <summary>
@@ -127,7 +150,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             Id = rc.Id,
             Name = rc.Name,
             Url = FormatHelper.GetRecipeCategoryURL(rc.Name),
-            Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : new List<RecipeModel>()
+            Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : []
         };
     }
     /// <summary>
@@ -138,7 +161,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <returns>List&lt;MenuModel&gt;.</returns>
     private List<MenuModel> CreateDomainMenu(List<Recipe> list, int DomainID)
     {
-        if (list == null) return new List<MenuModel>();
+        if (list == null) return [];
 
         if (DomainID > 0)
         {
@@ -149,19 +172,19 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             {
                 if (page == null)
                 {
-                    return list.Select(item => GetMenuItem(item, webSite)).OrderBy(x => x.DisplayOrder).ToList();
+                    return [.. list.Select(item => GetMenuItem(item, webSite)).OrderBy(x => x.DisplayOrder)];
                 }
                 else
                 {
-                    return list.Select(item => GetMenuItem(item, webSite, page)).OrderBy(x => x.DisplayOrder).ToList();
+                    return [.. list.Select(item => GetMenuItem(item, webSite, page)).OrderBy(x => x.DisplayOrder)];
                 }
             }
             else
             {
-                return list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder).ToList();
+                return [.. list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder)];
             }
         }
-        return new List<MenuModel>();
+        return [];
 
     }
 
@@ -171,10 +194,10 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private List<MenuModel> CreateMenu(List<Recipe> list)
+    private static List<MenuModel> CreateMenu(List<Recipe> list)
     {
-        if (list == null) return new List<MenuModel>();
-        return list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder).ToList();
+        if (list == null) return [];
+        return [.. list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder)];
     }
 
 
@@ -183,7 +206,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// </summary>
     /// <param name="recipe">The recipe.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel GetMenuItem(Recipe recipe)
+    private static MenuModel GetMenuItem(Recipe recipe)
     {
         if (recipe == null) return new MenuModel();
 
@@ -315,7 +338,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public List<MenuModel> GetAllMenuItems()
     {
-        return CreateMenu(webDomainContext.Recipe.ToList());
+        return CreateMenu([.. webDomainContext.Recipe]);
     }
 
     /// <summary>
@@ -366,6 +389,22 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
         return Create(webDomainContext.RecipeCategory.ToList());
     }
 
+    public List<RecipeImageModel> GetRecipeImages()
+    {
+        var dbRecipeImage = webDomainContext.RecipeImage.Include(i => i.Recipe).ToList();
+        return Create(dbRecipeImage);
+    }
+
+    public RecipeVM GetRecipeVMHostAsync(string host, WebsiteVM baseVM)
+    {
+        var recipeVM = new RecipeVM(baseVM)
+        {
+            CategoryList = [.. GetRecipeCategoryList()],
+            RecipeList = Get().ToList(),
+        };
+        return recipeVM;
+    }
+
     /// <summary>
     /// Gets the site menu.
     /// </summary>
@@ -373,7 +412,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public List<MenuModel> GetSiteMenu(int domainId)
     {
-        return CreateDomainMenu(webDomainContext.Recipe.ToList(), domainId);
+        return CreateDomainMenu([.. webDomainContext.Recipe], domainId);
     }
 
 
@@ -385,7 +424,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     public List<RecipeCategoryModel> Save(List<RecipeCategoryModel> saveCategories)
     {
 
-        if (saveCategories == null) return new List<RecipeCategoryModel>();
+        if (saveCategories == null) return [];
 
         var currentCategories = GetRecipeCategoryList();
 
@@ -535,44 +574,5 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             }
         }
         return GetRecipeCategoryById(saveItem.Id);
-    }
-
-    public RecipeVM GetRecipeVMHostAsync(string host, WebsiteVM baseVM)
-    {
-        var recipeVM = new RecipeVM(baseVM)
-        {
-            CategoryList = GetRecipeCategoryList().ToList(),
-            RecipeList = Get().ToList(),
-        };
-        return recipeVM;
-    }
-
-    public List<RecipeImageModel> GetRecipeImages()
-    {
-        var dbRecipeImage = webDomainContext.RecipeImage.Include(i => i.Recipe).ToList();
-        return Create(dbRecipeImage);
-    }
-
-    private List<RecipeImageModel> Create(List<RecipeImage> dbRecipeImage)
-    {
-        var recipeImageList = new List<RecipeImageModel>();
-        foreach (var dbItem in dbRecipeImage)
-        {
-            recipeImageList.Add(Create(dbItem));
-        }
-        return recipeImageList;
-    }
-
-    private RecipeImageModel Create(RecipeImage dbItem)
-    {
-        var recipeImage = new RecipeImageModel()
-        {
-            Id = dbItem.Id,
-            Recipe = Create(dbItem.Recipe),
-            DisplayOrder = dbItem.DisplayOrder,
-            FileDescription = dbItem.FileDescription,
-            FileName = dbItem.FileName,
-        };
-        return recipeImage;
     }
 }

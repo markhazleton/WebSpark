@@ -5,3 +5,34 @@ body {
   padding-top: 2.6em;
 }
 
+@media print {
+    /* Hide everything by default */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Show the recipe and its parent elements */
+    .recipe, .recipe * {
+        visibility: visible;
+    }
+
+    /* Ensure the recipe content takes the full width */
+    .recipe {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    /* Remove default print margins */
+    @page {
+        margin: 0;
+    }
+
+    /* Optional: Adjust recipe content styles for print, if necessary */
+    .recipe h1, .recipe h2, .recipe p, .recipe ul {
+        /* Example: Set font sizes for print */
+        font-size: 12pt; /* Adjust as needed */
+        background-color: red;
+    }
+}

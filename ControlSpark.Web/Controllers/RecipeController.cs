@@ -32,11 +32,12 @@ public class RecipeController : BaseController
     {
         get
         {
-            if (_viewModel == null)
+            if (IsCacheEnabled())
             {
                 _viewModel = HttpContext.Session.Get<RecipeVM>(RecipeViewKey);
                 _logger.LogInformation("Loaded RecipeView From Session");
             }
+
             if (_viewModel == null)
             {
                 var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
