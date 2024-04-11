@@ -25,10 +25,6 @@ var config = new ConfigurationBuilder()
     .Build();
 
 
-
-
-
-
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
