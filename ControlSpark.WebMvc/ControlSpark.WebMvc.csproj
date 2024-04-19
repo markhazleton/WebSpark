@@ -29,6 +29,7 @@
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.16.0" />
+		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.16" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ControlSpark.Core\ControlSpark.Core.csproj" />

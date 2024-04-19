@@ -1,6 +1,5 @@
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.RecipeManager.ViewModels;
-using ControlSpark.Web.Extensions;
 using System.Text.Json;
 
 namespace ControlSpark.Web.Controllers;
@@ -23,7 +22,7 @@ public class RecipeController(
         {
             if (IsCacheEnabled())
             {
-                _viewModel = HttpContext.Session.Get<RecipeVM>(RecipeViewKey);
+            //    _viewModel = HttpContext.Session.Get<RecipeVM>(RecipeViewKey);
                 _logger.LogInformation("Loaded RecipeView From Session");
             }
 

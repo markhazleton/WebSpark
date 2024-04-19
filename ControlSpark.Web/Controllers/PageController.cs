@@ -26,10 +26,12 @@ public class PageController(
     [HttpGet]
     public ActionResult Index(string id)
     {
-        var page = BaseVM.Menu.Where(w => w.Argument == id?.ToLower(CultureInfo.CurrentCulture) && w.Controller == "Page").FirstOrDefault();
-        if (page == null || id == null)
+
+        PageVM pageVM = new(BaseVM);
+        pageVM.Item = BaseVM.Menu.Where(w => w.Argument == id?.ToLower(CultureInfo.CurrentCulture) && w.Controller == "Page").FirstOrDefault();
+        if (pageVM.Item == null || id == null)
         {
-            page = BaseVM.Menu?.Where(w => w.ParentId == null).OrderBy(o => o.DisplayOrder).FirstOrDefault();
+            pageVM.Item = BaseVM.Menu?.Where(w => w.ParentId == null).OrderBy(o => o.DisplayOrder).FirstOrDefault();
 
             // return Redirect($"{page?.Url}");
         }
@@ -38,10 +40,10 @@ public class PageController(
         //{
         //    return Redirect($"/{page.Url}");
         //}
-        BaseVM.PageTitle = page?.Title ?? "Page Not Found";
-        BaseVM.MetaDescription = page?.Description ?? "Page Not Found";
-        BaseVM.MetaKeywords = page?.Action ?? "Page Not Found";
 
-        return View($"~/Views/Templates/{BaseVM.Template}/Page/Default.cshtml", BaseVM);
+        pageVM.PageTitle = pageVM.Item?.Title ?? "Page Not Found";
+        pageVM.MetaDescription = pageVM.Item?.Description ?? "Page Not Found";
+        pageVM.MetaKeywords = pageVM.Item?.Action ?? "Page Not Found";
+        return View($"~/Views/Templates/{pageVM.Template}/Page/Default.cshtml", pageVM);
     }
 }

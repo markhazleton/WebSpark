@@ -193,7 +193,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             ParentController = menu.Parent != null ? menu.Parent.Controller : string.Empty,
             ParentTitle = menu.Parent != null ? menu.Parent.Title : string.Empty,
             DisplayOrder = menu.DisplayOrder,
-            PageContent = menu.PageContent,
+            PageContent = Markdig.Markdown.ToHtml(menu.PageContent),
             VirtualPath = menu.Parent != null ? ($"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}") : menu.Action.ToLower(CultureInfo.CurrentCulture)
         };
 

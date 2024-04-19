@@ -1,5 +1,6 @@
 ﻿using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.RecipeManager.Models;
+using ControlSpark.WebMvc.Service;
 
 namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 
@@ -7,7 +8,10 @@ namespace ControlSpark.WebMvc.Areas.Recipe.Controllers;
 /// <summary>
 /// MainController 
 /// </summary>
-public class MainController(ILogger<MainController> logger, IRecipeService RecipeService) : RecipeBaseController(logger, RecipeService)
+public class MainController(
+    ILogger<MainController> logger,
+    IRecipeService RecipeService,
+    IRecipeGPTService recipeGPTService) : RecipeBaseController(logger, RecipeService)
 {
 
     // GET: RecipeListController
@@ -23,8 +27,51 @@ public class MainController(ILogger<MainController> logger, IRecipeService Recip
     {
         return View(_RecipeService.Get(id));
     }
+    public ActionResult MomCreate()
+    {
+        var model = _RecipeService.Get(0);
+        return View(model);
+    }
 
-    // GET: RecipeListController/Create
+    /// <summary>
+    /// POST: RecipeListController/Create
+    /// </summary>
+    /// <param name="recipeModel"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> MomCreate(RecipeModel recipeModel)
+    {
+        var categoryList = _RecipeService.GetRecipeCategoryList();
+        var category = categoryList.Where(w => w.Id == recipeModel.RecipeCategoryID).FirstOrDefault();
+        var genRecipe = await recipeGPTService.CreateMomGPTRecipe(recipeModel.Name, category?.Name ?? "Main Course");
+        genRecipe.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
+        try
+        {
+            category = categoryList.Where(w => w.Name == genRecipe.RecipeCategoryNM).FirstOrDefault();
+            if (category != null)
+            {
+                genRecipe.RecipeCategoryID = category.Id;
+            }
+            else
+            {
+                category = categoryList.Where(w => w.Name == "Main Course").FirstOrDefault();
+                genRecipe.RecipeCategoryID = category.Id;
+                genRecipe.RecipeCategoryNM = category.Name;
+                genRecipe.RecipeCategory = category;
+            }
+
+
+            var saveResult = _RecipeService.Save(genRecipe);
+            // return to edit the new recipe
+            return RedirectToAction("Edit", new { id = genRecipe.Id });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error Saving Recipe with Create Method");
+        }
+        return RedirectToAction("List");
+    }
     public ActionResult Create()
     {
         var model = _RecipeService.Get(0);
@@ -38,7 +85,7 @@ public class MainController(ILogger<MainController> logger, IRecipeService Recip
     /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create(RecipeModel recipeModel)
+    public async Task<ActionResult> Create(RecipeModel recipeModel)
     {
         recipeModel.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
         try
@@ -47,7 +94,7 @@ public class MainController(ILogger<MainController> logger, IRecipeService Recip
 
             return RedirectToAction(nameof(Index));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error Saving Recipe with Create Method");
             return View();

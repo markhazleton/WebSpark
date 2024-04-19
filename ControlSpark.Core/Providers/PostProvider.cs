@@ -424,10 +424,4 @@ public class PostProvider : IPostProvider
 
         return items;
     }
-
-    bool IsDemo()
-    {
-        return _configuration.GetSection("ControlSpark").GetValue<bool>("DemoMode");
-    }
-
 }

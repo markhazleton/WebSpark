@@ -17,7 +17,8 @@
         int index = random.Next(Model.StyleList.Count());
         styleUrl = Model.StyleList.ElementAt(index).cssCdn;
     }
-    string canonicalUrl = Model.SiteUrl + menu.Url;
+
+    string canonicalUrl = $"{Model?.SiteUrl}{menu?.Url?.Trim('/')??""}";
 }
 <!DOCTYPE html>
 <html lang="en">

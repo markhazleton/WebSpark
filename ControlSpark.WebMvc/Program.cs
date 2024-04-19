@@ -1,6 +1,7 @@
 ﻿using ControlSpark.Core.Data;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.WebMvc.Areas.Identity.Data;
+using ControlSpark.WebMvc.Service;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -23,9 +24,7 @@ var connectionString = builder.Configuration.GetConnectionString("ControlSparkUs
     ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
 
 builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString));
-builder.Services.AddQuickGridEntityFrameworkAdapter(); ;
-;
-
+builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControlSparkUserContext>();
 
@@ -45,6 +44,7 @@ builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
+builder.Services.AddScoped<IRecipeGPTService, RecipeGPTService>();
 builder.Services.AddBlogProviders();
 
 builder.Services.AddSession(options =>
