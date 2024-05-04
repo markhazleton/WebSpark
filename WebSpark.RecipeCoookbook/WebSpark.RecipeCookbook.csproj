@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="itext.bouncy-castle-adapter" Version="8.0.3" />
+    <PackageReference Include="itext7" Version="8.0.3" />
+    <PackageReference Include="itext7.commons" Version="8.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
+    <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
+    <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
+  </ItemGroup>
+</Project>

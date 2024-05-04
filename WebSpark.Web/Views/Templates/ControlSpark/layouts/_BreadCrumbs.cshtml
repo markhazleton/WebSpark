@@ -1,0 +1,9 @@
+@model             WebsiteVM
+
+<ol class="breadcrumb">
+    @foreach (var link in Html.GetBreadCrumb(Model))
+    {
+        <li class="breadcrumb-item"><a href="@link.Href">@link.Method</a></li>
+    }
+</ol>
+

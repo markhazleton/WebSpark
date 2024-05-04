@@ -1,0 +1,99 @@
+@model             RecipeVM
+@using WebSpark.RecipeManager.Models
+@using WebSpark.Domain
+@{
+    Layout = "../layouts/_Layout.cshtml";
+}
+@section Styles {
+
+}
+<br />
+<br />
+
+<div class="card">
+    <div class="card-header">Recipe Catalog</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-2 bg-light d-none d-lg-block d-print-none">
+                <div class="list-group">
+                    @foreach (var cat in Model.CategoryList)
+                    {
+                        if (cat.Id == Model.Recipe?.RecipeCategory?.Id)
+                        {
+                            <a href="@cat.Url" class="list-group-item list-group-item-action  list-group-item-primary">@cat.Name</a>
+                        }
+                        else
+                        {
+                            <a href="@cat.Url" class="list-group-item list-group-item-action">@cat.Name</a>
+                        }
+                    }
+                </div>
+                <br style="clear:both" />
+            </div>
+            <div class="col-lg-10 bg-light">
+                @if (Model.Recipe == null)
+                {
+                    Model.Recipe = new RecipeModel();
+
+                    <div class="container mt-5 mb-5">
+                        <div class="d-flex justify-content-between mb-3"></div>
+                        <div class="row g-2">
+
+                            @foreach (var cat in Model.CategoryList)
+                            {
+                                if (cat.Id == Model.Recipe?.RecipeCategory?.Id)
+                                {
+                                    <div class="col-md-3">
+                                        <div class="card p-2 py-3 text-center">
+                                            <div class="img mb-2"> <img src="https://i.imgur.com/LohyFIN.jpg" width="70" class="rounded-circle"> </div>
+                                            <h5 class="mb-0">@cat.Name</h5>
+                                            <div class="mt-4 "><a href="@cat.Url" class="">@cat.Name</a></div>
+                                        </div>
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div class="col-md-3">
+                                        <div class="card p-2 py-3 text-center">
+                                            <h5 class="mb-0">@cat.Name</h5>
+                                            <div class="ratings mt-2"> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> </div>
+                                            <div class="mt-4 "> <a href="@cat.Url" class="">@cat.Name</a></div>
+                                        </div>
+                                    </div>
+
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="recipe" id="recipe">
+                        <h1>@Html.Raw(Model.Recipe.Name)</h1>
+                        <markdown markdown="@Model.Recipe.Description" normalize-whitespace="false" sanitize-html="false" />
+                        <p>by @Html.Raw(Model.Recipe.AuthorNM)</p>
+                        <p>Serves: @Html.Raw(Model.Recipe.Servings)</p>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <h2>Ingredients</h2>
+                                <markdown markdown="@Model.Recipe.Ingredients" normalize-whitespace="false" sanitize-html="false" />
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <h2>Instructions</h2>
+                                <markdown markdown="@Model.Recipe.Instructions" normalize-whitespace="false" sanitize-html="false" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+    </div>
+</div>
+
+
+
+
+

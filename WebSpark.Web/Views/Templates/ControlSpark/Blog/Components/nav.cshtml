@@ -1,0 +1,38 @@
+@model WebsiteVM
+@using WebSpark.Domain.Interfaces
+@using WebSpark.Domain.Resources
+@using WebSpark.Domain
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resource> _localizer
+@inject ICategoryProvider _categoryProvider
+@inject IAuthorProvider _authorProvider
+@{
+    var menu = Model.Menu?.Where(w => w.Title == Model.PageTitle).FirstOrDefault();
+    if (menu == null)
+    {
+        menu = new MenuModel();
+    }
+    string canonicalUrl = Model.SiteUrl + menu.Url;
+    var categories = await _categoryProvider.Categories();
+    var catUrl = Url.Content("~/categories");
+    var currentUserAuthor = await _authorProvider.FindByEmail(User.Identity.Name);
+}
+
+<nav class="header-nav d-flex">
+    <div class="dropdown me-auto me-md-0">
+        <button class="header-nav-link" type="button" id="mainNav" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="me-1">@_localizer["categories"]</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mainNav">
+            @foreach (var item in categories)
+            {
+                <li>
+                    <a class="dropdown-item" href="@catUrl/@item.Category">@item.Category</a>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>

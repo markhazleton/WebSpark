@@ -1,0 +1,30 @@
+@using WebSpark.Domain.Extensions
+@if (!string.IsNullOrEmpty(Model.Post?.Title))
+{
+                BlogVM model = (BlogVM)Model;
+    var request = Url.ActionContext.HttpContext.Request;
+    var absoluteUrl = $"{request.Scheme}://{request.Host.ToUriComponent()}{request.PathBase.ToUriComponent()}";
+    var postTitle = model.Post.Title;
+    var postDesc = model.Post.Description.StripHtml();
+    var postUrl = model.Post.PostType == PostType.Post ? absoluteUrl + "/posts/" + model.Post.Slug : absoluteUrl + "/" + model.Post.Slug;
+    var postCover = absoluteUrl + "/" + model.Post.Cover;
+    var postPublished = model.Post.Published.ToString("s");
+    var postAuthor = model.Post.Author.DisplayName;
+
+    <script type="application/ld+json">
+      {
+      "@@context": "https://schema.org",
+      "@@type": "NewsArticle",
+      "headline": "@postTitle",
+      "url": "@postUrl",
+      "articleBody": "@postDesc",
+      "image": "@postCover",
+      "datePublished": "@postPublished",
+      "dateModified": "@postPublished",
+       "author": {
+        "@@type": "Person",
+        "name": "@postAuthor"
+      }
+    }
+    </script>
+}

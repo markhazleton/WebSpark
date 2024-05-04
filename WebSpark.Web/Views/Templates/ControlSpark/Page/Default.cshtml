@@ -1,0 +1,10 @@
+@model             PageVM
+@{
+    Layout = "../layouts/_Layout.cshtml";
+}
+@section Styles {
+
+}
+<div class="row">
+   @Html.Raw(Model.Item.PageContent)
+</div>

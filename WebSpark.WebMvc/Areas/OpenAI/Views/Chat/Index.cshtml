@@ -1,0 +1,49 @@
+﻿@model IEnumerable<DefinitionTypeDto>
+
+@{
+    ViewData["Title"] = "Core Sparks";
+}
+<div class="row">
+    <div class="col-2">
+        <h1>Core Sparks</h1>
+    </div>
+    <div class="col-10">
+        <blockquote class="custom-blockquote">
+            An interface specification for Large Language Models that details expected functionalities and output characteristics essential for any model implementation. It systematically outlines the model's architecture, training guidelines, and operational parameters, focusing on optimizing performance across various applications to enhance adaptability and precision in diverse settings.
+        </blockquote>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Core Spark
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(Model => Model.OutputType)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.DefinitionType">
+                        @Html.DisplayFor(modelItem => item.DefinitionType)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OutputType)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

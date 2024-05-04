@@ -1,0 +1,39 @@
+﻿@model             UserPromptDto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="row">
+    <div class="col-8">
+        <h1>@Model.UserPrompt</h1>
+        <p>@Model.DefinitionType</p>
+    </div>
+    <div class="col-4">
+        <a class="btn btn-primary me-2" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+        <a class="btn btn-danger me-2" asp-action="Refresh" asp-route-id="@Model?.Id">Refresh</a>
+        <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="accordion" id="gptAccordion">
+        @foreach (var item in Model.DefinitionResponses.Select((value, index) => new { Value = value, Index = index }))
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading@(item.Index)">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(item.Index)" aria-expanded="false" aria-controls="collapse@(item.Index)">
+                        @item.Value.GPTName
+                    </button>
+                </h2>
+                <div id="collapse@(item.Index)" class="accordion-collapse collapse" aria-labelledby="heading@(item.Index)">
+                    <div class="accordion-body">
+                        <p>@Html.Raw(DefinitionResponseDto_Extension.MarkdownToHtml(item.Value.SystemResponse))</p>
+                        <p>Created: @item.Value.Created</p>
+                        <p>Updated: @item.Value.Updated</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

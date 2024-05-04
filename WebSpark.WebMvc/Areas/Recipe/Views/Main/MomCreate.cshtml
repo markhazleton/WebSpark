@@ -1,0 +1,33 @@
+﻿@model             RecipeModel
+@{
+    ViewData["Title"] = "Mom Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Mom AI Recipe</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="MomCreate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Describe Your Recipe</label>
+                <textarea asp-for="Name" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecipeCategoryID" class="control-label"></label>
+                @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "RecipeCategoryID"})
+                <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
+            </div>
+            <div class="form-group row mt-3">
+                <div class="col-1">
+                    <input type="submit" value="Save" class="btn btn-primary" style="width: 100px;" />
+                </div>
+                <div class="col-1">
+                    <a class="btn-primary btn" asp-action="Details" asp-controller="RecipeCategory" asp-route-Id="@Model.RecipeCategoryID" style="width: 120px; text-align: center;">Back to List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

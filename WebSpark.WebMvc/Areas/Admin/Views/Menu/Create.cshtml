@@ -1,0 +1,105 @@
+﻿@model             MenuEditModel
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Create Menu Item</h1>
+<hr />
+
+<form asp-action="Create">
+    <div class="row">
+        <div class="col-md-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PageContent" class="control-label"></label>
+                <textarea asp-for="PageContent" class="form-control" rows="30" cols="150">
+
+                </textarea>
+                <span asp-validation-for="PageContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="DisplayInNavigation" /> @Html.DisplayNameFor(model => model.DisplayInNavigation)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="DomainID" class="control-label"></label>
+                @Html.DropDownListFor(x => Model.DomainID, new SelectList(Model.Domains, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "DomainID"})
+                <span asp-validation-for="DomainID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisplayOrder" class="control-label"></label>
+                <input asp-for="DisplayOrder" class="form-control" />
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParentId" class="control-label"></label>
+                @Html.DropDownListFor(x => Model.ParentId, new SelectList(Model.Parents, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "ParentId"})
+                <span asp-validation-for="ParentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Icon" class="control-label"></label>
+                @Html.DropDownListFor(x => Model.Icon, new SelectList(Model.Icons, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Icon"})
+                <span asp-validation-for="Icon" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label asp-for="Controller" class="control-label"></label>
+                @Html.DropDownListFor(x => Model.Controller, new SelectList(Model.Controllers, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Controller"})
+                <span asp-validation-for="Controller" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Action" class="control-label"></label>
+                @Html.DropDownListFor(x => Model.Action, new SelectList(Model.Actions, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Action"})
+                <span asp-validation-for="Action" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Argument" class="control-label"></label>
+                <input asp-for="Argument" class="form-control" />
+                <span asp-validation-for="Argument" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VirtualPath" class="control-label"></label>
+                <input asp-for="VirtualPath" class="form-control" />
+                <span asp-validation-for="VirtualPath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Url" class="control-label"></label>
+                <input asp-for="Url" class="form-control" />
+                <span asp-validation-for="Url" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

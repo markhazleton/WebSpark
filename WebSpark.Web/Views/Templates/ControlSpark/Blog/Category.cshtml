@@ -1,0 +1,11 @@
+@using WebSpark.Domain.Resources
+@using WebSpark.Domain
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resource> _localizer
+@{
+    Layout = "../layouts/_Layout.cshtml";
+}
+
+<partial name="components/header.cshtml" />
+<h1 class="h3 mb-5">@_localizer["categories"]: <strong>@ViewBag.Category</strong></h1>
+<partial name="components/view-list.cshtml" />
