@@ -1,2 +1,2 @@
-# ControlSpark
+# WebSpark
 A web content management system 
