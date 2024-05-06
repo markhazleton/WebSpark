@@ -1,0 +1,16 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Types",
+      "url": "/Prompt/DefinitionTypes/Index"
+    },
+    {
+      "text": "Definitions",
+      "url": "/Prompt/Definitions/Index"
+    },
+    {
+      "text": "User Prompts",
+      "url": "/Prompt/UserPrompts/Index"
+    }
+  ]
+}

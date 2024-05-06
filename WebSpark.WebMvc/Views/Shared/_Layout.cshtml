@@ -8,15 +8,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Mwh.Sample.Core.WebApi - Mark Hazleton">
+    <link rel="apple-touch-icon" sizes="180x180" href="/dist/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/dist/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/dist/images/favicon-16x16.png">
+    <link rel="manifest" href="/dist/images/site.webmanifest">
     <meta name="author" content="Mark Hazleton">
-    <link rel="icon" href="~/favicon.ico" type="image/x-icon">
 
     <title>@ViewData["Title"]</title>
 
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/lib/datatables.net-bs/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/dist/css/style.min.css" asp-append-version="true" />
+    <link href="https://cdn.datatables.net/2.0.4/css/dataTables.bootstrap5.css" rel="stylesheet">
 
     @RenderSection("HeadScripts", required: false)
 </head>
@@ -24,19 +25,17 @@
     <header>
         @await Html.PartialAsync("/Views/Shared/_nav.cshtml")
     </header>
-    <main role="main" class="content-container pb-3">
-        <section class="container-fluid" style="padding-top:25px;margin-top:25px;margin-bottom:25px;padding-bottom:25px;">
-            @RenderBody()
-        </section>
+    <main role="main" class="container-fluid main-content pb-3">
+        @RenderBody()
     </main>
 
     @await Html.PartialAsync("/Views/Shared/_Footer.cshtml")
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="~/lib/jquery/jquery.js" asp-append-version="true"></script>
-    <script src="~/lib/datatables/jquery.dataTables.min.js" asp-append-version="true"></script>
-    <script src="~/lib/datatables.net-bs/dataTables.bootstrap5.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/dist/js/bootstrap.bundle.js" asp-append-version="true"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/2.0.4/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.4/js/dataTables.bootstrap5.js"></script>
+    <script src="~/dist/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

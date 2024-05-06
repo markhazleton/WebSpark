@@ -5,14 +5,20 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<ApplicationIcon>favicon.ico</ApplicationIcon>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-	</PropertyGroup>
-	<PropertyGroup>
 		<Deterministic>false</Deterministic>
 		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
 		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
 		<ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
 		<UserSecretsId>0e20659f-1e9a-406a-b326-aa86441bb30f</UserSecretsId>
 	</PropertyGroup>
+	<Target Name="EnsureNodeModules" BeforeTargets="BeforeBuild">
+		<Message Importance="high" Text="Update npm packages..." />
+		<Exec Command="ncu -u" />
+		<Message Importance="high" Text="Restoring npm packages..." />
+		<Exec Command="npm install" />
+		<Message Importance="high" Text="Build Assets..." />
+		<Exec Command="npm run build" />
+	</Target>	
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
@@ -45,10 +51,6 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Areas\OpenAI\Controllers\" />
-	  <Folder Include="Areas\OpenAI\Data\" />
-	  <Folder Include="Areas\OpenAI\Models\" />
-	  <Folder Include="Areas\OpenAI\Views\" />
 	  <Folder Include="wwwroot\images\" />
 	  <Folder Include="wwwroot\lib\" />
 	</ItemGroup>
@@ -60,6 +62,7 @@
 	  <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
 	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
 	  <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
+	  <ProjectReference Include="..\WebSpark.Prompt\WebSpark.Prompt.csproj" />
 	  <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
 	</ItemGroup>
 </Project>

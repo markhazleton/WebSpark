@@ -1,0 +1,74 @@
+﻿@model                         DefinitionDto
+
+@{
+    ViewData["Title"] = "Edit Spark Variant";
+}
+
+<div class="row">
+    <div class="col-8">
+        <h1>Edit Spark Variant: @Model.Name</h1>
+    </div>
+    <div class="col-4">
+        <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+    </div>
+</div>
+<form asp-action="Edit" >
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label asp-for="Prompt" class="control-label"></label>
+                <textarea asp-for="Prompt" class="form-control" cols="15" rows="25"></textarea>
+                <span asp-validation-for="Prompt" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DefinitionId" />
+            <div class="form-group">
+                <label asp-for="Created" class="control-label"></label>
+                <input asp-for="Created" class="form-control" />
+                <span asp-validation-for="Created" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefinitionType" class="control-label"></label>
+                <select asp-for="DefinitionType" class="form-control" asp-items="@(new SelectList(Model.DefinitionTypes, Model.DefinitionType))"></select>
+                <span asp-validation-for="DefinitionType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OutputType" class="control-label"></label>
+                <select asp-for="OutputType" asp-items="Html.GetEnumSelectList<OutputType>()" class="form-control"></select>
+                <span asp-validation-for="OutputType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Role" class="control-label"></label>
+                <select asp-for="Role" asp-items="Html.GetEnumSelectList<GptRole>()" class="form-control"></select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Temperature" class="control-label"></label>
+                <input asp-for="Temperature" class="form-control" />
+                <span asp-validation-for="Temperature" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+

@@ -10,20 +10,20 @@ public class RecipeImageFileModel : RecipeImageModel
 }
 
 
-
 /// <summary>
 /// RecipeImageController
 /// </summary>
 /// <remarks>
 /// RecipeImageController Constructor
 /// </remarks>
-/// <param name="logger"></param>
-/// <param name="recipeService"></param>
-/// <param name="recipeImageService"></param>
-public class RecipeImageController(ILogger<MainController> logger, IRecipeService recipeService, IRecipeImageService recipeImageService) : RecipeBaseController(logger, recipeService)
+/// <param name="_logger"></param>
+/// <param name="_recipeService"></param>
+/// <param name="_recipeImageService"></param>
+public class RecipeImageController(
+    ILogger<MainController> _logger, 
+    IRecipeService _recipeService, 
+    IRecipeImageService _recipeImageService) : RecipeBaseController
 {
-    private readonly IRecipeImageService _recipeImageService = recipeImageService;
-
     /// <summary>
     /// Index Page
     /// </summary>
@@ -95,7 +95,7 @@ public class RecipeImageController(ILogger<MainController> logger, IRecipeServic
                 Console.WriteLine(ex.Message);
             }
         }
-        recipeImageModel.Recipe = _RecipeService.Get(1);
+        recipeImageModel.Recipe = _recipeService.Get(1);
 
         if (ModelState.IsValid)
         {

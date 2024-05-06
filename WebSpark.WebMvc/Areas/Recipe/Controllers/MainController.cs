@@ -9,9 +9,9 @@ namespace WebSpark.WebMvc.Areas.Recipe.Controllers;
 /// MainController 
 /// </summary>
 public class MainController(
-    ILogger<MainController> logger,
-    IRecipeService RecipeService,
-    IRecipeGPTService recipeGPTService) : RecipeBaseController(logger, RecipeService)
+    ILogger<MainController> _logger,
+    IRecipeService _RecipeService,
+    IRecipeGPTService recipeGPTService) : RecipeBaseController
 {
 
     // GET: RecipeListController

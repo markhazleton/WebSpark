@@ -1,0 +1,23 @@
+{
+  "name": "web_spark",
+  "description": "Web Spark Admin",
+  "author": "Mark Hazleton",
+  "license": "MIT",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node npm_build.js",
+    "compile-scss": "sass wwwroot/Styles/main.scss wwwroot/css/style.css"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "datatables.net-bs5": "^2.0.6",
+    "jquery": "^3.7.1"
+  },
+  "devDependencies": {
+    "bootswatch": "^5.3.3",
+    "clean-css-cli": "^5.6.3",
+    "ncp": "^2.0.0",
+    "sass": "^1.76.0",
+    "uglify-js": "^3.17.4"
+  }
+}

@@ -1,23 +1,35 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HttpClientUtility;
+using HttpClientUtility.StringConverter;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Extensions.Logging;
 using WebSpark.Core.Data;
-using Westwind.AspNetCore.Markdown;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
+using WebSpark.Prompt.Data;
+using WebSpark.Prompt.Service;
 using WebSpark.RecipeManager.Interfaces;
 using WebSpark.WebMvc.Areas.Identity.Data;
 using WebSpark.WebMvc.Service;
+using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddUserSecrets<Program>();
+builder.Configuration
+    .AddEnvironmentVariables()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>();
+
+var environment = builder.Environment;
+
+
 
 builder.Logging.ClearProviders();
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
-    .WriteTo.File(@"C:\temp\controlsparkadmin-log-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(@"C:\temp\webspark\webspark-log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 builder.Logging.AddProvider(new SerilogLoggerProvider(Log.Logger));
 Log.Information("Logger setup complete. This is a test log entry.");
@@ -34,6 +46,37 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
+
+builder.Services.AddDbContext<GPTDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration["ConnectionStrings:PromptSparkConnection"]);
+});
+builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>();
+builder.Services.AddHttpClient("HttpClientService", client =>
+{
+    client.Timeout = TimeSpan.FromMilliseconds(90000);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.DefaultRequestHeaders.Add("User-Agent", "HttpClientService");
+    client.DefaultRequestHeaders.Add("X-Request-ID", Guid.NewGuid().ToString());
+    client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
+});
+builder.Services.AddScoped(serviceProvider =>
+{
+    IHttpClientService baseService = new HttpClientService(
+        serviceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider.GetRequiredService<IStringConverter>()
+        );
+
+    IHttpClientService telemetryService = new HttpClientServiceTelemetry(
+        baseService);
+
+    return telemetryService;
+});
+builder.Services.AddScoped<IUserPromptService, UserPromptService>();
+builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
+builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();
+builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
+
 
 // Add services to the container.
 builder.Services.AddMarkdown();
@@ -63,10 +106,13 @@ builder.Services.AddMvc()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 app.UseMarkdown();

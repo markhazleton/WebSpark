@@ -5,12 +5,11 @@ using WebSpark.Domain.Models;
 
 namespace WebSpark.WebMvc.Areas.Admin.Controllers;
 
-public class MenuController(ILogger<MenuController> logger, IScopeInformation scopeInfo, IMenuService menuService) : BaseAdminController
+public class MenuController(
+    ILogger<MenuController> _logger, 
+    IScopeInformation _scopeInfo, 
+    IMenuService _menuService) : BaseAdminController
 {
-    private readonly ILogger<MenuController> _logger = logger;
-    private readonly IScopeInformation _scopeInfo = scopeInfo;
-    private readonly IMenuService _menuService = menuService;
-
     // GET: MenuController
     public ActionResult Index()
     {

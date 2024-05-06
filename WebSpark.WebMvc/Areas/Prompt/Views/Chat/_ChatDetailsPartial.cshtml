@@ -1,0 +1,67 @@
+﻿@model             UserPromptDto
+
+@functions {
+    public string FormatTimeMS(long timeMs)
+    {
+        // Convert milliseconds to seconds
+        double timeSec = timeMs / 1000.0;
+        // Format the number to string with three decimal places
+        return $"{timeSec:F3} sec";
+    }
+}
+
+<div class="row">
+    <div class="col-8">
+        <dl>
+            <dt>User Prompt</dt>
+            <dd class="text-dark-emphasis">@Model.UserPrompt</dd>
+            @if (!string.IsNullOrEmpty(Model.UserExpectedResponse))
+            {
+                <dt>Expected Response</dt>
+                <dd>@Model.UserExpectedResponse</dd>
+            }
+        </dl>
+    </div>
+    <div class="col-4">
+    </div>
+</div>
+<hr />
+<div class="container-fluid">
+    <span class="badge rounded-pill bg-primary">Responses From Spark Variants that Implement the Core Spark (@Model.DefinitionType)</span>
+    <div class="accordion" id="gptAccordion">
+        @foreach (var item in Model.DefinitionResponses.Select((value, index) => new { Value = value, Index = index }))
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading@(item.Index)">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(item.Index)" aria-expanded="true" aria-controls="collapse@(item.Index)">
+                        @item.Value.GPTName (@item.Value.OutputType.ToString())
+                    </button>
+                </h2>
+                <div id="collapse@(item.Index)" class="accordion-collapse" aria-expanded="true" aria-labelledby="heading@(item.Index)">
+                    <div class="accordion-body">
+                        <p>@Html.Raw((item.Value.ContentToString()))</p>
+                    </div>
+                    <div class="p-2">
+                        <a class="text-warning font-weight-bold" href="#" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover focus" data-bs-placement="right" data-bs-title="@item.Value.GPTName" data-bs-content="@item.Value.ToString()" data-bs-custom-class="custom-popover">
+                            Hover for details
+                        </a>
+                    </div>
+                    <div class="accordion-footer row">
+                        <dl class="dl-horizontal">
+                            <dt>Role:</dt>
+                            <dd>@item.Value.Role</dd>
+                            <dt>Temperature:</dt>
+                            <dd>@item.Value.Temperature</dd>
+                            <dt>Model:</dt>
+                            <dd>@item.Value.Model</dd>
+                            <dt>Total Tokens:</dt>
+                            <dd>@item.Value.TotalTokens</dd>
+                            <dt>Time:</dt>
+                            <dd>@FormatTimeMS(item.Value.TimeMS)</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

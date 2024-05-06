@@ -1,0 +1,111 @@
+html {
+  font-size: 14px;
+}
+.bg-site {
+    background-color: #0B253C;
+}
+
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+/* Header */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 50px; /* Height of the header */
+    background: #f8f9fa; /* Light grey background */
+    z-index: 1000;
+    border-bottom: 1px solid #dee2e6; /* Light border for the header */
+}
+
+/* Footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px; /* Height of the footer */
+    background: #f8f9fa; /* Light grey background */
+    z-index: 1000;
+    border-top: 1px solid #dee2e6; /* Light border for the footer */
+}
+
+/* Main Content Area */
+main.main-content {
+    padding-top: 120px; /* Slightly more than the height of the header */
+    padding-bottom: 60px; /* Slightly more than the height of the footer */
+    overflow-y: auto; /* Allows scrolling */
+    height: calc(100vh - 60px); /* Full viewport height minus header/footer adjustments */
+    width: 100%; /* Takes full width */
+}
+
+body {
+    margin: 0; /* Removes default body margin */
+}
+
+#chatDropdown {
+    font-size: 1.25rem; /* Larger font size */
+    padding: 10px 15px; /* More padding for a taller dropdown */
+    width: 100%; /* Full width to stand out more */
+    border: 2px solid #007bff; /* Bootstrap primary blue border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+.accordion-footer {
+    padding: 0.5rem 1.25rem; /* Match the padding of the accordion-body */
+    border-top: 1px solid rgba(0, 0, 0, 0.125); /* Adds a line similar to the accordion header */
+    background-color: #f8f9fa; /* Light background for the footer, match or customize */
+    display: flex;
+    justify-content: flex-end; /* Align content to the right */
+    align-items: center; /* Center content vertically */
+}
+/* Custom CSS to ensure all text in the navbar is white */
+.navbar-dark .navbar-nav .nav-link {
+    color: white;
+}
+
+/* Ensuring the toggler icon is also white */
+.navbar-dark .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 16 16' width='16' height='16'%3e%3cpath d='M1.5 2.5A.5.5 0 0 1 2 2h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5zm0 4A.5.5 0 0 1 2 6h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5zm0 4A.5.5 0 0 1 2 10h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5z'%3e%3c/path%3e%3c/svg%3e");
+}
+/* Aligns items inside the accordion-footer to the bottom */
+.accordion-footer {
+    display: flex;
+    align-items: flex-end; /* Aligns children to the bottom */
+    width: 100%;
+}
+
+.dl-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%; /* Ensures the dl takes full width to distribute items properly */
+}
+
+    .dl-horizontal dt, .dl-horizontal dd {
+        flex: 0 0 auto;
+        margin-right: 10px; /* Spacing between dt and dd */
+    }
+
+    .dl-horizontal dd {
+        margin-right: 20px; /* Additional spacing after dd before next dt */
+    }
+.custom-popover {
+    max-width: 80vw; /* You can set this to whatever width suits your needs */
+}
+.custom-blockquote {
+    border-left: 5px solid #007bff; /* Blue border on the left */
+    background-color: #f8f9fa; /* Light grey background */
+    padding: 0.5rem 1rem; /* Padding around the text */
+    font-size: 0.875rem; /* Smaller font size */
+    font-weight: bold; /* Bold font */
+}

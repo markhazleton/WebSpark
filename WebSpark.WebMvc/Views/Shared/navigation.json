@@ -1,12 +1,16 @@
 ﻿{
   "menuItems": [
     {
-      "text": "CMS",
+      "text": "Web ",
       "url": "/Admin/Website"
     },
     {
-      "text": "Recipes",
+      "text": "Recipe ",
       "url": "/Recipe/Main"
+    },
+    {
+      "text": "Prompt ",
+      "url": "/Prompt/Main"
     }
   ]
 }
