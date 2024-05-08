@@ -10,15 +10,15 @@ namespace WebSpark.WebMvc.Service;
 /// <summary>
 /// Service class for generating recipe using GPT model.
 /// </summary>
-public class RecipeGPTService : IRecipeGPTService
+public class RecipeAzureAIOpenAIService : IRecipeGPTService
 {
     private readonly OpenAIClient client;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RecipeGPTService"/> class.
+    /// Initializes a new instance of the <see cref="RecipeAzureAIOpenAIService"/> class.
     /// </summary>
     /// <param name="configuration">The configuration object.</param>
-    public RecipeGPTService(IConfiguration configuration)
+    public RecipeAzureAIOpenAIService(IConfiguration configuration)
     {
         var OPENAI_API_KEY = configuration["OPENAI_API_KEY"];
         client = new OpenAIClient(OPENAI_API_KEY);
@@ -52,10 +52,10 @@ public class RecipeGPTService : IRecipeGPTService
         {
             Temperature = 0.7f,
             DeploymentName = "gpt-4-turbo",
-            Messages = 
-            { 
-                new ChatRequestSystemMessage(sb.ToString()), 
-                new ChatRequestUserMessage(prompt) 
+            Messages =
+            {
+                new ChatRequestSystemMessage(sb.ToString()),
+                new ChatRequestUserMessage(prompt)
             }
         };
 
@@ -86,8 +86,8 @@ public class RecipeGPTService : IRecipeGPTService
                         {
                             Name = recipe.Name,
                             Description = recipe.Description,
-                            Ingredients = recipe.Ingredients != null ? string.Join("\n- ", recipe.Ingredients.Prepend("")) : string.Empty,
-                            Instructions = recipe.Instructions != null ? string.Join("\n1. ", recipe.Instructions.Prepend("")) : string.Empty,
+                            Ingredients = recipe.Ingredients != null ? string.Join("\n- ", recipe.Ingredients.Prepend(string.Empty)) : string.Empty,
+                            Instructions = recipe.Instructions != null ? string.Join("\n1. ", recipe.Instructions.Prepend(string.Empty)) : string.Empty,
                             Servings = servings,
                             AuthorNM = "MOM Recipe",
                             RecipeCategoryNM = recipe.Category,

@@ -13,7 +13,7 @@ namespace WebSpark.WebMvc.Areas.Admin.Controllers;
 /// <param name="logger"></param>
 /// <param name="scopeInfo"></param>
 public class WebsiteController(
-    IWebsiteService service, 
+    IWebsiteService service,
     ILogger<WebsiteController> logger,
     IScopeInformation scopeInfo) : BaseAdminController
 {
@@ -25,7 +25,7 @@ public class WebsiteController(
     /// <returns></returns>
     public ActionResult Index() { return View(service.Get()); }
 
-    
+
     /// <summary>
     /// Details Action
     /// </summary>
@@ -52,14 +52,15 @@ public class WebsiteController(
     [ValidateAntiForgeryToken]
     public ActionResult Create(WebsiteEditModel collection)
     {
-        if(collection == null)
+        if (collection == null)
         {
             return RedirectToAction(nameof(Index));
-        }   
+        }
         try
         {
             return RedirectToAction(nameof(Index));
-        } catch
+        }
+        catch
         {
             return View();
         }
@@ -70,7 +71,7 @@ public class WebsiteController(
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-   public async Task<ActionResult> Edit(int id)
+    public async Task<ActionResult> Edit(int id)
     {
         var website = await service.GetEditAsync(id);
         return View(website);
@@ -90,7 +91,7 @@ public class WebsiteController(
         {
             var itemToUpdate = await service.GetAsync(id);
 
-            if(itemToUpdate != null)
+            if (itemToUpdate != null)
             {
                 itemToUpdate.Name = website.Name ?? itemToUpdate.Name;
                 itemToUpdate.Description = website.Description ?? itemToUpdate.Description;
@@ -105,7 +106,8 @@ public class WebsiteController(
                 var saveResult = service.Save(itemToUpdate);
             }
             return RedirectToAction(nameof(Index));
-        } catch
+        }
+        catch
         {
             return View();
         }
@@ -131,7 +133,8 @@ public class WebsiteController(
         try
         {
             return RedirectToAction(nameof(Index));
-        } catch
+        }
+        catch
         {
             return View();
         }

@@ -162,12 +162,12 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     private List<MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
     {
         var menuList = list == null ? [] : list.Select(item => Create(item, LoadChild)).OrderBy(x => x.Title).ToList();
-        foreach(var menu in menuList.Where(w=>w.ParentId is null).OrderBy(o=>o.DisplayOrder))
+        foreach (var menu in menuList.Where(w => w.ParentId is null).OrderBy(o => o.DisplayOrder))
         {
             menu.IsHomePage = true;
             menu.Url = "/";
             break;
-       
+
         };
 
         return menuList;

@@ -163,4 +163,5 @@ public class RecipeModel
     /// </summary>
     public IEnumerable<LookupModel> RecipeCategories { get; set; }
     public int DomainID { get; set; } = 1;
+    public string SEO_Keywords { get; set; }
 }

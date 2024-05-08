@@ -6,7 +6,7 @@ namespace WebSpark.WebMvc.Areas.Identity.Data;
 /// </summary>
 public class ControlSparkUser : IdentityUser
 {
-    
+
     /// <summary>
     /// First Name of User
     /// </summary>

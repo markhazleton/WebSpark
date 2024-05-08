@@ -86,7 +86,7 @@ builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
-builder.Services.AddScoped<IRecipeGPTService, RecipeGPTService>();
+builder.Services.AddScoped<IRecipeGPTService, RecipePromptSparkService>();
 builder.Services.AddBlogProviders();
 
 builder.Services.AddSession(options =>

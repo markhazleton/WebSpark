@@ -72,54 +72,6 @@ public class OpenAIChatCompletionService(
             };
         }
     }
-    private static OpenAiApiRequest GetOpenAiApiRequest(DefinitionResponseDto definitionResponse)
-    {
-        if (Double.TryParse(definitionResponse.Temperature, out double temperature) == false)
-            throw new Exception("temperature is not a valid double.");
-
-        var systemMessage = new Message()
-        {
-            role = "system",
-            content = definitionResponse.SystemPrompt,
-        };
-        if (definitionResponse.OutputType.ToString().ToLower() == "json")
-        {
-            return new OpenAiApiRequest()
-            {
-                model = definitionResponse.Model,
-                response_format = new ResponseFormat() { type = "json_object" },
-                messages =
-                    [
-                        systemMessage,
-                    new Message
-                    {
-                        role = "user",
-                        content = definitionResponse.UserPrompt
-                    }
-                    ],
-                temperature = temperature
-            };
-        }
-        else
-        {
-            return new OpenAiApiRequest()
-            {
-                model = definitionResponse.Model,
-                response_format = new ResponseFormat() { type = "text" },
-                messages =
-                    [
-                        systemMessage,
-                    new Message
-                    {
-                        role = "user",
-                        content = definitionResponse.UserPrompt
-                    }
-                    ],
-                temperature = temperature
-            };
-        }
-    }
-
     public async Task<UserPromptDto> FindResponseByUserPromptTextAsync(string userPrompt)
     {
         try
@@ -321,21 +273,6 @@ public class OpenAIChatCompletionService(
             }
         }
     }
-    public async Task<DefinitionResponseDto> UpdateGPTResponse(DefinitionResponseDto gptResponse)
-    {
-        var openAIRequest = GetOpenAiApiRequest(gptResponse);
-        var serviceResponse = await httpClientService.PostAsync<OpenAiApiRequest, OpenAiApiResponse>(openAiUrl, openAIRequest, headers);
-        gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
-        gptResponse.SystemResponse = serviceResponse?.Content?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
-        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.UtcNow;
-        gptResponse.TimeMS = serviceResponse?.ElapsedMilliseconds ?? 0;
-        gptResponse.TotalTokens = serviceResponse?.Content?.usage?.total_tokens ?? 0;
-        gptResponse.CompletionTokens = serviceResponse?.Content?.usage?.completion_tokens ?? 0;
-        gptResponse.PromptTokens = serviceResponse?.Content?.usage?.prompt_tokens ?? 0;
-        gptResponse.Model = serviceResponse?.Content?.Model ?? "Unknown";
-        return gptResponse;
-    }
-
     public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse)
     {
         var openAIRequest = GetOpenAiApiRequest(gptResponse);

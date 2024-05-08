@@ -3,7 +3,7 @@
 namespace WebSpark.WebMvc.Service;
 
 /// <summary>
-/// RecipeGPTService Interface
+/// RecipeAzureAIOpenAIService Interface
 /// </summary>
 public interface IRecipeGPTService
 {
