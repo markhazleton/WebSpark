@@ -16,15 +16,12 @@ using WebSpark.WebMvc.Service;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
+var environment = builder.Environment;
 builder.Configuration
     .AddEnvironmentVariables()
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddUserSecrets<Program>();
-
-var environment = builder.Environment;
-
-
 
 builder.Logging.ClearProviders();
 Log.Logger = new LoggerConfiguration()

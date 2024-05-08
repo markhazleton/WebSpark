@@ -4,8 +4,8 @@ public class DefinitionDto
 {
     public int DefinitionId { get; set; }
     public string Description { get; set; } = "Description";
-    public DateTime Created { get; set; } = DateTime.Now;
-    public DateTime Updated { get; set; } = DateTime.Now;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime Updated { get; set; } = DateTime.UtcNow;
     public string Name { get; set; } = "Name";
     public OutputType OutputType { get; set; }
     public string Prompt { get; set; } = "System Prompt";

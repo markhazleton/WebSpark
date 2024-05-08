@@ -128,7 +128,7 @@ public class MenuModel
         {
             if (_lastModified == null)
             {
-                _lastModified = DateTime.Now;
+                _lastModified = DateTime.UtcNow;
             }
 
             return _lastModified.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");

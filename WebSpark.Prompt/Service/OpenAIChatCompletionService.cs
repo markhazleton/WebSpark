@@ -205,11 +205,11 @@ public class OpenAIChatCompletionService(
                 if (definitionResponse.GPTName != definition.GPTName)
                     definitionResponse.GPTName = definition.GPTName;
 
-                if (definitionResponse.Created < DateTime.Now.AddDays(-10))
-                    definitionResponse.Created = DateTime.Now.AddDays(-5);
+                if (definitionResponse.Created < DateTime.UtcNow.AddDays(-10))
+                    definitionResponse.Created = DateTime.UtcNow.AddDays(-5);
 
                 if (definitionResponse.SystemResponse == "No Answer"
-                    || definitionResponse.Updated.AddDays(1) < DateTime.Now)
+                    || definitionResponse.Updated.AddDays(1) < DateTime.UtcNow)
                 {
                     definitionResponse = await UpdateGPTResponse(definitionResponse);
                 }
@@ -259,11 +259,11 @@ public class OpenAIChatCompletionService(
                 if (definitionResponse.GPTName != definition.GPTName)
                     definitionResponse.GPTName = definition.GPTName;
 
-                if (definitionResponse.Created < DateTime.Now.AddDays(-10))
-                    definitionResponse.Created = DateTime.Now.AddDays(-5);
+                if (definitionResponse.Created < DateTime.UtcNow.AddDays(-10))
+                    definitionResponse.Created = DateTime.UtcNow.AddDays(-5);
 
                 if (definitionResponse.SystemResponse == "No Answer"
-                    || definitionResponse.Updated.AddDays(1) < DateTime.Now)
+                    || definitionResponse.Updated.AddDays(1) < DateTime.UtcNow)
                 {
                     definitionResponse = await UpdateGPTResponse(definitionResponse);
                 }
@@ -327,7 +327,7 @@ public class OpenAIChatCompletionService(
         var serviceResponse = await httpClientService.PostAsync<OpenAiApiRequest, OpenAiApiResponse>(openAiUrl, openAIRequest, headers);
         gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
         gptResponse.SystemResponse = serviceResponse?.Content?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
-        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
+        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.UtcNow;
         gptResponse.TimeMS = serviceResponse?.ElapsedMilliseconds ?? 0;
         gptResponse.TotalTokens = serviceResponse?.Content?.usage?.total_tokens ?? 0;
         gptResponse.CompletionTokens = serviceResponse?.Content?.usage?.completion_tokens ?? 0;
@@ -342,7 +342,7 @@ public class OpenAIChatCompletionService(
         var serviceResponse = await httpClientService.PostAsync<OpenAiApiRequest, OpenAiApiResponse>(openAiUrl, openAIRequest, headers);
         gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
         gptResponse.SystemResponse = serviceResponse?.Content?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
-        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
+        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.UtcNow;
         gptResponse.ElapsedMilliseconds = serviceResponse?.ElapsedMilliseconds ?? 0;
         gptResponse.TotalTokens = serviceResponse?.Content?.usage?.total_tokens ?? 0;
         gptResponse.CompletionTokens = serviceResponse?.Content?.usage?.completion_tokens ?? 0;

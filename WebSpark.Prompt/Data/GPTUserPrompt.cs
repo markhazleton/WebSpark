@@ -12,7 +12,7 @@ public class GPTUserPrompt
     public string UserPrompt { get; set; }
     public string DefinitionType { get; set; } = "Wichita";
     public string UserExpectedResponse { get; set; }
-    public DateTime Created { get; set; } = DateTime.Now;
-    public DateTime Updated { get; set; } = DateTime.Now;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime Updated { get; set; } = DateTime.UtcNow;
     public List<GPTDefinitionResponse> GPTResponses { get; set; } = new();
 }

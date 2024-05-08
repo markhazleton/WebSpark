@@ -100,8 +100,8 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
             Argument = menu.Argument,
             DisplayOrder = menu.DisplayOrder,
             PageContent = menu.PageContent,
-            CreatedDate = DateTime.Now,
-            UpdatedDate = DateTime.Now,
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow,
             UpdatedID = 99,
             CreatedID = 99,
         };

@@ -5,7 +5,7 @@
 @using System.Reflection;
 @inject IStringLocalizer<Resource> _localizer
 @{
-    var currentYear = DateTime.Now.Year.ToString();
+    var currentYear = DateTime.UtcNow.Year.ToString();
     var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
 }
 @{

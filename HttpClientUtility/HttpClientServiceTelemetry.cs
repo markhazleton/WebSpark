@@ -35,7 +35,7 @@ namespace HttpClientUtility
             }
             sw.Stop();
             statusCall.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-            statusCall.CompletionDate = DateTime.Now;
+            statusCall.CompletionDate = DateTime.UtcNow;
             return statusCall;
         }
 
@@ -54,7 +54,7 @@ namespace HttpClientUtility
             }
             sw.Stop();
             statusCall.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-            statusCall.CompletionDate = DateTime.Now;
+            statusCall.CompletionDate = DateTime.UtcNow;
             return statusCall;
         }
 
@@ -73,7 +73,7 @@ namespace HttpClientUtility
             }
             sw.Stop();
             statusCall.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-            statusCall.CompletionDate = DateTime.Now;
+            statusCall.CompletionDate = DateTime.UtcNow;
             return statusCall;
         }
     }

@@ -60,8 +60,6 @@ public class MainController(
                 genRecipe.RecipeCategoryNM = category.Name;
                 genRecipe.RecipeCategory = category;
             }
-
-
             var saveResult = _RecipeService.Save(genRecipe);
             // return to edit the new recipe
             return RedirectToAction("Edit", new { id = genRecipe.Id });

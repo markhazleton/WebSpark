@@ -39,7 +39,7 @@ public class StorageController(IStorageProvider storageProvider, IAuthorProvider
         var author = await _authorProvider.FindByEmail(User.Identity.Name);
         var post = postId == 0 ? new Post() : await _postProvider.GetPostById(postId);
 
-        var path = $"{author.Id}/{DateTime.Now.Year}/{DateTime.Now.Month}";
+        var path = $"{author.Id}/{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}";
         var fileName = $"data/{path}/{file.FileName}";
 
         if (uploadType == UploadType.PostImage)

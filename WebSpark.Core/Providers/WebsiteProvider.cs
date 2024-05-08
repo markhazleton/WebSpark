@@ -416,7 +416,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                     dbWebsite.UseBreadCrumbUrl = saveItem.UseBreadCrumbURL;
                     dbWebsite.UpdatedID = saveItem.ModifiedID;
                     dbWebsite.VersionNo = dbWebsite.VersionNo++;
-                    dbWebsite.UpdatedDate = DateTime.Now;
+                    dbWebsite.UpdatedDate = DateTime.UtcNow;
                     _context.SaveChanges();
                 }
             }

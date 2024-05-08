@@ -106,7 +106,7 @@ public class HttpClientSendRequest<T>
                 return "Result Cache date is null.";
             }
 
-            DateTime currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.UtcNow;
             DateTime inputDate = CompletionDate.Value;
 
             TimeSpan timeDifference = currentDate - inputDate;

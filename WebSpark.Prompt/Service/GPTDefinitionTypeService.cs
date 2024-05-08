@@ -67,7 +67,7 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
         {
             existingType.Description = definitionType?.Description ?? "MISSING";
             existingType.OutputType = definitionType?.OutputType ?? OutputType.Markdown;
-            existingType.Updated = DateTime.Now;
+            existingType.Updated = DateTime.UtcNow;
             context.DefinitionTypes.Update(existingType);
             await context.SaveChangesAsync();
         }

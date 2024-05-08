@@ -27,14 +27,14 @@ public class GPTDefinitionResponse
         SystemPrompt = definition.Prompt;
         UserPrompt = userPrompt.UserPrompt;
         UserExpectedResponse = userPrompt?.UserExpectedResponse ?? "UNKNOWN";
-        Created = DateTime.Now;
-        Updated = DateTime.Now;
+        Created = DateTime.UtcNow;
+        Updated = DateTime.UtcNow;
     }
 
 
 
     public int CompletionTokens { get; set; }
-    public DateTime Created { get; set; } = DateTime.Now;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
     public GPTDefinition Definition { get; set; }
     public int DefinitionId { get; set; }
     public string DefinitionType { get; set; }
@@ -50,7 +50,7 @@ public class GPTDefinitionResponse
     public string SystemResponse { get; set; }
     public string Temperature { get; set; }
     public int TotalTokens { get; set; }
-    public DateTime Updated { get; set; } = DateTime.Now;
+    public DateTime Updated { get; set; } = DateTime.UtcNow;
     public string? UserPrompt { get; set; }
     public OutputType OutputType { get; set; }
     public string GPTDescription { get; set; }

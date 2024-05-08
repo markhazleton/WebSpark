@@ -90,9 +90,9 @@ public class DefinitionsController(IGPTDefinitionService definitionService) : Op
 
         if (id == 0)
         {
-            gPTDefinition.Created = DateTime.Now;
+            gPTDefinition.Created = DateTime.UtcNow;
         }
-        gPTDefinition.Updated = DateTime.Now;
+        gPTDefinition.Updated = DateTime.UtcNow;
 
         if (ModelState.IsValid)
         {

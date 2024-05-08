@@ -85,7 +85,7 @@ public static partial class Utility
     public static string wpm_DaysInMonth()
     {
         string wpm_DaysInMonthRet = default;
-        int lLngMonth = Thread.CurrentThread.CurrentCulture.Calendar.GetMonth(DateTime.Now);
+        int lLngMonth = Thread.CurrentThread.CurrentCulture.Calendar.GetMonth(DateTime.UtcNow);
         switch (lLngMonth)
         {
             case 9:
@@ -459,7 +459,7 @@ public static partial class Utility
     } // fncFmtDate
     public static int wpm_FormatHour()
     {
-        string lDtmNow = Strings.FormatDateTime(DateTime.Now, DateFormat.LongTime);
+        string lDtmNow = Strings.FormatDateTime(DateTime.UtcNow, DateFormat.LongTime);
         return Conversions.ToInteger(Strings.Left(lDtmNow, Strings.InStr(lDtmNow, ":") - 1));
     } // FormatHour()
     public static string wpm_FormatLink(string LinkName, string LinkType, string LinkURL)
@@ -552,7 +552,7 @@ public static partial class Utility
     }
     public static string wpm_GetCurrentDate()
     {
-        var dRightNow = DateTime.Now;
+        var dRightNow = DateTime.UtcNow;
         return dRightNow.ToLongDateString();
     }
     public static string wpm_GetDayOrdinal(int intDay)
@@ -697,12 +697,12 @@ public static partial class Utility
     }
     public static string wpm_GetRFC822Date(object dbObject)
     {
-        int offset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours;
+        int offset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.UtcNow).Hours;
         string timeZone__1 = $"+{offset.ToString().PadLeft(2, '0')}";
         DateTime myDate;
         if (dbObject is DBNull)
         {
-            myDate = DateTime.Now.AddDays(-100);
+            myDate = DateTime.UtcNow.AddDays(-100);
         }
         else
         {
@@ -782,7 +782,7 @@ public static partial class Utility
     }
     public static bool wpm_IsNowLeapYear()
     {
-        int lLngYear = Thread.CurrentThread.CurrentCulture.Calendar.GetYear(DateTime.Now);
+        int lLngYear = Thread.CurrentThread.CurrentCulture.Calendar.GetYear(DateTime.UtcNow);
         if (lLngYear % 4 == 0 & lLngYear % 100 != 0 | lLngYear % 400 == 0)
         {
             return true;
@@ -821,7 +821,7 @@ public static partial class Utility
 
     public static string wpm_OrdinalSuffix()
     {
-        int lLngDay = Thread.CurrentThread.CurrentCulture.Calendar.GetDayOfMonth(DateTime.Now);
+        int lLngDay = Thread.CurrentThread.CurrentCulture.Calendar.GetDayOfMonth(DateTime.UtcNow);
         if (lLngDay.ToString().Right(1) == "1")
         {
             return "st";

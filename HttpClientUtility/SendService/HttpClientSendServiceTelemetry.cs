@@ -46,7 +46,7 @@ public class HttpClientSendServiceTelemetry : Interfaces.IHttpClientService
         }
         sw.Stop();
         statusCall.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        statusCall.CompletionDate = DateTime.Now;
+        statusCall.CompletionDate = DateTime.UtcNow;
         return statusCall;
     }
 }

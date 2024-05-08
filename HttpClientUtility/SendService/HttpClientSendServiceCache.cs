@@ -44,7 +44,7 @@ public sealed class HttpClientSendServiceCache : Interfaces.IHttpClientService
         // If the result is not cached, make the actual HTTP request using the wrapped service
         // and store the result in the cache before returning it
         statusCall = await _service.HttpClientSendAsync(statusCall, ct);
-        statusCall.CompletionDate = DateTime.Now;
+        statusCall.CompletionDate = DateTime.UtcNow;
         if (statusCall.CacheDurationMinutes > 0)
         {
             try

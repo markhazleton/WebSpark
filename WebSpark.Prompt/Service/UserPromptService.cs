@@ -28,8 +28,8 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
 
     public async Task<UserPromptDto> CreateAsync(UserPromptDto dto)
     {
-        dto.Created = DateTime.Now;
-        dto.Updated = DateTime.Now;
+        dto.Created = DateTime.UtcNow;
+        dto.Updated = DateTime.UtcNow;
         var entity = dto.ToEntity();
         context.Chats.Add(entity);
         await context.SaveChangesAsync();
@@ -46,8 +46,8 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
             {
                 DefinitionType = definitionTypes.FirstOrDefault(),
                 DefinitionTypes = definitionTypes,
-                Created = DateTime.Now,
-                Updated = DateTime.Now,
+                Created = DateTime.UtcNow,
+                Updated = DateTime.UtcNow,
                 DefinitionResponses = new List<DefinitionResponseDto>()
             };
         }
@@ -90,7 +90,7 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
         {
             entity.UserPrompt = dto.UserPrompt;
             entity.DefinitionType = dto.DefinitionType;
-            entity.Updated = DateTime.Now;  // Or dto.Updated
+            entity.Updated = DateTime.UtcNow;  
             await context.SaveChangesAsync();
         }
     }

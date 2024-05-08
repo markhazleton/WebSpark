@@ -38,8 +38,8 @@ public class GPTDefinitionService(GPTDbContext context, IGPTService service) : I
         {
             existingDefinition = new GPTDefinition
             {
-                Created = DateTime.Now,
-                Updated = DateTime.Now,
+                Created = DateTime.UtcNow,
+                Updated = DateTime.UtcNow,
                 GPTName = definitionDto.Name,
                 Description = definitionDto.Description,
                 Prompt = definitionDto.Prompt,
@@ -61,7 +61,7 @@ public class GPTDefinitionService(GPTDbContext context, IGPTService service) : I
             existingDefinition.Role = definitionDto.Role;
             existingDefinition.Model = definitionDto.Model;
             existingDefinition.Temperature = definitionDto.Temperature;
-            existingDefinition.Updated = DateTime.Now;
+            existingDefinition.Updated = DateTime.UtcNow;
             context.Definitions.Update(existingDefinition);
         }
         await context.SaveChangesAsync();
@@ -185,7 +185,7 @@ public class GPTDefinitionService(GPTDbContext context, IGPTService service) : I
                 existingDbResponse.SystemPrompt = definition.Prompt;
                 existingDbResponse.UserPrompt = userPrompt.UserPrompt;
                 existingDbResponse.UserExpectedResponse = userPrompt.UserExpectedResponse;
-                existingDbResponse.Updated = DateTime.Now;
+                existingDbResponse.Updated = DateTime.UtcNow;
                 existingDbResponse.Temperature = definition.Temperature;
                 existingDbResponse.OutputType = definition.OutputType;
                 existingDbResponse.DefinitionType = definition.DefinitionType;

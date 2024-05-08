@@ -6,8 +6,8 @@ using WebSpark.Domain.Models;
 namespace WebSpark.WebMvc.Areas.Admin.Controllers;
 
 public class MenuController(
-    ILogger<MenuController> _logger, 
-    IScopeInformation _scopeInfo, 
+    ILogger<MenuController> _logger,
+    IScopeInformation _scopeInfo,
     IMenuService _menuService) : BaseAdminController
 {
     // GET: MenuController

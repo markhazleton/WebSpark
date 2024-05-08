@@ -449,7 +449,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             if (saveItem.Id == 0)
             {
                 var saveCategory = Create(saveItem);
-                saveCategory.UpdatedDate = DateTime.Now;
+                saveCategory.UpdatedDate = DateTime.UtcNow;
                 webDomainContext.RecipeCategory.Add(saveCategory);
                 webDomainContext.SaveChanges();
                 saveItem.Id = saveCategory.Id;
@@ -461,7 +461,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
                 {
                     saveCategory.Name = saveItem.Name;
                     saveCategory.Comment = saveItem.Description;
-                    saveCategory.UpdatedDate = DateTime.Now;
+                    saveCategory.UpdatedDate = DateTime.UtcNow;
                     webDomainContext.SaveChanges();
                 }
             }
@@ -499,7 +499,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             if (saveItem.Id == 0)
             {
                 var saveRecipe = Create(saveItem);
-                saveRecipe.UpdatedDate = DateTime.Now;
+                saveRecipe.UpdatedDate = DateTime.UtcNow;
                 webDomainContext.Recipe.Add(saveRecipe);
                 webDomainContext.SaveChanges();
                 saveItem.Id = saveRecipe.Id;
