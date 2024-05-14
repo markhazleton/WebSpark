@@ -14,6 +14,7 @@ public class DefinitionResponseDto
     public string Role { get; set; } = "system";
     public string Temperature { get; set; }
     public string Model { get; set; }
+    public int ResponseId { get; set; }
     public string UserPrompt { get; set; }
     public OutputType OutputType { get; set; }
     public string GPTDescription { get; set; }

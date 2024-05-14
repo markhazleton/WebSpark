@@ -37,7 +37,7 @@
 		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
-		<PackageReference Include="ReverseMarkdown" Version="4.3.0" />
+		<PackageReference Include="ReverseMarkdown" Version="4.4.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 	</ItemGroup>
 

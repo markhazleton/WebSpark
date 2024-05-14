@@ -58,7 +58,17 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            new DataTable('#displayTable');
+            $('#displayTable').DataTable({
+                paging: false,        // Disable pagination
+                scrollY: '50vh',      // Enable vertical scrolling and set the height
+                scrollCollapse: true,  // Optional: Reduce the height of the table when there are fewer rows
+                stateSave: true,
+                colReorder: {
+                    realtime: true, // update the table as you drag the columns (default: true)
+                    fixedColumnsLeft: 1, // number of columns on the left that cannot be reordered
+                    fixedColumnsRight: 1 // number of columns on the right that cannot be reordered
+                }
+            });
         });
     </script>
 }

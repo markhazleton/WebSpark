@@ -5,6 +5,7 @@
     <table id="displayTable" class="table">
         <thead>
             <tr>
+                <th>id</th>
                 <th>Updated</th>
                 <th>Prompt Tokens</th>
                 <th>Completion Tokens</th>
@@ -17,6 +18,7 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td><a href="/Prompt/UserPrompts/Details/@item.ResponseId">@item.ResponseId</a></td>
                     <td>@item.Updated.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td>@item.PromptTokens</td>
                     <td>@item.CompletionTokens</td>

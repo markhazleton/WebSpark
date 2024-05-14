@@ -100,7 +100,7 @@ public static class GPTMapper
             UserExpectedResponse = dto.UserExpectedResponse,
             DefinitionType = dto.DefinitionType,
             Created = dto.Created,
-            Updated = dto.Updated
+            Updated = dto.Updated,
         };
     }
     public static DefinitionResponseDto ToDto(this GPTDefinitionResponse r)
@@ -108,6 +108,7 @@ public static class GPTMapper
         return new DefinitionResponseDto
         {
             GPTName = r.GPTName,
+            ResponseId = r.ResponseId,
             Model = r.Model,
             SystemResponse = r.SystemResponse,
             SystemPrompt = r.SystemPrompt ?? "MISSING",
