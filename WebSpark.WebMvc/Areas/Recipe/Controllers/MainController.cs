@@ -42,12 +42,12 @@ public class MainController(
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> MomCreate(RecipeModel recipeModel)
     {
-        var categoryList = _RecipeService.GetRecipeCategoryList();
-        var category = categoryList.Where(w => w.Id == recipeModel.RecipeCategoryID).FirstOrDefault();
-        var genRecipe = await recipeGPTService.CreateMomGPTRecipe(recipeModel.Name, category?.Name ?? "Main Course");
-        genRecipe.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
         try
         {
+            var categoryList = _RecipeService.GetRecipeCategoryList();
+            var category = categoryList.Where(w => w.Id == recipeModel.RecipeCategoryID).FirstOrDefault();
+            var genRecipe = await recipeGPTService.CreateMomGPTRecipe(recipeModel.Name, category?.Name ?? "Main Course");
+            genRecipe.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
             category = categoryList.Where(w => w.Name == genRecipe.RecipeCategoryNM).FirstOrDefault();
             if (category != null)
             {
