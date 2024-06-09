@@ -23,19 +23,6 @@
 		<Exec Command="npm run build-assets" />
 	</Target>
 	<ItemGroup>
-		<None Remove="App_Data\PromptSpark.db" />
-		<None Remove="App_Data\User.db" />
-		<None Remove="App_Data\logging.db" />
-	</ItemGroup>
-	<ItemGroup>
-		<Content Include="App_Data\PromptSpark.db">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="App_Data\User.db">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Azure.Identity" Version="1.11.3" />
 		<PackageReference Include="CsvHelper" Version="32.0.3" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -68,28 +55,9 @@
 		  <Pack>True</Pack>
 		  <PackagePath>\</PackagePath>
 		</None>
-		<None Include="wwwroot\kitchen_sink.html" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
 	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<Content Update="Areas\OpenAI\Views\Chat\Details.cshtml">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="Areas\OpenAI\Views\Chat\Index.cshtml">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\csv\2024_0408trainingdata.csv">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Update="wwwroot\favicon.ico">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-	</ItemGroup>
-
 </Project>

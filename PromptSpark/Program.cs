@@ -93,14 +93,6 @@ builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
 
 var app = builder.Build();
 
-// Migrate database
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var userCtx = services.GetRequiredService<AdminContext>();
-    userCtx.Database.Migrate();
-}
-
 // Configure middleware
 if (app.Environment.IsDevelopment())
 {

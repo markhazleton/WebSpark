@@ -8,8 +8,4 @@ public class AdminContext : IdentityDbContext<AdminUser>
         : base(options)
     {
     }
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source=App_Data/User.db");
-
-
 }

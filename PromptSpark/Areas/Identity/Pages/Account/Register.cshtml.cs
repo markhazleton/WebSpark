@@ -109,7 +109,6 @@ namespace PromptSpark.Areas.Identity.Pages.Account
                 var user = CreateUser();
                 user.FirstName = "First";
                 user.LastName = "Last";
-                user.UsernameChangeLimit = 10;
                 user.ProfilePicture = null;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
