@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using WebSpark.Prompt.Models;
-using WebSpark.Prompt.Service;
+using PromptSpark.Domain.Models;
+using PromptSpark.Domain.Service;
 
 namespace WebSpark.WebMvc.Areas.Prompt.Controllers;
 [Authorize]

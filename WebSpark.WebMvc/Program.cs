@@ -8,12 +8,13 @@ using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
-using WebSpark.Prompt.Data;
-using WebSpark.Prompt.Service;
+using PromptSpark.Domain.Data;
+using PromptSpark.Domain.Service;
 using WebSpark.RecipeManager.Interfaces;
 using WebSpark.WebMvc.Areas.Identity.Data;
 using WebSpark.WebMvc.Service;
 using Westwind.AspNetCore.Markdown;
+using HttpClientUtility.FullService;
 
 var builder = WebApplication.CreateBuilder(args);
 var environment = builder.Environment;
@@ -69,6 +70,22 @@ builder.Services.AddScoped(serviceProvider =>
 
     return telemetryService;
 });
+
+builder.Services.AddScoped(serviceProvider =>
+{
+    IHttpClientFullService baseService = new HttpClientFullService(
+        serviceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider.GetRequiredService<IStringConverter>()
+        );
+
+    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(
+        baseService);
+
+    return telemetryService;
+});
+
+
+
 builder.Services.AddScoped<IUserPromptService, UserPromptService>();
 builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
 builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();

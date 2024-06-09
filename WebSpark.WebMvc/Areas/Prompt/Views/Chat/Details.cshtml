@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Core Spark";
-    int SelectedPromptId = Model.Prompts.Select(s=>s.Id).FirstOrDefault();
+    int SelectedPromptId = Model.Prompts.Select(s=>s.UserPromptId).FirstOrDefault();
 }
 <span class="badge rounded-pill bg-primary">Core Spark (@Model.DefinitionType)</span>
 <div class="row">
@@ -20,7 +20,7 @@
     {
         if (!string.IsNullOrEmpty(item.UserPrompt))
         {
-            if(item.Id == SelectedPromptId)
+            if (item.UserPromptId == SelectedPromptId)
             {
                 <option value="@item.UserPrompt" selected>@Html.DisplayFor(modelItem => item.UserPrompt)</option>
             }

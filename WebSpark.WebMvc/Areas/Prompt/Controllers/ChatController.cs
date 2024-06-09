@@ -1,4 +1,4 @@
-﻿using WebSpark.Prompt.Service;
+﻿using PromptSpark.Domain.Service;
 
 namespace WebSpark.WebMvc.Areas.Prompt.Controllers;
 

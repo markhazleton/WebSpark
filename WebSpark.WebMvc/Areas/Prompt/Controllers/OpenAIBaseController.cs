@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using WebSpark.Prompt.Models;
+using WebSpark.WebMvc.Models;
 
 namespace WebSpark.WebMvc.Areas.Prompt.Controllers;
 

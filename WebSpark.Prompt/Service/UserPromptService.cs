@@ -90,7 +90,7 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
         {
             entity.UserPrompt = dto.UserPrompt;
             entity.DefinitionType = dto.DefinitionType;
-            entity.Updated = DateTime.UtcNow;  
+            entity.Updated = DateTime.UtcNow;
             await context.SaveChangesAsync();
         }
     }

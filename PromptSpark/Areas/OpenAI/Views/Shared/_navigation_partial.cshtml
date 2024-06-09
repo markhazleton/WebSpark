@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using PromptSpark.Areas.Identity.Data
+
+@inject SignInManager<AdminUser> SignInManager
+@inject UserManager<AdminUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <a class="nav-link" href="/OpenAI/DefinitionTypes/Index">Sparks</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/OpenAI/Definitions/Index">Variants</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/OpenAI/UserPrompts/Index">Prompts</a>
+    </li>
+}

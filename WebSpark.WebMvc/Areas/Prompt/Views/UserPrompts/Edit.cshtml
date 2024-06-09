@@ -1,4 +1,4 @@
-﻿@model             UserPromptDto
+﻿@model  UserPromptDto
 
 @{
     ViewData["Title"] = "Edit User Prompt";
@@ -6,7 +6,7 @@
 <form asp-action="Edit">
     <div class="row">
         <div class="col-8">
-            <h1>Edit User Prompt: @Model.Id </h1>
+            <h1>Edit User Prompt: @Model.UserPromptId </h1>
 
         </div>
         <div class="col-4">
@@ -19,7 +19,7 @@
     <div class="row">
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserPromptId" />
             <div class="form-group">
                 <label asp-for="DefinitionType" class="control-label"></label>
                 <select asp-for="DefinitionType" class="form-control" asp-items="@(new SelectList(Model.DefinitionTypes, Model.DefinitionType))"></select>

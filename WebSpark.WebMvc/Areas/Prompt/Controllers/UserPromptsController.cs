@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using WebSpark.Prompt.Models;
-using WebSpark.Prompt.Service;
+using PromptSpark.Domain.Models;
+using PromptSpark.Domain.Service;
 
 namespace WebSpark.WebMvc.Areas.Prompt.Controllers;
 
@@ -63,7 +63,7 @@ public class UserPromptsController(IUserPromptService userPromptService) : OpenA
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, UserPromptDto promptDto)
     {
-        if (id != promptDto.Id)
+        if (id != promptDto.UserPromptId)
         {
             return NotFound();
         }
@@ -76,7 +76,7 @@ public class UserPromptsController(IUserPromptService userPromptService) : OpenA
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await UserPromptExists(promptDto.Id))
+                if (!await UserPromptExists(promptDto.UserPromptId))
                 {
                     return NotFound();
                 }

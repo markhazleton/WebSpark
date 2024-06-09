@@ -1,8 +1,7 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using WebSpark.Prompt.Data;
-using WebSpark.Prompt.Service;
+using PromptSpark.Domain.Data;
+using PromptSpark.Domain.Service;
 using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.WebMvc.Service
@@ -12,7 +11,7 @@ namespace WebSpark.WebMvc.Service
     /// </summary>
     /// <param name="_configuration">The _configuration object.</param>
     public class RecipePromptSparkService(
-        IConfiguration _configuration, 
+        IConfiguration _configuration,
         IGPTDefinitionService _definitionService,
         IGPTService _promptService) : IRecipeGPTService
     {
@@ -27,9 +26,9 @@ namespace WebSpark.WebMvc.Service
         )
         {
             public RecipeData() : this(
-                Name: "",
-                Description: "",
-                Category: "",
+                Name: string.Empty,
+                Description: string.Empty,
+                Category: string.Empty,
                 Ingredients: [],
                 Instructions: [],
                 Servings: 4,

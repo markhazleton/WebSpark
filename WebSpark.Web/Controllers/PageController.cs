@@ -13,12 +13,12 @@ namespace WebSpark.Web.Controllers;
 /// <param name="config"></param>
 /// <param name="websiteService"></param>
 public class PageController(
-    ILogger<PageController> logger, 
+    ILogger<PageController> logger,
     IConfiguration config,
-    IWebsiteService websiteService) : 
+    IWebsiteService websiteService) :
     BaseController(
-        logger, 
-        config, 
+        logger,
+        config,
         websiteService)
 {
     /// <summary>

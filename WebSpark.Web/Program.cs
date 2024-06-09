@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Extensions.Logging;
 using WebSpark.Core.Data;
-using Westwind.AspNetCore.Markdown;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 using WebSpark.RecipeManager.Interfaces;
 using WebSpark.Web.Extensions;
+using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
@@ -91,7 +91,7 @@ app.UseCors("ControlSparkPolicy");
 app.MapRazorPages();
 app.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Page}/{action=Index}/{id?}"); 
+        pattern: "{controller=Page}/{action=Index}/{id?}");
 app.MapDynamicControllerRoute<WebRouteValueTransformer>("{**slug}");
 
 app.Run();

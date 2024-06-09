@@ -49,7 +49,7 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
             if (_baseView == null)
             {
                 var _DefaultSiteId = _config.GetSection("ControlSpark").GetValue<string>("DefaultSiteId");
-                
+
                 _baseView = _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId).GetAwaiter().GetResult();
 
                 var styleService = new BootswatchStyleProvider();

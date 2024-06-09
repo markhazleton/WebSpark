@@ -30,10 +30,10 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.6" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-		<PackageReference Include="Serilog" Version="3.1.1" />
+		<PackageReference Include="Serilog" Version="4.0.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.17.0" />
 		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.16" />
@@ -60,12 +60,10 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
+	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
 	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
 	  <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
-	  <ProjectReference Include="..\WebSpark.Prompt\WebSpark.Prompt.csproj">
-	    <Private>True</Private>
-	  </ProjectReference>
 	  <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebSpark.Prompt.Data;
+using PromptSpark.Domain.Data;
 
 namespace WebSpark.WebMvc.Areas.Prompt.Controllers
 {

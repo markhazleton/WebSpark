@@ -151,8 +151,8 @@ public static class MenuHelper
         if (html == null)
             return string.Empty;
 
-        var routeAction = html.GetRouteValueOrDefault("action","index");
-        var routeControl = html.GetRouteValueOrDefault("controller","home");
+        var routeAction = html.GetRouteValueOrDefault("action", "index");
+        var routeControl = html.GetRouteValueOrDefault("controller", "home");
 
         // both must match
         var returnActive = control == routeControl && action == routeAction;
