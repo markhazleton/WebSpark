@@ -11,7 +11,7 @@ using WebSpark.Domain.Models;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using WebSpark.RecipeManager.Interfaces;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using WebSpark.WebMvc.Service;
 using Westwind.AspNetCore.Markdown;
 using HttpClientUtility.FullService;
@@ -27,7 +27,7 @@ builder.Configuration
 builder.Logging.ClearProviders();
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
-    .WriteTo.File(@"C:\temp\webspark\webspark-log-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(@"C:\websites\webspark\logs\webspark-log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 builder.Logging.AddProvider(new SerilogLoggerProvider(Log.Logger));
 Log.Information("Logger setup complete. This is a test log entry.");
@@ -35,10 +35,10 @@ Log.Information("Logger setup complete. This is a test log entry.");
 var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection")
     ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
 
-builder.Services.AddDbContext<ControlSparkUserContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<WebSparkUserContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddQuickGridEntityFrameworkAdapter();
-builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ControlSparkUserContext>();
+builder.Services.AddDefaultIdentity<WebSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<WebSparkUserContext>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

@@ -3,7 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.Linq;
 
@@ -11,11 +11,11 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class GenerateRecoveryCodesModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
+        private readonly UserManager<WebSparkUser> _userManager;
         private readonly ILogger<GenerateRecoveryCodesModel> _logger;
 
         public GenerateRecoveryCodesModel(
-            UserManager<AdminUser> userManager,
+            UserManager<WebSparkUser> userManager,
             ILogger<GenerateRecoveryCodesModel> logger)
         {
             _userManager = userManager;

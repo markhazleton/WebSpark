@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using PromptSpark.Areas.Identity.Data
+@using WebSpark.Domain.User.Data
 
-@inject SignInManager<AdminUser> SignInManager
-@inject UserManager<AdminUser> UserManager
+@inject SignInManager<WebSparkUser> SignInManager
+@inject UserManager<WebSparkUser> UserManager
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))

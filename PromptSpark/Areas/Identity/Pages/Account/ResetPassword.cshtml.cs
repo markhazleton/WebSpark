@@ -4,7 +4,7 @@
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -13,9 +13,9 @@ namespace PromptSpark.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
+        private readonly UserManager<WebSparkUser> _userManager;
 
-        public ResetPasswordModel(UserManager<AdminUser> userManager)
+        public ResetPasswordModel(UserManager<WebSparkUser> userManager)
         {
             _userManager = userManager;
         }

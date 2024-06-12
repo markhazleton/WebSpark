@@ -9,16 +9,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel(
-        UserManager<ControlSparkUser> userManager,
+        UserManager<WebSparkUser> userManager,
         ILogger<EnableAuthenticatorModel> logger,
         UrlEncoder urlEncoder) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly UserManager<WebSparkUser> _userManager = userManager;
         private readonly ILogger<EnableAuthenticatorModel> _logger = logger;
         private readonly UrlEncoder _urlEncoder = urlEncoder;
 
@@ -132,7 +132,7 @@ namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
             }
         }
 
-        private async Task LoadSharedKeyAndQrCodeUriAsync(ControlSparkUser user)
+        private async Task LoadSharedKeyAndQrCodeUriAsync(WebSparkUser user)
         {
             // Load the authenticator key & QR code URI to display on the form
             var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);

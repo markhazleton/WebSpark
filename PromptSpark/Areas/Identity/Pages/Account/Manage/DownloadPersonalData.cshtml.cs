@@ -3,7 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.Linq;
 using System.Text.Json;
@@ -12,11 +12,11 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
+        private readonly UserManager<WebSparkUser> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
 
         public DownloadPersonalDataModel(
-            UserManager<AdminUser> userManager,
+            UserManager<WebSparkUser> userManager,
             ILogger<DownloadPersonalDataModel> logger)
         {
             _userManager = userManager;
@@ -40,7 +40,7 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 
             // Only include personal data for download
             var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(AdminUser).GetProperties().Where(
+            var personalDataProps = typeof(WebSparkUser).GetProperties().Where(
                             prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
             foreach (var p in personalDataProps)
             {

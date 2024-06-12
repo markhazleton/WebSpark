@@ -5,13 +5,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class LogoutModel(SignInManager<ControlSparkUser> signInManager, ILogger<LogoutModel> logger) : PageModel
+    public class LogoutModel(SignInManager<WebSparkUser> signInManager, ILogger<LogoutModel> logger) : PageModel
     {
-        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
         private readonly ILogger<LogoutModel> _logger = logger;
 
         public async Task<IActionResult> OnPost(string returnUrl = null)

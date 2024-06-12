@@ -3,19 +3,19 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 
 namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class TwoFactorAuthenticationModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
-        private readonly SignInManager<AdminUser> _signInManager;
+        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager;
         private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
         public TwoFactorAuthenticationModel(
-            UserManager<AdminUser> userManager, SignInManager<AdminUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+            UserManager<WebSparkUser> userManager, SignInManager<WebSparkUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;

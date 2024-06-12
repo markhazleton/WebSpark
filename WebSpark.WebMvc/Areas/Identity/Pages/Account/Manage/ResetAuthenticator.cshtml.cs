@@ -5,17 +5,17 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel(
-        UserManager<ControlSparkUser> userManager,
-        SignInManager<ControlSparkUser> signInManager,
+        UserManager<WebSparkUser> userManager,
+        SignInManager<WebSparkUser> signInManager,
         ILogger<ResetAuthenticatorModel> logger) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager = userManager;
-        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly UserManager<WebSparkUser> _userManager = userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
         private readonly ILogger<ResetAuthenticatorModel> _logger = logger;
 
         /// <summary>

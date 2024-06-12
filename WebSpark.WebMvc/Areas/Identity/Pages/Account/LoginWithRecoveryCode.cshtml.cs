@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.ComponentModel.DataAnnotations;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel(
-        SignInManager<ControlSparkUser> signInManager,
-        UserManager<ControlSparkUser> userManager,
+        SignInManager<WebSparkUser> signInManager,
+        UserManager<WebSparkUser> userManager,
         ILogger<LoginWithRecoveryCodeModel> logger) : PageModel
     {
-        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
-        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
+        private readonly UserManager<WebSparkUser> _userManager = userManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger = logger;
 
         /// <summary>

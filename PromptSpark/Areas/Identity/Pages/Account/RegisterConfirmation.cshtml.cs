@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.Text;
 
@@ -14,10 +14,10 @@ namespace PromptSpark.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
+        private readonly UserManager<WebSparkUser> _userManager;
         private readonly IEmailSender _sender;
 
-        public RegisterConfirmationModel(UserManager<AdminUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<WebSparkUser> userManager, IEmailSender sender)
         {
             _userManager = userManager;
             _sender = sender;

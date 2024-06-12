@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using WebSpark.WebMvc.Areas.Identity.Data
+@using WebSpark.Domain.User.Data
 
-@inject SignInManager<ControlSparkUser> SignInManager
-@inject UserManager<ControlSparkUser> UserManager
+@inject SignInManager<WebSparkUser> SignInManager
+@inject UserManager<WebSparkUser> UserManager
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))

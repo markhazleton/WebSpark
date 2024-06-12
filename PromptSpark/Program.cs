@@ -2,7 +2,7 @@ using HttpClientUtility.FullService;
 using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.SemanticKernel;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
@@ -41,12 +41,12 @@ builder.Services.AddSession(options =>
 });
 
 
-var adminConnectionString = builder.Configuration.GetConnectionString("AdminContext");
-builder.Services.AddDbContext<AdminContext>(options =>
+var adminConnectionString = builder.Configuration.GetConnectionString("WebSparkUserContext");
+builder.Services.AddDbContext<WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
-builder.Services.AddIdentity<AdminUser, IdentityRole>()
-        .AddEntityFrameworkStores<AdminContext>()
+builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
+        .AddEntityFrameworkStores<WebSparkUserContext>()
         .AddDefaultUI()
         .AddDefaultTokenProviders()
         .AddUserManager<ApplicationUserManager>();

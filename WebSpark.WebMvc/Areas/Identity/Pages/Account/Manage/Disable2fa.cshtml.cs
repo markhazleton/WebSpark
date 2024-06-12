@@ -5,15 +5,15 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class Disable2faModel(
-        UserManager<ControlSparkUser> userManager,
+        UserManager<WebSparkUser> userManager,
         ILogger<Disable2faModel> logger) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager = userManager;
+        private readonly UserManager<WebSparkUser> _userManager = userManager;
         private readonly ILogger<Disable2faModel> _logger = logger;
 
         /// <summary>

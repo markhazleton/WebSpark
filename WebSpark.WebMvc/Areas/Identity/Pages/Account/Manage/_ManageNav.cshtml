@@ -1,4 +1,4 @@
-﻿@inject SignInManager<ControlSparkUser> SignInManager
+﻿@inject SignInManager<WebSparkUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

@@ -4,7 +4,7 @@
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.Text;
 
@@ -12,10 +12,10 @@ namespace PromptSpark.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
-        private readonly SignInManager<AdminUser> _signInManager;
+        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager;
 
-        public ConfirmEmailChangeModel(UserManager<AdminUser> userManager, SignInManager<AdminUser> signInManager)
+        public ConfirmEmailChangeModel(UserManager<WebSparkUser> userManager, SignInManager<WebSparkUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -1,14 +1,14 @@
-﻿using PromptSpark.Areas.Identity.Data;
+﻿using WebSpark.Domain.User.Data;
 
 namespace PromptSpark.Areas.Admin.Controllers;
 
-public class UserRolesController(AdminContext _context, UserManager<AdminUser> _userManager, RoleManager<IdentityRole> _roleManager) : AdminBaseController(_context, _userManager, _roleManager)
+public class UserRolesController(WebSparkUserContext _context, UserManager<WebSparkUser> _userManager, RoleManager<IdentityRole> _roleManager) : AdminBaseController(_context, _userManager, _roleManager)
 {
     public async Task<IActionResult> Index()
     {
         var users = await _userManager.Users.ToListAsync();
         var userRolesViewModel = new List<UserRolesViewModel>();
-        foreach (AdminUser user in users)
+        foreach (WebSparkUser user in users)
         {
             var thisViewModel = new UserRolesViewModel();
             thisViewModel.UserId = user.Id;
@@ -73,7 +73,7 @@ public class UserRolesController(AdminContext _context, UserManager<AdminUser> _
         }
         return RedirectToAction("Index");
     }
-    private async Task<List<string>> GetUserRoles(AdminUser user)
+    private async Task<List<string>> GetUserRoles(WebSparkUser user)
     {
         return new List<string>(await _userManager.GetRolesAsync(user));
     }

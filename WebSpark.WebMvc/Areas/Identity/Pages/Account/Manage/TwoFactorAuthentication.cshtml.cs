@@ -5,15 +5,15 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class TwoFactorAuthenticationModel(
-        UserManager<ControlSparkUser> userManager, SignInManager<ControlSparkUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger) : PageModel
+        UserManager<WebSparkUser> userManager, SignInManager<WebSparkUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager = userManager;
-        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly UserManager<WebSparkUser> _userManager = userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
         private readonly ILogger<TwoFactorAuthenticationModel> _logger = logger;
 
         /// <summary>

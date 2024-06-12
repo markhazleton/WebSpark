@@ -3,14 +3,14 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 #nullable disable
 
 namespace PromptSpark.Migrations.Admin
 {
-    [DbContext(typeof(AdminContext))]
-    partial class AdminContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(WebSparkUserContext))]
+    partial class WebSparkUserContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -145,7 +145,7 @@ namespace PromptSpark.Migrations.Admin
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.Identity.Data.AdminUser", b =>
+            modelBuilder.Entity("WebSpark.Domain.User.Data.WebSparkUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -234,7 +234,7 @@ namespace PromptSpark.Migrations.Admin
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("PromptSpark.Areas.Identity.Data.AdminUser", null)
+                    b.HasOne("WebSpark.Domain.User.Data.WebSparkUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,7 +243,7 @@ namespace PromptSpark.Migrations.Admin
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("PromptSpark.Areas.Identity.Data.AdminUser", null)
+                    b.HasOne("WebSpark.Domain.User.Data.WebSparkUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -258,7 +258,7 @@ namespace PromptSpark.Migrations.Admin
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PromptSpark.Areas.Identity.Data.AdminUser", null)
+                    b.HasOne("WebSpark.Domain.User.Data.WebSparkUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -267,7 +267,7 @@ namespace PromptSpark.Migrations.Admin
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("PromptSpark.Areas.Identity.Data.AdminUser", null)
+                    b.HasOne("WebSpark.Domain.User.Data.WebSparkUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -4,7 +4,7 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,10 +13,10 @@ namespace PromptSpark.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<AdminUser> _signInManager;
+        private readonly SignInManager<WebSparkUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<AdminUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<WebSparkUser> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;

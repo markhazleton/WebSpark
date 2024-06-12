@@ -4,7 +4,7 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.Linq;
 
@@ -12,14 +12,14 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<AdminUser> _userManager;
-        private readonly SignInManager<AdminUser> _signInManager;
-        private readonly IUserStore<AdminUser> _userStore;
+        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager;
+        private readonly IUserStore<WebSparkUser> _userStore;
 
         public ExternalLoginsModel(
-            UserManager<AdminUser> userManager,
-            SignInManager<AdminUser> signInManager,
-            IUserStore<AdminUser> userStore)
+            UserManager<WebSparkUser> userManager,
+            SignInManager<WebSparkUser> signInManager,
+            IUserStore<WebSparkUser> userStore)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -65,7 +65,7 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
                 .ToList();
 
             string passwordHash = null;
-            if (_userStore is IUserPasswordStore<AdminUser> userPasswordStore)
+            if (_userStore is IUserPasswordStore<WebSparkUser> userPasswordStore)
             {
                 passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
             }

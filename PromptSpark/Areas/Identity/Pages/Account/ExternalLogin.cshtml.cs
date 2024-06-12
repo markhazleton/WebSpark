@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using PromptSpark.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -17,17 +17,17 @@ namespace PromptSpark.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<AdminUser> _signInManager;
-        private readonly UserManager<AdminUser> _userManager;
-        private readonly IUserStore<AdminUser> _userStore;
-        private readonly IUserEmailStore<AdminUser> _emailStore;
+        private readonly SignInManager<WebSparkUser> _signInManager;
+        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly IUserStore<WebSparkUser> _userStore;
+        private readonly IUserEmailStore<WebSparkUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<AdminUser> signInManager,
-            UserManager<AdminUser> userManager,
-            IUserStore<AdminUser> userStore,
+            SignInManager<WebSparkUser> signInManager,
+            UserManager<WebSparkUser> userManager,
+            IUserStore<WebSparkUser> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -191,27 +191,27 @@ namespace PromptSpark.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private AdminUser CreateUser()
+        private WebSparkUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<AdminUser>();
+                return Activator.CreateInstance<WebSparkUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(AdminUser)}'. " +
-                    $"Ensure that '{nameof(AdminUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(WebSparkUser)}'. " +
+                    $"Ensure that '{nameof(WebSparkUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
             }
         }
 
-        private IUserEmailStore<AdminUser> GetEmailStore()
+        private IUserEmailStore<WebSparkUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<AdminUser>)_userStore;
+            return (IUserEmailStore<WebSparkUser>)_userStore;
         }
     }
 }

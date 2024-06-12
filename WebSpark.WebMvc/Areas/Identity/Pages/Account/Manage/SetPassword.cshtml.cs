@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.ComponentModel.DataAnnotations;
-using WebSpark.WebMvc.Areas.Identity.Data;
+using WebSpark.Domain.User.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel(
-        UserManager<ControlSparkUser> userManager,
-        SignInManager<ControlSparkUser> signInManager) : PageModel
+        UserManager<WebSparkUser> userManager,
+        SignInManager<WebSparkUser> signInManager) : PageModel
     {
-        private readonly UserManager<ControlSparkUser> _userManager = userManager;
-        private readonly SignInManager<ControlSparkUser> _signInManager = signInManager;
+        private readonly UserManager<WebSparkUser> _userManager = userManager;
+        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
