@@ -35,7 +35,7 @@ public class OpenAIChatCompletionService(
             role = "system",
             content = definitionResponse.SystemPrompt,
         };
-        if (definitionResponse.OutputType.ToString().ToLower() == "json")
+        if (definitionResponse.OutputType.ToString().Equals("json", StringComparison.CurrentCultureIgnoreCase))
         {
             return new OpenAiApiRequest()
             {

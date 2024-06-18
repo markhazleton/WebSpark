@@ -37,7 +37,7 @@ namespace WebSpark.Core.Providers
             _webRoot = webRoot;
             _baseUrl = baseUrl;
 
-            List<Post> posts = new List<Post>();
+            List<Post> posts = [];
             try
             {
                 SyndicationFeed feed = SyndicationFeed.Load(XmlReader.Create(feedUrl));
@@ -122,7 +122,7 @@ namespace WebSpark.Core.Providers
             if (syndicationItem.Categories != null)
             {
                 if (post.PostCategories == null)
-                    post.PostCategories = new List<PostCategory>();
+                    post.PostCategories = [];
 
                 foreach (var category in syndicationItem.Categories)
                 {

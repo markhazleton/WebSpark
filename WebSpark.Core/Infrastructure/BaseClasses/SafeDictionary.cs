@@ -13,7 +13,7 @@ public sealed class SafeDictionary<TKey, TValue>
     /// <summary>
     ///
     /// </summary>
-    public SafeDictionary() { _Dictionary = new Dictionary<TKey, TValue>(); }
+    public SafeDictionary() { _Dictionary = []; }
 
     /// <summary>
     ///

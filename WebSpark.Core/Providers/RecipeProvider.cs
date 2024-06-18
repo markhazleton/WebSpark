@@ -86,7 +86,6 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
         var Category = webDomainContext.RecipeCategory.Where(w => w.Id == Recipe.RecipeCategoryID).FirstOrDefault();
         var Domain = webDomainContext.Domain.Where(w => w.Id == Recipe.DomainID).FirstOrDefault();
 
-
         return new Recipe()
         {
             Id = Recipe.Id,
@@ -102,8 +101,10 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             ViewCount = Recipe.ViewCount,
             LastViewDt = Recipe.LastViewDT,
             RecipeCategory = Category,
-            Domain = Domain
-
+            Domain = Domain,
+            Servings = Recipe.Servings,
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow,
         };
     }
     private static RecipeCategory Create(RecipeCategoryModel s)

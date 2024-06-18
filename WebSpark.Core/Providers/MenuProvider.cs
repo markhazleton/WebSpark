@@ -30,8 +30,8 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// <returns>List&lt;MenuModel&gt;.</returns>
     private List<MenuModel> Create(List<Menu> list)
     {
-        if (list == null) return new List<MenuModel>();
-        return list.Select(item => Create(item)).OrderBy(x => x.Title).ToList();
+        if (list == null) return [];
+        return [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];
     }
 
     /// <summary>
@@ -197,10 +197,10 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public IEnumerable<MenuModel> GetMenuList()
     {
-        return Create(_context.Menu.OrderBy(o => o.DisplayOrder)
+        return Create([.. _context.Menu.OrderBy(o => o.DisplayOrder)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
-            .OrderBy(o => o.DisplayOrder).ToList());
+            .OrderBy(o => o.DisplayOrder)]);
     }
 
     /// <summary>
@@ -210,10 +210,10 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public List<MenuModel> GetSiteMenu(int DomainId)
     {
-        return Create(_context.Menu.Where(w => w.Domain.Id == DomainId)
+        return Create([.. _context.Menu.Where(w => w.Domain.Id == DomainId)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
-            .OrderBy(o => o.DisplayOrder).ToList());
+            .OrderBy(o => o.DisplayOrder)]);
     }
 
 

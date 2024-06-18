@@ -63,7 +63,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns></returns>
     private List<RecipeModel> Create(IEnumerable<Recipe> list)
     {
-        return list == null ? new List<RecipeModel>() : list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
+        return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns>List&lt;MenuModel&gt;.</returns>
     private List<WebsiteModel> Create(List<WebSite> list)
     {
-        return list == null ? new List<WebsiteModel>() : list.Select(item => Create(item)).OrderBy(x => x.Name).ToList();
+        return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns>MenuModel List</returns>
     private List<MenuModel> Create(List<Menu> list)
     {
-        return list == null ? new List<MenuModel>() : list.Select(item => Create(item)).OrderBy(x => x.Title).ToList();
+        return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];
     }
     /// <summary>
     /// Creates the specified rc.
@@ -156,7 +156,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                 Id = rc.Id,
                 Name = rc.Name,
                 Url = FormatHelper.GetRecipeCategoryURL(rc.Name),
-                Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : new List<RecipeModel>()
+                Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : []
             };
     }
     private List<MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
@@ -254,7 +254,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     {
         var list = _context.Recipe.Include(i => i.RecipeCategory).ToList();
 
-        return list == null ? new List<MenuModel>() : list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder).ToList();
+        return list == null ? [] : [.. list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder)];
     }
     /// <summary>
     /// Gets the menu item.

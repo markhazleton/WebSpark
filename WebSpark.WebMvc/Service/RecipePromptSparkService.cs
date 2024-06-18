@@ -56,7 +56,9 @@ namespace WebSpark.WebMvc.Service
                 DefinitionId = recipeDefinition.DefinitionId,
                 UserPrompt = prompt,
                 Temperature = recipeDefinition.Temperature,
-                Model = recipeDefinition.Model
+                Model = recipeDefinition.Model,
+                OutputType = recipeDefinition.OutputType,
+                GPTName = recipeDefinition.Name,
             };
 
             try

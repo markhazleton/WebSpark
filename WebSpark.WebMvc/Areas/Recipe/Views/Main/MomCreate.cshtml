@@ -1,7 +1,6 @@
-﻿@model             RecipeModel
+﻿@model RecipeModel
 @{
     ViewData["Title"] = "Mom Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h1>Mom AI Recipe</h1>
 <hr />
@@ -20,11 +19,11 @@
                 <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
             </div>
             <div class="form-group row mt-3">
-                <div class="col-1">
-                    <input type="submit" value="Save" class="btn btn-primary" style="width: 100px;" />
+                <div class="col-6 m-4">
+                    <input type="submit" value="Save" class="btn btn-success" />
                 </div>
-                <div class="col-1">
-                    <a class="btn-primary btn" asp-action="Details" asp-controller="RecipeCategory" asp-route-Id="@Model.RecipeCategoryID" style="width: 120px; text-align: center;">Back to List</a>
+                <div class="col-6 m-4">
+                    <a class="btn-info btn" asp-action="Index" asp-controller="Main">Back to List</a>
                 </div>
             </div>
         </form>

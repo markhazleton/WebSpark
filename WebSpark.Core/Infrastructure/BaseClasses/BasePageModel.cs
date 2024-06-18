@@ -59,10 +59,10 @@ public abstract class BasePageModel : PageModel
     {
         var userDict = new Dictionary<string, string>
         {
-            {"UserId", context.HttpContext.User.FindFirst("sub")?.Value },
-            {"GivenName", context.HttpContext.User.FindFirst("given_name")?.Value }
+            { "UserId", context.HttpContext.User.FindFirst("sub")?.Value },
+            { "GivenName", context.HttpContext.User.FindFirst("given_name")?.Value },
+            { "Email", MaskEmailAddress(context.HttpContext.User.FindFirst("email")?.Value) }
         };
-        userDict.Add("Email", MaskEmailAddress(context.HttpContext.User.FindFirst("email")?.Value));
 
         _userScope = _logger.BeginScope(userDict);
         _hostScope = _logger.BeginScope(_scopeInfo.HostScopeInfo);

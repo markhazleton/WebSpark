@@ -122,7 +122,7 @@ public class CategoryProvider : ICategoryProvider, IDisposable
             return false;
 
         if (post.PostCategories == null)
-            post.PostCategories = new List<PostCategory>();
+            post.PostCategories = [];
 
         PostCategory postCategory = await _db.PostCategories
             .AsNoTracking()

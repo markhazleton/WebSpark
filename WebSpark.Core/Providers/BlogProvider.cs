@@ -28,7 +28,7 @@ public class BlogProvider : IBlogProvider, IDisposable
             Theme = blog.Theme,
             IncludeFeatured = blog.IncludeFeatured,
             ItemsPerPage = blog.ItemsPerPage,
-            SocialFields = new List<SocialField>(),
+            SocialFields = [],
             Cover = string.IsNullOrEmpty(blog.Cover) ? Constants.DefaultCover : blog.Cover,
             Logo = string.IsNullOrEmpty(blog.Logo) ? Constants.DefaultLogo : blog.Logo,
             HeaderScript = blog.HeaderScript,

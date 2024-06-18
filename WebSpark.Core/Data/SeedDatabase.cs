@@ -259,7 +259,7 @@ public class SeedDatabase : IDisposable
                 Logo = null,
                 CreatedID = 1,
                 UpdatedID = 1,
-                Authors = new List<Author>() { markAuthor },
+                Authors = [markAuthor],
             };
 
             _context.Blogs.Add(myBlog);
@@ -299,7 +299,7 @@ public class SeedDatabase : IDisposable
                 AuthorId = 1,
                 Selected = true,
                 IsFeatured = true,
-                PostCategories = new List<PostCategory>() { GetPostCategory(1, 1) },
+                PostCategories = [GetPostCategory(1, 1)],
                 PostType = PostType.Post,
                 PostViews = 1,
                 Rating = 5,
@@ -326,7 +326,7 @@ public class SeedDatabase : IDisposable
                 AuthorId = 1,
                 Selected = true,
                 IsFeatured = true,
-                PostCategories = new List<PostCategory>() { GetPostCategory(2, 2) },
+                PostCategories = [GetPostCategory(2, 2)],
                 PostType = PostType.Post,
                 PostViews = 1,
                 Rating = 5,
@@ -353,7 +353,7 @@ public class SeedDatabase : IDisposable
                 AuthorId = 1,
                 Selected = true,
                 IsFeatured = true,
-                PostCategories = new List<PostCategory>() { GetPostCategory(3, 3) },
+                PostCategories = [GetPostCategory(3, 3)],
                 PostType = PostType.Post,
                 PostViews = 1,
                 Rating = 5,

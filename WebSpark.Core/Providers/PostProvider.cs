@@ -92,7 +92,7 @@ public class PostProvider : IPostProvider
             }
         }
 
-        results = results.OrderByDescending(r => r.Rank).ToList();
+        results = [.. results.OrderByDescending(r => r.Rank)];
 
         var posts = new List<PostItem>();
         for (int i = 0; i < results.Count; i++)
@@ -303,11 +303,11 @@ public class PostProvider : IPostProvider
         var posts = new List<Post>();
 
         if (author > 0)
-            posts = _db.Posts.AsNoTracking().Where(p => p.Published > DateTime.MinValue && p.AuthorId == author)
-                 .OrderByDescending(p => p.PostViews).ThenByDescending(p => p.Published).ToList();
+            posts = [.. _db.Posts.AsNoTracking().Where(p => p.Published > DateTime.MinValue && p.AuthorId == author)
+                 .OrderByDescending(p => p.PostViews).ThenByDescending(p => p.Published)];
         else
-            posts = _db.Posts.AsNoTracking().Where(p => p.Published > DateTime.MinValue)
-                 .OrderByDescending(p => p.PostViews).ThenByDescending(p => p.Published).ToList();
+            posts = [.. _db.Posts.AsNoTracking().Where(p => p.Published > DateTime.MinValue)
+                 .OrderByDescending(p => p.PostViews).ThenByDescending(p => p.Published)];
 
         pager.Configure(posts.Count);
 
@@ -348,7 +348,7 @@ public class PostProvider : IPostProvider
             Published = p.Published,
             Featured = p.IsFeatured,
             Author = _db.Authors.Single(a => a.Id == p.AuthorId),
-            SocialFields = new List<SocialField>()
+            SocialFields = []
         };
 
         if (post.Author != null)
@@ -391,7 +391,7 @@ public class PostProvider : IPostProvider
             Published = p.Published,
             Featured = p.IsFeatured,
             Author = _db.Authors.Single(a => a.Id == p.AuthorId),
-            SocialFields = new List<SocialField>()
+            SocialFields = []
         };
 
     }
@@ -405,28 +405,28 @@ public class PostProvider : IPostProvider
         {
             var drafts = author > 0 ?
                  _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.AuthorId == author && p.PostType == PostType.Post).ToList() :
-                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.PostType == PostType.Post).ToList();
-            items = items.Concat(drafts).ToList();
+                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.PostType == PostType.Post)];
+            items = [.. items, .. drafts];
         }
 
         if (include.ToUpper().Contains(Constants.PostFeatured) || string.IsNullOrEmpty(include))
         {
             var featured = author > 0 ?
                  _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.AuthorId == author && p.PostType == PostType.Post).OrderByDescending(p => p.Published).ToList() :
-                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.PostType == PostType.Post).OrderByDescending(p => p.Published).ToList();
-            pubfeatured = pubfeatured.Concat(featured).ToList();
+                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.PostType == PostType.Post).OrderByDescending(p => p.Published)];
+            pubfeatured = [.. pubfeatured, .. featured];
         }
 
         if (include.ToUpper().Contains(Constants.PostPublished) || string.IsNullOrEmpty(include))
         {
             var published = author > 0 ?
                  _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.AuthorId == author && p.PostType == PostType.Post).OrderByDescending(p => p.Published).ToList() :
-                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.PostType == PostType.Post).OrderByDescending(p => p.Published).ToList();
-            pubfeatured = pubfeatured.Concat(published).ToList();
+                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.PostType == PostType.Post).OrderByDescending(p => p.Published)];
+            pubfeatured = [.. pubfeatured, .. published];
         }
 
-        pubfeatured = pubfeatured.OrderByDescending(p => p.Published).ToList();
-        items = items.Concat(pubfeatured).ToList();
+        pubfeatured = [.. pubfeatured.OrderByDescending(p => p.Published)];
+        items = [.. items, .. pubfeatured];
 
         return items;
     }
