@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -17,17 +17,17 @@ namespace PromptSpark.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<WebSparkUser> _signInManager;
-        private readonly UserManager<WebSparkUser> _userManager;
-        private readonly IUserStore<WebSparkUser> _userStore;
-        private readonly IUserEmailStore<WebSparkUser> _emailStore;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
+        private readonly IUserStore<WebSpark.UserIdentity.Data.WebSparkUser> _userStore;
+        private readonly IUserEmailStore<WebSpark.UserIdentity.Data.WebSparkUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<WebSparkUser> signInManager,
-            UserManager<WebSparkUser> userManager,
-            IUserStore<WebSparkUser> userStore,
+            SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager,
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
+            IUserStore<WebSpark.UserIdentity.Data.WebSparkUser> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -191,27 +191,27 @@ namespace PromptSpark.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private WebSparkUser CreateUser()
+        private WebSpark.UserIdentity.Data.WebSparkUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<WebSparkUser>();
+                return Activator.CreateInstance<WebSpark.UserIdentity.Data.WebSparkUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(WebSparkUser)}'. " +
-                    $"Ensure that '{nameof(WebSparkUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(WebSpark.UserIdentity.Data.WebSparkUser)}'. " +
+                    $"Ensure that '{nameof(WebSpark.UserIdentity.Data.WebSparkUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
             }
         }
 
-        private IUserEmailStore<WebSparkUser> GetEmailStore()
+        private IUserEmailStore<WebSpark.UserIdentity.Data.WebSparkUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<WebSparkUser>)_userStore;
+            return (IUserEmailStore<WebSpark.UserIdentity.Data.WebSparkUser>)_userStore;
         }
     }
 }

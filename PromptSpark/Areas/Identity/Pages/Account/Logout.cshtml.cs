@@ -3,17 +3,17 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 
 namespace PromptSpark.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<WebSparkUser> _signInManager;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
 
-        public LogoutModel(SignInManager<WebSparkUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager, ILogger<LogoutModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;

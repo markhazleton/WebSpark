@@ -3,7 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,13 +11,13 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager;
-        private readonly SignInManager<WebSparkUser> _signInManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
 
         public DeletePersonalDataModel(
-            UserManager<WebSparkUser> userManager,
-            SignInManager<WebSparkUser> signInManager,
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
+            SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager,
             ILogger<DeletePersonalDataModel> logger)
         {
             _userManager = userManager;

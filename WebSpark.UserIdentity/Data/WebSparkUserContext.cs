@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
-namespace WebSpark.Domain.User.Data;
+namespace WebSpark.UserIdentity.Data;
 
-public class WebSparkUserContext(DbContextOptions<WebSparkUserContext> options) 
-    : IdentityDbContext<WebSparkUser>(options)
+public class WebSparkUserContext(DbContextOptions<Data.WebSparkUserContext> options)
+    : IdentityDbContext<Data.WebSparkUser>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {

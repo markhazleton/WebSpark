@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -16,10 +16,10 @@ namespace PromptSpark.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ResendEmailConfirmationModel : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ResendEmailConfirmationModel(UserManager<WebSparkUser> userManager, IEmailSender emailSender)
+        public ResendEmailConfirmationModel(UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;

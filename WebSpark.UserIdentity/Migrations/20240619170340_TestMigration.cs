@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 #nullable disable
 
-namespace WebSpark.Domain.User.Migrations
+namespace WebSpark.UserIdentity.Migrations
 {
     /// <inheritdoc />
     public partial class TestMigration : Migration

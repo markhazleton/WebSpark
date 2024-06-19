@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class LoginModel(SignInManager<WebSparkUser> signInManager, ILogger<LoginModel> logger) : PageModel
+    public class LoginModel(SignInManager<UserIdentity.Data.WebSparkUser> signInManager, ILogger<LoginModel> logger) : PageModel
     {
-        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
+        private readonly SignInManager<UserIdentity.Data.WebSparkUser> _signInManager = signInManager;
         private readonly ILogger<LoginModel> _logger = logger;
 
         /// <summary>

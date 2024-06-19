@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.ComponentModel.DataAnnotations;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel(
-        UserManager<WebSparkUser> userManager,
-        SignInManager<WebSparkUser> signInManager,
+        UserManager<UserIdentity.Data.WebSparkUser> userManager,
+        SignInManager<UserIdentity.Data.WebSparkUser> signInManager,
         ILogger<ChangePasswordModel> logger) : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager = userManager;
-        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager = userManager;
+        private readonly SignInManager<UserIdentity.Data.WebSparkUser> _signInManager = signInManager;
         private readonly ILogger<ChangePasswordModel> _logger = logger;
 
         /// <summary>

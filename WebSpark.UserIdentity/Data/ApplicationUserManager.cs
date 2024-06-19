@@ -2,20 +2,20 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace WebSpark.Domain.User.Data;
+namespace WebSpark.UserIdentity.Data;
 
-public class ApplicationUserManager : UserManager<WebSparkUser>
+public class ApplicationUserManager : UserManager<Data.WebSparkUser>
 {
     public ApplicationUserManager(
-        IUserStore<WebSparkUser> store,
+        IUserStore<Data.WebSparkUser> store,
         IOptions<IdentityOptions> optionsAccessor,
-        IPasswordHasher<WebSparkUser> passwordHasher,
-        IEnumerable<IUserValidator<WebSparkUser>> userValidators,
-        IEnumerable<IPasswordValidator<WebSparkUser>> passwordValidators,
+        IPasswordHasher<Data.WebSparkUser> passwordHasher,
+        IEnumerable<IUserValidator<Data.WebSparkUser>> userValidators,
+        IEnumerable<IPasswordValidator<Data.WebSparkUser>> passwordValidators,
         ILookupNormalizer keyNormalizer,
         IdentityErrorDescriber errors,
         IServiceProvider services,
-        ILogger<UserManager<WebSparkUser>> logger)
+        ILogger<UserManager<Data.WebSparkUser>> logger)
         : base(store,
               optionsAccessor,
               passwordHasher,

@@ -1,4 +1,4 @@
-﻿namespace WebSpark.Domain.User.Data;
+﻿namespace WebSpark.UserIdentity.Data;
 
 public enum Roles
 {

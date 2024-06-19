@@ -3,20 +3,20 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 namespace PromptSpark.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
     {
-        private readonly SignInManager<WebSparkUser> _signInManager;
-        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
         public LoginWithRecoveryCodeModel(
-            SignInManager<WebSparkUser> signInManager,
-            UserManager<WebSparkUser> userManager,
+            SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager,
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
             ILogger<LoginWithRecoveryCodeModel> logger)
         {
             _signInManager = signInManager;

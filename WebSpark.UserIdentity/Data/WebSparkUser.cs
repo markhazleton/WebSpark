@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace WebSpark.Domain.User.Data;
+namespace WebSpark.UserIdentity.Data;
 /// <summary>
 /// Add profile data for application users by adding properties to the WebSparkUser class
 /// </summary>

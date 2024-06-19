@@ -3,7 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,13 +11,13 @@ namespace PromptSpark.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<WebSparkUser> _signInManager;
-        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<WebSparkUser> signInManager,
-            UserManager<WebSparkUser> userManager,
+            SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager,
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;

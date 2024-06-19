@@ -10,7 +10,7 @@ using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using WebSpark.RecipeManager.Interfaces;
 using WebSpark.WebMvc.Service;
 using Westwind.AspNetCore.Markdown;
@@ -26,14 +26,14 @@ builder.Configuration
 WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "WebSparkAdmin");
 
 var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
-builder.Services.AddDbContext<WebSparkUserContext>(options =>
+builder.Services.AddDbContext<WebSpark.UserIdentity.Data.WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
-builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
-        .AddEntityFrameworkStores<WebSparkUserContext>()
+builder.Services.AddIdentity<WebSpark.UserIdentity.Data.WebSparkUser, IdentityRole>()
+        .AddEntityFrameworkStores<WebSpark.UserIdentity.Data.WebSparkUserContext>()
         .AddDefaultUI()
         .AddDefaultTokenProviders()
-        .AddUserManager<ApplicationUserManager>();
+        .AddUserManager<WebSpark.UserIdentity.Data.ApplicationUserManager>();
 
 
 

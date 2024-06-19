@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -15,13 +15,13 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager;
-        private readonly SignInManager<WebSparkUser> _signInManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public EmailModel(
-            UserManager<WebSparkUser> userManager,
-            SignInManager<WebSparkUser> signInManager,
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
+            SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -71,7 +71,7 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(WebSparkUser user)
+        private async Task LoadAsync(WebSpark.UserIdentity.Data.WebSparkUser user)
         {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;

@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Linq;
 using System.Text.Json;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel(
-        UserManager<WebSparkUser> userManager,
+        UserManager<UserIdentity.Data.WebSparkUser> userManager,
         ILogger<DownloadPersonalDataModel> logger) : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager = userManager;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager = userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger = logger;
 
         public IActionResult OnGet()
@@ -35,7 +35,7 @@ namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 
             // Only include personal data for download
             var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(WebSparkUser).GetProperties().Where(
+            var personalDataProps = typeof(UserIdentity.Data.WebSparkUser).GetProperties().Where(
                             prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
             foreach (var p in personalDataProps)
             {

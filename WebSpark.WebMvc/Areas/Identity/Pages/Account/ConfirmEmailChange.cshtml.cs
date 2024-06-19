@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Text;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
 {
-    public class ConfirmEmailChangeModel(UserManager<WebSparkUser> userManager, SignInManager<WebSparkUser> signInManager) : PageModel
+    public class ConfirmEmailChangeModel(UserManager<UserIdentity.Data.WebSparkUser> userManager, SignInManager<UserIdentity.Data.WebSparkUser> signInManager) : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager = userManager;
-        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager = userManager;
+        private readonly SignInManager<UserIdentity.Data.WebSparkUser> _signInManager = signInManager;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

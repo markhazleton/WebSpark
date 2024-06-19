@@ -6,7 +6,7 @@ using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
 using Serilog;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configure services
@@ -27,14 +27,14 @@ builder.Services.AddSession(options =>
 });
 
 var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
-builder.Services.AddDbContext<WebSparkUserContext>(options =>
+builder.Services.AddDbContext<WebSpark.UserIdentity.Data.WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
-builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
-        .AddEntityFrameworkStores<WebSparkUserContext>()
+builder.Services.AddIdentity<WebSpark.UserIdentity.Data.WebSparkUser, IdentityRole>()
+        .AddEntityFrameworkStores<WebSpark.UserIdentity.Data.WebSparkUserContext>()
         .AddDefaultUI()
         .AddDefaultTokenProviders()
-        .AddUserManager<ApplicationUserManager>();
+        .AddUserManager<WebSpark.UserIdentity.Data.ApplicationUserManager>();
 
 var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>

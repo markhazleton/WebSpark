@@ -10,22 +10,22 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<WebSparkUser> _signInManager;
-        private readonly UserManager<WebSparkUser> _userManager;
-        private readonly IUserStore<WebSparkUser> _userStore;
-        private readonly IUserEmailStore<WebSparkUser> _emailStore;
+        private readonly SignInManager<UserIdentity.Data.WebSparkUser> _signInManager;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager;
+        private readonly IUserStore<UserIdentity.Data.WebSparkUser> _userStore;
+        private readonly IUserEmailStore<UserIdentity.Data.WebSparkUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
 
         public RegisterModel(
-            UserManager<WebSparkUser> userManager,
-            IUserStore<WebSparkUser> userStore,
-            SignInManager<WebSparkUser> signInManager,
+            UserManager<UserIdentity.Data.WebSparkUser> userManager,
+            IUserStore<UserIdentity.Data.WebSparkUser> userStore,
+            SignInManager<UserIdentity.Data.WebSparkUser> signInManager,
             ILogger<RegisterModel> logger)
         {
             _userManager = userManager;
@@ -136,27 +136,27 @@ namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private WebSparkUser CreateUser()
+        private UserIdentity.Data.WebSparkUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<WebSparkUser>();
+                return Activator.CreateInstance<UserIdentity.Data.WebSparkUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(WebSparkUser)}'. " +
-                    $"Ensure that '{nameof(WebSparkUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(UserIdentity.Data.WebSparkUser)}'. " +
+                    $"Ensure that '{nameof(UserIdentity.Data.WebSparkUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<WebSparkUser> GetEmailStore()
+        private IUserEmailStore<UserIdentity.Data.WebSparkUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<WebSparkUser>)_userStore;
+            return (IUserEmailStore<UserIdentity.Data.WebSparkUser>)_userStore;
         }
     }
 }

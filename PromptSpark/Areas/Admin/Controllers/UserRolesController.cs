@@ -1,16 +1,16 @@
-﻿using WebSpark.Domain.User.Data;
+﻿using WebSpark.UserIdentity.Data;
 
 namespace PromptSpark.Areas.Admin.Controllers;
 
-public class UserRolesController(WebSparkUserContext _context, UserManager<WebSparkUser> _userManager, RoleManager<IdentityRole> _roleManager) : AdminBaseController(_context, _userManager, _roleManager)
+public class UserRolesController(WebSpark.UserIdentity.Data.WebSparkUserContext _context, UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager, RoleManager<IdentityRole> _roleManager) : AdminBaseController(_context, _userManager, _roleManager)
 {
     public async Task<IActionResult> Index()
     {
         var users = await _userManager.Users.ToListAsync();
-        var userRolesViewModel = new List<UserRolesViewModel>();
-        foreach (WebSparkUser user in users)
+        var userRolesViewModel = new List<WebSpark.UserIdentity.Data.UserRolesViewModel>();
+        foreach (WebSpark.UserIdentity.Data.WebSparkUser user in users)
         {
-            var thisViewModel = new UserRolesViewModel();
+            var thisViewModel = new WebSpark.UserIdentity.Data.UserRolesViewModel();
             thisViewModel.UserId = user.Id;
             thisViewModel.Email = user.Email;
             thisViewModel.FirstName = user.FirstName;
@@ -30,10 +30,10 @@ public class UserRolesController(WebSparkUserContext _context, UserManager<WebSp
             return View("NotFound");
         }
         ViewBag.UserName = user.UserName;
-        var model = new List<ManageUserRolesViewModel>();
+        var model = new List<WebSpark.UserIdentity.Data.ManageUserRolesViewModel>();
         foreach (var role in _roleManager.Roles)
         {
-            var userRolesViewModel = new ManageUserRolesViewModel
+            var userRolesViewModel = new WebSpark.UserIdentity.Data.ManageUserRolesViewModel
             {
                 RoleId = role.Id,
                 RoleName = role.Name
@@ -51,7 +51,7 @@ public class UserRolesController(WebSparkUserContext _context, UserManager<WebSp
         return View(model);
     }
     [HttpPost]
-    public async Task<IActionResult> Manage(List<ManageUserRolesViewModel> model, string userId)
+    public async Task<IActionResult> Manage(List<WebSpark.UserIdentity.Data.ManageUserRolesViewModel> model, string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -73,7 +73,7 @@ public class UserRolesController(WebSparkUserContext _context, UserManager<WebSp
         }
         return RedirectToAction("Index");
     }
-    private async Task<List<string>> GetUserRoles(WebSparkUser user)
+    private async Task<List<string>> GetUserRoles(WebSpark.UserIdentity.Data.WebSparkUser user)
     {
         return new List<string>(await _userManager.GetRolesAsync(user));
     }

@@ -5,18 +5,18 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel(
-        UserManager<WebSparkUser> userManager,
-        SignInManager<WebSparkUser> signInManager,
-        IUserStore<WebSparkUser> userStore) : PageModel
+        UserManager<UserIdentity.Data.WebSparkUser> userManager,
+        SignInManager<UserIdentity.Data.WebSparkUser> signInManager,
+        IUserStore<UserIdentity.Data.WebSparkUser> userStore) : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager = userManager;
-        private readonly SignInManager<WebSparkUser> _signInManager = signInManager;
-        private readonly IUserStore<WebSparkUser> _userStore = userStore;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager = userManager;
+        private readonly SignInManager<UserIdentity.Data.WebSparkUser> _signInManager = signInManager;
+        private readonly IUserStore<UserIdentity.Data.WebSparkUser> _userStore = userStore;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -57,7 +57,7 @@ namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
                 .ToList();
 
             string passwordHash = null;
-            if (_userStore is IUserPasswordStore<WebSparkUser> userPasswordStore)
+            if (_userStore is IUserPasswordStore<UserIdentity.Data.WebSparkUser> userPasswordStore)
             {
                 passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
             }

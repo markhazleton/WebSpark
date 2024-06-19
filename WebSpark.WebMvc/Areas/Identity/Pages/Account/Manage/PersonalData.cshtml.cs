@@ -3,15 +3,15 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel(
-        UserManager<WebSparkUser> userManager,
+        UserManager<UserIdentity.Data.WebSparkUser> userManager,
         ILogger<PersonalDataModel> logger) : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager = userManager;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager = userManager;
         private readonly ILogger<PersonalDataModel> _logger = logger;
 
         public async Task<IActionResult> OnGet()

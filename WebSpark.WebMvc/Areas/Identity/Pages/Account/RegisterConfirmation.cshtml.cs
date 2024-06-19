@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 
 namespace WebSpark.WebMvc.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
-    public class RegisterConfirmationModel(UserManager<WebSparkUser> userManager) : PageModel
+    public class RegisterConfirmationModel(UserManager<UserIdentity.Data.WebSparkUser> userManager) : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager = userManager;
+        private readonly UserManager<UserIdentity.Data.WebSparkUser> _userManager = userManager;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

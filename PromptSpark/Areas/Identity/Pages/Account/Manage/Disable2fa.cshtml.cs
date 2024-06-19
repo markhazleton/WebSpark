@@ -3,18 +3,18 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 
 namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class Disable2faModel : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
         private readonly ILogger<Disable2faModel> _logger;
 
         public Disable2faModel(
-            UserManager<WebSparkUser> userManager,
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
             ILogger<Disable2faModel> logger)
         {
             _userManager = userManager;

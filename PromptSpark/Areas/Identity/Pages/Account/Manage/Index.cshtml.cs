@@ -3,7 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.User.Data;
+using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,12 +11,12 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<WebSparkUser> _userManager;
-        private readonly SignInManager<WebSparkUser> _signInManager;
+        private readonly UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager;
+        private readonly SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> _signInManager;
 
         public IndexModel(
-            UserManager<WebSparkUser> userManager,
-            SignInManager<WebSparkUser> signInManager)
+            UserManager<WebSpark.UserIdentity.Data.WebSparkUser> userManager,
+            SignInManager<WebSpark.UserIdentity.Data.WebSparkUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -59,7 +59,7 @@ namespace PromptSpark.Areas.Identity.Pages.Account.Manage
             public byte[] ProfilePicture { get; set; }
         }
 
-        private async Task LoadAsync(WebSparkUser user)
+        private async Task LoadAsync(WebSpark.UserIdentity.Data.WebSparkUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);

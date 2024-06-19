@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace WebSpark.Domain.User.Data;
+namespace WebSpark.UserIdentity.Data;
 public class WebSparkUserContextFactory : IDesignTimeDbContextFactory<WebSparkUserContext>
 {
     public WebSparkUserContext CreateDbContext(string[] args)
