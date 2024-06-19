@@ -50,6 +50,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
 	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
+	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
 	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
 	  <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
 	</ItemGroup>

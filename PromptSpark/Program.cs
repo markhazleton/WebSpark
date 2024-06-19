@@ -2,26 +2,13 @@ using HttpClientUtility.FullService;
 using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.SemanticKernel;
-using WebSpark.Domain.User.Data;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
 using Serilog;
-using Serilog.Events;
+using WebSpark.Domain.User.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "logging.db");
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Warning()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.SQLite(logFilePath)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
 // Configure services
 builder.Configuration
     .AddEnvironmentVariables()
@@ -29,6 +16,7 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddUserSecrets<Program>();
 
+WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "PromptSpark");
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -103,14 +91,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // For serving static files
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "App_Data")),
-    RequestPath = "/App_Data",
-    ServeUnknownFileTypes = true,
-    DefaultContentType = "text/plain"
-});
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

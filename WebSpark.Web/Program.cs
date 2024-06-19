@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Extensions.Logging;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
@@ -14,26 +12,21 @@ using Westwind.AspNetCore.Markdown;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 
-builder.Logging.ClearProviders();
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.File(@"C:\temp\controlspark-log-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-builder.Logging.AddProvider(new SerilogLoggerProvider(Log.Logger));
-Log.Information("Logger setup complete. This is a test log entry.");
-
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", false, true)
     .AddEnvironmentVariables()
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, true)
     .Build();
 
+WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "WebSpark");
 
-// Add services to the container.
+var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+    options.UseSqlite(AppDbConnectionString);
 });
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
