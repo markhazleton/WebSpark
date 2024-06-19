@@ -1,20 +1,19 @@
 ﻿using HttpClientUtility;
+using HttpClientUtility.FullService;
 using HttpClientUtility.StringConverter;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Extensions.Logging;
+using PromptSpark.Domain.Data;
+using PromptSpark.Domain.Service;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
-using PromptSpark.Domain.Data;
-using PromptSpark.Domain.Service;
-using WebSpark.RecipeManager.Interfaces;
 using WebSpark.Domain.User.Data;
+using WebSpark.RecipeManager.Interfaces;
 using WebSpark.WebMvc.Service;
 using Westwind.AspNetCore.Markdown;
-using HttpClientUtility.FullService;
 
 var builder = WebApplication.CreateBuilder(args);
 var environment = builder.Environment;
@@ -24,31 +23,33 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddUserSecrets<Program>();
 
-builder.Logging.ClearProviders();
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.File(@"C:\websites\webspark\logs\webspark-log-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-builder.Logging.AddProvider(new SerilogLoggerProvider(Log.Logger));
-Log.Information("Logger setup complete. This is a test log entry.");
+WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "WebSparkAdmin");
 
-var connectionString = builder.Configuration.GetConnectionString("ControlSparkUserContextConnection")
-    ?? throw new InvalidOperationException("Connection string 'ControlSparkUserContextConnection' not found.");
+var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
+builder.Services.AddDbContext<WebSparkUserContext>(options =>
+    options.UseSqlite(adminConnectionString));
 
-builder.Services.AddDbContext<WebSparkUserContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
+        .AddEntityFrameworkStores<WebSparkUserContext>()
+        .AddDefaultUI()
+        .AddDefaultTokenProviders()
+        .AddUserManager<ApplicationUserManager>();
+
+
+
+
 builder.Services.AddQuickGridEntityFrameworkAdapter();
-builder.Services.AddDefaultIdentity<WebSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<WebSparkUserContext>();
 
+var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+    options.UseSqlite(AppDbConnectionString);
 });
 
+var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
-{
-    options.UseSqlite(builder.Configuration["ConnectionStrings:PromptSparkConnection"]);
-});
+    options.UseSqlite(GPTDbConnectionString));
+
 builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>();
 builder.Services.AddHttpClient("HttpClientService", client =>
 {
@@ -144,3 +145,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.Run();
+
