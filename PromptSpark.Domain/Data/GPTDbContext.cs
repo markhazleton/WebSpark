@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace PromptSpark.Domain.Data;
+
 
 /// <summary>
 /// Represents the database context for PromptSpark.

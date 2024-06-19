@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore.Design;
 using WebSpark.Domain.Entities;
 using WebSpark.RecipeManager.Entities;
 
 namespace WebSpark.Core.Data;
+
 
 /// <summary>
 /// 

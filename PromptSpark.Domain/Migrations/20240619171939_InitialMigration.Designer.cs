@@ -8,19 +8,19 @@ using PromptSpark.Domain.Data;
 
 #nullable disable
 
-namespace PromptSpark.Migrations.HazletonGPTDb
+namespace PromptSpark.Domain.Migrations
 {
     [DbContext(typeof(GPTDbContext))]
-    [Migration("20240420224916_UpdateDefinition")]
-    partial class UpdateDefinition
+    [Migration("20240619171939_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTDefinition", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTDefinition", b =>
                 {
                     b.Property<int>("DefinitionId")
                         .ValueGeneratedOnAdd()
@@ -33,7 +33,11 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GPTName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -41,13 +45,19 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("OutputType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Prompt")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
+                    b.Property<string>("PromptHash")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Temperature")
                         .IsRequired()
@@ -58,15 +68,15 @@ namespace PromptSpark.Migrations.HazletonGPTDb
 
                     b.HasKey("DefinitionId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("GPTName")
                         .IsUnique();
 
                     b.ToTable("Definitions");
                 });
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTDefinitionResponse", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTDefinitionResponse", b =>
                 {
-                    b.Property<int>("ServiceDefintionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -80,31 +90,42 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("DefinitionType")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<long>("ElapsedMilliseconds")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("GPTDescription")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GPTName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("OutputType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("PromptTokens")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("UserPromptId")
+                    b.Property<int>("ResponseId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SystemPrompt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SystemResponse")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Temperature")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("TotalTokens")
@@ -113,19 +134,23 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TestPrompt")
+                    b.Property<string>("UserExpectedResponse")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ServiceDefintionId");
+                    b.Property<string>("UserPrompt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DefinitionId");
 
-                    b.HasIndex("UserPromptId");
+                    b.HasIndex("ResponseId");
 
                     b.ToTable("DefinitionResponses");
                 });
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTDefinitionType", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTDefinitionType", b =>
                 {
                     b.Property<string>("DefinitionType")
                         .HasColumnType("TEXT");
@@ -136,6 +161,9 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("OutputType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
@@ -148,9 +176,9 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                     b.ToTable("DefinitionTypes");
                 });
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTUserPrompt", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTUserPrompt", b =>
                 {
-                    b.Property<int>("ServiceDefintionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -158,33 +186,42 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DefinitionType")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TestPrompt")
+                    b.Property<string>("UserExpectedResponse")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ServiceDefintionId");
+                    b.Property<string>("UserPrompt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("TestPrompt")
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserPrompt")
+                        .IsUnique();
+
+                    b.HasIndex("UserPrompt", "DefinitionType")
                         .IsUnique();
 
                     b.ToTable("Chats");
                 });
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTDefinitionResponse", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTDefinitionResponse", b =>
                 {
-                    b.HasOne("PromptSpark.ServiceDefinition.Database.GPTDefinition", "Definition")
+                    b.HasOne("PromptSpark.Domain.Data.GPTDefinition", "Definition")
                         .WithMany("GPTResponses")
                         .HasForeignKey("DefinitionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PromptSpark.ServiceDefinition.Database.GPTUserPrompt", "Response")
+                    b.HasOne("PromptSpark.Domain.Data.GPTUserPrompt", "Response")
                         .WithMany("GPTResponses")
-                        .HasForeignKey("UserPromptId")
+                        .HasForeignKey("ResponseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -193,12 +230,12 @@ namespace PromptSpark.Migrations.HazletonGPTDb
                     b.Navigation("Response");
                 });
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTDefinition", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTDefinition", b =>
                 {
                     b.Navigation("GPTResponses");
                 });
 
-            modelBuilder.Entity("PromptSpark.ServiceDefinition.Database.GPTUserPrompt", b =>
+            modelBuilder.Entity("PromptSpark.Domain.Data.GPTUserPrompt", b =>
                 {
                     b.Navigation("GPTResponses");
                 });

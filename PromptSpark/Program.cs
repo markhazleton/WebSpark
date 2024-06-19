@@ -38,8 +38,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-
-var adminConnectionString = builder.Configuration.GetConnectionString("WebSparkUserContext");
+var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
 builder.Services.AddDbContext<WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
@@ -49,7 +48,7 @@ builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
         .AddDefaultTokenProviders()
         .AddUserManager<ApplicationUserManager>();
 
-var GPTDbConnectionString = builder.Configuration.GetConnectionString("GPTDbContext");
+var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
     options.UseSqlite(GPTDbConnectionString));
 

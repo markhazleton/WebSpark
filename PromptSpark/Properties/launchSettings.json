@@ -1,13 +1,12 @@
-﻿{
+{
   "profiles": {
     "PromptSpark": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7098",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:55113;http://localhost:55114"
     }
   }
 }
