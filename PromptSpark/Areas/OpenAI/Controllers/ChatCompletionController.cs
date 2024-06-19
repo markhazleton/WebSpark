@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Newtonsoft.Json;
+using NuGet.Protocol;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
@@ -33,8 +34,9 @@ public class ChatCompletionController(
         var definitionDtoJson = session.GetString("DefinitionDto");
         var definitionDto = JsonConvert.DeserializeObject<DefinitionDto>(definitionDtoJson);
 
-        if (!string.IsNullOrEmpty(message))
+        if (!string.IsNullOrEmpty(message) && definitionDto != null)
         {
+            logger.LogWarning("Received message: {message} for {Name}", message, definitionDto.Name);
             var chatHistory = new ChatHistory();
             chatHistory.AddSystemMessage(definitionDto.Prompt);
             chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");

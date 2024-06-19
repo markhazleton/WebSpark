@@ -23,8 +23,8 @@
 		<Exec Command="npm run build-assets" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="1.11.4" />
-		<PackageReference Include="CsvHelper" Version="32.0.3" />
+		<PackageReference Include="Azure.Identity" Version="1.12.0" />
+		<PackageReference Include="CsvHelper" Version="33.0.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />

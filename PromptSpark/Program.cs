@@ -11,9 +11,7 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Serilog
 var logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "logging.db");
-
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Warning()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)

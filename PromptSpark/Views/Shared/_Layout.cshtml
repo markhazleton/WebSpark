@@ -35,9 +35,7 @@
                         </li>
                         <partial name="_navigation_partial" />
                     </ul>
-                    <!-- Assuming _LoginPartial contains login or user account related links 
                     <partial name="_LoginPartial" />
-                    -->
                 </div>
             </div>
         </nav>
@@ -45,25 +43,10 @@
     <main class="container-fluid main-content pb-3">
         @RenderBody()
     </main>
-    <br style="clear:both;" />
-    <br />
-    <br />
-    <br />
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    PromptSpark &copy; 2024 - <a href="https://markhazleton.com">Mark Hazleton</a>
-                </div>
-                <div class="col-md-4">
-                    <!-- Centered content if needed -->
-                </div>
-                <div class="col-md-4">
-                    <a class="" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+
+    @await Html.PartialAsync("/Views/Shared/_Footer.cshtml")
+
+
     <script src="~/dist/js/bootstrap.bundle.js" asp-append-version="true"></script>
     <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.7/cr-2.0.2/date-1.5.2/r-3.0.2/datatables.min.js"></script>
     <script src="~/dist/js/site.js" asp-append-version="true"></script>

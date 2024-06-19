@@ -1,4 +1,4 @@
-﻿namespace PromptSpark.Models;
+﻿namespace WebSpark.Domain.ViewModels;
 public class ErrorViewModel
 {
     public string? RequestId { get; set; }
