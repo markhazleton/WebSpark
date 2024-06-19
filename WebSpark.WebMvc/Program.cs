@@ -26,14 +26,14 @@ builder.Configuration
 WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "WebSparkAdmin");
 
 var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
-builder.Services.AddDbContext<WebSpark.UserIdentity.Data.WebSparkUserContext>(options =>
+builder.Services.AddDbContext<WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
-builder.Services.AddIdentity<WebSpark.UserIdentity.Data.WebSparkUser, IdentityRole>()
-        .AddEntityFrameworkStores<WebSpark.UserIdentity.Data.WebSparkUserContext>()
+builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
+        .AddEntityFrameworkStores<WebSparkUserContext>()
         .AddDefaultUI()
         .AddDefaultTokenProviders()
-        .AddUserManager<WebSpark.UserIdentity.Data.ApplicationUserManager>();
+        .AddUserManager<ApplicationUserManager>();
 
 
 
