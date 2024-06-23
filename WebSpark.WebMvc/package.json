@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node npm_build.js",
-    "compile-scss": "sass wwwroot/Styles/main.scss wwwroot/css/style.css"
+    "compile-scss": "sass src/scss/main.scss wwwroot/css/style.css"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",

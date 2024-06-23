@@ -53,10 +53,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="wwwroot\images\" />
-	  <Folder Include="wwwroot\lib\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Include="wwwroot\js\site.js" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
