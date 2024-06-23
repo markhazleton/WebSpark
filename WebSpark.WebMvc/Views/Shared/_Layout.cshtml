@@ -8,9 +8,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/dist/images/favicon-16x16.png">
     <link rel="manifest" href="/dist/images/site.webmanifest">
     <meta name="author" content="Mark Hazleton">
-
     <title>@ViewData["Title"]</title>
-
     <link rel="stylesheet" href="~/dist/css/style.min.css" asp-append-version="true" />
     <link href="https://cdn.datatables.net/2.0.4/css/dataTables.bootstrap5.css" rel="stylesheet">
 
@@ -26,11 +24,7 @@
 
     @await Html.PartialAsync("/Views/Shared/_Footer.cshtml")
 
-    <script src="~/dist/js/bootstrap.bundle.js" asp-append-version="true"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/2.0.4/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.4/js/dataTables.bootstrap5.js"></script>
-    <script src="~/dist/js/site.js" asp-append-version="true"></script>
+    <script src="~/dist/js/scripts.min.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

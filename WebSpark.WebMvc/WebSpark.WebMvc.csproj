@@ -18,7 +18,71 @@
 		<Exec Command="npm install" />
 		<Message Importance="high" Text="Build Assets..." />
 		<Exec Command="npm run build" />
-	</Target>	
+	</Target>
+	<ItemGroup>
+	  <None Remove="src\images\android-chrome-192x192.png" />
+	  <None Remove="src\images\android-chrome-512x512.png" />
+	  <None Remove="src\images\apple-touch-icon.png" />
+	  <None Remove="src\images\favicon-16x16.png" />
+	  <None Remove="src\images\favicon-32x32.png" />
+	  <None Remove="src\images\favicon.ico" />
+	  <None Remove="src\images\GPT-Entity-Diagram.png" />
+	  <None Remove="src\images\PromptSpark-icon-transparent.webp" />
+	  <None Remove="src\images\PromptSpark-icon.png" />
+	  <None Remove="src\images\PromptSpark-icon.webp" />
+	  <None Remove="src\images\PromptSpark.webp" />
+	  <None Remove="src\images\site.webmanifest" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="src\images\android-chrome-192x192.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\android-chrome-512x512.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\apple-touch-icon.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\favicon-16x16.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\favicon-32x32.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\favicon.ico">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\GPT-Entity-Diagram.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark-icon-transparent.webp">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark-icon.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark-icon.webp">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark.webp">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\site.webmanifest">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>	
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
@@ -52,9 +116,6 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="wwwroot\images\" />
-	</ItemGroup>
-	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
 	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
@@ -62,5 +123,8 @@
 	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
 	  <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\dist\" />
 	</ItemGroup>
 </Project>
