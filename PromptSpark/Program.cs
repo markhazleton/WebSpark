@@ -1,12 +1,10 @@
 using HttpClientUtility.FullService;
 using HttpClientUtility.StringConverter;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.SemanticKernel;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
 using Serilog;
-using WebSpark.UserIdentity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configure services

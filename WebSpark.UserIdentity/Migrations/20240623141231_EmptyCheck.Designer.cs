@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebSpark.UserIdentity.Data;
 
 #nullable disable
 
-namespace WebSpark.Domain.User.Migrations
+namespace WebSpark.UserIdentity.Migrations
 {
     [DbContext(typeof(WebSparkUserContext))]
-    partial class WebSparkUserContextModelSnapshot : ModelSnapshot
+    [Migration("20240623141231_EmptyCheck")]
+    partial class EmptyCheck
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
