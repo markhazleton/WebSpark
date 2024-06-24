@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedLibrary", "SharedLibr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.UserIdentity", "WebSpark.UserIdentity\WebSpark.UserIdentity.csproj", "{167FFCCC-F688-4464-8D50-DBB469A33148}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Admin", "WebSpark.Admin\WebSpark.Admin.csproj", "{857DB6C9-17CF-45B4-B9EA-55EB929884CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{167FFCCC-F688-4464-8D50-DBB469A33148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{167FFCCC-F688-4464-8D50-DBB469A33148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{167FFCCC-F688-4464-8D50-DBB469A33148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{857DB6C9-17CF-45B4-B9EA-55EB929884CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{857DB6C9-17CF-45B4-B9EA-55EB929884CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{857DB6C9-17CF-45B4-B9EA-55EB929884CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{857DB6C9-17CF-45B4-B9EA-55EB929884CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

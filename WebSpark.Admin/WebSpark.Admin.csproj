@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <Target Name="EnsureNodeModules" BeforeTargets="BeforeBuild">
+    <Message Importance="high" Text="Update npm packages..." />
+    <Exec Command="ncu -u" />
+    <Message Importance="high" Text="Restoring npm packages..." />
+    <Exec Command="npm install --legacy-peer-deps" />
+    <Message Importance="high" Text="Build Assets..." />
+    <Exec Command="npm run build" />
+  </Target>
+  <ItemGroup>
+    <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.17.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
+    <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
+    <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
+    <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Areas\Recipe\Views\_ViewImports.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\Recipe\Views\_ViewStart.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

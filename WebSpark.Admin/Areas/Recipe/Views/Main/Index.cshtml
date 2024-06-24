@@ -1,0 +1,63 @@
+@model IEnumerable<RecipeModel>
+
+@{
+    ViewData["Title"] = "Recipes";
+}
+
+<h1>Recipes</h1>
+
+<p>
+    <a asp-action="MomCreate">Mom AI Recipe</a>
+</p>
+<p>
+    <a asp-action="Create">Create Recipe</a>
+</p>
+<table class="table" id="displayTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecipeCategory.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.Name, "Edit", new {id=item.Id })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section PageScripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#displayTable').DataTable({
+                paging: false,        // Disable pagination
+                scrollY: '50vh',      // Enable vertical scrolling and set the height
+                scrollCollapse: true,  // Optional: Reduce the height of the table when there are fewer rows
+                stateSave: true,
+                colReorder: {
+                    realtime: true, // update the table as you drag the columns (default: true)
+                    fixedColumnsLeft: 1, // number of columns on the left that cannot be reordered
+                    fixedColumnsRight: 1 // number of columns on the right that cannot be reordered
+                }
+            });
+        });
+    </script>
+}

@@ -18,9 +18,11 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+	  <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.16" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
+    <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 ﻿using WebSpark.RecipeManager.Interfaces;
 using WebSpark.RecipeManager.Models;
-using WebSpark.WebMvc.Service;
 
 namespace WebSpark.WebMvc.Areas.Recipe.Controllers;
 
@@ -11,7 +10,7 @@ namespace WebSpark.WebMvc.Areas.Recipe.Controllers;
 public class MainController(
     ILogger<MainController> _logger,
     IRecipeService _RecipeService,
-    IRecipeGPTService recipeGPTService) : RecipeBaseController
+    PromptSpark.Domain.Service.IRecipeGPTService recipeGPTService) : RecipeBaseController
 {
 
     // GET: RecipeListController
