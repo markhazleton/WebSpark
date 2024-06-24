@@ -1,0 +1,16 @@
+{
+  "menuItems": [
+    {
+      "text": "Home",
+      "url": "/WebCMS/Home"
+    },
+    {
+      "text": "Menu",
+      "url": "/WebCMS/Menu"
+    },
+    {
+      "text": "Website",
+      "url": "/WebCMS/Website"
+    }
+  ]
+}

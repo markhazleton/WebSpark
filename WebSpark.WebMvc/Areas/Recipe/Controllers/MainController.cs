@@ -132,7 +132,7 @@ public class MainController(
         }
     }
 
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult Delete(int id)

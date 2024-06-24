@@ -20,78 +20,10 @@
 		<Exec Command="npm run build" />
 	</Target>
 	<ItemGroup>
-	  <None Remove="src\images\android-chrome-192x192.png" />
-	  <None Remove="src\images\android-chrome-512x512.png" />
-	  <None Remove="src\images\apple-touch-icon.png" />
-	  <None Remove="src\images\favicon-16x16.png" />
-	  <None Remove="src\images\favicon-32x32.png" />
-	  <None Remove="src\images\favicon.ico" />
-	  <None Remove="src\images\GPT-Entity-Diagram.png" />
-	  <None Remove="src\images\PromptSpark-icon-transparent.webp" />
-	  <None Remove="src\images\PromptSpark-icon.png" />
-	  <None Remove="src\images\PromptSpark-icon.webp" />
-	  <None Remove="src\images\PromptSpark.webp" />
-	  <None Remove="src\images\site.webmanifest" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Content Include="src\images\android-chrome-192x192.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\android-chrome-512x512.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\apple-touch-icon.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\favicon-16x16.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\favicon-32x32.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\favicon.ico">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\GPT-Entity-Diagram.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark-icon-transparent.webp">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark-icon.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark-icon.webp">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark.webp">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\site.webmanifest">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	</ItemGroup>	
-	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.6" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
 		<PackageReference Include="Serilog" Version="4.0.0" />
@@ -100,20 +32,6 @@
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.17.0" />
-		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.16" />
-	</ItemGroup>
-	<ItemGroup>
-		<Content Update="Views\Shared\_Footer.cshtml">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="Views\Shared\_Layout.cshtml">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\site\mom\RecipeList.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
@@ -123,8 +41,5 @@
 	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
 	  <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="wwwroot\dist\" />
 	</ItemGroup>
 </Project>
