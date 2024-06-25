@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.RecipeManager", "W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Web", "WebSpark.Web\WebSpark.Web.csproj", "{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.WebMvc", "WebSpark.WebMvc\WebSpark.WebMvc.csproj", "{73646F7D-E779-4C4D-84E0-FB300F445098}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{83E5AC53-6F44-4CDB-9127-01082E0D143F}"
 EndProject
 Global
@@ -85,10 +83,6 @@ Global
 		{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73646F7D-E779-4C4D-84E0-FB300F445098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73646F7D-E779-4C4D-84E0-FB300F445098}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73646F7D-E779-4C4D-84E0-FB300F445098}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73646F7D-E779-4C4D-84E0-FB300F445098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

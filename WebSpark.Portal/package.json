@@ -1,0 +1,57 @@
+{
+    "title": "WebSpark Portal",
+    "name": "web-spark-portal",
+    "version": "8.0.1",
+    "scripts": {
+        "build": "npm run clean && npm run build:scss && npm run build:scripts && npm run build:assets",
+        "build:assets": "node scripts/build-assets.js",
+        "build:scripts": "node scripts/build-scripts.js",
+        "build:scss": "node scripts/build-scss.js",
+        "clean": "node scripts/clean.js",
+        "start": "npm run build && node scripts/start.js",
+        "start:debug": "npm run build && node scripts/start-debug.js"
+    },
+    "description": "The admin portal for all things WebSpark.",
+    "keywords": [
+        "css",
+        "sass",
+        "html",
+        "responsive",
+        "theme",
+        "template",
+        "ui"
+    ],
+    "homepage": "https://markhazleton.com/",
+    "bugs": {
+        "email": "mark.hazleton@controlorigins.com"
+    },
+    "license": "SEE_LICENSE",
+    "author": "Mark Hazleton",
+    "contributors": [
+      "David Miller (https://davidmiller.io/)",
+      "Mark Hazleton (https://markhazleton.com/)"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/markhazleton/webspark.git"
+    },
+    "dependencies": {
+        "bootstrap": "5.3.3"
+    },
+    "devDependencies": {
+        "@fullhuman/postcss-purgecss": "^6.0.0",
+        "autoprefixer": "10.4.19",
+        "browser-sync": "3.0.2",
+        "chokidar": "3.6.0",
+        "concurrently": "8.2.2",
+        "cssnano": "^7.0.3",
+        "dotenv": "16.4.5",
+        "p-limit": "5.0.0",
+        "postcss": "8.4.38",
+        "prettier": "3.3.2",
+        "sass": "1.77.6",
+        "shelljs": "0.8.5",
+        "upath": "2.0.1",
+        "workerpool": "9.1.2"
+    }
+}
