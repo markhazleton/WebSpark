@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebSpark.UserIdentity.Data;
 
-public class WebSparkUserContext(DbContextOptions<Data.WebSparkUserContext> options)
-    : IdentityDbContext<Data.WebSparkUser>(options)
+public class WebSparkUserContext(DbContextOptions<WebSparkUserContext> options)
+    : IdentityDbContext<WebSparkUser>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {

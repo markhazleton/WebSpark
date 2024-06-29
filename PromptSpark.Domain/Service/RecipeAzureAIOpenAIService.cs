@@ -11,7 +11,7 @@ namespace PromptSpark.Domain.Service;
 /// <summary>
 /// Service class for generating recipe using GPT model.
 /// </summary>
-public class RecipeAzureAIOpenAIService : Service.IRecipeGPTService
+public class RecipeAzureAIOpenAIService : IRecipeGPTService
 {
     private readonly OpenAIClient client;
 
@@ -74,7 +74,7 @@ public class RecipeAzureAIOpenAIService : Service.IRecipeGPTService
                         AllowTrailingCommas = true,
                         UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
                     };
-                    var recipe = JsonSerializer.Deserialize<Service.RecipeAzureAIOpenAIService.RecipeData>(message.Message.Content, options);
+                    var recipe = JsonSerializer.Deserialize<RecipeData>(message.Message.Content, options);
                     if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
                     {
                         // try cast recipe.servings to int

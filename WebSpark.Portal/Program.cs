@@ -1,11 +1,16 @@
 using HttpClientUtility.FullService;
 using HttpClientUtility.StringConverter;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using Serilog;
+using WebSpark.Core.Data;
+using WebSpark.Core.Extensions;
+using WebSpark.Core.Providers;
+using WebSpark.Domain.Interfaces;
+using WebSpark.Domain.Models;
+using WebSpark.RecipeManager.Interfaces;
+using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configure services
@@ -26,14 +31,22 @@ builder.Services.AddSession(options =>
 });
 
 var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
-builder.Services.AddDbContext<WebSpark.UserIdentity.Data.WebSparkUserContext>(options =>
+builder.Services.AddDbContext<WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
-builder.Services.AddIdentity<WebSpark.UserIdentity.Data.WebSparkUser, IdentityRole>()
-        .AddEntityFrameworkStores<WebSpark.UserIdentity.Data.WebSparkUserContext>()
+builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
+        .AddEntityFrameworkStores<WebSparkUserContext>()
         .AddDefaultUI()
         .AddDefaultTokenProviders()
-        .AddUserManager<WebSpark.UserIdentity.Data.ApplicationUserManager>();
+        .AddUserManager<ApplicationUserManager>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite(AppDbConnectionString);
+});
 
 var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
@@ -69,11 +82,36 @@ builder.Services.AddSignalR().AddJsonProtocol(options =>
     // Configuring JSON serializer options if needed
     options.PayloadSerializerOptions.PropertyNamingPolicy = null;
 });
-builder.Services.AddSingleton<WebSpark.Portal.Utilities.ChatHistoryStore>();
+builder.Services.AddSingleton<ChatHistoryStore>();
 builder.Services.AddScoped<IUserPromptService, UserPromptService>();
 builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
 builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();
 builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
+builder.Services.AddScoped<IRecipeGPTService, RecipePromptSparkService>();
+
+
+builder.Services.AddMarkdown();
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
+builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
+builder.Services.AddScoped<IMenuService, MenuProvider>();
+builder.Services.AddScoped<IRecipeService, RecipeProvider>();
+builder.Services.AddScoped<IMenuProvider, MenuProvider>();
+builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
+builder.Services.AddBlogProviders();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(360);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+// We need to use MVC so we can use a Razor Configuration SiteTemplate
+// have to let MVC know we have a controller
+builder.Services.AddMvc()
+    .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
 var app = builder.Build();
 
@@ -107,7 +145,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
-    endpoints.MapHub<WebSpark.Portal.Utilities.ChatHub>("/chatHub");
+    endpoints.MapHub<ChatHub>("/chatHub");
 });
 
 app.Run();

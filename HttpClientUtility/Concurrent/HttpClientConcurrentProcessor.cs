@@ -4,10 +4,10 @@ namespace HttpClientUtility.Concurrent;
 
 public class HttpClientConcurrentProcessor : ConcurrentProcessor<HttpClientConcurrentModel>
 {
-    private readonly HttpClientUtility.Interfaces.IHttpClientService _service;
+    private readonly Interfaces.IHttpClientService _service;
 
     public HttpClientConcurrentProcessor(
-        Func<int, HttpClientConcurrentModel> taskDataFactory, HttpClientUtility.Interfaces.IHttpClientService service) :
+        Func<int, HttpClientConcurrentModel> taskDataFactory, Interfaces.IHttpClientService service) :
         base(
             taskDataFactory)
     {

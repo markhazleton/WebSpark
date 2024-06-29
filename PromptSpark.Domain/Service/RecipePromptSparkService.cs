@@ -13,7 +13,7 @@ namespace PromptSpark.Domain.Service;
 public class RecipePromptSparkService(
     IConfiguration _configuration,
     IGPTDefinitionService _definitionService,
-    IGPTService _promptService) : Service.IRecipeGPTService
+    IGPTService _promptService) : IRecipeGPTService
 {
     public record RecipeData(
         string Name,
@@ -74,7 +74,7 @@ public class RecipePromptSparkService(
                     AllowTrailingCommas = true,
                     UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
                 };
-                var recipe = JsonSerializer.Deserialize<Service.RecipePromptSparkService.RecipeData>(response.SystemResponse, options);
+                var recipe = JsonSerializer.Deserialize<RecipeData>(response.SystemResponse, options);
                 if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
                 {
                     recipeModel = new RecipeModel

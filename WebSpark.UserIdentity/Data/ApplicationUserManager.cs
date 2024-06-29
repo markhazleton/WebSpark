@@ -4,18 +4,18 @@ using Microsoft.Extensions.Options;
 
 namespace WebSpark.UserIdentity.Data;
 
-public class ApplicationUserManager : UserManager<Data.WebSparkUser>
+public class ApplicationUserManager : UserManager<WebSparkUser>
 {
     public ApplicationUserManager(
-        IUserStore<Data.WebSparkUser> store,
+        IUserStore<WebSparkUser> store,
         IOptions<IdentityOptions> optionsAccessor,
-        IPasswordHasher<Data.WebSparkUser> passwordHasher,
-        IEnumerable<IUserValidator<Data.WebSparkUser>> userValidators,
-        IEnumerable<IPasswordValidator<Data.WebSparkUser>> passwordValidators,
+        IPasswordHasher<WebSparkUser> passwordHasher,
+        IEnumerable<IUserValidator<WebSparkUser>> userValidators,
+        IEnumerable<IPasswordValidator<WebSparkUser>> passwordValidators,
         ILookupNormalizer keyNormalizer,
         IdentityErrorDescriber errors,
         IServiceProvider services,
-        ILogger<UserManager<Data.WebSparkUser>> logger)
+        ILogger<UserManager<WebSparkUser>> logger)
         : base(store,
               optionsAccessor,
               passwordHasher,

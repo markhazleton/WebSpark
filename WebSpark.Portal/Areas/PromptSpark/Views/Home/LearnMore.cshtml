@@ -1,0 +1,1123 @@
+﻿@*
+
+*@
+@{
+}
+@section Styles {
+    <style>
+        .navigation {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+
+        .content-section {
+            margin-bottom: 60px;
+        }
+
+        .nav-link {
+            padding: 10px 15px;
+            color: #007bff;
+        }
+
+            .nav-link:hover {
+                color: #0056b3;
+                text-decoration: underline;
+            }
+    </style>
+}
+
+
+
+
+<h1 class="mb-4 text-center">Understanding Prompt Spark</h1>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Column 1: Navigation -->
+        <div class="navigation col-xl-2 col-sm-12 col-md-2">
+            <nav id="sidebar" class="d-flex flex-column">
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#coreSparks">Core Sparks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sparkVariant">Spark Variant</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#userPrompts">User Prompts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#howToUse">How To Use Prompt Spark</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tokens">Tokens in Large Language Models</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#megaPrompts">Mastering Mega Prompts</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- Column 2: Content -->
+        <div class="content col-xl-10 col-sm-12 col-md-10">
+            <div id="section1" class="content-section">
+                <!-- Section 1: Core Sparks -->
+                <a id="coreSparks"></a>
+                <div class="card mb-3" >
+                    <div class="card-header">
+                        <h2>Core Sparks</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">
+                            A <strong>Core Spark</strong> is a critical part of the Prompt Spark application, serving as the core specification for the behavior of Large Language Models (LLMs). It is designed to detail the expected functionalities and output characteristics necessary for the effective operation of any LLM. By defining these elements, a Core Spark ensures that all model implementations adhere to a consistent standard, which is crucial for maintaining the quality and reliability of interactions within the application.
+                        </p>
+                        <p>
+                            This specification outlines the architectural framework, training guidelines, and operational parameters of LLMs. These guidelines are crafted with the intent to optimize the performance of these models in a variety of applications, from simple question answering to complex dialogue systems. The foundation aims to enhance the adaptability of LLMs, enabling them to perform efficiently across different scenarios and industries without the need for extensive reconfiguration.
+                        </p>
+                        <p>
+                            In practice, the Core Spark acts as a blueprint for developers, providing a clear path to developing applications that are both innovative and robust. It allows for the systematic improvement and scaling of model capabilities, which in turn, facilitates the creation of tailored solutions that meet the diverse needs of users. By leveraging a well-defined Core Spark, Prompt Spark empowers developers to harness the full potential of LLM technology, sparking extraordinary outcomes in various fields.
+                        </p>
+                        <strong>Here are some common output types:</strong>
+                        <!-- Accordion -->
+                        <div class="accordion" id="gptTypesAccordion">
+                            <!-- Markdown -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingMarkdown">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMarkdown" aria-expanded="true" aria-controls="collapseMarkdown">
+                                        <strong>Markdown</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseMarkdown" class="accordion-collapse collapse show" aria-labelledby="headingMarkdown" data-bs-parent="#gptTypesAccordion">
+                                    <div class="accordion-body">
+                                        <p>
+                                            Markdown GPTs are tailored to create content that includes Markdown formatting.
+                                            They generate text formatted for ease of reading and web compatibility,
+                                            making them perfect for creating well-structured documentation or
+                                            content directly in Markdown-supported platforms.
+                                        </p>
+                                        <p>
+                                            By automating the formatting process, these GPTs help streamline the
+                                            workflow for content creators allowing them to focus more on the quality
+                                            of content rather than its presentation.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- JSON -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingJSON">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJSON" aria-expanded="false" aria-controls="collapseJSON">
+                                        <strong>JSON</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseJSON" class="accordion-collapse collapse" aria-labelledby="headingJSON" data-bs-parent="#gptTypesAccordion">
+                                    <div class="accordion-body">
+                                        <p>
+                                            JSON GPTs specialize in generating structured data in JSON format,
+                                            which is essential for applications that require data interchange.
+                                            These models facilitate the manipulation and transmission of data
+                                            between servers and clients in web and mobile applications.
+                                        </p>
+                                        <p>
+                                            Their ability to output precisely structured JSON strings makes them invaluable
+                                            for developing APIs, configuring software applications,
+                                            and automating data entry and testing processes.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingText">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseText" aria-expanded="false" aria-controls="collapseText">
+                                        <strong>Text</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseText" class="accordion-collapse collapse" aria-labelledby="headingText" data-bs-parent="#gptTypesAccordion">
+                                    <div class="accordion-body">
+                                        <p>
+                                            Text GPTs are versatile, designed to produce plain text applicable across various mediums.
+                                            These GPTs are used for composing emails, writing articles, generating reports, and more,
+                                            adapting to different contexts based on user input.
+                                        </p>
+                                        <p>
+                                            Whether for business communications or creative writing,
+                                            Text GPTs provide a foundation for natural language generation tasks,
+                                            ensuring the produced content is contextually relevant and stylistically appropriate.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- HTML -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingHTML">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHTML" aria-expanded="false" aria-controls="collapseHTML">
+                                        <strong>HTML</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseHTML" class="accordion-collapse collapse" aria-labelledby="headingHTML" data-bs-parent="#gptTypesAccordion">
+                                    <div class="accordion-body">
+                                        <p>
+                                            HTML GPTs generate HTML code, which is crucial for web development
+                                            and maintaining online content. They assist developers in creating web pages
+                                            by automatically generating the necessary HTML elements and structures
+                                            based on given specifications.
+                                        </p>
+                                        <p>
+                                            This capability not only speeds up the development process but also
+                                            ensures consistency in web design practices, allowing for more streamlined
+                                            and efficient project completions.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Code -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingCode">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCode" aria-expanded="false" aria-controls="collapseCode">
+                                        <strong>Code</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseCode" class="accordion-collapse collapse" aria-labelledby="headingCode" data-bs-parent="#gptTypesAccordion">
+                                    <div class="accordion-body">
+                                        <p>
+                                            Code GPTs focus on producing source code in various programming languages.
+                                            These models assist programmers by generating code snippets, debugging existing code,
+                                            or even providing complete programming solutions based on specified requirements.
+                                        </p>
+                                        <p>
+                                            They enhance productivity by reducing the time spent on routine coding tasks
+                                            and allowing developers to focus on more complex problem-solving aspects
+                                            of software development.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Classification -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingClassification">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClassification" aria-expanded="false" aria-controls="collapseClassification">
+                                        <strong>Classification</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseClassification" class="accordion-collapse collapse" aria-labelledby="headingClassification" data-bs-parent="#gptTypesAccordion">
+                                    <div class="accordion-body">
+                                        <p>
+                                            Classification GPTs are configured to analyze and categorize text based on predefined criteria.
+                                            They are essential for tasks such as sentiment analysis, content moderation,
+                                            and any application where text needs to be quickly and accurately sorted into categories.
+                                        </p>
+                                        <p>
+                                            These models improve the efficiency of data processing workflows
+                                            and aid in decision-making processes by providing consistent
+                                            and objective categorizations of large volumes of textual data.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Section 2: Spark Variant -->
+                <a id="sparkVariant"></a>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h2>Spark Variant</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            The configuration or definition of a Generative Pre-trained Transformer (GPT) is essential for tailoring
+                            the AI model to perform specific tasks effectively.
+                            This definition acts as a blueprint that dictates how the GPT will interpret inputs and generate outputs.
+                            By setting parameters such as the system prompt, output type, and model version,
+                            prompt engineers can control the behavior of the AI to suit particular needs,
+                            whether in a commercial, academic, or personal context.
+                        </p>
+                        <p>
+                            Each aspect of a GPT's definition serves a unique purpose in shaping its responses.
+                            The system prompt sets the stage by directing the AI's focus,
+                            guiding it on what type of information or response is expected.
+                            The output type specifies the format that the response should take,
+                            which can vary from plain text to complex code, depending on the intended use.
+                            This allows the GPT to integrate seamlessly with various applications and platforms.
+                        </p>
+                        <h3>Attributes of a Spark Variant:</h3>
+                        <!-- Accordion for Spark Variants -->
+                        <div class="accordion" id="gptDefinitionAccordion">
+                            <!-- System Prompt -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingSystemPrompt">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSystemPrompt" aria-expanded="true" aria-controls="collapseSystemPrompt">
+                                        <strong>System Prompt</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseSystemPrompt" class="accordion-collapse collapse show" aria-labelledby="headingSystemPrompt" data-bs-parent="#gptDefinitionAccordion">
+                                    <div class="accordion-body">
+                                        <p>The System Prompt directs the GPT on the type of response to generate and acts as the initial input that sets the framework for the AI’s processing. Unlike user prompts, which are typically questions or requests inputted by the user, system prompts often include predefined instructions or data that guide the AI more explicitly, determining the structure and scope of the response.</p>
+                                        <p>This distinction is crucial because system prompts play a more deterministic role in shaping the AI's output. With a system role, the prompt can define specific parameters or directives that the AI must follow, thus exerting a greater degree of control and influence over the outcome. This is contrasted with a user role, which generally provides the content or context for inquiry but allows the AI more flexibility in how it chooses to respond. The system's role is to ensure the response adheres to certain standards or achieves specific objectives, making it integral to maintaining consistency and relevance in the output generated by the GPT.</p>
+                                        <p>Moreover, the differentiation between system and user roles highlights the collaborative nature of human-AI interaction. While the AI, guided by the system prompts, ensures consistency and adherence to objectives, the user prompts provide the real-world context and variability that challenge the AI to adapt and respond dynamically. This interplay allows GPTs to offer tailored solutions that are not only consistent and reliable but also personalized and responsive to individual user needs, striking a balance between controlled output and creative flexibility.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Output Type -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOutputType">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOutputType" aria-expanded="false" aria-controls="collapseOutputType">
+                                        <strong>Output Type</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseOutputType" class="accordion-collapse collapse" aria-labelledby="headingOutputType" data-bs-parent="#gptDefinitionAccordion">
+                                    <div class="accordion-body">
+                                        <p>The Output Type defines the format of the AI’s response. Whether the result is plain text, HTML, JSON, or code, specifying the output type ensures that the GPT produces content that can be directly utilized in the intended application or platform.</p>
+                                        <p>This parameter is key for integration with other systems, enabling the GPT to deliver responses that require minimal post-processing, thus enhancing efficiency and usability in practical scenarios.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Model Used -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingModelUsed">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseModelUsed" aria-expanded="false" aria-controls="collapseModelUsed">
+                                        <strong>Model Used</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseModelUsed" class="accordion-collapse collapse" aria-labelledby="headingModelUsed" data-bs-parent="#gptDefinitionAccordion">
+                                    <div class="accordion-body">
+                                        <p>The choice of model determines the capabilities and accuracy of the GPT. Different models, like GPT-3 or GPT-4, have varying degrees of complexity and understanding, which can significantly impact the quality of the AI’s responses.</p>
+                                        <p>Selecting the appropriate model is essential for tasks that require high precision or creative output, ensuring that the AI can meet or exceed the expectations for its performance in specific contexts.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Temperature -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTemperature">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemperature" aria-expanded="false" aria-controls="collapseTemperature">
+                                        <strong>Temperature</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapseTemperature" class="accordion-collapse collapse" aria-labelledby="headingTemperature" data-bs-parent="#gptDefinitionAccordion">
+                                    <div class="accordion-body">
+                                        <p>Temperature controls the variability and creativity of the responses generated by the GPT. A lower temperature results in more predictable and consistent outputs, while a higher temperature allows for greater creativity and diversity in responses.</p>
+                                        <p>This setting is particularly useful in applications where innovation or variability is desired, enabling users to fine-tune the balance between randomness and relevance in the AI’s outputs.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Section 3: User Prompts -->
+                <a id="userPrompts"></a>
+                <div class="card mb-3" >
+                    <div class="card-header">
+                        <h2>User Prompts</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            User Prompts enable you to rigorously test and compare the various implementations of a Core Spark.
+                            By running these test cases, you can evaluate how each variant handles real-world scenarios,
+                            ensuring they meet the desired standards for accuracy, responsiveness, and overall quality.
+                            This process allows you to fine-tune your AI, making informed decisions on the best
+                            configurations and approaches.
+                        </p>
+                        <p>
+                            Harness the power of User Prompts to benchmark your AI’s capabilities,
+                            ensuring that each Spark Variant not only meets but exceeds the expectations set by the Core Spark.
+                            With User Prompts, you can achieve a higher level of precision and performance,
+                            driving your AI solutions towards excellence.
+                        </p>
+                        <div class="accordion" id="accordionUserPrompts">
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingPurpose">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePurpose" aria-expanded="true" aria-controls="collapsePurpose">
+                                        Purpose and Functionality
+                                    </button>
+                                </h2>
+                                <div id="collapsePurpose" class="accordion-collapse collapse show" aria-labelledby="headingPurpose" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Purpose</dt>
+                                            <dd>User Prompts are collections of test cases specifically created for a particular Core Spark. They simulate real-world interactions and scenarios, providing a practical way to measure the effectiveness of different Spark Variants.</dd>
+                                            <dt>Functionality</dt>
+                                            <dd>By running these test cases against multiple variants of a Core Spark, users can conduct A/B testing and detailed comparisons to determine which configurations best meet the specified requirements.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingCreatingPrompts">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreatingPrompts" aria-expanded="false" aria-controls="collapseCreatingPrompts">
+                                        Creating User Prompts
+                                    </button>
+                                </h2>
+                                <div id="collapseCreatingPrompts" class="accordion-collapse collapse" aria-labelledby="headingCreatingPrompts" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Core Spark Specificity</dt>
+                                            <dd>Each User Prompt is tailored to the requirements of a specific Core Spark. This ensures that the tests are relevant and aligned with the core functionalities and output expectations defined in the Core Spark.</dd>
+                                            <dt>Input Definition</dt>
+                                            <dd>Users define specific inputs that they want to test, which can include questions, commands, or any other interactions relevant to the Core Spark.</dd>
+                                            <dt>Expected Outputs</dt>
+                                            <dd>For each input, users can define expected outputs or evaluation criteria to assess the quality and relevance of the generated responses.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingRunningPrompts">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRunningPrompts" aria-expanded="false" aria-controls="collapseRunningPrompts">
+                                        Running User Prompts
+                                    </button>
+                                </h2>
+                                <div id="collapseRunningPrompts" class="accordion-collapse collapse" aria-labelledby="headingRunningPrompts" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Execution</dt>
+                                            <dd>Users run the defined User Prompts against selected Spark Variants of the same Core Spark. This process involves feeding the inputs to the model and capturing the outputs generated by each variant.</dd>
+                                            <dt>Simultaneous Testing</dt>
+                                            <dd>Multiple variants can be tested simultaneously, providing a comprehensive view of how different configurations perform under the same conditions.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEvaluatingResponses">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEvaluatingResponses" aria-expanded="false" aria-controls="collapseEvaluatingResponses">
+                                        Evaluating Responses
+                                    </button>
+                                </h2>
+                                <div id="collapseEvaluatingResponses" class="accordion-collapse collapse" aria-labelledby="headingEvaluatingResponses" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Comparison</dt>
+                                            <dd>The responses generated by each Spark Variant are compared against the expected outputs or evaluation criteria. This comparison helps identify which variants perform best for specific types of inputs.</dd>
+                                            <dt>Metrics</dt>
+                                            <dd>Key performance metrics such as accuracy, response time, and token usage are analyzed to provide a quantitative assessment of each variant’s performance.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingIterativeRefinement">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIterativeRefinement" aria-expanded="false" aria-controls="collapseIterativeRefinement">
+                                        Iterative Refinement
+                                    </button>
+                                </h2>
+                                <div id="collapseIterativeRefinement" class="accordion-collapse collapse" aria-labelledby="headingIterativeRefinement" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Feedback Loop</dt>
+                                            <dd>Based on the evaluation results, users can make informed decisions about adjusting the configurations of their Spark Variants. This iterative process allows for continuous refinement and optimization.</dd>
+                                            <dt>Learning and Improvement</dt>
+                                            <dd>The insights gained from running User Prompts help in understanding how different parameters affect performance, leading to better prompt engineering practices.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingBenefits">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBenefits" aria-expanded="false" aria-controls="collapseBenefits">
+                                        Benefits of User Prompts
+                                    </button>
+                                </h2>
+                                <div id="collapseBenefits" class="accordion-collapse collapse" aria-labelledby="headingBenefits" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Consistency</dt>
+                                            <dd>Ensures that the LLM behaves consistently across different scenarios by standardizing the testing process.</dd>
+                                            <dt>Quality Assurance</dt>
+                                            <dd>Helps in maintaining high-quality outputs by rigorously testing and comparing different configurations.</dd>
+                                            <dt>Efficiency</dt>
+                                            <dd>Saves time and resources by identifying the most effective prompt configurations quickly and reliably.</dd>
+                                            <dt>Scalability</dt>
+                                            <dd>Facilitates scaling up the deployment of LLMs by providing a robust framework for testing and validation.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingPracticalApplications">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePracticalApplications" aria-expanded="false" aria-controls="collapsePracticalApplications">
+                                        Practical Applications
+                                    </button>
+                                </h2>
+                                <div id="collapsePracticalApplications" class="accordion-collapse collapse" aria-labelledby="headingPracticalApplications" data-bs-parent="#accordionUserPrompts">
+                                    <div class="accordion-body">
+                                        <dl>
+                                            <dt>Customer Support</dt>
+                                            <dd>For evaluating responses in customer support scenarios, ensuring that the AI provides helpful and accurate information.</dd>
+                                            <dt>Educational Tools</dt>
+                                            <dd>Testing how well the AI assists in educational contexts, such as answering questions or explaining concepts.</dd>
+                                            <dt>Creative Writing</dt>
+                                            <dd>Assessing the AI’s ability to generate creative content, like stories or poems, based on given prompts.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Section 4: How to Use Prompt Spark-->
+                <a id="howToUse"></a>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h2>How To Use Prompt Spark</h2>
+                    </div>
+                    <div id="collapseOverview" class="collapse show" aria-labelledby="headingOverview" data-bs-parent="#accordionPromptSpark">
+                        <div class="card-body">
+                            <div class="accordion" id="accordionPromptSpark">
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingCoreSparks">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCoreSparks" aria-expanded="true" aria-controls="collapseCoreSparks">
+                                            Exploring Core Sparks
+                                        </button>
+                                    </h2>
+                                    <div id="collapseCoreSparks" class="accordion-collapse collapse show" aria-labelledby="headingCoreSparks" data-bs-parent="#accordionPromptSpark">
+                                        <div class="accordion-body">
+                                            <dl>
+                                                <dt>Initial Interaction:</dt>
+                                                <dd> Users start by browsing the list of available Core Sparks on the Prompt Spark homepage. Each Core Spark represents a design specification for a particular type of LLM/GPT assistant, detailing the expected functionalities and output characteristics.</dd>
+                                                <dt>Selection:</dt>
+                                                <dd> Users select a Core Spark that aligns with their needs, whether it’s for customer support, educational tutoring, creative writing, or another application.</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSparkVariants">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSparkVariants" aria-expanded="false" aria-controls="collapseSparkVariants">
+                                            Managing Spark Variants
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSparkVariants" class="accordion-collapse collapse" aria-labelledby="headingSparkVariants" data-bs-parent="#accordionPromptSpark">
+                                        <div class="accordion-body">
+                                            <dl>
+                                                <dt>Viewing Variants:</dt>
+                                                <dd> Once a Core Spark is selected, users can view the different Spark Variants associated with that Core Spark. These variants are implementations of the Core Spark with different configurations.</dd>
+                                                <dt>Customizing Variants:</dt>
+                                                <dd> Users can customize these variants by adjusting parameters such as temperature, LLM model type, and system prompting methods. This allows them to experiment with different prompt engineering approaches.</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingUserPrompts">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUserPrompts" aria-expanded="false" aria-controls="collapseUserPrompts">
+                                            Utilizing User Prompts
+                                        </button>
+                                    </h2>
+                                    <div id="collapseUserPrompts" class="accordion-collapse collapse" aria-labelledby="headingUserPrompts" data-bs-parent="#accordionPromptSpark">
+                                        <div class="accordion-body">
+                                            <dl>
+                                                <dt>Running Test Cases:</dt>
+                                                <dd> Users select or create User Prompts, which are collections of test cases designed to evaluate the performance of the Spark Variants. These prompts simulate real-world scenarios and interactions.</dd>
+                                                <dt>Evaluating Responses:</dt>
+                                                <dd> Users run these User Prompts against the different Spark Variants. The system then generates responses, allowing users to compare how each variant handles the prompts.</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingPerformance">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerformance" aria-expanded="false" aria-controls="collapsePerformance">
+                                            Analyzing Performance
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePerformance" class="accordion-collapse collapse" aria-labelledby="headingPerformance" data-bs-parent="#accordionPromptSpark">
+                                        <div class="accordion-body">
+                                            <dl>
+                                                <dt>Performance Metrics:</dt>
+                                                <dd> Prompt Spark provides detailed performance tracking for each variant. Users can analyze metrics such as accuracy, response times, token costs, and overall effectiveness.</dd>
+                                                <dt>A/B Testing:</dt>
+                                                <dd> Users can conduct A/B testing to directly compare the performance of different Spark Variants under similar conditions. This helps identify the most effective configurations.</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOptimization">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOptimization" aria-expanded="false" aria-controls="collapseOptimization">
+                                            Iterating and Optimizing
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOptimization" class="accordion-collapse collapse" aria-labelledby="headingOptimization" data-bs-parent="#accordionPromptSpark">
+                                        <div class="accordion-body">
+                                            <dl>
+                                                <dt>Feedback Loop:</dt>
+                                                <dd> Based on the performance analysis and comparison results, users can iterate on their Spark Variants. They can make adjustments to configurations and rerun User Prompts to see the impact of their changes.</dd>
+                                                <dt>Optimization:</dt>
+                                                <dd> This iterative process allows users to fine-tune their AI models, achieving the best possible performance and meeting the Core Spark specifications effectively.</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Section 5: Tokens in Large Language Models-->
+                <a id="tokens"></a>
+                <div class="card mb-3">
+                    <div class="card-header" >
+                        <h2>Tokens in Large Language Models</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Definition List: Tokens -->
+                        <div class="accordion" id="tokensAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="tokensHeading">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#tokensCollapse" aria-expanded="true" aria-controls="tokensCollapse">
+                                        What are Tokens?
+                                    </button>
+                                </h2>
+                                <div id="tokensCollapse" class="accordion-collapse collapse show" aria-labelledby="tokensHeading" data-bs-parent="#tokensAccordion">
+                                    <div class="accordion-body">
+                                        <p>In large language models, a "token" typically refers to the smallest unit of data that the model is learning from and predicting. It could be as small as a single character or as large as a word or even a sentence, depending on preprocessing.</p>
+                                        <p>For example, the sentence "The quick brown fox jumps over the lazy dog" could be tokenized into: ["The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"].</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Definition List: Predictions -->
+                        <div class="accordion mt-4" id="predictionsAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="predictionsHeading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#predictionsCollapse" aria-expanded="false" aria-controls="predictionsCollapse">
+                                        Predictions in Large Language Models
+                                    </button>
+                                </h2>
+                                <div id="predictionsCollapse" class="accordion-collapse collapse" aria-labelledby="predictionsHeading" data-bs-parent="#predictionsAccordion">
+                                    <div class="accordion-body">
+                                        <p>Predictions in large language models are the outputs that the model generates based on the data it has been trained on. After consuming a series of tokens, the model will attempt to generate the next token. This process is called "prediction".</p>
+                                        <p>When generating text, large language models like GPT-3 use a statistical approach to make predictions of the next token based on the tokens it has seen so far. The model assigns each potential next token a probability and typically selects the token with the highest probability.</p>
+                                        <p>For instance, if the model has consumed the tokens ["The", "quick", "brown"], it might assign a high probability to "fox" as the next token, assuming it has often seen these words together in its training data.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pricing Impact -->
+                        <div class="accordion mt-4" id="pricingAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="pricingHeading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pricingCollapse" aria-expanded="false" aria-controls="pricingCollapse">
+                                        How Tokens Impact Pricing
+                                    </button>
+                                </h2>
+                                <div id="pricingCollapse" class="accordion-collapse collapse" aria-labelledby="pricingHeading" data-bs-parent="#pricingAccordion">
+                                    <div class="accordion-body">
+                                        <p>In terms of pricing for using large language models, the number of tokens processed by the model typically plays a significant role. Many providers of LLMs offer pricing plans based on the number of tokens processed or the amount of computational resources used during inference.</p>
+                                        <p>For example, if you're using a cloud-based LLM service, you might be charged based on the number of tokens generated by your prompts. Longer prompts or prompts that result in more tokens being processed may incur higher costs.</p>
+                                        <p>Therefore, developers need to be mindful of token usage when working with large language models to avoid unexpected pricing implications.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+                <!-- Section 6: Mastering Mega Prompts-->
+                <a id="megaPrompts"></a>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h2>Mastering Mega Prompts</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="">
+                            <div class="">
+                                <h2 class="card-title">Introduction</h2>
+                                <p class="card-text">As a prompt engineer embarking on the journey of crafting prompts for AI systems, you're venturing into a realm where words wield immense power. The art and science of generating effective prompts require more than just stringing together sentences; it demands a nuanced understanding of language, context, and user intent. In this guide, we'll delve into the world of Mega Prompts – a structured approach that empowers prompt engineers to unleash the full potential of AI systems like GPT.</p>
+                                <p class="card-text">Mega Prompts are not just another set of guidelines; they are a framework meticulously designed to elevate the quality and relevance of generated content. Whether you're a novice or seasoned prompt engineer, mastering Mega Prompts will equip you with the tools and strategies needed to craft prompts that captivate, inform, and engage.</p>
+                                <p class="card-text">Throughout this guide, we'll explore various Mega Prompt strategies, each designed to address specific aspects of prompt engineering. From C.R.E.A.T.E. to A.S.P.E.C.C.T. and beyond, we'll dissect these frameworks, unravel their intricacies, and provide practical insights to help you navigate the complexities of prompt generation.</p>
+                                <p class="card-text">But why Mega Prompts, you might ask? In a landscape flooded with information, Mega Prompts serve as beacons of clarity, guiding AI systems to produce content that meets user expectations and fulfills predefined objectives. Whether you're seeking to generate compelling narratives, informative articles, or interactive dialogues, Mega Prompts provide the roadmap to success.</p>
+                                <p class="card-text">In the chapters that follow, we'll explore each element of Mega Prompts in detail, offering actionable tips, real-world examples, and best practices gleaned from industry experts. From understanding the nuances of context and audience to harnessing the power of creativity and constraint, this guide will empower you to craft prompts that resonate with users and drive meaningful interactions.</p>
+                                <p class="card-text">So, whether you're a prompt engineer eager to hone your skills or a curious enthusiast exploring the possibilities of AI-driven content generation, join us on this journey as we unlock the secrets of Mega Prompts and pave the way for a new era of human-machine collaboration.</p>
+                                <p class="card-text">Get ready to unleash your creativity, refine your craft, and embark on a transformative exploration of Mega Prompts – where words shape worlds and possibilities abound.</p>
+                                <p class="card-text">Welcome to the world of Mega Prompts. Let's begin.</p>
+                                <h1 class="text-center mt-5 mb-4">MegaPrompt Writing Strategies</h1>
+                                <div class="card bg-light">
+                                    <div class="card-header">
+                                        <h2 class="mb-0">Summary of Mega Prompt Strategies</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Evaluating Prompt Strategies for Effective AI Communication</h5>
+                                        <dl class="row">
+                                            <dt class="col-sm-4">C.R.E.A.T.E.</dt>
+                                            <dd class="col-sm-8">
+                                                <strong>Pros:</strong> Encourages creativity and flexibility in responses; provides a structured approach to generate comprehensive content.<br />
+                                                <strong>Cons:</strong> Can be time-consuming to implement; may require extensive domain knowledge to craft effectively.<br />
+                                                <strong>Best Used:</strong> When aiming for innovative and detailed explorations of topics, particularly in creative writing or complex scenario simulations.<br />
+                                            </dd>
+
+                                            <dt class="col-sm-4">A.S.P.E.C.C.T.</dt>
+                                            <dd class="col-sm-8">
+                                                <strong>Pros:</strong> Focuses on audience engagement and content relevance; sets clear constraints which help maintain content quality.<br />
+                                                <strong>Cons:</strong> May not always allow for sufficient flexibility in responses; can be overly prescriptive.<br />
+                                                <strong>Best Used:</strong> When targeting specific audiences or needs, such as marketing content or customer service interactions.<br />
+                                            </dd>
+
+                                            <dt class="col-sm-4">P.O.E.T.R.Y.</dt>
+                                            <dd class="col-sm-8">
+                                                <strong>Pros:</strong> Provides a holistic approach to prompt design; encourages a thoughtful balance between content structure and creativity.<br />
+                                                <strong>Cons:</strong> Complexity in balancing all elements can lead to convoluted prompts if not carefully managed.<br />
+                                                <strong>Best Used:</strong> For literary or educational content where depth and richness are crucial.<br />
+                                            </dd>
+
+                                            <dt class="col-sm-4">F.O.C.U.S.</dt>
+                                            <dd class="col-sm-8">
+                                                <strong>Pros:</strong> Ensures clarity and directness in communication; good for defining precise objectives and outcomes.<br />
+                                                <strong>Cons:</strong> May restrict creativity due to its emphasis on clarity and boundaries.<br />
+                                                <strong>Best Used:</strong> In business or technical settings where clear, concise, and direct communication is essential.<br />
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+
+
+                                <div class="accordion" id="megaPromptAccordion">
+                                    <!-- C.R.E.A.T.E. -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="createHeading">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#createCollapse" aria-expanded="true" aria-controls="createCollapse">
+                                                C.R.E.A.T.E.
+                                            </button>
+                                        </h2>
+                                        <div id="createCollapse" class="accordion-collapse collapse show" aria-labelledby="createHeading" data-bs-parent="#megaPromptAccordion">
+                                            <div class="accordion-body">
+                                                <p>C.R.E.A.T.E. is a powerful writing strategy that guides prompt engineers in crafting effective prompts for AI systems:</p>
+                                                <ul>
+                                                    <li><strong>Context:</strong> Provide clear context for the prompt, including background information, setting, and any relevant details.</li>
+                                                    <li><strong>Role:</strong> Define the role or perspective the AI should take when generating the response.</li>
+                                                    <li><strong>Event:</strong> Specify the event or scenario that the prompt revolves around.</li>
+                                                    <li><strong>Action:</strong> Describe the action or task the AI should perform.</li>
+                                                    <li><strong>Twist:</strong> Add a twist or unexpected element to encourage creativity.</li>
+                                                    <li><strong>End Result:</strong> Define the desired outcome of the generated content.</li>
+                                                </ul>
+                                                <hr />
+                                                <div class="card bg-light">
+                                                    <div class="card-header">
+                                                        <h2 class="mb-0">C.R.E.A.T.E. Mega Prompt: Wichita Wisdom</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Crafting an AI system for engaging and informative interactions about Wichita, Kansas</h5>
+                                                        <dl class="row">
+                                                            <dt class="col-sm-3">Context:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Detailed information on Wichita's history, key events, cultural landmarks, and current dynamics as an economic and cultural hub in the Midwest. Background includes details about the city’s founding, demographics, and significant annual events.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Role:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The AI acts as a local historian and cultural ambassador, expressing deep knowledge of and enthusiasm for Wichita, providing insights and recommendations with the pride of a long-time resident.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Event:</dt>
+                                                            <dd class="col-sm-9">
+                                                                A user planning to visit Wichita inquires about historical sites, cultural experiences, and local recommendations to plan their visit effectively.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Action:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The AI provides a comprehensive, tailored guide to Wichita, engaging the user with detailed descriptions, anecdotes, and personalized recommendations based on expressed interests.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Twist:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The AI introduces interactive queries to refine user preferences for more personalized advice, enhancing the engagement and customization of the information provided.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">End Result:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The user feels well-informed and excited about their upcoming visit, equipped with a personalized itinerary that reflects a deep appreciation of Wichita’s historical and cultural richness.
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- A.S.P.E.C.C.T. -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="aspectHeading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aspectCollapse" aria-expanded="false" aria-controls="aspectCollapse">
+                                                A.S.P.E.C.C.T.
+                                            </button>
+                                        </h2>
+                                        <div id="aspectCollapse" class="accordion-collapse collapse" aria-labelledby="aspectHeading" data-bs-parent="#megaPromptAccordion">
+                                            <div class="accordion-body">
+                                                <p>A.S.P.E.C.C.T. is another useful writing strategy for crafting prompts:</p>
+                                                <ul>
+                                                    <li><strong>Audience:</strong> Specify the target audience for the generated content.</li>
+                                                    <li><strong>Subject:</strong> Define the subject or topic that the prompt should focus on.</li>
+                                                    <li><strong>Purpose:</strong> Clarify the purpose or goal of the generated content.</li>
+                                                    <li><strong>Engagement:</strong> Consider how to engage the audience with the generated content.</li>
+                                                    <li><strong>Constraints:</strong> Set any constraints or limitations for the prompt.</li>
+                                                    <li><strong>Creativity:</strong> Encourage creativity in the prompt to stimulate innovative responses.</li>
+                                                </ul>
+                                                <hr />
+                                                <div class="card bg-light">
+                                                    <div class="card-header">
+                                                        <h2 class="mb-0">A.S.P.E.C.C.T. System Prompt for Wichita Wisdom</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Engaging and Informative Content on Wichita, Kansas</h5>
+                                                        <dl class="row">
+                                                            <dt class="col-sm-3">Audience:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Targeted at prospective visitors to Wichita, Kansas, including tourists, students, and business travelers interested in exploring the city's rich history and cultural offerings.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Subject:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Focus on Wichita's historical landmarks, cultural sites, and major annual events, providing a blend of historical data and current cultural insights.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Purpose:</dt>
+                                                            <dd class="col-sm-9">
+                                                                To inform and excite the audience about visiting Wichita by offering comprehensive and engaging content that highlights the city's unique attributes and offerings.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Engagement:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Utilize interactive elements such as quizzes on Wichita's history, user-driven content selections (like "Choose Your Adventure" in Wichita), and personalized travel tips based on user preferences.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Constraints:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The responses must be concise yet thorough, ideally not exceeding 300 words per answer, and should be suitable for a family-friendly audience.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Creativity:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Encourage the use of vivid storytelling and imaginative scenarios that place the audience in the heart of Wichita's events and locales, enhancing the narrative with local idioms or historical anecdotes.
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="card-footer text-muted">
+                                                        Craft responses that transform ordinary city facts into engaging stories to captivate and educate our audience.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- P.O.E.T.R.Y. -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="poetryHeading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#poetryCollapse" aria-expanded="false" aria-controls="poetryCollapse">
+                                                P.O.E.T.R.Y.
+                                            </button>
+                                        </h2>
+                                        <div id="poetryCollapse" class="accordion-collapse collapse" aria-labelledby="poetryHeading" data-bs-parent="#megaPromptAccordion">
+                                            <div class="accordion-body">
+                                                <p>P.O.E.T.R.Y. is a unified framework for generating text from language models:</p>
+                                                <dl>
+                                                    <dt>Purpose:</dt>
+                                                    <dd> Clearly define the purpose or objective of the prompt.</dd>
+                                                    <dt>Overview:</dt>
+                                                    <dd> Provide an overview or summary of the context, topic, or situation.</dd>
+                                                    <dt>Elements:</dt>
+                                                    <dd> Identify key elements, themes, or aspects that the prompt should incorporate.</dd>
+                                                    <dt>Tone:</dt>
+                                                    <dd>Specify the tone or style that the prompt should adopt.</dd>
+                                                    <dt>Restrictions:</dt>
+                                                    <dd> Set any restrictions or constraints for the prompt.</dd>
+                                                    <dt>Yield:</dt>
+                                                    <dd> Define the desired outcome or result of the generated content.</dd>
+                                                </dl>
+                                                <hr />
+                                                <div class="card bg-light">
+                                                    <div class="card-header">
+                                                        <h2 class="mb-0">P.O.E.T.R.Y. System Prompt for Wichita Wisdom</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Engaging Historical and Cultural Insights into Wichita, Kansas</h5>
+                                                        <dl class="row">
+                                                            <dt class="col-sm-3">Purpose:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The purpose of this prompt is to provide informative and engaging content about Wichita’s historical and cultural significance, aiming to educate and inspire users, particularly tourists and local educators.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Overview:</dt>
+                                                            <dd class="col-sm-9">
+                                                                This prompt encompasses the rich history of Wichita, from its early days as a trading post on the Chisholm Trail to its current status as a vibrant cultural hub in the Midwest, highlighting key events, places, and figures.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Elements:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Key elements include historical milestones, cultural landmarks, influential figures, and major annual events. Themes of resilience, innovation, and community should be woven throughout the narrative.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Tone:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The tone should be educational yet captivating, with a mix of formal historical recounting and casual storytelling to make the content accessible and appealing to a broad audience.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Restrictions:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Responses should remain concise and focused, adhering to a 300-word limit per response. The content must be appropriate for all ages and devoid of any controversial or sensitive topics.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Yield:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The desired outcome is to provide users with a well-rounded understanding of Wichita's past and present, equipping them with knowledge that enriches their visit or teaching curriculum.
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="card-footer text-muted">
+                                                        Ensure every piece of content not only informs but also resonates with and captivates our audience, enriching their appreciation for Wichita.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- F.O.C.U.S. -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="focusHeading">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#focusCollapse" aria-expanded="false" aria-controls="focusCollapse">
+                                                F.O.C.U.S.
+                                            </button>
+                                        </h2>
+                                        <div id="focusCollapse" class="accordion-collapse collapse" aria-labelledby="focusHeading" data-bs-parent="#megaPromptAccordion">
+                                            <div class="accordion-body">
+                                                <p>F.O.C.U.S. is a framework designed to guide prompt engineers in crafting effective prompts:</p>
+                                                <ul>
+                                                    <li><strong>Framing:</strong> Frame the prompt with clear context and background information.</li>
+                                                    <li><strong>Objective:</strong> Clearly state the objective or goal of the prompt.</li>
+                                                    <li><strong>Criteria:</strong> Establish criteria or guidelines for evaluating the quality of the generated content.</li>
+                                                    <li><strong>User-Centric:</strong> Consider the needs, preferences, and expectations of the target audience.</li>
+                                                    <li><strong>Scope:</strong> Define the scope or boundaries of the prompt.</li>
+                                                </ul>
+                                                <hr />
+                                                <div class="card bg-light">
+                                                    <div class="card-header">
+                                                        <h2 class="mb-0">F.O.C.U.S. System Prompt for Wichita Wisdom</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Crafting Engaging and Informative Content about Wichita, Kansas</h5>
+                                                        <dl class="row">
+                                                            <dt class="col-sm-3">Framing:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Provide a detailed backdrop of Wichita, emphasizing its historical significance as a key player in the aviation industry and a cultural center in the Midwest. The prompt should also touch on modern aspects like its economic growth, educational institutions, and annual events.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Objective:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The objective is to educate and engage users by sharing compelling stories and facts about Wichita, aiming to enhance their knowledge and appreciation of the city.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Criteria:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Content quality will be evaluated based on accuracy, engagement level, relevance to user interests, and ability to invoke curiosity and further exploration about Wichita.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">User-Centric:</dt>
+                                                            <dd class="col-sm-9">
+                                                                Consider the information needs and preferences of tourists, students, and local residents, tailoring content to be as useful and appealing as possible to these groups.
+                                                            </dd>
+
+                                                            <dt class="col-sm-3">Scope:</dt>
+                                                            <dd class="col-sm-9">
+                                                                The scope includes Wichita's history, culture, key landmarks, and notable personalities, along with practical information like travel tips and upcoming cultural events.
+                                                            </dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="card-footer text-muted">
+                                                        This prompt is designed to focus on providing a rich, user-centered narrative that captivates and educates about Wichita, ensuring all content aligns with user interests and city attributes.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+                <!-- Section 7: Fine-Tuning LLMs -->
+                <div class="card mb-3">
+                    <div class="card-header" id="headingOverview">
+                        <h2>Fine-Tuning in Large Language Models</h2>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="accordion" id="fineTuningAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="fineTuningHeading">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#fineTuningCollapse" aria-expanded="true" aria-controls="fineTuningCollapse">
+                                        What is Fine-Tuning?
+                                    </button>
+                                </h2>
+                                <div id="fineTuningCollapse" class="accordion-collapse collapse show" aria-labelledby="fineTuningHeading" data-bs-parent="#fineTuningAccordion">
+                                    <div class="accordion-body">
+                                        <p>Fine-tuning in large language models refers to the process of adapting a pre-trained model to a specific task or dataset. While pre-trained models like GPT-3 have been trained on vast amounts of text data, fine-tuning allows users to customize the model for their specific needs.</p>
+                                        <p>By fine-tuning, users can leverage the knowledge and capabilities of pre-trained models while tailoring them to perform better on tasks such as text generation, classification, or translation.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Development of GPTs -->
+                        <div class="accordion mt-4" id="developmentAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="developmentHeading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#developmentCollapse" aria-expanded="false" aria-controls="developmentCollapse">
+                                        How did we get to GPTs?
+                                    </button>
+                                </h2>
+                                <div id="developmentCollapse" class="accordion-collapse collapse" aria-labelledby="developmentHeading" data-bs-parent="#developmentAccordion">
+                                    <div class="accordion-body">
+                                        <p>The development of Generative Pre-trained Transformers (GPTs) stems from advancements in deep learning, particularly in the field of natural language processing (NLP). GPTs are a type of large language model that has been pre-trained on vast amounts of text data to learn the intricacies of language and generate coherent and contextually relevant text.</p>
+                                        <p>Researchers and engineers have continually refined and improved upon the architecture and training methods of GPTs, leading to the creation of models like GPT-3, which has achieved remarkable capabilities in understanding and generating natural language text.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+                <!-- Section 8: Prompt Engineering Course for C# Developers -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h2>Prompt Engineering for C# Developers</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">A structured program to master Prompt Engineering integrated with your C# expertise.</p>
+                        <div class="accordion" id="weekAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Introduction to Language Models
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#weekAccordion">
+                                    <div class="accordion-body">
+                                        <strong>Goals:</strong> Understand the fundamentals of language models and the basics of prompt engineering.
+                                        <dl>
+                                            <dt>Activities:</dt>
+                                            <dd>Read foundational articles on GPT-3 and BERT.</dd>
+                                            <dd>Setup OpenAI API and explore basic prompts.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        The Art of Crafting Prompts
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#weekAccordion">
+                                    <div class="accordion-body">
+                                        <strong>Goals:</strong> Learn to write effective and clear prompts.
+                                        <dl>
+                                            <dt>Activities:</dt>
+                                            <dd>Practice creating various types of prompts.</dd>
+                                            <dd>Analyze how different prompts affect responses.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        Advanced Prompt Techniques
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#weekAccordion">
+                                    <div class="accordion-body">
+                                        <strong>Goals:</strong> Explore advanced prompt strategies to refine outputs.
+                                        <dl>
+                                            <dt>Activities:</dt>
+                                            <dd>Learn about prompt chaining, reformulation, and conditional prompting.</dd>
+                                            <dd>Apply these techniques in more complex scenarios.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFour">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                        Integrating Prompts in C# Applications
+                                    </button>
+                                </h2>
+                                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#weekAccordion">
+                                    <div class="accordion-body">
+                                        <strong>Goals:</strong> Begin integrating AI prompts with your C# projects.
+                                        <dl>
+                                            <dt>Activities:</dt>
+                                            <dd>Develop a simple C# application that interacts with AI models via API.</dd>
+                                            <dd>Handle API responses and integrate prompt-driven interactions.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFive">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                        Optimization and Refinement
+                                    </button>
+                                </h2>
+                                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#weekAccordion">
+                                    <div class="accordion-body">
+                                        <strong>Goals:</strong> Optimize and refine prompts based on performance metrics.
+                                        <dl>
+                                            <dt>Activities:</dt>
+                                            <dd>Assess prompt effectiveness through testing and feedback.</dd>
+                                            <dd>Refine prompts to improve clarity and response quality.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingSix">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                        Ethical Considerations and Future Trends
+                                    </button>
+                                </h2>
+                                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#weekAccordion">
+                                    <div class="accordion-body">
+                                        <strong>Goals:</strong> Understand the ethical implications and stay updated with future trends.
+                                        <dl>
+                                            <dt>Activities:</dt>
+                                            <dd>Explore ethical considerations in AI and Prompt Engineering.</dd>
+                                            <dd>Research future advancements and potential applications in your field.</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

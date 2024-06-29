@@ -1,0 +1,78 @@
+@model             WebsiteEditModel
+@{
+    ViewData["Title"] = "Create";
+}
+<h1>Create Website</h1>
+<hr />
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-4 col-sm-12">
+            <h2>Site Look and Feel</h2>
+            <div class="form-group">
+                <label asp-for="SiteStyle" class="control-label"></label>
+                <input asp-for="SiteStyle" class="form-control" />
+                <span asp-validation-for="SiteStyle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteTemplate" class="control-label"></label>
+                <input asp-for="SiteTemplate" class="form-control" />
+                <span asp-validation-for="SiteTemplate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteName" class="control-label"></label>
+                <input asp-for="SiteName" class="form-control" />
+                <span asp-validation-for="SiteName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-8 col-sm-12">
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WebsiteUrl" class="control-label"></label>
+                <input asp-for="WebsiteUrl" class="form-control" />
+                <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WebsiteTitle" class="control-label"></label>
+                <input asp-for="WebsiteTitle" class="form-control" />
+                <span asp-validation-for="WebsiteTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="UseBreadCrumbURL" /> @Html.DisplayNameFor(model => model.UseBreadCrumbURL)
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

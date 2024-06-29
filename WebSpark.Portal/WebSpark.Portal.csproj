@@ -8,6 +8,7 @@
 		<Deterministic>false</Deterministic>
 		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
 		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
+		<UserSecretsId>8683a6ad-fbb6-465c-8afa-2b91b5f294fb</UserSecretsId>
 	</PropertyGroup>
 	<Target Name="EnsureNodeModules" BeforeTargets="BeforeBuild">
 		<Message Importance="high" Text="Update npm packages..." />
@@ -21,6 +22,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.6" />
 		<PackageReference Include="Microsoft.SemanticKernel" Version="1.15.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.17.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />

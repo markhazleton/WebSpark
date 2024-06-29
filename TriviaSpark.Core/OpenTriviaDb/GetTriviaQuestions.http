@@ -1,0 +1,18 @@
+
+GET https://opentdb.com/api_config.php
+
+###
+
+GET https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple
+
+###
+
+GET https://opentdb.com/api.php?amount=1&difficulty=hard&type=multiple
+
+###
+
+GET https://opentdb.com/api.php?amount=10&type=boolean
+
+###
+
+GET https://opentdb.com/api_category.php

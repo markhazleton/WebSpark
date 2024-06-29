@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromptSpark.Domain", "Promp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientUtility", "HttpClientUtility\HttpClientUtility.csproj", "{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Admin", "WebSpark.Admin\WebSpark.Admin.csproj", "{B7488F21-6A26-4FB7-91F1-68322B1FF79F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Bootswatch", "WebSpark.Bootswatch\WebSpark.Bootswatch.csproj", "{F6EF2571-B88C-4F19-84E9-0DD2FCE922E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Domain", "WebSpark.Domain\WebSpark.Domain.csproj", "{DFF4419D-D889-453E-9F34-E214273AF389}"
@@ -29,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Web", "WebSpark.We
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{83E5AC53-6F44-4CDB-9127-01082E0D143F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Portal", "WebSpark.Portal\WebSpark.Portal.csproj", "{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +43,6 @@ Global
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7488F21-6A26-4FB7-91F1-68322B1FF79F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7488F21-6A26-4FB7-91F1-68322B1FF79F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7488F21-6A26-4FB7-91F1-68322B1FF79F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7488F21-6A26-4FB7-91F1-68322B1FF79F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6EF2571-B88C-4F19-84E9-0DD2FCE922E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6EF2571-B88C-4F19-84E9-0DD2FCE922E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6EF2571-B88C-4F19-84E9-0DD2FCE922E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -83,6 +79,10 @@ Global
 		{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

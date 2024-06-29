@@ -1,7 +1,68 @@
-// 
 // Project styles
-// 
 
 // This file is intentionally blank
 // Use this file to override SCSS within the project, or to add new SCSS
 // for creating your own CSS components
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+}
+
+.footer {
+    flex-shrink: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    background-color: #f8f9fa; // bg-light
+}
+
+.footer .container {
+    padding-left: 1rem; // px-5
+    padding-right: 1rem; // px-5
+}
+
+.footer .row {
+    align-items: center; // gx-5 align-items-center
+}
+
+.footer .col-md-6.small {
+    margin-bottom: 0.5rem; // mb-3
+}
+
+.footer .icon-list-social {
+    margin-bottom: 0.5rem; // mb-3
+}
+
+.footer .icon-list-social-link {
+    margin-right: 0.5rem; // Adjust spacing between icons if necessary
+}
+
+.footer .text-md-end {
+    text-align: end;
+}
+.navbar-marketing {
+    background: url('/img/backgrounds/bg-SardinaSunset.jpg') no-repeat center center;
+    background-size: cover;
+}
+.nav-pills .nav-link.custom-pill {
+    background-color: rgba(255, 255, 255, 0.5); /* semi-transparent white */
+    border-radius: 50px; /* pill shape */
+    color: #000; /* text color */
+    padding: 0.5rem 1rem; /* padding for the pill */
+    margin: 0 0.5rem; /* spacing between pills */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-pills .nav-link.custom-pill:hover,
+.nav-pills .nav-link.custom-pill:focus {
+    background-color: rgba(255, 255, 255, 0.8); /* slightly less transparent on hover */
+    color: #333; /* darker text color on hover */
+}

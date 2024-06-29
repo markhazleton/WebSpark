@@ -1,0 +1,64 @@
+﻿@model                         DefinitionTypeDto
+
+@{
+    ViewData["Title"] = "Core Spark";
+}
+<div class="row">
+    <div class="col-8">
+        <h1>@Model.DefinitionType</h1>
+        <p>@Model.Description</p>
+    </div>
+    <div class="col-4">
+        <a class="btn btn-primary me-2" asp-action="Edit" asp-route-id="@Model?.DefinitionType">Edit</a>
+        <a class="btn btn-danger me-2" asp-action="Refresh" asp-route-id="@Model?.DefinitionType">Refresh</a>
+        <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+<hr/>
+<select id="chatDropdown" class="form-control">
+    <option value="">Select a Prompt</option>
+    @foreach (var item in Model.Prompts)
+    {
+        if (!string.IsNullOrEmpty(item.UserPrompt))
+        {
+            <option value="@item.UserPrompt">@Html.DisplayFor(modelItem => item.UserPrompt)</option>
+        }
+    }
+</select>
+
+<div id="chatDetails"></div>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, { html: true })
+            });
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+            var dropdown = document.getElementById('chatDropdown');
+            dropdown.addEventListener('change', function () {
+                var selectedPrompt = this.value;
+                if (selectedPrompt) {
+                    fetch('@Url.Action("GetChatDetails", "Chat")?id=' + encodeURIComponent(selectedPrompt))
+                        .then(response => response.text())
+                        .then(html => {
+                            // Set the innerHTML of the chatDetails container to the fetched HTML
+                            var container = document.getElementById('chatDetails');
+                            container.innerHTML = html;
+
+                            // Initialize all popovers within the newly added content
+                            var popoverTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="popover"]'));
+                            popoverTriggerList.forEach(function (popoverTriggerEl) {
+                                new bootstrap.Popover(popoverTriggerEl);
+                            });
+                        })
+                        .catch(error => console.error('Error loading the chat details:', error));
+                }
+            });
+        });
+    </script>
+}

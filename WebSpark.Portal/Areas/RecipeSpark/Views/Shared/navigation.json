@@ -1,0 +1,16 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Recipes",
+      "url": "/RecipeSpark/Main"
+    },
+    {
+      "text": "Images",
+      "url": "/RecipeSpark/RecipeImage"
+    },
+    {
+      "text": "Category",
+      "url": "/RecipeSpark/RecipeCategory"
+    }
+  ]
+}

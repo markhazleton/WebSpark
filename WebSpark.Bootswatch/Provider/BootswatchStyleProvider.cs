@@ -60,7 +60,7 @@ public class BootswatchStyleProvider : IStyleProvider
         try
         {
             var myClient = new HttpClient();
-            var task = Task.Run(() => myClient.GetFromJsonAsync<Model.BootswatchResponse>("http://bootswatch.com/api/5.json"));
+            var task = Task.Run(() => myClient.GetFromJsonAsync<BootswatchResponse>("http://bootswatch.com/api/5.json"));
             task.Wait();
             task.Result?.themes?.ForEach(myTheme => { siteStyle.Add(Create(myTheme)); });
         }

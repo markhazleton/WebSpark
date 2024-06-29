@@ -1,0 +1,41 @@
+﻿@model IEnumerable<RecipeImageModel>
+
+@{
+    ViewData["Title"] = "Recipes";
+}
+
+<h1>Recipe Image</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Recipe.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileDescription)
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.FileDescription, "Edit", new {id=item.Id })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Recipe.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FileDescription)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

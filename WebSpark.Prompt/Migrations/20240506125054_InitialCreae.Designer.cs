@@ -20,7 +20,7 @@ namespace WebSpark.Prompt.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTDefinition", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTDefinition", b =>
                 {
                     b.Property<int>("DefinitionId")
                         .ValueGeneratedOnAdd()
@@ -74,7 +74,7 @@ namespace WebSpark.Prompt.Migrations
                     b.ToTable("Definitions");
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTDefinitionResponse", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTDefinitionResponse", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +150,7 @@ namespace WebSpark.Prompt.Migrations
                     b.ToTable("DefinitionResponses");
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTDefinitionType", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTDefinitionType", b =>
                 {
                     b.Property<string>("DefinitionType")
                         .HasColumnType("TEXT");
@@ -176,7 +176,7 @@ namespace WebSpark.Prompt.Migrations
                     b.ToTable("DefinitionTypes");
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTUserPrompt", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTUserPrompt", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,15 +208,15 @@ namespace WebSpark.Prompt.Migrations
                     b.ToTable("Chats");
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTDefinitionResponse", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTDefinitionResponse", b =>
                 {
-                    b.HasOne("PromptSpark.Areas.OpenAI.Data.GPTDefinition", "Definition")
+                    b.HasOne("WebSpark.Portal.Areas.OpenAI.Data.GPTDefinition", "Definition")
                         .WithMany("GPTResponses")
                         .HasForeignKey("DefinitionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PromptSpark.Areas.OpenAI.Data.GPTUserPrompt", "Response")
+                    b.HasOne("WebSpark.Portal.Areas.OpenAI.Data.GPTUserPrompt", "Response")
                         .WithMany("GPTResponses")
                         .HasForeignKey("ResponseId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -227,12 +227,12 @@ namespace WebSpark.Prompt.Migrations
                     b.Navigation("Response");
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTDefinition", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTDefinition", b =>
                 {
                     b.Navigation("GPTResponses");
                 });
 
-            modelBuilder.Entity("PromptSpark.Areas.OpenAI.Data.GPTUserPrompt", b =>
+            modelBuilder.Entity("WebSpark.Portal.Areas.OpenAI.Data.GPTUserPrompt", b =>
                 {
                     b.Navigation("GPTResponses");
                 });
