@@ -34,14 +34,14 @@
        @RenderSection("Styles", required: false)
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100" style="padding-top: 5vh;">
 <header>
     <partial name="_MainMenu.cshtml" />
 </header>
 
 <br clear="all" />
 
-<main role="main" class="container bg-body ">
+<main role="main" class="container bg-body " >
     @RenderBody()
 </main>
 
