@@ -91,6 +91,9 @@ public class WebsiteVM : IBaseViewModel
     /// <value>The website theme.</value>
     [JsonPropertyName("website_style")]
     public string WebsiteStyle { get; set; }
-
+    /// <summary>
+    /// Current Style
+    /// </summary>
+    public string CurrentStyle { get; set; }
 
 }

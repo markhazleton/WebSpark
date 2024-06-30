@@ -41,7 +41,7 @@
 		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
-		<PackageReference Include="ReverseMarkdown" Version="4.5.0" />
+		<PackageReference Include="ReverseMarkdown" Version="4.6.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 	</ItemGroup>
 

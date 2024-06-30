@@ -7,17 +7,12 @@ namespace WebSpark.Web.Extensions;
 /// <summary>
 /// 
 /// </summary>
-public class WebRouteValueTransformer : DynamicRouteValueTransformer
+/// <remarks>
+/// 
+/// </remarks>
+public class WebRouteValueTransformer(
+    ILogger<WebRouteValueTransformer> logger) : DynamicRouteValueTransformer
 {
-    private ILogger<WebRouteValueTransformer> _logger;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public WebRouteValueTransformer(ILogger<WebRouteValueTransformer> logger)
-    {
-        _logger = logger;
-    }
 
     /// <summary>
     /// 
@@ -32,7 +27,7 @@ public class WebRouteValueTransformer : DynamicRouteValueTransformer
         // Check for file extensions
         if (route.EndsWith(".js"))
         {
-            _logger.LogWarning("JS File not found", new { route, values });
+            logger.LogWarning("JS File not found", new { route, values });
             values["controller"] = "EmptyFiles";
             values["action"] = "BlankJS";
             values["id"] = string.Empty;
@@ -40,7 +35,7 @@ public class WebRouteValueTransformer : DynamicRouteValueTransformer
         }
         if (route.EndsWith(".css"))
         {
-            _logger.LogWarning("CSS File not found", new { route, values });
+            logger.LogWarning("CSS File not found", new { route, values });
             values["controller"] = "EmptyFiles";
             values["action"] = "BlankCss";
             values["id"] = string.Empty;
@@ -95,7 +90,7 @@ public class WebRouteValueTransformer : DynamicRouteValueTransformer
             }
             else
             {
-                _logger.LogWarning("Page not found", new { route, values });
+                logger.LogWarning("Page not found", new { route, values });
                 values["controller"] = "error";
                 values["controller"] = "error";
                 values["action"] = "notfound";

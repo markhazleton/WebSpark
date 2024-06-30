@@ -12,9 +12,13 @@ public static class SessionExtensionsKeys
     /// </summary>
     public const string SessionInitialized = "SessionInitialized";
     /// <summary>
-    /// 
+    /// Base View Key
     /// </summary>
     public const string BaseViewKey = "BaseViewKey";
+    /// <summary>
+    /// Current View Key
+    /// </summary>
+    public const string CurrentViewKey = "CurrentViewKey";
 
     /// <summary>
     /// 

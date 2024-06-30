@@ -29,6 +29,6 @@ public class LookupListModel
     /// </summary>
     public LookupListModel()
     {
-        Items = new List<LookupListItemModel>();
+        Items = [];
     }
 }

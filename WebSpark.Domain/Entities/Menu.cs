@@ -5,7 +5,7 @@ public partial class Menu : BaseEntity
 {
     public Menu()
     {
-        InverseParent = new HashSet<Menu>();
+        InverseParent = [];
     }
     [Key]
     public int Id { get; set; }

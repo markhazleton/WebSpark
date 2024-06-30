@@ -1,15 +1,21 @@
-@model             WebsiteVM
+@model WebsiteVM
 @using Westwind.AspNetCore.Markdown;
+@using System.IO
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
 @{
-    var menu = Model?.Menu?.Where(w => w.Title == Model.PageTitle).FirstOrDefault();
-    if (menu == null)
+    var areaName1 = ViewContext.RouteData.Values["area"]?.ToString();
+    string currentPath = ViewContext.HttpContext.Request.Path.Value;
+    if(currentPath == "/")
     {
-        menu = new MenuModel();
+        currentPath = "/Home/Index";
     }
+
+    string currentStyle = Model?.CurrentStyle?? Model?.WebsiteStyle;
     string siteStyle = $"/site/{Model?.WebsiteStyle}/css/site.css";
     string siteJs = $"/site/{Model?.WebsiteStyle}/js/site.js";
     string siteJsBootstrap = $"/lib/bootstrap/js/bootstrap.bundle.min.js";
-    string styleUrl = Model?.StyleList.Where(w => w.name == Model.WebsiteStyle).FirstOrDefault()?.cssCdn;
+    string styleUrl = Model?.StyleList.Where(w => w.name == currentStyle).FirstOrDefault()?.cssCdn;
         
     if (String.IsNullOrEmpty(styleUrl))
     {
@@ -17,8 +23,7 @@
         int index = random.Next(Model.StyleList.Count());
         styleUrl = Model.StyleList.ElementAt(index).cssCdn;
     }
-
-    string canonicalUrl = $"{Model?.SiteUrl}{menu?.Url?.Trim('/')??""}";
+    string canonicalUrl = $"{Model?.SiteUrl}{currentPath.Trim('/')??""}";
 }
 <!DOCTYPE html>
 <html lang="en">

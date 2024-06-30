@@ -8,24 +8,23 @@ namespace WebSpark.Web.Controllers;
 /// <summary>
 /// Pick Style for WebSite
 /// </summary>
-public class BootswatchController : BaseController
+/// <remarks>
+/// 
+/// </remarks>
+/// <param name="configuration"></param>
+public class BootswatchController(
+    ILogger<BootswatchController> logger,
+    IConfiguration config,
+    IWebsiteService websiteService) : BaseController(logger, config, websiteService)
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="configuration"></param>
-    public BootswatchController(ILogger<BootswatchController> logger, IConfiguration config, IWebsiteService websiteService)
-        : base(logger, config, websiteService)
-    {
 
-    }
     /// <summary>
     /// Get Page
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns>ActionResult.</returns>
     [HttpGet]
-    public ActionResult Index(string id = null)
+    public ActionResult Index(string? id = null)
     {
         BaseVM.PageTitle = "Style";
         BaseVM.MetaDescription = "Style";
@@ -39,10 +38,11 @@ public class BootswatchController : BaseController
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpPost]
-    public ActionResult Index(WebsiteVM postWebsiteVM, string id = null)
+    public ActionResult Index(WebsiteVM postWebsiteVM, string? id = null)
     {
-        BaseVM.WebsiteStyle = postWebsiteVM.WebsiteStyle ?? BaseVM.WebsiteStyle;
-        HttpContext.Session.SetString(SessionExtensionsKeys.BaseViewKey, JsonSerializer.Serialize(BaseVM, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
+        SetCurrentStyle(postWebsiteVM.WebsiteStyle ?? BaseVM.WebsiteStyle);
+        BaseVM.CurrentStyle = postWebsiteVM.WebsiteStyle ?? BaseVM.WebsiteStyle;
+        HttpContext.Session.SetString(SessionExtensionsKeys.CurrentViewKey, JsonSerializer.Serialize(BaseVM, optionsJsonSerializer));
         return View($"~/Views/Templates/{BaseVM.Template}/Bootswatch/Index.cshtml", BaseVM);
     }
 }

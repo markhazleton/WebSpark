@@ -24,7 +24,6 @@ public class RecipeController(
         {
             if (IsCacheEnabled())
             {
-                //    _viewModel = HttpContext.Session.Get<RecipeVM>(RecipeViewKey);
                 _logger.LogInformation("Loaded RecipeView From Session");
             }
 
@@ -35,7 +34,9 @@ public class RecipeController(
                 var task = Task.Run(() => recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, BaseVM));
                 _viewModel = task.GetAwaiter().GetResult();
 
-                HttpContext.Session.SetString(RecipeViewKey, JsonSerializer.Serialize(_viewModel, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
+                _viewModel.CurrentStyle = BaseVM.CurrentStyle;
+
+                HttpContext.Session.SetString(RecipeViewKey, JsonSerializer.Serialize(_viewModel, optionsJsonSerializer));
                 _logger.LogInformation("Loaded RecipeView From Database");
             }
             return _viewModel;

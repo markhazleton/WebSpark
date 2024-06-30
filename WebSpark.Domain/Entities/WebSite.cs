@@ -5,7 +5,7 @@ public partial class WebSite : BaseEntity
 {
     public WebSite()
     {
-        Menus = new HashSet<Menu>();
+        Menus = [];
     }
 
     [Key]

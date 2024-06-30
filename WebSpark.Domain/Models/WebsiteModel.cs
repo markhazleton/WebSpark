@@ -11,7 +11,7 @@ public class WebsiteModel
     /// </summary>
     public WebsiteModel()
     {
-        Menu = new List<MenuModel>();
+        Menu = [];
         Message = null;
     }
 

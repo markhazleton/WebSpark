@@ -12,8 +12,8 @@ public class WebDataGrid
     /// </summary>
     public WebDataGrid()
     {
-        GridColumns = new ColumnColl();
-        GridRows = new RowColl();
+        GridColumns = [];
+        GridRows = [];
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class WebDataGrid
         {
             ViewOnSummary = true;
             ViewOnPhone = true;
-            ColumnValues = new List<string>();
+            ColumnValues = [];
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ public class WebDataGrid
         /// <summary>
         /// The col dictionary
         /// </summary>
-        private Dictionary<string, int> ColDictionary = new();
+        private Dictionary<string, int> ColDictionary = [];
 
         /// <summary>
         /// Updates the dictionary.
@@ -467,7 +467,7 @@ public class WebDataGrid
         /// </summary>
         public GridRow()
         {
-            Value = new List<string>();
+            Value = [];
         }
 
         /// <summary>
@@ -792,7 +792,7 @@ public class WebDataGrid
     /// <summary>
     /// The header items
     /// </summary>
-    public List<GridColumn> HeaderItems = new();
+    public List<GridColumn> HeaderItems = [];
 
     /// <summary>
     /// Adds the header item.

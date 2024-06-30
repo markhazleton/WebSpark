@@ -20,7 +20,7 @@ public class ThemeVM : WebsiteVM
         WebsiteName = parent.WebsiteName;
         WebsiteStyle = parent.WebsiteStyle;
         SiteUrl = parent.SiteUrl;
-        StyleList = new List<StyleModel>();
+        StyleList = [];
         Theme = new StyleModel();
     }
 

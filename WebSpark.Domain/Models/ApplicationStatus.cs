@@ -109,11 +109,11 @@ public class ApplicationStatus
     /// <summary>
     /// 
     /// </summary>
-    public Dictionary<string, string> Features { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> Features { get; set; } = [];
     /// <summary>
     /// 
     /// </summary>
-    public List<string> Messages { get; set; } = new List<string>();
+    public List<string> Messages { get; set; } = [];
     /// <summary>
     /// 
     /// </summary>
@@ -125,5 +125,5 @@ public class ApplicationStatus
     /// <summary>
     /// 
     /// </summary>
-    public Dictionary<string, string> Tests { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> Tests { get; set; } = [];
 }

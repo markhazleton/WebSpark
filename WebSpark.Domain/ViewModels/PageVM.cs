@@ -1,26 +1,26 @@
 using WebSpark.Domain.Models;
 
 namespace WebSpark.Domain.ViewModels;
-
 /// <summary>
-/// 
+/// Class PageVM.
+/// Implements the <see cref="WebsiteVM" />
 /// </summary>
-public class WebsiteAdminVM : WebsiteVM
+/// <seealso cref="WebsiteVM" />
+public class PageVM : WebsiteVM
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuVM" /> class.
     /// </summary>
-    public WebsiteAdminVM()
+    public PageVM()
     {
-        Item = new WebsiteModel();
-        ItemCollection = [];
+        Item = new MenuModel();
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuVM" /> class.
     /// </summary>
     /// <param name="domain">The parent.</param>
-    public WebsiteAdminVM(WebsiteVM domain)
+    public PageVM(WebsiteVM domain)
     {
         if (domain is null)
         {
@@ -37,22 +37,15 @@ public class WebsiteAdminVM : WebsiteVM
         Menu = domain.Menu;
         StyleList = domain.StyleList;
         StyleUrl = domain.StyleUrl;
-
-        Item = new WebsiteModel();
-        ItemCollection = [];
-        PageTitle = "Website Maintenance";
+        Template = domain.Template;
+        Item = new MenuModel();
+        PageTitle = "Menu Maintenance";
     }
 
     /// <summary>
     /// Gets or sets the item.
     /// </summary>
     /// <value>The item.</value>
-    public WebsiteModel Item { get; set; }
-
-    /// <summary>
-    /// Gets the item collection.
-    /// </summary>
-    /// <value>The item collection.</value>
-    public List<WebsiteModel> ItemCollection { get; }
+    public MenuModel Item { get; set; }
 
 }

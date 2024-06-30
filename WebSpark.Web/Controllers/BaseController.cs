@@ -19,6 +19,8 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
     protected readonly ILogger _logger = logger;
     protected readonly IWebsiteService _websiteService = websiteService;
     protected readonly IConfiguration _config = configuration;
+    private WebsiteVM? _baseView = null;
+    protected readonly JsonSerializerOptions optionsJsonSerializer = new() { PropertyNameCaseInsensitive = true };
 
     /// <summary>
     /// Is Cache Enabled
@@ -31,8 +33,19 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
     /// <summary>
     /// Base View for Page Rendering
     /// </summary>
-    private WebsiteVM? _baseView = null;
+    protected string SetCurrentStyle(string currentStyle)
+    {
+        if (_baseView == null)
+        {
+            _baseView = BaseVM;
+        }
+        _baseView.CurrentStyle = currentStyle;
+        HttpContext.Session.SetString(
+            SessionExtensionsKeys.CurrentViewKey, 
+            JsonSerializer.Serialize(_baseView, optionsJsonSerializer));
 
+        return _baseView.CurrentStyle;
+    }
     /// <summary>
     /// 
     /// </summary>
@@ -40,6 +53,15 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
     {
         get
         {
+            // check for current view first
+            var curView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.CurrentViewKey);
+            if (curView != null)
+            {
+                _baseView = curView;
+                _logger.LogInformation("Loaded BaseView From Session:CurrentViewKey");
+                return curView;
+            }
+
             if (IsCacheEnabled())
             {
                 _baseView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.BaseViewKey);

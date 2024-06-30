@@ -102,7 +102,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    private WebSite Create(WebsiteModel domain)
+    private static WebSite Create(WebsiteModel domain)
     {
         var item = new WebSite()
         {
@@ -127,7 +127,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns>List&lt;MenuModel&gt;.</returns>
     private List<WebsiteModel> Create(List<WebSite> list)
     {
-        return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
+        return list == null ? [] : [.. list.Select(Create).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>MenuModel List</returns>
-    private List<MenuModel> Create(List<Menu> list)
+    private static List<MenuModel> Create(List<Menu> list)
     {
         return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];
     }
@@ -159,7 +159,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                 Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : []
             };
     }
-    private List<MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
+    private static List<MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
     {
         var menuList = list == null ? [] : list.Select(item => Create(item, LoadChild)).OrderBy(x => x.Title).ToList();
         foreach (var menu in menuList.Where(w => w.ParentId is null).OrderBy(o => o.DisplayOrder))
@@ -230,6 +230,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             WebsiteId = domain.Id,
             WebsiteName = domain.Name,
             WebsiteStyle = domain.Style,
+            CurrentStyle = domain.Style,
             SiteName = domain.GalleryFolder,
             Template = domain.Template,
             MetaDescription = domain.Description,

@@ -16,7 +16,7 @@
                 <a href="https://markhazleton.com" title="Mark Hazleton, Solutions Architect, Lifelong Learner, not sidetracked by sizzle" target="_blank">Mark Hazleton</a>
             </div>
             <div class="col-lg-4 col-md-3 mb-4 float-end  text-light">
-                @DateTime.UtcNow.ToLocalTime().ToString("F")
+                Last Built: @status.BuildDate.ToLocalTime().ToLongDateString() <br />
             </div>
         </div>
     </div>

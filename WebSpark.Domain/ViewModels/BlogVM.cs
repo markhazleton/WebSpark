@@ -19,6 +19,7 @@ public class BlogVM : WebsiteVM
         WebsiteId = website.WebsiteId;
         WebsiteName = website.WebsiteName;
         WebsiteStyle = website.WebsiteStyle;
+        CurrentStyle = website.CurrentStyle;
         Template = website.Template;
         SiteUrl = website.SiteUrl;
         MetaDescription = website.MetaDescription;
