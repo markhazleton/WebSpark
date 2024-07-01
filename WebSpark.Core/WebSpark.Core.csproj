@@ -1,34 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Authors>Mark Hazleton</Authors>
-		<Description>ControlSpark is an open-source publishing platform Written in ASP.NET.</Description>
-		<Copyright>WebSpark.Net</Copyright>
-		<PackageProjectUrl>https://WebSpark.net</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/ControlSparkdotnet/ControlSpark</RepositoryUrl>
-		<PackageTags>blog,ControlSpark,asp.net,.net core,WebSpark.net,asp.net core</PackageTags>
-		<Version>1.0.0</Version>
-		<PackageId>ControlOrigins.ControlSpark</PackageId>
-		<PackageReleaseNotes>Initial release of WebSpark.</PackageReleaseNotes>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<AssemblyVersion>8.0.0.0</AssemblyVersion>
-		<FileVersion>8.0.0.0</FileVersion>
-		<NeutralLanguage>en</NeutralLanguage>
+		<Description>WebSpark is an open-source publishing platform Written in ASP.NET.</Description>
+		<Copyright>MarkHazleton.com</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<Deterministic>false</Deterministic>
 		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
+		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
+		<ApplicationIcon>favicon.ico</ApplicationIcon>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<FileVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</FileVersion>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Content Include="RecipeList.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />

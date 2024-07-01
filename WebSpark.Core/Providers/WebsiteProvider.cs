@@ -1,4 +1,4 @@
-using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.DependencyInjection;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure;
 using WebSpark.Domain.EditModels;
@@ -11,17 +11,21 @@ using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.Core.Providers;
 
+public class WebsiteServiceFactory(IServiceProvider serviceProvider) : IWebsiteServiceFactory
+{
+    public IWebsiteService Create()
+    {
+        return serviceProvider.GetRequiredService<IWebsiteService>();
+    }
+}
+
+
 /// <summary>
 ///  Domain
 /// </summary>
-public class WebsiteProvider : IWebsiteService, IDisposable
+public class WebsiteProvider(AppDbContext webDomainContext) : IWebsiteService, IDisposable
 {
-    private readonly AppDbContext _context;
-
-    public WebsiteProvider(AppDbContext webDomainContext)
-    {
-        _context = webDomainContext;
-    }
+    private bool disposedValue;
 
     /// <summary>
     /// Returns Website Model from Website table
@@ -63,7 +67,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns></returns>
     private List<RecipeModel> Create(IEnumerable<Recipe> list)
     {
-        return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
+        return list == null ? [] : [.. list.Select(Create).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -128,16 +132,6 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     private List<WebsiteModel> Create(List<WebSite> list)
     {
         return list == null ? [] : [.. list.Select(Create).OrderBy(x => x.Name)];
-    }
-
-    /// <summary>
-    /// Creates the specified list.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    /// <returns>MenuModel List</returns>
-    private static List<MenuModel> Create(List<Menu> list)
-    {
-        return list == null ? [] : [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];
     }
     /// <summary>
     /// Creates the specified rc.
@@ -253,10 +247,40 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns>List&lt;MenuModel&gt;.</returns>
     private List<MenuModel> CreateRecipeMenu()
     {
-        var list = _context.Recipe.Include(i => i.RecipeCategory).ToList();
+        var categoryList = webDomainContext.RecipeCategory.ToList();
+        List<MenuModel> categoryMenu = categoryList == null ? [] : [.. categoryList.Select(GetMenuItem).OrderBy(x => x.DisplayOrder)];
 
-        return list == null ? [] : [.. list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder)];
+        var list = webDomainContext.Recipe.Include(i => i.RecipeCategory).ToList();
+        categoryMenu.AddRange(list == null ? [] : [.. list.Select(GetMenuItem).OrderBy(x => x.DisplayOrder)]);
+
+        return categoryMenu;
     }
+
+
+    private MenuModel GetMenuItem(RecipeCategory category)
+    {
+        return category == null
+            ? new MenuModel()
+            : new MenuModel()
+            {
+                ParentId = category?.Id,
+                Controller = "recipe",
+                Action = "Category",
+                Argument = FormatHelper.GetSafePath(category.Name),
+                Description = string.IsNullOrEmpty(category.Comment) ? category.Name : category.Comment,
+                Title = category.Name,
+                ParentController = "recipe",
+                ParentTitle = "Recipe",
+                Url = FormatHelper.GetRecipeCategoryURL(category.Name),
+                VirtualPath = FormatHelper.GetRecipeCategoryURL(category.Name),
+                Icon = "fa fa-food",
+                PageContent = category.Comment,
+                DisplayOrder = 10,
+                DisplayInNavigation = false
+            };
+    }
+
+
     /// <summary>
     /// Gets the menu item.
     /// </summary>
@@ -295,30 +319,24 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             return false;
         }
 
-        var deleteItem = _context.Domain.Where(w => w.Id == Id).FirstOrDefault();
+        var deleteItem = webDomainContext.Domain.Where(w => w.Id == Id).FirstOrDefault();
         if (deleteItem != null)
         {
-            _context.Domain.Remove(deleteItem);
-            _context.SaveChanges();
+            webDomainContext.Domain.Remove(deleteItem);
+            webDomainContext.SaveChanges();
             return true;
         }
         return false;
     }
 
-    public void Dispose()
-    {
-        SqliteConnection.ClearAllPools();
-        ((IDisposable)_context).Dispose();
-    }
-
     public List<WebsiteModel> Get()
     {
-        return Create(_context.Domain.OrderBy(o => o.Name).ToList());
+        return Create(webDomainContext.Domain.OrderBy(o => o.Name).ToList());
     }
 
     public async Task<WebsiteModel> GetAsync(int id)
     {
-        var returnMenu = Create(await _context.Set<WebSite>()
+        var returnMenu = Create(await webDomainContext.Set<WebSite>()
             .Where(w => w.Id == id)
             .Include(i => i.Menus).FirstOrDefaultAsync());
         if (returnMenu == null)
@@ -334,12 +352,12 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <returns></returns>
     public async Task<WebsiteVM> GetBaseViewByHostAsync(string host, string defaultSiteId = null)
     {
-        var bvm = CreateBaseView(await _context.Domain.Where(w => w.DomainUrl.ToLower().Contains(host.ToLower()))
+        var bvm = CreateBaseView(await webDomainContext.Domain.Where(w => w.DomainUrl.ToLower().Contains(host.ToLower()))
             .Include(i => i.Menus).FirstOrDefaultAsync());
 
         if (bvm.WebsiteId == 0)
         {
-            bvm = CreateBaseView(await _context.Domain.Where(w => host.ToLower().Contains(w.Name.ToLower()))
+            bvm = CreateBaseView(await webDomainContext.Domain.Where(w => host.ToLower().Contains(w.Name.ToLower()))
                 .Include(i => i.Menus).FirstOrDefaultAsync());
         }
 
@@ -349,13 +367,13 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             if (!int.TryParse(defaultSiteId ?? "1", out siteId))
                 siteId = 1;
 
-            bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == siteId)
+            bvm = CreateBaseView(await webDomainContext.Domain.Where(w => w.Id == siteId)
                 .Include(i => i.Menus).FirstOrDefaultAsync());
 
             if (bvm.WebsiteId == 0)
             {
-                siteId = await _context.Domain.Select(s => s.Id).FirstOrDefaultAsync();
-                bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == siteId)
+                siteId = await webDomainContext.Domain.Select(s => s.Id).FirstOrDefaultAsync();
+                bvm = CreateBaseView(await webDomainContext.Domain.Where(w => w.Id == siteId)
                     .Include(i => i.Menus).FirstOrDefaultAsync());
             }
         }
@@ -364,14 +382,14 @@ public class WebsiteProvider : IWebsiteService, IDisposable
 
     public async Task<WebsiteVM> GetBaseViewModelAsync(int id)
     {
-        var bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == id)
+        var bvm = CreateBaseView(await webDomainContext.Domain.Where(w => w.Id == id)
             .Include(i => i.Menus).FirstOrDefaultAsync());
 
         return bvm;
     }
     public async Task<WebsiteEditModel> GetEditAsync(int id)
     {
-        var website = new WebsiteEditModel(Create(await _context.Set<WebSite>()
+        var website = new WebsiteEditModel(Create(await webDomainContext.Set<WebSite>()
             .Where(w => w.Id == id)
             .Include(i => i.Menus).FirstOrDefaultAsync()));
         return website ??= new WebsiteEditModel();
@@ -389,8 +407,8 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             var saveWebsite = Create(saveItem);
             try
             {
-                _context.Domain.Add(saveWebsite);
-                _context.SaveChanges();
+                webDomainContext.Domain.Add(saveWebsite);
+                webDomainContext.SaveChanges();
                 saveItem.Id = saveWebsite.Id;
             }
             catch (Exception ex)
@@ -404,7 +422,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         {
             try
             {
-                var dbWebsite = _context.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+                var dbWebsite = webDomainContext.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault();
                 if (dbWebsite != null)
                 {
                     dbWebsite.Name = saveItem.Name;
@@ -418,7 +436,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                     dbWebsite.UpdatedID = saveItem.ModifiedID;
                     dbWebsite.VersionNo = dbWebsite.VersionNo++;
                     dbWebsite.UpdatedDate = DateTime.UtcNow;
-                    _context.SaveChanges();
+                    webDomainContext.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -428,7 +446,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
                 return saveItem;
             }
         }
-        return Create(_context.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault());
+        return Create(webDomainContext.Domain.Where(w => w.Id == saveItem.Id).FirstOrDefault());
     }
 
     public static Uri ValidateUrl(string url)
@@ -442,5 +460,34 @@ public class WebsiteProvider : IWebsiteService, IDisposable
         {
             return null;
         }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                if (webDomainContext != null)
+                {
+                    webDomainContext.Dispose();
+                    webDomainContext = null;
+                }
+            }
+            disposedValue = true;
+        }
+    }
+
+    ~WebsiteProvider()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: false);
+    }
+
+    void IDisposable.Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

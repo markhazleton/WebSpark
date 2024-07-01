@@ -3,25 +3,22 @@
     "mssql1": {
       "ignored": "true",
       "type": "mssql",
-      "connectionId": "WebSparkUserContext"
+      "connectionId": "ControlSpark:ConnString"
     },
     "mssql2": {
       "ignored": "true",
       "type": "mssql",
-      "connectionId": "GPTDbContext"
-    },
-    "sqlite1": {
-      "ignored": "true",
-      "type": "sqlite"
-    },
-    "secrets1": {
-      "type": "secrets",
-      "connectionId": null
+      "connectionId": "DefaultConnection"
     },
     "mssql3": {
       "ignored": "true",
       "type": "mssql",
-      "connectionId": "WebSparkContext"
+      "connectionId": "ControlSparkUserContextConnection"
+    },
+    "mssql4": {
+      "ignored": "true",
+      "type": "mssql",
+      "connectionId": "PromptSparkConnection"
     }
   }
 }

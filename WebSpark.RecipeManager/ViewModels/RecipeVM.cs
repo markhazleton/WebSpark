@@ -15,6 +15,10 @@ public class RecipeVM : WebsiteVM
     /// </summary>
     public RecipeVM()
     {
+        Recipe = new();
+        Category = new();
+        CategoryList = [];
+        RecipeList = [];
     }
 
     /// <summary>
@@ -26,6 +30,7 @@ public class RecipeVM : WebsiteVM
         WebsiteId = website.WebsiteId;
         WebsiteName = website.WebsiteName;
         WebsiteStyle = website.WebsiteStyle;
+        CurrentStyle = website.CurrentStyle;
         Template = website.Template;
         SiteUrl = website.SiteUrl;
         MetaDescription = website.MetaDescription;
@@ -34,33 +39,34 @@ public class RecipeVM : WebsiteVM
         Menu = website.Menu;
         StyleList = website.StyleList;
         StyleUrl = website.StyleUrl;
-        Recipe = new RecipeModel();
-        Category = new RecipeCategoryModel();
-        CategoryList = new List<RecipeCategoryModel>();
-        RecipeList = new List<RecipeModel>();
+        Recipe = new();
+        Category = new();
+        CategoryList = [];
+        RecipeList = [];
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonPropertyName("category")]
+    public RecipeCategoryModel Category { get; set; }
     /// <summary>
     /// Gets the category list.
     /// </summary>
     /// <value>The category list.</value>
     [JsonPropertyName("category_list")]
     public List<RecipeCategoryModel> CategoryList { get; set; }
-    /// <summary>
-    /// Gets the recipe list.
-    /// </summary>
-    /// <value>The recipe list.</value>
-    [JsonPropertyName("recipes")]
-    public List<RecipeModel> RecipeList { get; set; }
 
     /// <summary>
     /// Gets or sets the recipe.
     /// </summary>
     /// <value>The recipe.</value>
     [JsonPropertyName("recipe")]
-    public RecipeModel Recipe { get; set; }
+    public RecipeModel? Recipe { get; set; }
     /// <summary>
-    /// 
+    /// Gets the recipe list.
     /// </summary>
-    [JsonPropertyName("category")]
-    public RecipeCategoryModel Category { get; set; }
+    /// <value>The recipe list.</value>
+    [JsonPropertyName("recipes")]
+    public List<RecipeModel> RecipeList { get; set; }
 }

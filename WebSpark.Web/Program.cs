@@ -25,14 +25,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(AppDbConnectionString);
 });
-
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
 builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddSingleton<WebRouteValueTransformer>();
+builder.Services.AddSingleton<IWebsiteServiceFactory, WebsiteServiceFactory>();
+
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -61,20 +62,13 @@ builder.Services.AddSession(options =>
 builder.Services.AddMvc()
     .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
+
 // Setup Database and Seed (TEMP)
 var app = builder.Build();
 //await DbInitializer.SeedAsync(app);
 
 app.UseSession();
-app.Use(async (context, next) =>
-{
-    if (context == null || context.Session == null || context.Session.GetInt32(SessionExtensionsKeys.SessionInitialized) == 1)
-    {
-        return;
-    }
-    context.Session.Set("MyTest", "MyTest");
-    await next();
-});
+app.UseSessionInitialization();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

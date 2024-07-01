@@ -1,0 +1,12 @@
+﻿@model RecipeModel
+@using System.Net
+@{
+    string recipeUrl = WebUtility.UrlEncode(Model.RecipeURL);
+    string recipeTitle = WebUtility.UrlEncode(Model.Name);
+    recipeTitle = WebUtility.UrlEncode(recipeTitle);
+    string message = WebUtility.UrlEncode($"Check out this recipe!");
+    string emailBODY = WebUtility.UrlEncode($"Check out this recipe: {Model.Name} at {Model.RecipeURL}");
+}
+<div class="social-sharing-links my-3">
+
+</div>

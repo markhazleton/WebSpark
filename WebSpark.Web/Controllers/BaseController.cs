@@ -35,13 +35,10 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
     /// </summary>
     protected string SetCurrentStyle(string currentStyle)
     {
-        if (_baseView == null)
-        {
-            _baseView = BaseVM;
-        }
+        _baseView ??= BaseVM;
         _baseView.CurrentStyle = currentStyle;
         HttpContext.Session.SetString(
-            SessionExtensionsKeys.CurrentViewKey, 
+            SessionExtensionsKeys.CurrentViewKey,
             JsonSerializer.Serialize(_baseView, optionsJsonSerializer));
 
         return _baseView.CurrentStyle;
@@ -58,14 +55,14 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
             if (curView != null)
             {
                 _baseView = curView;
-                _logger.LogInformation("Loaded BaseView From Session:CurrentViewKey");
+                _logger.LogDebug("Loaded BaseView From Session:CurrentViewKey");
                 return curView;
             }
 
             if (IsCacheEnabled())
             {
                 _baseView = HttpContext.Session.Get<WebsiteVM>(SessionExtensionsKeys.BaseViewKey);
-                _logger.LogInformation("Loaded BaseView From Session");
+                _logger.LogDebug("Loaded BaseView From Session");
             }
 
             if (_baseView == null)
@@ -82,7 +79,7 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
                 var curSiteRoot = ($"{RequestScheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
                 _baseView.SiteUrl = new Uri(curSiteRoot);
                 HttpContext.Session.SetString(SessionExtensionsKeys.BaseViewKey, JsonSerializer.Serialize(_baseView, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
-                _logger.LogInformation("Loaded BaseView From Database");
+                _logger.LogDebug("Loaded BaseView From Database");
             }
             return _baseView;
         }

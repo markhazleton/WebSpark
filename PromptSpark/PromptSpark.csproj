@@ -9,10 +9,6 @@
 		<Deterministic>false</Deterministic>
 		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
 		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
-		<ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
-		<Title>Prompt Spark</Title>
-		<PackageIcon>PromptSpark-icon.png</PackageIcon>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	<Target Name="EnsureNodeModules" BeforeTargets="BeforeBuild">
 		<Message Importance="high" Text="Update npm packages..." />

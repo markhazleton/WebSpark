@@ -5,102 +5,164 @@ using WebSpark.Domain.ViewModels;
 namespace WebSpark.Web.Extensions;
 
 /// <summary>
-/// 
+/// Represents a class that transforms route values for web routes.
 /// </summary>
-/// <remarks>
-/// 
-/// </remarks>
-public class WebRouteValueTransformer(
-    ILogger<WebRouteValueTransformer> logger) : DynamicRouteValueTransformer
+public class WebRouteValueTransformer(ILogger<WebRouteValueTransformer> logger) : DynamicRouteValueTransformer
 {
-
     /// <summary>
-    /// 
+    /// Transforms the route values asynchronously.
     /// </summary>
-    /// <param name="httpContext"></param>
-    /// <param name="values"></param>
-    /// <returns></returns>
+    /// <param name="httpContext">The current HttpContext.</param>
+    /// <param name="values">The route values.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public override ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
     {
         var route = httpContext?.Request?.Path.Value?.ToLower();
 
-        // Check for file extensions
-        if (route.EndsWith(".js"))
+        if (string.IsNullOrEmpty(route))
         {
-            logger.LogWarning("JS File not found", new { route, values });
-            values["controller"] = "EmptyFiles";
-            values["action"] = "BlankJS";
+            logger.LogError("Route is null or empty");
+            values["controller"] = "error";
+            values["action"] = "notfound";
             values["id"] = string.Empty;
             return new ValueTask<RouteValueDictionary>(values);
+        }
+
+        if (HandleFileExtensions(route, values)
+            || HandleBlogLinks(route, values)
+            || HandleAdmin(route, values))
+        {
+            logger.LogInformation("Route handled: {route}", route);
+            return new ValueTask<RouteValueDictionary>(values);
+        }
+
+        return HandleBaseView(httpContext, route, values);
+    }
+
+    /// <summary>
+    /// Handles the file extensions in the route.
+    /// </summary>
+    /// <param name="route">The route value.</param>
+    /// <param name="values">The route values.</param>
+    /// <returns><c>true</c> if the file extension is handled; otherwise, <c>false</c>.</returns>
+    private bool HandleFileExtensions(string route, RouteValueDictionary values)
+    {
+        if (route.EndsWith(".js"))
+        {
+            SetValues(values, "EmptyFiles", "BlankJS", string.Empty);
+            return true;
         }
         if (route.EndsWith(".css"))
         {
-            logger.LogWarning("CSS File not found", new { route, values });
-            values["controller"] = "EmptyFiles";
-            values["action"] = "BlankCss";
-            values["id"] = string.Empty;
-            return new ValueTask<RouteValueDictionary>(values);
+            SetValues(values, "EmptyFiles", "BlankCss", string.Empty);
+            return true;
         }
+        if (route.EndsWith(".png"))
+        {
+            SetValues(values, "EmptyFiles", "BlankPNG", string.Empty);
+            return true;
+        }
+        if (route.EndsWith(".jpg") || route.EndsWith(".jpeg"))
+        {
+            SetValues(values, "EmptyFiles", "BlankJPG", string.Empty);
+            return true;
+        }
+        if (route.EndsWith(".gif"))
+        {
+            SetValues(values, "EmptyFiles", "BlankGIF", string.Empty);
+            return true;
+        }
+        return false;
+    }
 
 
-        // Check for Blog Links
+    /// <summary>
+    /// Handles the blog links in the route.
+    /// </summary>
+    /// <param name="route">The route value.</param>
+    /// <param name="values">The route values.</param>
+    /// <returns><c>true</c> if the blog link is handled; otherwise, <c>false</c>.</returns>
+    private bool HandleBlogLinks(string route, RouteValueDictionary values)
+    {
         if (route == "/blog")
         {
-            values["controller"] = "Blog";
-            values["action"] = "index";
-            values["id"] = string.Empty;
-            return new ValueTask<RouteValueDictionary>(values);
+            SetValues(values, "Blog", "index", string.Empty);
+            return true;
         }
-        if (route?.StartsWith("/posts/") == true)
+        if (route.StartsWith("/posts/"))
         {
             var slug = route.Replace("/posts/", string.Empty);
-            values["controller"] = "Blog";
-            values["action"] = "single";
-            values["id"] = slug;
-            return new ValueTask<RouteValueDictionary>(values);
+            SetValues(values, "Blog", "single", slug);
+            return true;
         }
-        if (route?.StartsWith("/categories/") == true)
+        if (route.StartsWith("/categories/"))
         {
             var slug = route.Replace("/categories/", string.Empty);
-            values["controller"] = "Blog";
-            values["action"] = "categories";
-            values["id"] = slug;
-            return new ValueTask<RouteValueDictionary>(values);
+            SetValues(values, "Blog", "categories", slug);
+            return true;
         }
+        return false;
+    }
 
-        // Admin
-        if (route?.StartsWith("/admin/") == true)
+    /// <summary>
+    /// Handles the admin routes in the route.
+    /// </summary>
+    /// <param name="route">The route value.</param>
+    /// <param name="values">The route values.</param>
+    /// <returns><c>true</c> if the admin route is handled; otherwise, <c>false</c>.</returns>
+    private bool HandleAdmin(string route, RouteValueDictionary values)
+    {
+        if (route.StartsWith("/admin/"))
         {
             var slug = route.Replace("/admin/", string.Empty);
-            values["controller"] = "admin";
-            values["action"] = "index";
-            values["id"] = slug;
-            return new ValueTask<RouteValueDictionary>(values);
+            SetValues(values, "admin", "index", slug);
+            return true;
         }
+        return false;
+    }
 
+    /// <summary>
+    /// Handles the base view route.
+    /// </summary>
+    /// <param name="httpContext">The current HttpContext.</param>
+    /// <param name="route">The route value.</param>
+    /// <param name="values">The route values.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    private ValueTask<RouteValueDictionary> HandleBaseView(HttpContext httpContext, string route, RouteValueDictionary values)
+    {
         var value = httpContext?.Session.GetString("BaseViewKey");
-        var baseView = value == null ? default : JsonSerializer.Deserialize<WebsiteVM>(value);
-        var myPage = baseView?.Menu?.Where(w => w.Url == httpContext?.Request?.Path.Value).FirstOrDefault();
+        var baseView = string.IsNullOrEmpty(value) ? null : JsonSerializer.Deserialize<WebsiteVM>(value);
+        var myPage = baseView?.Menu?.FirstOrDefault(w => w.Url == route);
+
         if (myPage == null)
         {
-            if (string.IsNullOrWhiteSpace(route?.Replace("/", string.Empty)))
+            if (string.IsNullOrWhiteSpace(route.Replace("/", string.Empty)))
             {
-                // If this is the root, then return the default page (first in display order)
                 myPage = baseView?.Menu?.Where(w => w.ParentId == null).OrderBy(o => o.DisplayOrder).FirstOrDefault();
             }
             else
             {
-                logger.LogWarning("Page not found", new { route, values });
-                values["controller"] = "error";
-                values["controller"] = "error";
-                values["action"] = "notfound";
-                values["id"] = route;
+                logger.LogWarning("Page not found for route: {route}", route);
+                SetValues(values, "error", "notfound", route);
                 return new ValueTask<RouteValueDictionary>(values);
             }
         }
-        values["controller"] = myPage?.Controller ?? "Page";
-        values["action"] = myPage?.Action ?? "index";
-        values["id"] = myPage?.Argument ?? myPage?.Action;
+
+        SetValues(values, myPage?.Controller ?? "Page", myPage?.Action ?? "index", myPage?.Argument ?? myPage?.Action);
         return new ValueTask<RouteValueDictionary>(values);
+    }
+
+    /// <summary>
+    /// Sets the controller, action, and id values in the route values.
+    /// </summary>
+    /// <param name="values">The route values.</param>
+    /// <param name="controller">The controller value.</param>
+    /// <param name="action">The action value.</param>
+    /// <param name="id">The id value.</param>
+    private static void SetValues(RouteValueDictionary values, string controller, string action, string id)
+    {
+        values["controller"] = controller;
+        values["action"] = action;
+        values["id"] = id;
     }
 }

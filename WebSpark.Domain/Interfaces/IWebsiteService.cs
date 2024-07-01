@@ -4,6 +4,7 @@ using WebSpark.Domain.ViewModels;
 
 namespace WebSpark.Domain.Interfaces;
 
+
 /// <summary>
 /// Website Service
 /// </summary>

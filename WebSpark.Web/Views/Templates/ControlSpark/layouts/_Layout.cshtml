@@ -6,11 +6,6 @@
 @{
     var areaName1 = ViewContext.RouteData.Values["area"]?.ToString();
     string currentPath = ViewContext.HttpContext.Request.Path.Value;
-    if(currentPath == "/")
-    {
-        currentPath = "/Home/Index";
-    }
-
     string currentStyle = Model?.CurrentStyle?? Model?.WebsiteStyle;
     string siteStyle = $"/site/{Model?.WebsiteStyle}/css/site.css";
     string siteJs = $"/site/{Model?.WebsiteStyle}/js/site.js";

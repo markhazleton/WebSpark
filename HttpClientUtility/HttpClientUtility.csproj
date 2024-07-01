@@ -5,6 +5,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
+	<PropertyGroup>
+		<Deterministic>false</Deterministic>
+		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
+		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />

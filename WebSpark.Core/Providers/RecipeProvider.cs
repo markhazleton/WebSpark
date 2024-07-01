@@ -1,4 +1,3 @@
-using Microsoft.Data.Sqlite;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure;
 using WebSpark.Domain.Entities;
@@ -21,6 +20,7 @@ namespace WebSpark.Core.Providers;
 /// <seealso cref="IMenuProvider" />
 public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRecipeService, IDisposable
 {
+    private bool disposedValue;
 
     /// <summary>
     /// 
@@ -30,7 +30,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     private List<RecipeModel> Create(List<Recipe> list)
     {
         if (list == null) return [];
-        return [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
+        return [.. list.Select(Create).OrderBy(x => x.Name)];
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <param name="recipe">The recipe.</param>
     /// <param name="domain">The domain.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel GetMenuItem(Recipe recipe, WebSite domain)
+    private static MenuModel GetMenuItem(Recipe recipe, WebSite domain)
     {
         if (recipe == null) return new MenuModel();
 
@@ -269,7 +269,7 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
     /// <param name="domain">The domain.</param>
     /// <param name="page">The page.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel GetMenuItem(Recipe recipe, WebSite domain, Menu page)
+    private static MenuModel GetMenuItem(Recipe recipe, WebSite domain, Menu page)
     {
         if (recipe == null) return new MenuModel();
 
@@ -308,12 +308,6 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             return true;
         }
         return false;
-    }
-
-    public void Dispose()
-    {
-        SqliteConnection.ClearAllPools();
-        ((IDisposable)webDomainContext).Dispose();
     }
 
     /// <summary>
@@ -583,5 +577,37 @@ public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRec
             }
         }
         return GetRecipeCategoryById(saveItem.Id);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                if (webDomainContext != null)
+                {
+                    webDomainContext.Dispose();
+                    webDomainContext = null;
+                }
+            }
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            disposedValue = true;
+        }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    ~RecipeProvider()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: false);
+    }
+
+    void IDisposable.Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

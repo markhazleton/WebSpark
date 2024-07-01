@@ -3,28 +3,12 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<ApplicationIcon>favicon.ico</ApplicationIcon>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 	<PropertyGroup>
 		<Deterministic>false</Deterministic>
 		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
 		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
-		<ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
 	</PropertyGroup>
-	<ItemGroup>
-	  <Content Remove="Views\Shared\Error.cshtml" />
-	  <Content Remove="Views\Shared\MainLayout.razor" />
-	  <Content Remove="Views\Shared\NavMenu.razor" />
-	  <Content Remove="Views\Shared\_Footer.cshtml" />
-	  <Content Remove="Views\Shared\_Layout.cshtml" />
-	  <Content Remove="Views\Shared\_MainMenu.cshtml" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Views\Shared\MainLayout.razor.css" />
-	  <None Remove="Views\Shared\NavMenu.razor.css" />
-	  <None Remove="Views\Shared\_Layout.cshtml.css" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.0.0" />
@@ -40,34 +24,34 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
-	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
-	  <ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
-	  <ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
+		<ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
+		<ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
+		<ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
+		<ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="wwwroot\site\mom\img\background.jpg">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\site\mom\js\site.js">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\site\mom\RecipeList.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="wwwroot\site\texecon\css\site.css">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\site\texecon\img\background.jpg">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\site\texecon\js\site.js">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 	</ItemGroup>
 

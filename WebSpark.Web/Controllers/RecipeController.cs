@@ -17,27 +17,23 @@ public class RecipeController(
 {
     private RecipeVM? _viewModel;
     private const string RecipeViewKey = "RecipeViewKey";
-
-    private RecipeVM viewModel
+    private RecipeVM RecipeViewModel
     {
         get
         {
             if (IsCacheEnabled())
             {
-                _logger.LogInformation("Loaded RecipeView From Session");
+                _logger.LogDebug("Loaded RecipeView From Session");
             }
-
             if (_viewModel == null)
             {
                 var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
                 var x = HttpContext.Request.Host;
                 var task = Task.Run(() => recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, BaseVM));
                 _viewModel = task.GetAwaiter().GetResult();
-
                 _viewModel.CurrentStyle = BaseVM.CurrentStyle;
-
                 HttpContext.Session.SetString(RecipeViewKey, JsonSerializer.Serialize(_viewModel, optionsJsonSerializer));
-                _logger.LogInformation("Loaded RecipeView From Database");
+                _logger.LogDebug("Loaded RecipeView From Database");
             }
             return _viewModel;
         }
@@ -49,84 +45,53 @@ public class RecipeController(
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
-    public ActionResult Category(string id = null)
+    public ActionResult Category(string? id = null)
     {
         if (!string.IsNullOrEmpty(id))
         {
-            viewModel.Category = viewModel.CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
-
-            if (string.Compare(HttpContext.Request.Path, viewModel.Category.Url, StringComparison.Ordinal) != 0)
+            RecipeViewModel.Category = RecipeViewModel.CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
+            if (RecipeViewModel.Category != null)
             {
-                return Redirect($"/{viewModel.Category.Url}");
+                if (string.Compare(HttpContext.Request.Path, RecipeViewModel.Category.Url, StringComparison.Ordinal) != 0)
+                {
+                    return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Category.cshtml", RecipeViewModel);
+                }
+                RecipeViewModel.PageTitle = $"{RecipeViewModel.Category.Name}";
+                RecipeViewModel.MetaDescription = $"{RecipeViewModel.Category.Description}";
+                RecipeViewModel.MetaKeywords = $"{RecipeViewModel.Category.Name}";
             }
-            viewModel.PageTitle = $"{viewModel.Category.Name}";
-            viewModel.MetaDescription = $"{viewModel.Category.Description}";
-            viewModel.MetaKeywords = $"{viewModel.Category.Name}";
         }
-        return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Category.cshtml", viewModel);
+        return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Category.cshtml", RecipeViewModel);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="recipeVM"></param>
-    /// <returns></returns>
-    [HttpPost]
-    public ActionResult Category(RecipeVM recipeVM, string id = null)
-    {
-        viewModel.Category = viewModel
-            .CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(recipeVM.Category?.Name)).FirstOrDefault();
-        if (viewModel.Category == null)
-            return Redirect($"/recipe/category");
-
-        return Redirect(viewModel.Category.Url);
-    }
     /// <summary>
     /// Get Page
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns>ActionResult.</returns>
     [HttpGet]
-    public ActionResult Index(string id = null)
+    public ActionResult Index(string? id = null)
     {
         if (string.IsNullOrEmpty(id))
         {
-            return Redirect($"/recipe/category");
+            return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Category.cshtml", RecipeViewModel);
         }
         else
         {
-            viewModel.Recipe = viewModel.RecipeList
+            RecipeViewModel.Recipe = RecipeViewModel.RecipeList
                 .Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
 
-            if (viewModel.Recipe == null)
+            if (RecipeViewModel.Recipe == null)
                 return Redirect($"/recipe");
 
-            if (string.Compare(HttpContext.Request.Path, viewModel.Recipe.RecipeURL, StringComparison.Ordinal) != 0)
+            if (string.Compare(HttpContext.Request.Path, RecipeViewModel.Recipe.RecipeURL, StringComparison.Ordinal) != 0)
             {
-                return Redirect($"/{viewModel.Recipe.RecipeURL}");
+                return Redirect($"/{RecipeViewModel.Recipe.RecipeURL}");
             }
-            viewModel.PageTitle = $"{viewModel.Recipe.Name}";
-            viewModel.MetaDescription = $"{viewModel.Recipe.Description}";
-            viewModel.MetaKeywords = $"{viewModel.Recipe.Name}";
+            RecipeViewModel.PageTitle = $"{RecipeViewModel.Recipe.Name}";
+            RecipeViewModel.MetaDescription = $"{RecipeViewModel.Recipe.Description}";
+            RecipeViewModel.MetaKeywords = $"{RecipeViewModel.Recipe.Name}";
         }
-        return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Index.cshtml", viewModel);
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="recipeVM"></param>
-    /// <returns></returns>
-    [HttpPost]
-    public ActionResult Index(RecipeVM recipeVM, string id = null)
-    {
-        viewModel.Recipe = viewModel?.RecipeList
-            .Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(recipeVM.Recipe?.Name))
-            .FirstOrDefault();
-        if (viewModel?.Recipe == null)
-            return Redirect($"/recipe");
-
-        return Redirect(viewModel.Recipe.RecipeURL);
+        return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Index.cshtml", RecipeViewModel);
     }
 }

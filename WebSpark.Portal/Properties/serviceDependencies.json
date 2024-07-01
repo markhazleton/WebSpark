@@ -10,14 +10,6 @@
       "type": "mssql",
       "connectionId": "GPTDbContext"
     },
-    "sqlite1": {
-      "ignored": "true",
-      "type": "sqlite"
-    },
-    "secrets1": {
-      "type": "secrets",
-      "connectionId": null
-    },
     "mssql3": {
       "ignored": "true",
       "type": "mssql",

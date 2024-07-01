@@ -1,4 +1,4 @@
-@model             RecipeVM
+@model RecipeVM
 @using WebSpark.RecipeManager.Models
 @using WebSpark.Domain
 @{
@@ -90,6 +90,7 @@
         </div>
     </div>
     <div class="card-footer">
+        <partial name="_ShareRecipe.cshtml" model="Model.Recipe" />
     </div>
 </div>
 
