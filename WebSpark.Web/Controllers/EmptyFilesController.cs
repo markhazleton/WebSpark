@@ -19,6 +19,17 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     }
 
     /// <summary>
+    /// Action Method for service blank PHP file 
+    /// </summary>
+    /// <returns></returns>
+    [Route("/blank.php")]
+        public ContentResult BlankPHP()
+    {
+        logger.LogInformation("Serving blank PHP file");
+        return BlankFile("application/x-httpd-php");
+    }
+
+    /// <summary>
     /// Action method for serving blank CSS file.
     /// </summary>
     /// <returns>The content result.</returns>

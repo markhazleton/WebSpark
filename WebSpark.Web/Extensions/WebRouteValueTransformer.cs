@@ -47,6 +47,11 @@ public class WebRouteValueTransformer(ILogger<WebRouteValueTransformer> logger) 
     /// <returns><c>true</c> if the file extension is handled; otherwise, <c>false</c>.</returns>
     private bool HandleFileExtensions(string route, RouteValueDictionary values)
     {
+        if (route.EndsWith(".php"))
+        {
+            SetValues(values, "EmptyFiles", "BlankPHP", string.Empty);
+            return true;
+        }
         if (route.EndsWith(".js"))
         {
             SetValues(values, "EmptyFiles", "BlankJS", string.Empty);

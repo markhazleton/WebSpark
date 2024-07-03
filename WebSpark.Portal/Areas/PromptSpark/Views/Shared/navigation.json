@@ -1,0 +1,24 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Explore",
+      "url": "/PromptSpark/Chat"
+    },
+    {
+      "text": "Definitions",
+      "url": "/PromptSpark/Definitions"
+    },
+    {
+      "text": "Definition Types",
+      "url": "/PromptSpark/DefinitionTypes"
+    },
+    {
+      "text": "UserPrompts",
+      "url": "/PromptSpark/UserPrompts"
+    },
+    {
+      "text": "Responses",
+      "url": "/PromptSpark/Responses"
+    }
+  ]
+}

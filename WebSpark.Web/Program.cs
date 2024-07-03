@@ -57,16 +57,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-// We need to use MVC so we can use a Razor Configuration SiteTemplate
-// have to let MVC know we have a controller
+
 builder.Services.AddMvc()
     .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
-
-// Setup Database and Seed (TEMP)
 var app = builder.Build();
-//await DbInitializer.SeedAsync(app);
-
 app.UseSession();
 app.UseSessionInitialization();
 

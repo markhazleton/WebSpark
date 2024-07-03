@@ -2,21 +2,15 @@
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 
-public class ResponsesController : PromptSparkBaseController
+public class ResponsesController(GPTDbContext context) : PromptSparkBaseController
 {
-    private readonly GPTDbContext _context;
-
-    public ResponsesController(GPTDbContext context)
-    {
-        _context = context;
-    }
 
     // GET: Responses
     public async Task<IActionResult> Index()
     {
         try
         {
-            var list = await _context.Chats.ToListAsync();
+            var list = await context.Chats.ToListAsync();
             return View(list);
         }
         catch (Exception ex)
@@ -34,7 +28,7 @@ public class ResponsesController : PromptSparkBaseController
             return NotFound();
         }
 
-        var gPTResponse = await _context.Chats
+        var gPTResponse = await context.Chats
             .FirstOrDefaultAsync(m => m.Id == id);
         if (gPTResponse == null)
         {
@@ -59,8 +53,8 @@ public class ResponsesController : PromptSparkBaseController
     {
         if (ModelState.IsValid)
         {
-            _context.Add(gPTResponse);
-            await _context.SaveChangesAsync();
+            context.Add(gPTResponse);
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         return View(gPTResponse);
@@ -74,7 +68,7 @@ public class ResponsesController : PromptSparkBaseController
             return NotFound();
         }
 
-        var gPTResponse = await _context.Chats.FindAsync(id);
+        var gPTResponse = await context.Chats.FindAsync(id);
         if (gPTResponse == null)
         {
             return NotFound();
@@ -98,8 +92,8 @@ public class ResponsesController : PromptSparkBaseController
         {
             try
             {
-                _context.Update(gPTResponse);
-                await _context.SaveChangesAsync();
+                context.Update(gPTResponse);
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -125,7 +119,7 @@ public class ResponsesController : PromptSparkBaseController
             return NotFound();
         }
 
-        var gPTResponse = await _context.Chats
+        var gPTResponse = await context.Chats
             .FirstOrDefaultAsync(m => m.Id == id);
         if (gPTResponse == null)
         {
@@ -140,18 +134,18 @@ public class ResponsesController : PromptSparkBaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var gPTResponse = await _context.Chats.FindAsync(id);
+        var gPTResponse = await context.Chats.FindAsync(id);
         if (gPTResponse != null)
         {
-            _context.Chats.Remove(gPTResponse);
+            context.Chats.Remove(gPTResponse);
         }
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private bool GPTResponseExists(int id)
     {
-        return _context.Chats.Any(e => e.Id == id);
+        return context.Chats.Any(e => e.Id == id);
     }
 }

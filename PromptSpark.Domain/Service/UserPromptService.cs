@@ -36,7 +36,7 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
             .Where(c => c.UserPrompt == entity.UserPrompt && c.DefinitionType == entity.DefinitionType)
             .FirstOrDefaultAsync();
 
-        if(existing != null)
+        if (existing != null)
         {
             return existing.ToDto();
         }

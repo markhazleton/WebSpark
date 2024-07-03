@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace PromptSpark.Domain.Data;
 
@@ -50,7 +49,7 @@ public class GPTDbContext : DbContext
 
         // Ensure TestPrompt is unique
         modelBuilder.Entity<GPTUserPrompt>()
-            .HasIndex(c => new { c.UserPrompt, c.DefinitionType})
+            .HasIndex(c => new { c.UserPrompt, c.DefinitionType })
              .IsUnique();
 
         // Relationship between GPTUserPrompt and GPTDefinitionResponse
