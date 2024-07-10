@@ -14,11 +14,11 @@ namespace WebSpark.Core.Providers;
 /// <seealso cref="IMenuProvider" />
 public class MenuProvider : IMenuProvider, IDisposable, IMenuService
 {
-    private readonly AppDbContext _context;
+    private readonly WebSparkDbContext _context;
     /// <summary>
     /// Initializes a new instance of the <see cref="MenuProvider" /> class.
     /// </summary>
-    public MenuProvider(AppDbContext webDomainContext)
+    public MenuProvider(WebSparkDbContext webDomainContext)
     {
         _context = webDomainContext;
     }

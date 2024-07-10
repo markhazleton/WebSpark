@@ -41,7 +41,7 @@ public static class FormatHelper
     /// <returns></returns>
     public static string GetRecipeURL(string recipeName)
     {
-        return $"/recipe/{FormatHelper.GetSafePath(recipeName)}";
+        return $"/recipe/{GetSafePath(recipeName)}";
     }
 
     /// <summary>
@@ -51,6 +51,6 @@ public static class FormatHelper
     /// <returns></returns>
     public static string GetRecipeCategoryURL(string name)
     {
-        return $"/recipe/category/{FormatHelper.GetSafePath(name)}";
+        return $"/recipe/category/{GetSafePath(name)}";
     }
 }

@@ -23,7 +23,7 @@ public class WebsiteServiceFactory(IServiceProvider serviceProvider) : IWebsiteS
 /// <summary>
 ///  Domain
 /// </summary>
-public class WebsiteProvider(AppDbContext webDomainContext) : IWebsiteService, IDisposable
+public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteService, IDisposable
 {
     private bool disposedValue;
 

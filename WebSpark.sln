@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Portal", "WebSpark.Portal\WebSpark.Portal.csproj", "{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSpark.SharedKernel", "WebSpark.SharedKernel\WebSpark.SharedKernel.csproj", "{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{B05C49EC-9E92-4C6D-B89E-D22A7669E0C4} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{9BF4918C-CFB5-4077-9FB5-D804720259BA} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{2A6FB423-7C82-4D56-9E51-5790B30A40EB} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}

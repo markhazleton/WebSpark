@@ -1,4 +1,15 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@functions {
+    public string GetCanonicalUrl()
+    {
+        var request = HttpContextAccessor.HttpContext.Request;
+        var canonicalUrl = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}";
+        return canonicalUrl;
+    }
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,8 +19,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-
     <title>@ViewData["Title"] - Prompt Spark</title>
+    <link rel="canonical" href="@GetCanonicalUrl()" />
     <link rel="stylesheet" href="~/dist/css/style.min.css" asp-append-version="true" />
     <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.7/cr-2.0.2/date-1.5.2/r-3.0.2/datatables.min.css" rel="stylesheet">
     @await RenderSectionAsync("Styles", required: false)
@@ -33,9 +44,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/OpenAI/Chat/Index">Explore</a>
                         </li>
-                        <partial name="_navigation_partial" />
                     </ul>
-                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

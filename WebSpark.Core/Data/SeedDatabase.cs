@@ -10,9 +10,9 @@ namespace WebSpark.Core.Data;
 
 public class SeedDatabase : IDisposable
 {
-    private readonly AppDbContext _context;
+    private readonly WebSparkDbContext _context;
 
-    public SeedDatabase(AppDbContext context)
+    public SeedDatabase(WebSparkDbContext context)
     {
         _context = context;
     }

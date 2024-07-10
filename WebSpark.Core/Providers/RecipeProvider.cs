@@ -13,12 +13,12 @@ namespace WebSpark.Core.Providers;
 
 /// <summary>
 /// Recipe Service
-/// Implements the <see cref="AppDbContext" />
+/// Implements the <see cref="WebSparkDbContext" />
 /// Implements the <see cref="IMenuProvider" />
 /// </summary>
-/// <seealso cref="AppDbContext" />
+/// <seealso cref="WebSparkDbContext" />
 /// <seealso cref="IMenuProvider" />
-public class RecipeProvider(AppDbContext webDomainContext) : IMenuProvider, IRecipeService, IDisposable
+public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider, IRecipeService, IDisposable
 {
     private bool disposedValue;
 

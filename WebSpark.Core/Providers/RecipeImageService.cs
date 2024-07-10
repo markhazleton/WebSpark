@@ -15,9 +15,9 @@ public interface IRecipeImageService
 
 public class RecipeImageService : IRecipeImageService, IDisposable
 {
-    private readonly AppDbContext _dbContext;
+    private readonly WebSparkDbContext _dbContext;
 
-    public RecipeImageService(AppDbContext dbContext)
+    public RecipeImageService(WebSparkDbContext dbContext)
     {
         _dbContext = dbContext;
     }

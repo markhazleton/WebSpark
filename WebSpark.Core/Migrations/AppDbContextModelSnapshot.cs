@@ -9,7 +9,7 @@ using WebSpark.Core.Data;
 
 namespace WebSpark.Core.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(WebSparkDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

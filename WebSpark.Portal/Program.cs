@@ -43,7 +43,7 @@ builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<WebSparkDbContext>(options =>
 {
     options.UseSqlite(AppDbConnectionString);
 });

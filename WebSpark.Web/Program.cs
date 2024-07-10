@@ -21,7 +21,7 @@ var config = new ConfigurationBuilder()
 WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "WebSpark");
 
 var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<WebSparkDbContext>(options =>
 {
     options.UseSqlite(AppDbConnectionString);
 });

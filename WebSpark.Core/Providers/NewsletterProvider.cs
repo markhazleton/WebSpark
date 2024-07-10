@@ -7,10 +7,10 @@ namespace WebSpark.Core.Providers;
 
 public class NewsletterProvider : INewsletterProvider
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
     private readonly IEmailProvider _emailProvider;
 
-    public NewsletterProvider(AppDbContext db, IEmailProvider emailProvider)
+    public NewsletterProvider(WebSparkDbContext db, IEmailProvider emailProvider)
     {
         _db = db;
         _emailProvider = emailProvider;

@@ -1,5 +1,3 @@
-using HttpClientUtility.Models;
-
 namespace HttpClientUtility.FullService;
 /// <summary>
 /// Interface for HttpClientService

@@ -1,4 +1,3 @@
-using HttpClientUtility.Models;
 using HttpClientUtility.StringConverter;
 using System.Net;
 using System.Text;

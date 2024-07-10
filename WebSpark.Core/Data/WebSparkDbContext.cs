@@ -7,17 +7,12 @@ namespace WebSpark.Core.Data;
 /// <summary>
 /// 
 /// </summary>
-public partial class AppDbContext : DbContext
+/// <remarks>
+/// 
+/// </remarks>
+public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> options) : DbContext(options)
 {
-    protected readonly DbContextOptions<AppDbContext> _options;
-    /// <summary>
-    /// 
-    /// </summary>
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-    : base(options)
-    {
-        _options = options;
-    }
+    protected readonly DbContextOptions<WebSparkDbContext> _options = options;
 
     /// <summary>
     /// 

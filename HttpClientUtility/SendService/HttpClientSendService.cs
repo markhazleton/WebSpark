@@ -1,5 +1,4 @@
-﻿using HttpClientUtility.Models;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace HttpClientUtility.SendService;
@@ -23,7 +22,7 @@ namespace HttpClientUtility.SendService;
 /// var response = await httpClientSendService.HttpClientSendAsync(httpSendResults, CancellationToken.None);
 /// </code>
 /// </example>
-public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpClient httpClient) : Interfaces.IHttpClientService
+public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpClient httpClient) : IHttpClientService
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     private readonly ILogger<HttpClientSendService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));

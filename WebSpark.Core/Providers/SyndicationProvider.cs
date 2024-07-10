@@ -18,14 +18,14 @@ namespace WebSpark.Core.Providers
 
     public class SyndicationProvider : ISyndicationProvider
     {
-        private readonly AppDbContext _dbContext;
+        private readonly WebSparkDbContext _dbContext;
         private readonly IStorageProvider _storageProvider;
 
         private static int _userId;
         private static string _webRoot;
         private static Uri _baseUrl;
 
-        public SyndicationProvider(AppDbContext dbContext, IStorageProvider storageProvider)
+        public SyndicationProvider(WebSparkDbContext dbContext, IStorageProvider storageProvider)
         {
             _dbContext = dbContext;
             _storageProvider = storageProvider;

@@ -10,7 +10,7 @@ using WebSpark.Core.Data;
 
 namespace WebSpark.Core.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(WebSparkDbContext))]
     [Migration("20240619171041_InitialMigration")]
     partial class InitialMigration
     {

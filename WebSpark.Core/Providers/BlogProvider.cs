@@ -8,10 +8,10 @@ namespace WebSpark.Core.Providers;
 
 public class BlogProvider : IBlogProvider, IDisposable
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
     private readonly IStorageProvider _storageProvider;
 
-    public BlogProvider(AppDbContext db, IStorageProvider storageProvider)
+    public BlogProvider(WebSparkDbContext db, IStorageProvider storageProvider)
     {
         _db = db;
         _storageProvider = storageProvider;

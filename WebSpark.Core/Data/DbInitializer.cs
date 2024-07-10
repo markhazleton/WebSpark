@@ -14,7 +14,7 @@ public static class DbInitializer
     /// <param name="applicationBuilder"></param>
     public static async Task SeedAsync(IApplicationBuilder applicationBuilder)
     {
-        using AppDbContext cmsCtx = applicationBuilder.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+        using WebSparkDbContext cmsCtx = applicationBuilder.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<WebSparkDbContext>();
         if (!cmsCtx.Database.CanConnect())
         {
             await cmsCtx.Database.EnsureDeletedAsync();

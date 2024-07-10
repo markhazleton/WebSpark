@@ -20,10 +20,10 @@ public interface IAuthorProvider
 
 public class AuthorProvider : IAuthorProvider
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
     private static string _salt;
 
-    public AuthorProvider(AppDbContext db, IConfiguration configuration)
+    public AuthorProvider(WebSparkDbContext db, IConfiguration configuration)
     {
         _db = db;
         _salt = configuration.GetSection("ControlSpark").GetValue<string>("Salt");

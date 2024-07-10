@@ -11,9 +11,9 @@ public interface IAboutProvider
 
 public class AboutProvider : IAboutProvider
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
 
-    public AboutProvider(AppDbContext db)
+    public AboutProvider(WebSparkDbContext db)
     {
         _db = db;
     }

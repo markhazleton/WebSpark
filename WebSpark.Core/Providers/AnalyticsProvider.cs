@@ -12,9 +12,9 @@ public interface IAnalyticsProvider
 
 public class AnalyticsProvider : IAnalyticsProvider
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
 
-    public AnalyticsProvider(AppDbContext db)
+    public AnalyticsProvider(WebSparkDbContext db)
     {
         _db = db;
     }

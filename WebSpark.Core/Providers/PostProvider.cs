@@ -8,11 +8,11 @@ namespace WebSpark.Core.Providers;
 
 public class PostProvider : IPostProvider
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
     private readonly ICategoryProvider _categoryProvider;
     private readonly IConfiguration _configuration;
 
-    public PostProvider(AppDbContext db, ICategoryProvider categoryProvider, IConfiguration configuration)
+    public PostProvider(WebSparkDbContext db, ICategoryProvider categoryProvider, IConfiguration configuration)
     {
         _db = db;
         _categoryProvider = categoryProvider;

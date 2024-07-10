@@ -1,4 +1,3 @@
-using HttpClientUtility.Models;
 using System.Diagnostics;
 using System.Net;
 

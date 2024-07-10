@@ -10,7 +10,7 @@ using WebSpark.Core.Data;
 
 namespace WebSpark.Core.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(WebSparkDbContext))]
     [Migration("20240623141123_EmptyCheck")]
     partial class EmptyCheck
     {

@@ -1,5 +1,4 @@
-﻿using HttpClientUtility.Models;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace HttpClientUtility.SendService;
@@ -7,13 +6,13 @@ namespace HttpClientUtility.SendService;
 /// <summary>
 /// Implementation of IHttpClientService that caches HTTP responses using IMemoryCache.
 /// </summary>
-public sealed class HttpClientSendServiceCache : Interfaces.IHttpClientService
+public sealed class HttpClientSendServiceCache : IHttpClientService
 {
     private readonly IMemoryCache _cache;
     private readonly ILogger<HttpClientSendServiceCache> _logger;
-    private readonly Interfaces.IHttpClientService _service;
+    private readonly IHttpClientService _service;
 
-    public HttpClientSendServiceCache(Interfaces.IHttpClientService service, ILogger<HttpClientSendServiceCache> logger, IMemoryCache cache)
+    public HttpClientSendServiceCache(IHttpClientService service, ILogger<HttpClientSendServiceCache> logger, IMemoryCache cache)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

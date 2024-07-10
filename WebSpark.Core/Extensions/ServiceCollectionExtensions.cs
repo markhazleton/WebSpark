@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         var conn = section.GetValue<string>("ConnString");
 
         if (section.GetValue<string>("DbProvider") == "SQLite")
-            services.AddDbContext<AppDbContext>(o => o.UseSqlite(conn));
+            services.AddDbContext<WebSparkDbContext>(o => o.UseSqlite(conn));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
         return services;

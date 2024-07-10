@@ -1,6 +1,6 @@
 ﻿@model DefinitionDto
 @{
-
+    ViewData["Title"] = $"{Model.DefinitionType} - {Model.Name}  Chat Completions";
 }
 
 @section Styles
@@ -49,8 +49,7 @@
 </div>
 
 @section scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js" integrity="sha512-7SRCYIJtR6F8ocwW7UxW6wGKqbSyqREDbfCORCbGLatU0iugBLwyOXpzhkPyHIFdBO0K2VCu57fvP2Twgx1o2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub")

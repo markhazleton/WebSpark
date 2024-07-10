@@ -8,9 +8,9 @@ namespace WebSpark.Core.Providers;
 
 public class CategoryProvider : ICategoryProvider, IDisposable
 {
-    private readonly AppDbContext _db;
+    private readonly WebSparkDbContext _db;
 
-    public CategoryProvider(AppDbContext db)
+    public CategoryProvider(WebSparkDbContext db)
     {
         _db = db;
     }

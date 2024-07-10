@@ -1,6 +1,4 @@
-﻿using WebSpark.Domain.Interfaces;
-
-namespace WebSpark.Domain.Models;
+﻿namespace WebSpark.Domain.Models;
 
 /// <summary>
 /// 
@@ -27,36 +25,6 @@ public class ApplicationStatus
             Revision = oVer.Revision,
             BuildDate = GetBuildDate()
         };
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="domainService"></param>
-    public ApplicationStatus(Assembly assembly, IWebsiteService domainService)
-    {
-        _assembly = assembly;
-        Version oVer = assembly?.GetName().Version;
-        BuildVersion = new BuildVersion()
-        {
-            MajorVersion = oVer.Major,
-            MinorVersion = oVer.Minor,
-            Build = oVer.Build,
-            Revision = oVer.Revision,
-            BuildDate = GetBuildDate()
-        };
-        try
-        {
-            var domains = domainService.Get();
-            Tests.Add("Database", $"Database Success Domain Count:{domains.Count}");
-
-        }
-        catch (Exception EE)
-        {
-            Messages.Add(EE.ToString());
-        }
-
     }
 
     private DateTime GetBuildDate()

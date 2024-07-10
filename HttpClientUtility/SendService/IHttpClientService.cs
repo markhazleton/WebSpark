@@ -1,6 +1,4 @@
-﻿using HttpClientUtility.Models;
-
-namespace HttpClientUtility.Interfaces;
+﻿namespace HttpClientUtility.SendService;
 
 public interface IHttpClientService
 {

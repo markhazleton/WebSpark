@@ -16,4 +16,5 @@ public class DefinitionDto
     public string Model { get; set; } = "gpt-3.5-turbo";
     public string Temperature { get; set; } = "0.7";
     public List<DefinitionResponseDto> DefinitionResponses { get; set; } = [];
+    public Guid ConversationId { get; set; } = Guid.NewGuid();
 }
