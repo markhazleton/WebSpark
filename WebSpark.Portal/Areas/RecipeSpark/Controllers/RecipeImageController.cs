@@ -20,7 +20,7 @@ public class RecipeImageFileModel : RecipeImageModel
 /// <param name="_recipeService"></param>
 /// <param name="_recipeImageService"></param>
 public class RecipeImageController(
-    ILogger<MainController> _logger,
+    ILogger<HomeController> _logger,
     IRecipeService _recipeService,
     IRecipeImageService _recipeImageService) : RecipeBaseController
 {

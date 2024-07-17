@@ -6,10 +6,10 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
 
 /// <summary>
-/// MainController 
+/// HomeController 
 /// </summary>
-public class MainController(
-    ILogger<MainController> _logger,
+public class HomeController(
+    ILogger<HomeController> _logger,
     IRecipeService _RecipeService,
     IRecipeGPTService recipeGPTService) : RecipeBaseController
 {

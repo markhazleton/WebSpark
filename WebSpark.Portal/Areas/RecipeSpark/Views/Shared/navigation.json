@@ -2,7 +2,7 @@
   "menuItems": [
     {
       "text": "Recipes",
-      "url": "/RecipeSpark/Main"
+      "url": "/RecipeSpark/"
     },
     {
       "text": "Images",

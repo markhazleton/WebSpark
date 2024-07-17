@@ -1,10 +1,6 @@
 ﻿{
   "menuItems": [
     {
-      "text": "Explore",
-      "url": "/PromptSpark/Chat"
-    },
-    {
       "text": "Definitions",
       "url": "/PromptSpark/Definitions"
     },

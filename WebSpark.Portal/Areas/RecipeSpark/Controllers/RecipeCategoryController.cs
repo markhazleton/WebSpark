@@ -11,7 +11,7 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 /// </remarks>
 /// <param name="_logger"></param>
 /// <param name="_RecipeService"></param>
-public class RecipeCategoryController(ILogger<MainController> _logger, IRecipeService _RecipeService) : RecipeBaseController
+public class RecipeCategoryController(ILogger<HomeController> _logger, IRecipeService _RecipeService) : RecipeBaseController
 {
 
     // GET: RecipeCategoryController
