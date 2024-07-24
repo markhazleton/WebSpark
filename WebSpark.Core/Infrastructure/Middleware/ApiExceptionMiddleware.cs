@@ -25,7 +25,7 @@ public class ApiExceptionMiddleware
         _options = options;
     }
 
-    private string GetInnermostExceptionMessage(Exception exception)
+    private static string GetInnermostExceptionMessage(Exception exception)
     {
         if (exception.InnerException != null)
             return GetInnermostExceptionMessage(exception.InnerException);

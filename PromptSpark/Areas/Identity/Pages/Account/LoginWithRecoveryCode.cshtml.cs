@@ -3,7 +3,6 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.UserIdentity.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
 namespace PromptSpark.Areas.Identity.Pages.Account

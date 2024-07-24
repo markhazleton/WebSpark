@@ -2,20 +2,19 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using Serilog;
-using WebSpark.Domain.Entities;
 
 namespace WebSpark.Core.Providers;
 
 public interface IEmailProvider
 {
-    Task<bool> SendEmail(MailSetting settings, List<Subscriber> subscribers, string subject, string content);
+    Task<bool> SendEmail(Data.MailSetting settings, List<Data.Subscriber> subscribers, string subject, string content);
 }
 
 public class MailKitProvider : IEmailProvider
 {
     public MailKitProvider() { }
 
-    public async Task<bool> SendEmail(MailSetting settings, List<Subscriber> subscribers, string subject, string content)
+    public async Task<bool> SendEmail(Data.MailSetting settings, List<Data.Subscriber> subscribers, string subject, string content)
     {
         var client = GetClient(settings);
         if (client == null)
@@ -46,7 +45,7 @@ public class MailKitProvider : IEmailProvider
         return await Task.FromResult(true);
     }
 
-    private SmtpClient GetClient(MailSetting settings)
+    private static SmtpClient GetClient(Data.MailSetting settings)
     {
         try
         {

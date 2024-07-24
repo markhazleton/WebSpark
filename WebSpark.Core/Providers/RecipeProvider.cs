@@ -1,10 +1,8 @@
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 using WebSpark.Domain.ViewModels;
-using WebSpark.RecipeManager.Entities;
 using WebSpark.RecipeManager.Interfaces;
 using WebSpark.RecipeManager.Models;
 using WebSpark.RecipeManager.ViewModels;
@@ -61,6 +59,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Ingredients = Recipe?.Ingredients ?? Recipe.Name,
             Instructions = Recipe?.Instructions ?? Recipe.Name,
             Description = Recipe?.Description ?? Recipe.Name,
+            SEO_Keywords = Recipe?.Keywords ?? Recipe.Name,
             Servings = Recipe.Servings,
             AuthorNM = Recipe.AuthorName,
             AverageRating = Recipe.AverageRating,
@@ -92,6 +91,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Name = Recipe.Name,
             Ingredients = Recipe.Ingredients,
             Instructions = Recipe.Instructions,
+            Keywords = Recipe.SEO_Keywords,
             Description = string.IsNullOrEmpty(Recipe.Description) ? Recipe.Name : Recipe.Description,
             AuthorName = Recipe.AuthorNM,
             AverageRating = Recipe.AverageRating,
@@ -226,6 +226,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Controller = "Recipe",
             Action = "index",
             Description = recipe.Name,
+            KeyWords = recipe.Keywords,
             Title = recipe.Name,
             Url = FormatHelper.GetRecipeURL(recipe.Name),
             DisplayInNavigation = false

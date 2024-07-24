@@ -1,5 +1,4 @@
 ﻿using WebSpark.Core.Data;
-using WebSpark.RecipeManager.Entities;
 using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.Core.Providers;
@@ -13,64 +12,22 @@ public interface IRecipeImageService
     void UpdateRecipeImage(RecipeImageModel recipeImageModel);
 }
 
-public class RecipeImageService : IRecipeImageService, IDisposable
+public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageService, IDisposable
 {
-    private readonly WebSparkDbContext _dbContext;
+    private bool disposedValue;
 
-    public RecipeImageService(WebSparkDbContext dbContext)
+    private static RecipeImage ConvertToEntity(RecipeImageModel recipeImageModel, RecipeImage recipeImage = null)
     {
-        _dbContext = dbContext;
+        recipeImage ??= new RecipeImage();
+        recipeImage.FileName = recipeImageModel.FileName;
+        recipeImage.FileDescription = recipeImageModel.FileDescription;
+        recipeImage.DisplayOrder = recipeImageModel.DisplayOrder;
+        recipeImage.Id = recipeImageModel.Recipe.Id;
+        recipeImage.ImageData = recipeImageModel.ImageData;
+        return recipeImage;
     }
 
-    public IEnumerable<RecipeImageModel> GetRecipeImages()
-    {
-        var recipeImages = _dbContext.RecipeImage
-            .Include(r => r.Recipe)
-            .OrderBy(r => r.DisplayOrder)
-            .ToList();
-
-        return recipeImages.Select(r => ConvertToModel(r));
-    }
-
-    public RecipeImageModel GetRecipeImageById(int id)
-    {
-        var recipeImage = _dbContext.RecipeImage
-            .Include(r => r.Recipe)
-            .SingleOrDefault(r => r.Id == id);
-
-        return recipeImage != null ? ConvertToModel(recipeImage) : null;
-    }
-
-    public void AddRecipeImage(RecipeImageModel recipeImageModel)
-    {
-        var recipeImage = ConvertToEntity(recipeImageModel);
-        _dbContext.RecipeImage.Add(recipeImage);
-        _dbContext.SaveChanges();
-    }
-
-    public void UpdateRecipeImage(RecipeImageModel recipeImageModel)
-    {
-        var existingRecipeImage = _dbContext.RecipeImage.SingleOrDefault(r => r.Id == recipeImageModel.Id);
-        if (existingRecipeImage == null)
-        {
-            throw new InvalidOperationException("Recipe image not found.");
-        }
-
-        ConvertToEntity(recipeImageModel, existingRecipeImage);
-        _dbContext.SaveChanges();
-    }
-
-    public void DeleteRecipeImage(int id)
-    {
-        var recipeImage = _dbContext.RecipeImage.SingleOrDefault(r => r.Id == id);
-        if (recipeImage != null)
-        {
-            _dbContext.RecipeImage.Remove(recipeImage);
-            _dbContext.SaveChanges();
-        }
-    }
-
-    private RecipeImageModel ConvertToModel(RecipeImage recipeImage)
+    private static RecipeImageModel ConvertToModel(RecipeImage recipeImage)
     {
         return new RecipeImageModel
         {
@@ -89,19 +46,70 @@ public class RecipeImageService : IRecipeImageService, IDisposable
         };
     }
 
-    private RecipeImage ConvertToEntity(RecipeImageModel recipeImageModel, RecipeImage recipeImage = null)
+    public void AddRecipeImage(RecipeImageModel recipeImageModel)
     {
-        recipeImage ??= new RecipeImage();
-        recipeImage.FileName = recipeImageModel.FileName;
-        recipeImage.FileDescription = recipeImageModel.FileDescription;
-        recipeImage.DisplayOrder = recipeImageModel.DisplayOrder;
-        recipeImage.Id = recipeImageModel.Recipe.Id;
-        recipeImage.ImageData = recipeImageModel.ImageData;
-        return recipeImage;
+        var recipeImage = ConvertToEntity(recipeImageModel);
+        dbContext.RecipeImage.Add(recipeImage);
+        dbContext.SaveChanges();
     }
 
+    public void DeleteRecipeImage(int id)
+    {
+        var recipeImage = dbContext.RecipeImage.SingleOrDefault(r => r.Id == id);
+        if (recipeImage != null)
+        {
+            dbContext.RecipeImage.Remove(recipeImage);
+            dbContext.SaveChanges();
+        }
+    }
+
+    public RecipeImageModel GetRecipeImageById(int id)
+    {
+        var recipeImage = dbContext.RecipeImage
+            .Include(r => r.Recipe)
+            .SingleOrDefault(r => r.Id == id);
+
+        return recipeImage != null ? ConvertToModel(recipeImage) : null;
+    }
+
+    public IEnumerable<RecipeImageModel> GetRecipeImages()
+    {
+        var recipeImages = dbContext.RecipeImage
+            .Include(r => r.Recipe)
+            .OrderBy(r => r.DisplayOrder)
+            .ToList();
+
+        return recipeImages.Select(r => ConvertToModel(r));
+    }
+
+    public void UpdateRecipeImage(RecipeImageModel recipeImageModel)
+    {
+        var existingRecipeImage = dbContext.RecipeImage.SingleOrDefault(r => r.Id == recipeImageModel.Id) ?? throw new InvalidOperationException("Recipe image not found.");
+        ConvertToEntity(recipeImageModel, existingRecipeImage);
+        dbContext.SaveChanges();
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                if (dbContext != null)
+                    dbContext.Dispose();
+            }
+            disposedValue = true;
+        }
+    }
+    ~RecipeImageService()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: false);
+    }
     public void Dispose()
     {
-        ((IDisposable)_dbContext).Dispose();
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

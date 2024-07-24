@@ -1,5 +1,3 @@
-using WebSpark.Domain.Entities;
-
 namespace WebSpark.Domain.Models;
 
 public class PostItem
@@ -12,7 +10,7 @@ public class PostItem
     public string Description { get; set; }
     [Required]
     public string Content { get; set; }
-    public ICollection<Category> Categories { get; set; }
+    public ICollection<CategoryItem> Categories { get; set; }
     public string Cover { get; set; }
     public int PostViews { get; set; }
     public double Rating { get; set; }
@@ -20,7 +18,7 @@ public class PostItem
     public bool IsPublished { get { return Published > DateTime.MinValue; } }
     public bool Featured { get; set; }
 
-    public Author Author { get; set; }
+    public AuthorItem Author { get; set; }
     public SaveStatus Status { get; set; }
     public List<SocialField> SocialFields { get; set; }
     public bool Selected { get; set; }

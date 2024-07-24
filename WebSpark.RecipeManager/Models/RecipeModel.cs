@@ -156,7 +156,7 @@ public class RecipeModel
     /// <value>The recipe URL.</value>
     public string RecipeURL { get; set; }
 
-    public List<RecipeImageModel> Images { get; set; } = new List<RecipeImageModel>();
+    public List<RecipeImageModel> Images { get; set; } = [];
 
     /// <summary>
     /// Lookup List of Recipe Categories

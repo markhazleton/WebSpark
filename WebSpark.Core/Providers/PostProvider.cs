@@ -1,10 +1,28 @@
 using WebSpark.Core.Data;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Extensions;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
+public interface IPostProvider
+{
+    Task<List<Post>> GetPosts(PublishedStatus filter, PostType postType);
+    Task<List<Post>> SearchPosts(string term);
+    Task<Post> GetPostById(int id);
+    Task<Post> GetPostBySlug(string slug);
+    Task<string> GetSlugFromTitle(string title);
+    Task<bool> Add(Post post);
+    Task<bool> Update(Post post);
+    Task<bool> Publish(int id, bool publish);
+    Task<bool> Featured(int id, bool featured);
+    Task<IEnumerable<PostItem>> GetPostItems();
+    Task<PostModel> GetPostModel(string slug);
+    Task<List<PostItem>> GetAllPostsAsync();
+    Task<IEnumerable<PostItem>> GetPopular(Pager pager, int author = 0);
+    Task<IEnumerable<PostItem>> Search(Pager pager, string term, int author = 0, string include = "", bool sanitize = false);
+    Task<IEnumerable<PostItem>> GetList(Pager pager, int author = 0, string category = "", string include = "", bool sanitize = true);
+    Task<bool> Remove(int id);
+}
 
 public class PostProvider : IPostProvider
 {
@@ -68,7 +86,7 @@ public class PostProvider : IPostProvider
                 {
                     foreach (var pc in p.PostCategories)
                     {
-                        if (pc.Category.Content.ToLower() == termItem) rank += 10;
+                        if (pc.Category.Content.Equals(termItem, StringComparison.CurrentCultureIgnoreCase)) rank += 10;
                     }
                 }
                 if (p.Title.ToLower().Contains(termItem))
@@ -122,7 +140,7 @@ public class PostProvider : IPostProvider
                 Description = post.Description,
                 Content = post.Content,
                 Slug = post.Slug,
-                Author = _db.Authors.Where(a => a.Id == post.AuthorId).First(),
+                Author = Create(_db.Authors.Where(a => a.Id == post.AuthorId).FirstOrDefault()),
                 Cover = string.IsNullOrEmpty(post.Cover) ? Constants.DefaultCover : post.Cover,
                 Published = post.Published,
                 PostViews = post.PostViews,
@@ -131,6 +149,23 @@ public class PostProvider : IPostProvider
         }
 
         return postItems;
+    }
+    private static AuthorItem Create(Author? first)
+    {
+        if (first == null)
+            return new AuthorItem();
+
+        return new AuthorItem
+        {
+            Id = first.Id,
+            DisplayName = first.DisplayName,
+            Email = first.Email,
+            Avatar = first.Avatar,
+            Bio = first.Bio,
+            IsAdmin = first.IsAdmin,
+            DateCreated = first.DateCreated,
+            DateUpdated = first.DateUpdated
+        };
     }
 
     public async Task<PostModel> GetPostModel(string slug)
@@ -272,7 +307,7 @@ public class PostProvider : IPostProvider
             {
                 if (p.PostCategories != null && p.PostCategories.Count > 0)
                 {
-                    Category cat = _db.Categories.Single(c => c.Content.ToLower() == category.ToLower());
+                    Category cat = _db.Categories.Single(c => c.Content.Equals(category, StringComparison.CurrentCultureIgnoreCase));
                     if (cat == null)
                         continue;
 
@@ -347,7 +382,7 @@ public class PostProvider : IPostProvider
             Rating = p.Rating,
             Published = p.Published,
             Featured = p.IsFeatured,
-            Author = _db.Authors.Single(a => a.Id == p.AuthorId),
+            Author = Create(_db.Authors.SingleOrDefault(a => a.Id == p.AuthorId)),
             SocialFields = []
         };
 
@@ -378,11 +413,14 @@ public class PostProvider : IPostProvider
             Title = p.Title,
             Description = p.Description,
             Content = p.Content,
-            Categories = p.PostCategories.Select(s => new Category()
+            Categories = p.PostCategories.Select(s => new CategoryItem()
             {
                 Id = s.CategoryId,
                 Description = s.Category.Description,
-                Content = s.Category.Content
+                Category = s.Category.Content,
+                Selected = false,
+                DateCreated = s.Category.DateCreated
+
             }
             ).ToList(),
             Cover = p.Cover,
@@ -390,7 +428,7 @@ public class PostProvider : IPostProvider
             Rating = p.Rating,
             Published = p.Published,
             Featured = p.IsFeatured,
-            Author = _db.Authors.Single(a => a.Id == p.AuthorId),
+            Author = Create(_db.Authors.Single(a => a.Id == p.AuthorId)),
             SocialFields = []
         };
 

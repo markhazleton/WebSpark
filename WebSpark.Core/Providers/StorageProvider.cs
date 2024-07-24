@@ -47,7 +47,7 @@ public class StorageProvider : IStorageProvider
         return fileName.SanitizePath();
     }
 
-    string GetImgSrcValue(string imgTag)
+    static string GetImgSrcValue(string imgTag)
     {
         if (!(imgTag.Contains("data:image") && imgTag.Contains("src=")))
             return imgTag;
@@ -72,7 +72,7 @@ public class StorageProvider : IStorageProvider
         return $"data/{url}";
     }
 
-    string TitleFromUri(Uri uri)
+    static string TitleFromUri(Uri uri)
     {
         var title = uri.ToString().ToLower();
         title = title.Replace("%2f", "/");

@@ -1,6 +1,4 @@
-﻿using WebSpark.Domain.Entities;
-
-namespace WebSpark.RecipeManager.Entities;
+﻿namespace WebSpark.Core.Data;
 
 public class RecipeOld
 {
@@ -8,9 +6,9 @@ public class RecipeOld
     {
     }
 
-    public Recipe GetRecipe(WebSite mom, RecipeCategory rcat)
+    public Data.Recipe GetRecipe(WebSite mom, RecipeCategory rcat)
     {
-        return new Recipe()
+        return new Data.Recipe()
         {
             Id = Id,
             Name = RecipeNM,

@@ -4,7 +4,6 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using System.Xml.Linq;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Extensions;
 using WebSpark.Domain.Models;
 
@@ -261,7 +260,7 @@ namespace WebSpark.Core.Providers
             return slug;
         }
 
-        string ValidateUrl(string link)
+        static string ValidateUrl(string link)
         {
             var url = link;
 
@@ -281,7 +280,7 @@ namespace WebSpark.Core.Providers
             return url;
         }
 
-        string GetDescription(string description)
+        static string GetDescription(string description)
         {
             description = description.StripHtml();
             if (description.Length > 450)

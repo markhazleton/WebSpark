@@ -1,5 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.Domain.Entities;
+namespace WebSpark.Core.Data;
 
 public partial class Menu : BaseEntity
 {
@@ -12,6 +13,7 @@ public partial class Menu : BaseEntity
     public int DisplayOrder { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
+    public string KeyWords { get; set; }
     public string Controller { get; set; }
     public string Action { get; set; }
     public string? Argument { get; set; }

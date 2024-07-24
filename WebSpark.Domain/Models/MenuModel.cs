@@ -57,6 +57,16 @@ public class MenuModel
     public string Description { get; set; }
 
     /// <summary>
+    /// KeyWords
+    /// </summary>
+    [JsonPropertyName("keywords")]
+    [DisplayName("KeyWords")]
+    [StringLength(100, ErrorMessage = "Max length is 100.")]
+    [Required]
+    [DataType(DataType.MultilineText)]
+    public string KeyWords { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether [display in navigation].
     /// </summary>
     /// <value><c>true</c> if [display in navigation]; otherwise, <c>false</c>.</value>

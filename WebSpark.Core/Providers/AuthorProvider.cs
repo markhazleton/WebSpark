@@ -1,6 +1,5 @@
 using Serilog;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Extensions;
 using WebSpark.Domain.Models;
 

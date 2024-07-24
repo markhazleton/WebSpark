@@ -1,6 +1,6 @@
-﻿using WebSpark.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.RecipeManager.Entities;
+namespace WebSpark.Core.Data;
 
 public partial class RecipeComment : BaseEntity
 {
@@ -9,5 +9,5 @@ public partial class RecipeComment : BaseEntity
     public string Name { get; set; }
     public string Email { get; set; }
     public string Comment { get; set; }
-    public virtual Recipe Recipe { get; set; }
+    public virtual Data.Recipe Recipe { get; set; }
 }

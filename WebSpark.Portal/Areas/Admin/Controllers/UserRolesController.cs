@@ -1,9 +1,9 @@
 ﻿namespace WebSpark.Portal.Areas.Admin.Controllers;
 
 public class UserRolesController(
-    WebSparkUserContext _context, 
-    UserManager<WebSparkUser> _userManager, 
-    RoleManager<IdentityRole> _roleManager) : 
+    WebSparkUserContext _context,
+    UserManager<WebSparkUser> _userManager,
+    RoleManager<IdentityRole> _roleManager) :
     AdminBaseController(_context, _userManager, _roleManager)
 {
     public async Task<IActionResult> Index()

@@ -1,6 +1,5 @@
 using Microsoft.Data.Sqlite;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 
@@ -37,18 +36,60 @@ public class BlogProvider : IBlogProvider, IDisposable
         };
     }
 
-    public async Task<Blog> GetBlog()
+    public async Task<BlogItem> GetBlog()
     {
-        return await _db.Blogs.OrderBy(b => b.Id).AsNoTracking().FirstAsync();
+        return Create(await _db.Blogs.OrderBy(b => b.Id).AsNoTracking().FirstAsync());
     }
 
-    public async Task<ICollection<Category>> GetBlogCategories()
+    private BlogItem Create(Blog blog)
     {
-        return await _db.Categories.AsNoTracking().ToListAsync();
+        return new BlogItem
+        {
+            Title = blog.Title,
+            Description = blog.Description,
+            Theme = blog.Theme,
+            IncludeFeatured = blog.IncludeFeatured,
+            ItemsPerPage = blog.ItemsPerPage,
+            SocialFields = [],
+            Cover = string.IsNullOrEmpty(blog.Cover) ? Constants.DefaultCover : blog.Cover,
+            Logo = string.IsNullOrEmpty(blog.Logo) ? Constants.DefaultLogo : blog.Logo,
+            HeaderScript = blog.HeaderScript,
+            FooterScript = blog.FooterScript,
+            values = GetValues(blog.Theme).Result
+        };
     }
 
-    public async Task<bool> Update(Blog blog)
+    public async Task<ICollection<CategoryItem>> GetBlogCategories()
     {
+        return Create(await _db.Categories.AsNoTracking().ToListAsync());
+    }
+
+    private static ICollection<CategoryItem> Create(List<Category> categories)
+    {
+        return categories.Select(c => new CategoryItem
+        {
+            Id = c.Id,
+            Description = c.Description,
+            DateCreated = c.DateCreated,
+            Selected = false,
+            Category = c.Content,
+        }).ToList();
+    }
+
+    public async Task<bool> Update(BlogItem blogItem)
+    {
+        var blog = new Blog
+        {
+            Title = blogItem.Title,
+            Description = blogItem.Description,
+            ItemsPerPage = blogItem.ItemsPerPage,
+            IncludeFeatured = blogItem.IncludeFeatured,
+            Theme = blogItem.Theme,
+            Cover = blogItem.Cover,
+            Logo = blogItem.Logo,
+            HeaderScript = blogItem.HeaderScript,
+            FooterScript = blogItem.FooterScript
+        };
         var existing = await _db.Blogs.OrderBy(b => b.Id).FirstAsync();
 
         existing.Title = blog.Title;

@@ -10,140 +10,140 @@ public class MenuController(
     IScopeInformation _scopeInfo,
     IMenuService _menuService) : WebCMSBaseController
 {
-  // GET: MenuController
-  public ActionResult Index()
-  {
-    return View(_menuService.GetAllMenuItems());
-  }
-
-  // GET: MenuController/Details/5
-  public async Task<ActionResult> Details(int id)
-  {
-    return View(await _menuService.GetMenuEditAsync(id));
-  }
-
-  // GET: MenuController/Create
-  public async Task<ActionResult> Create()
-  {
-    var item = await _menuService.GetMenuEditAsync(0);
-    return View(item);
-  }
-
-  // POST: MenuController/Create
-  [HttpPost]
-  [ValidateAntiForgeryToken]
-  public ActionResult Create(MenuEditModel item)
-  {
-    var menuToUpdate = new MenuModel();
-    try
+    // GET: MenuController
+    public ActionResult Index()
     {
-      if (menuToUpdate != null)
-      {
-        menuToUpdate.DomainID = item.DomainID;
-        menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
-        menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
-        menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
-        menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
-        menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;
-        menuToUpdate.Url = item.Url ?? item.Title ?? "UNKNOWN";
-        menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
-        menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
-        menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
-        menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
-        menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
-        menuToUpdate.DisplayOrder = item.DisplayOrder;
-        var saveResult = _menuService.Save(menuToUpdate);
-      }
-      return RedirectToAction(nameof(Index));
+        return View(_menuService.GetAllMenuItems());
     }
-    catch
+
+    // GET: MenuController/Details/5
+    public async Task<ActionResult> Details(int id)
     {
-      return View(menuToUpdate);
+        return View(await _menuService.GetMenuEditAsync(id));
     }
-  }
 
-  // GET: MenuController/Edit/5
-  public async Task<ActionResult> Edit(int id)
-  {
-    var item = await _menuService.GetMenuEditAsync(id);
-    return View(item);
-  }
-
-  // POST: MenuController/Edit/5
-  /// <summary>
-  /// 
-  /// </summary>
-  /// <param name="id"></param>
-  /// <param name="item"></param>
-  /// <returns></returns>
-  [HttpPost]
-  [ValidateAntiForgeryToken]
-  public ActionResult Edit(int id, MenuEditModel item)
-  {
-    try
+    // GET: MenuController/Create
+    public async Task<ActionResult> Create()
     {
-      var menuToUpdate = _menuService.GetAllMenuItems().Where(w => w.Id == id).FirstOrDefault();
-      if (menuToUpdate != null)
-      {
-        if (item.Controller == "Page")
+        var item = await _menuService.GetMenuEditAsync(0);
+        return View(item);
+    }
+
+    // POST: MenuController/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Create(MenuEditModel item)
+    {
+        var menuToUpdate = new MenuModel();
+        try
         {
-          if (item.ParentId is null)
-          {
-            item.Url = item.Title.ToSlug();
-            item.Argument = item.Title.ToSlug();
-          }
-          else
-          {
-            if (item.ParentId == menuToUpdate.ParentId)
+            if (menuToUpdate != null)
             {
-              item.Url = $"{menuToUpdate.ParentTitle.ToSlug()}/{item.Title.ToSlug()}";
-              item.Argument = item.Url;
+                menuToUpdate.DomainID = item.DomainID;
+                menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
+                menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
+                menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
+                menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
+                menuToUpdate.ApiUrl = item.ApiUrl ?? menuToUpdate.ApiUrl;
+                menuToUpdate.Url = item.Url ?? item.Title ?? "UNKNOWN";
+                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
+                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
+                menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
+                menuToUpdate.DisplayOrder = item.DisplayOrder;
+                var saveResult = _menuService.Save(menuToUpdate);
             }
-          }
+            return RedirectToAction(nameof(Index));
         }
-
-        menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
-        menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
-        menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
-        menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
-        menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
-        menuToUpdate.DisplayOrder = item.DisplayOrder;
-        menuToUpdate.ParentId = item.ParentId;
-        menuToUpdate.Url = item.Url;
-        menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
-        menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
-        menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
-        var saveResult = _menuService.Save(menuToUpdate);
-      }
-      return RedirectToAction("Details", "Website", new { id = item.DomainID });
+        catch
+        {
+            return View(menuToUpdate);
+        }
     }
-    catch
+
+    // GET: MenuController/Edit/5
+    public async Task<ActionResult> Edit(int id)
     {
-      return View();
+        var item = await _menuService.GetMenuEditAsync(id);
+        return View(item);
     }
-  }
 
-  // GET: MenuController/Delete/5
-  public async Task<ActionResult> Delete(int id)
-  {
-    var item = await _menuService.GetMenuEditAsync(id);
-    return View(item);
-  }
-
-  // POST: MenuController/Delete/5
-  [HttpPost]
-  [ValidateAntiForgeryToken]
-  public async Task<ActionResult> Delete(int id, IFormCollection collection)
-  {
-    try
+    // POST: MenuController/Edit/5
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Edit(int id, MenuEditModel item)
     {
-      var deleteResult = await _menuService.DeleteMenuAsync(id);
+        try
+        {
+            var menuToUpdate = _menuService.GetAllMenuItems().Where(w => w.Id == id).FirstOrDefault();
+            if (menuToUpdate != null)
+            {
+                if (item.Controller == "Page")
+                {
+                    if (item.ParentId is null)
+                    {
+                        item.Url = item.Title.ToSlug();
+                        item.Argument = item.Title.ToSlug();
+                    }
+                    else
+                    {
+                        if (item.ParentId == menuToUpdate.ParentId)
+                        {
+                            item.Url = $"{menuToUpdate.ParentTitle.ToSlug()}/{item.Title.ToSlug()}";
+                            item.Argument = item.Url;
+                        }
+                    }
+                }
 
-      return RedirectToAction(nameof(Index));
+                menuToUpdate.Title = item.Title ?? menuToUpdate.Title;
+                menuToUpdate.Icon = item.Icon ?? menuToUpdate.Icon;
+                menuToUpdate.PageContent = item.PageContent ?? menuToUpdate.PageContent;
+                menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
+                menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
+                menuToUpdate.DisplayOrder = item.DisplayOrder;
+                menuToUpdate.ParentId = item.ParentId;
+                menuToUpdate.Url = item.Url;
+                menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
+                menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
+                menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
+                var saveResult = _menuService.Save(menuToUpdate);
+            }
+            return RedirectToAction("Details", "Website", new { id = item.DomainID });
+        }
+        catch
+        {
+            return View();
+        }
     }
-    catch
+
+    // GET: MenuController/Delete/5
+    public async Task<ActionResult> Delete(int id)
     {
-      return View();
+        var item = await _menuService.GetMenuEditAsync(id);
+        return View(item);
     }
-  }
+
+    // POST: MenuController/Delete/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> Delete(int id, IFormCollection collection)
+    {
+        try
+        {
+            var deleteResult = await _menuService.DeleteMenuAsync(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch
+        {
+            return View();
+        }
+    }
 }

@@ -1,6 +1,3 @@
-using WebSpark.Domain.Entities;
-using WebSpark.RecipeManager.Entities;
-
 namespace WebSpark.Core.Data;
 
 
@@ -88,6 +85,10 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
                 .IsRequired()
                 .HasMaxLength(100);
 
+            entity.Property(e => e.KeyWords)
+                .IsRequired()
+                .HasMaxLength(100);
+
             entity.Property(e => e.Icon).HasMaxLength(50);
 
             entity.Property(e => e.Title)
@@ -107,7 +108,7 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
                 .HasConstraintName("FK_Menu_ParentMenu_ParentId");
         });
 
-        modelBuilder.Entity<Recipe>(entity =>
+        modelBuilder.Entity<Data.Recipe>(entity =>
        {
 
            entity.Property(e => e.AuthorName)
@@ -122,6 +123,8 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
 
            entity.Property(e => e.Description)
                .HasMaxLength(500);
+           entity.Property(e => e.Keywords)
+               .HasMaxLength(100);
 
            entity.Property(e => e.Name)
                .IsRequired()
@@ -237,7 +240,7 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
     public virtual DbSet<Newsletter> Newsletters { get; set; }
     public virtual DbSet<PostCategory> PostCategories { get; set; }
     public virtual DbSet<Post> Posts { get; set; }
-    public virtual DbSet<Recipe> Recipe { get; set; }
+    public virtual DbSet<Data.Recipe> Recipe { get; set; }
     public virtual DbSet<RecipeCategory> RecipeCategory { get; set; }
     public virtual DbSet<RecipeComment> RecipeComment { get; set; }
     public virtual DbSet<RecipeImage> RecipeImage { get; set; }

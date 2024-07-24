@@ -1,6 +1,6 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.Domain.Entities;
+namespace WebSpark.Core.Data;
 
 public class Subscriber : BaseEntity
 {

@@ -1,5 +1,4 @@
-﻿
-namespace WebSpark.Domain.Entities;
+﻿namespace WebSpark.Core.Data;
 
 /// <summary>
 /// Base Entity

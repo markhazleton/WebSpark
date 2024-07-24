@@ -10,7 +10,7 @@ public class RecipeCategoryModel
     /// </summary>
     public RecipeCategoryModel()
     {
-        Recipes = new List<RecipeModel>();
+        Recipes = [];
     }
 
     /// <summary>

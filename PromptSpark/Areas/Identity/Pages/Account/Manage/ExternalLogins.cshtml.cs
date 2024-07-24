@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.UserIdentity.Data;
 using System;
 using System.Linq;
 

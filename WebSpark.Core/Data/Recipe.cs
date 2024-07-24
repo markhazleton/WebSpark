@@ -1,19 +1,19 @@
-using WebSpark.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.RecipeManager.Entities;
-
+namespace WebSpark.Core.Data;
 public partial class Recipe : BaseEntity
 {
     public Recipe()
     {
-        RecipeComment = new HashSet<RecipeComment>();
-        RecipeImage = new HashSet<RecipeImage>();
+        RecipeComment = [];
+        RecipeImage = [];
     }
 
     [Key]
     public int Id { get; set; }
     public string Name { get; set; }
-    public string? Description { get; set; }
+    public string Description { get; set; }
+    public string Keywords { get; set; }
     public string AuthorName { get; set; }
     public int Servings { get; set; }
     public string Ingredients { get; set; }

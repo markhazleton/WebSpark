@@ -2,11 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure;
 using WebSpark.Domain.EditModels;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 using WebSpark.Domain.ViewModels;
-using WebSpark.RecipeManager.Entities;
 using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.Core.Providers;
@@ -65,7 +63,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="list"></param>
     /// <returns></returns>
-    private List<RecipeModel> Create(IEnumerable<Recipe> list)
+    private List<RecipeModel> Create(IEnumerable<Data.Recipe> list)
     {
         return list == null ? [] : [.. list.Select(Create).OrderBy(x => x.Name)];
     }
@@ -75,7 +73,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="Recipe">The recipe.</param>
     /// <returns>RecipeModel.</returns>
-    private RecipeModel Create(Recipe Recipe)
+    private RecipeModel Create(Data.Recipe Recipe)
     {
         return Recipe == null
             ? new RecipeModel()
@@ -287,7 +285,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// <param name="recipe">The recipe.</param>
     /// <param name="domain">The website.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel GetMenuItem(Recipe recipe)
+    private MenuModel GetMenuItem(Data.Recipe recipe)
     {
         return recipe == null
             ? new MenuModel()

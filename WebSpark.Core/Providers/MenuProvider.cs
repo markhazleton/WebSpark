@@ -1,7 +1,6 @@
 using Microsoft.Data.Sqlite;
 using WebSpark.Core.Data;
 using WebSpark.Domain.EditModels;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 
@@ -28,7 +27,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private List<MenuModel> Create(List<Menu> list)
+    private static List<MenuModel> Create(List<Menu> list)
     {
         if (list == null) return [];
         return [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];

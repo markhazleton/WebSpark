@@ -1,6 +1,4 @@
-﻿using WebSpark.UserIdentity.Data;
-
-namespace PromptSpark.Areas.Admin.Controllers;
+﻿namespace PromptSpark.Areas.Admin.Controllers;
 
 public class RoleManagerController(WebSpark.UserIdentity.Data.WebSparkUserContext _context, UserManager<WebSpark.UserIdentity.Data.WebSparkUser> _userManager, RoleManager<IdentityRole> _roleManager) : AdminBaseController(_context, _userManager, _roleManager)
 {

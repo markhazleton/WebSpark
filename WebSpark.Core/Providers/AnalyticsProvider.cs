@@ -68,7 +68,7 @@ public class AnalyticsProvider : IAnalyticsProvider
         };
     }
 
-    private int GetDays(int id)
+    private static int GetDays(int id)
     {
         switch ((AnalyticsPeriod)id)
         {

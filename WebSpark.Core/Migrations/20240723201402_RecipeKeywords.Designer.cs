@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebSpark.Core.Data;
 
@@ -10,9 +11,11 @@ using WebSpark.Core.Data;
 namespace WebSpark.Core.Migrations
 {
     [DbContext(typeof(WebSparkDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240723201402_RecipeKeywords")]
+    partial class RecipeKeywords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -302,11 +305,6 @@ namespace WebSpark.Core.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("KeyWords")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("PageContent")
                         .HasColumnType("TEXT");
 
@@ -527,7 +525,6 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Keywords")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastViewDt")

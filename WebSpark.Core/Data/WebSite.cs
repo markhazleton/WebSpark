@@ -1,5 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.Domain.Entities;
+namespace WebSpark.Core.Data;
 
 public partial class WebSite : BaseEntity
 {

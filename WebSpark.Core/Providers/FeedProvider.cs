@@ -1,7 +1,5 @@
 using Microsoft.SyndicationFeed;
 using Microsoft.SyndicationFeed.Atom;
-using WebSpark.Domain.Entities;
-using WebSpark.Domain.Interfaces;
 using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
@@ -39,9 +37,9 @@ public class FeedProvider : IFeedProvider
 
             if (post.Categories != null && post.Categories.Count > 0)
             {
-                foreach (Category category in post.Categories)
+                foreach (CategoryItem category in post.Categories)
                 {
-                    item.AddCategory(new SyndicationCategory(category.Content));
+                    item.AddCategory(new SyndicationCategory(category.Category));
                 }
             }
 

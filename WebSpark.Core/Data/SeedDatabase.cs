@@ -2,9 +2,7 @@ using System.IO;
 using System.Text.Json;
 using WebSpark.Core.Helpers;
 using WebSpark.Core.Infrastructure.BaseClasses;
-using WebSpark.Domain.Entities;
 using WebSpark.Domain.Models;
-using WebSpark.RecipeManager.Entities;
 
 namespace WebSpark.Core.Data;
 
@@ -17,7 +15,7 @@ public class SeedDatabase : IDisposable
         _context = context;
     }
 
-    private WebSite GetMomWebsite()
+    private static WebSite GetMomWebsite()
     {
         var Mom = new WebSite()
         {
@@ -83,7 +81,7 @@ public class SeedDatabase : IDisposable
 
         return Mom;
     }
-    private WebSite GetProjectMechanicsWebsite()
+    private static WebSite GetProjectMechanicsWebsite()
     {
         var projectMechanics = new WebSite()
         {
@@ -111,7 +109,7 @@ public class SeedDatabase : IDisposable
         }
         return projectMechanics;
     }
-    private WebSite GetTexeconWebsite()
+    private static WebSite GetTexeconWebsite()
     {
         var Texecon = new WebSite()
         {

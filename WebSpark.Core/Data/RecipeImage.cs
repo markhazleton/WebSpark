@@ -1,6 +1,6 @@
-﻿using WebSpark.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.RecipeManager.Entities;
+namespace WebSpark.Core.Data;
 
 public partial class RecipeImage : BaseEntity
 {
@@ -11,5 +11,5 @@ public partial class RecipeImage : BaseEntity
     public int DisplayOrder { get; set; }
     public byte[] ImageData { get; set; }
 
-    public virtual Recipe Recipe { get; set; }
+    public virtual Data.Recipe Recipe { get; set; }
 }

@@ -24,7 +24,7 @@ public static class MenuHelpers
         var curPath = html.ViewContext.HttpContext.Request.Path.Value
             .ToLower(CultureInfo.CurrentCulture)
             .Split('/');
-        foreach (var path in curPath.Where(w => w.ToLower(CultureInfo.CurrentCulture) != "index"))
+        foreach (var path in curPath.Where(w => !w.Equals("index", StringComparison.CurrentCultureIgnoreCase)))
         {
             if (string.Compare(path.Trim().ToLower(CultureInfo.CurrentCulture),
                               string.Empty,
@@ -36,8 +36,7 @@ public static class MenuHelpers
             }
             else
             {
-                if (myList.Where(w => w.Method.ToLower(CultureInfo.CurrentCulture) ==
-                         path.ToLower(CultureInfo.CurrentCulture))
+                if (myList.Where(w => w.Method.Equals(path, StringComparison.CurrentCultureIgnoreCase))
                         .FirstOrDefault() ==
                     null)
                 {

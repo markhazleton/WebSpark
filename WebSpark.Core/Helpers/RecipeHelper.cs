@@ -1,5 +1,4 @@
-﻿using WebSpark.Domain.Entities;
-using WebSpark.RecipeManager.Entities;
+﻿using WebSpark.Core.Data;
 
 namespace WebSpark.Core.Helpers;
 
@@ -16,13 +15,22 @@ public static class RecipeHelper
         };
         return myCat;
     }
-    public static Recipe GetRecipe(WebSite domain, string name, string authorName, string description, string ingredients, string instructions, RecipeCategory category)
+    public static Recipe GetRecipe(
+        WebSite domain,
+        string name,
+        string authorName,
+        string description,
+        string ingredients,
+        string instructions,
+        RecipeCategory category,
+        string keyWords = "")
     {
         return new Recipe()
         {
             Name = name,
             AuthorName = authorName,
             Description = description,
+            Keywords = string.IsNullOrWhiteSpace(keyWords) ? name : keyWords,
             Ingredients = ingredients,
             Instructions = instructions,
             Domain = domain,

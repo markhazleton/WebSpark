@@ -39,7 +39,7 @@ namespace WebSpark.RecipeManager.EditModels
             RecipeURL = Recipe.RecipeURL;
             ViewCount = Recipe.ViewCount;
         }
-        public List<RecipeCategoryModel> Categories { get; set; } = new List<RecipeCategoryModel>();
+        public List<RecipeCategoryModel> Categories { get; set; } = [];
 
     }
 }

@@ -1,12 +1,12 @@
-﻿using WebSpark.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebSpark.RecipeManager.Entities;
+namespace WebSpark.Core.Data;
 
 public partial class RecipeCategory : BaseEntity
 {
     public RecipeCategory()
     {
-        Recipe = new HashSet<Recipe>();
+        Recipe = [];
     }
 
     [Key]
@@ -15,5 +15,5 @@ public partial class RecipeCategory : BaseEntity
     public string Comment { get; set; }
     public int DisplayOrder { get; set; }
     public bool IsActive { get; set; }
-    public virtual ICollection<Recipe> Recipe { get; set; }
+    public virtual ICollection<Data.Recipe> Recipe { get; set; }
 }

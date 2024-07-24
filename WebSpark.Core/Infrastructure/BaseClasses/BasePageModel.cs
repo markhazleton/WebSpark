@@ -27,7 +27,7 @@ public abstract class BasePageModel : PageModel
         _timer = new Stopwatch();
     }
 
-    private string MaskEmailAddress(string emailAddress)
+    private static string MaskEmailAddress(string emailAddress)
     {
         var atIndex = emailAddress?.IndexOf('@');
         if (atIndex > 1)

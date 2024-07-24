@@ -23,7 +23,7 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     /// </summary>
     /// <returns></returns>
     [Route("/blank.php")]
-        public ContentResult BlankPHP()
+    public ContentResult BlankPHP()
     {
         logger.LogInformation("Serving blank PHP file");
         return BlankFile("application/x-httpd-php");

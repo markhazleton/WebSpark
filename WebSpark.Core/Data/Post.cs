@@ -1,6 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using WebSpark.Domain.Models;
 
-namespace WebSpark.Domain.Entities;
+namespace WebSpark.Core.Data;
 
 public class Post : BaseEntity
 {
