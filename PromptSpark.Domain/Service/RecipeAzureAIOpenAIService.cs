@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
 

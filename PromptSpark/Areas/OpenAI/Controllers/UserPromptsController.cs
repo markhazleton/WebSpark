@@ -1,7 +1,4 @@
-﻿using PromptSpark.Domain.Models;
-using PromptSpark.Domain.Service;
-
-namespace PromptSpark.Areas.OpenAI.Controllers;
+﻿namespace PromptSpark.Areas.OpenAI.Controllers;
 
 [Authorize]
 public class UserPromptsController(IUserPromptService userPromptService) : OpenAIBaseController

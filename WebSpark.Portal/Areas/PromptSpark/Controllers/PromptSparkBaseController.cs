@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 

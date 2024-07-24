@@ -1,5 +1,4 @@
 using WebSpark.Core.Extensions;
-using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Controllers;
 

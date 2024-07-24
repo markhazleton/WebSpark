@@ -1,8 +1,6 @@
 using System.Text.Json;
 using WebSpark.Bootswatch.Model;
 using WebSpark.Bootswatch.Provider;
-using WebSpark.Core.Models;
-using WebSpark.Core.Models.ViewModels;
 using WebSpark.Web.Extensions;
 
 namespace WebSpark.Web.Controllers;

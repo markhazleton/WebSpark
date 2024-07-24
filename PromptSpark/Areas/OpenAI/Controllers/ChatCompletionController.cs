@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Newtonsoft.Json;
-using PromptSpark.Domain.Models;
-using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
 using System.Text;
 

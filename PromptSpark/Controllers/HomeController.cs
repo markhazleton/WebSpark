@@ -1,6 +1,5 @@
 ﻿using Markdig;
 using System.Diagnostics;
-using WebSpark.Core.Models.ViewModels;
 
 namespace PromptSpark.Controllers;
 

@@ -2,7 +2,6 @@ using HttpClientUtility.FullService;
 using HttpClientUtility.StringConverter;
 using Microsoft.SemanticKernel;
 using PromptSpark.Domain.Data;
-using PromptSpark.Domain.Service;
 using PromptSpark.Utilities;
 using Serilog;
 

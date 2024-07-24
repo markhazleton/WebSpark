@@ -1,5 +1,4 @@
 using System.Text.Json;
-using WebSpark.Core.Models.ViewModels;
 using WebSpark.Web.Extensions;
 
 namespace WebSpark.Web.Controllers;

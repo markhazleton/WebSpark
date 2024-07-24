@@ -4,8 +4,6 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
 using WebSpark.Core.Extensions;
-using WebSpark.Core.Models;
-using WebSpark.Core.Models.ViewModels;
 using WebSpark.Core.Providers;
 
 namespace WebSpark.Web.Controllers;

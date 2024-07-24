@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using WebSpark.Portal.Models;
 
 namespace WebSpark.Portal.Controllers;
 

@@ -5,5 +5,6 @@ global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.AspNetCore.WebUtilities;
 global using Microsoft.EntityFrameworkCore;
 global using System.Text;
+global using WebSpark.Core.Models.ViewModels;
 global using WebSpark.Portal.Utilities;
 global using WebSpark.UserIdentity.Data;

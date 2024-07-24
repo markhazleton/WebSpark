@@ -1,6 +1,4 @@
-﻿using WebSpark.Core.Models;
-
-namespace PromptSpark.Domain.Service;
+﻿namespace PromptSpark.Domain.Service;
 
 /// <summary>
 /// RecipeAzureAIOpenAIService Interface

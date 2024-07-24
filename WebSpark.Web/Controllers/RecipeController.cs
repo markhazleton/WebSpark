@@ -1,6 +1,5 @@
 using System.Text.Json;
 using WebSpark.Core.Infrastructure;
-using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Controllers;
 
