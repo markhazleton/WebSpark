@@ -7,9 +7,6 @@ using Serilog;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
-using WebSpark.RecipeManager.Interfaces;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -94,11 +91,11 @@ builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
-builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
-builder.Services.AddScoped<IMenuService, MenuProvider>();
-builder.Services.AddScoped<IRecipeService, RecipeProvider>();
-builder.Services.AddScoped<IMenuProvider, MenuProvider>();
+builder.Services.AddSingleton<WebSpark.Core.Interfaces.IScopeInformation, WebSpark.Core.Models.ScopeInformation>();
+builder.Services.AddScoped<WebSpark.Core.Interfaces.IWebsiteService, WebsiteProvider>();
+builder.Services.AddScoped<WebSpark.Core.Interfaces.IMenuService, MenuProvider>();
+builder.Services.AddScoped<WebSpark.Core.Interfaces.IRecipeService, RecipeProvider>();
+builder.Services.AddScoped<WebSpark.Core.Interfaces.IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddBlogProviders();
 

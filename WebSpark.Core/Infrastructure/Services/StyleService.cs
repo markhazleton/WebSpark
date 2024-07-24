@@ -1,18 +1,15 @@
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
-
 namespace WebSpark.Core.Infrastructure.Services;
 
 /// <summary>
 /// 
 /// </summary>
-public class StyleService : IStyleProvider
+public class StyleService : Interfaces.IStyleProvider
 {
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<StyleModel> Get()
+    public IEnumerable<Models.StyleModel> Get()
     {
         return GetSiteStyles();
     }
@@ -22,7 +19,7 @@ public class StyleService : IStyleProvider
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public StyleModel Get(string name)
+    public Models.StyleModel Get(string name)
     {
         return GetSiteStyles().Where(w => w.name == name).FirstOrDefault();
     }
@@ -30,19 +27,19 @@ public class StyleService : IStyleProvider
     /// 
     /// </summary>
     /// <returns></returns>
-    public static List<StyleModel> GetSiteStyles()
+    public static List<Models.StyleModel> GetSiteStyles()
     {
-        var siteStyles = new List<StyleModel>();
+        var siteStyles = new List<Models.StyleModel>();
         try
         {
-            siteStyles.Add(new StyleModel()
+            siteStyles.Add(new Models.StyleModel()
             {
                 name = "mom",
                 css = "/style/mom/css/bootstrap.min.css",
                 cssMin = "/style/mom/css/bootstrap.min.css",
                 cssCdn = "/style/mom/css/bootstrap.min.css"
             });
-            siteStyles.Add(new StyleModel()
+            siteStyles.Add(new Models.StyleModel()
             {
                 name = "texecon",
                 css = "/style/texecon/css/bootstrap.min.css",

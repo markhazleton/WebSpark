@@ -10,11 +10,11 @@ public interface IStyleProvider
     /// Get List of Themes
     /// </summary>
     /// <returns></returns>
-    IEnumerable<StyleModel> Get();
+    IEnumerable<BootswatchStyleModel> Get();
     /// <summary>
     /// Get User By Id
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    StyleModel Get(string id);
+    BootswatchStyleModel Get(string id);
 }

@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Portal.Areas.WebCMS.Controllers;
 

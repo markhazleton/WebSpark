@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using WebSpark.Bootswatch.Provider;
-using WebSpark.Domain.Interfaces;
 
 namespace WebSpark.Web.Extensions;
 
@@ -29,11 +28,11 @@ public class SessionInitializationMiddleware(
 
             using (var scope = context.RequestServices.CreateScope())
             {
-                var _websiteService = scope.ServiceProvider.GetRequiredService<IWebsiteService>();
+                var _websiteService = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IWebsiteService>();
                 var _baseView = await _websiteService.GetBaseViewByHostAsync(context.Request.Host.Host, _DefaultSiteId);
 
                 var styleService = new BootswatchStyleProvider();
-                _baseView.StyleList = styleService.Get();
+                _baseView.StyleList = Create(styleService.Get());
 
                 var RequestScheme = "https";
                 var curSiteRoot = $"{RequestScheme}://{context.Request.Host.Host}:{context.Request.Host.Port}/";
@@ -48,6 +47,29 @@ public class SessionInitializationMiddleware(
             }
         }
         await _next(context);
+    }
+
+    private static IEnumerable<Core.Models.StyleModel> Create(IEnumerable<Bootswatch.Model.BootswatchStyleModel> enumerable)
+    {
+        var list = new List<Core.Models.StyleModel>();
+        foreach (var item in enumerable)
+        {
+            list.Add(new Core.Models.StyleModel
+            {
+                name = item.name,
+                cssCdn = item.cssCdn,
+                css = item.css,
+                scss = item.scss,
+                scssVariables = item.scssVariables,
+                cssMin = item.cssMin,
+                description = item.description,
+                less = item.less,
+                lessVariables = item.lessVariables,
+                preview = item.preview,
+                thumbnail = item.thumbnail
+            });
+        }
+        return list;
     }
 }
 

@@ -1,6 +1,4 @@
 using PromptSpark.Domain.Service;
-using WebSpark.RecipeManager.Interfaces;
-using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
@@ -10,7 +8,7 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 /// </summary>
 public class HomeController(
     ILogger<HomeController> _logger,
-    IRecipeService _RecipeService,
+    Core.Interfaces.IRecipeService _RecipeService,
     IRecipeGPTService recipeGPTService) : RecipeBaseController
 {
 
@@ -40,7 +38,7 @@ public class HomeController(
     /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> MomCreate(RecipeModel recipeModel)
+    public async Task<ActionResult> MomCreate(Core.Models.RecipeModel recipeModel)
     {
         try
         {
@@ -83,7 +81,7 @@ public class HomeController(
     /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Create(RecipeModel recipeModel)
+    public async Task<ActionResult> Create(Core.Models.RecipeModel recipeModel)
     {
         recipeModel.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
         try
@@ -109,7 +107,7 @@ public class HomeController(
     // POST: RecipeListController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, RecipeModel item)
+    public ActionResult Edit(int id, Core.Models.RecipeModel item)
     {
         try
         {

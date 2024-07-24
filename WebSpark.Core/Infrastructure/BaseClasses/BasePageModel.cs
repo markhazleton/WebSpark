@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebSpark.Domain.Interfaces;
 
 namespace WebSpark.Core.Infrastructure.BaseClasses;
 
@@ -11,7 +10,7 @@ public abstract class BasePageModel : PageModel
 {
     private IDisposable _hostScope;
     private readonly ILogger _logger;
-    private readonly IScopeInformation _scopeInfo;
+    private readonly Interfaces.IScopeInformation _scopeInfo;
     private readonly Stopwatch _timer;
     private IDisposable _userScope;
 
@@ -20,7 +19,7 @@ public abstract class BasePageModel : PageModel
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="scopeInfo"></param>
-    public BasePageModel(ILogger logger, IScopeInformation scopeInfo)
+    public BasePageModel(ILogger logger, Interfaces.IScopeInformation scopeInfo)
     {
         _logger = logger;
         _scopeInfo = scopeInfo;

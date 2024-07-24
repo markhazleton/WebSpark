@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Routing;
 using System.Text.Json;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Extensions;
 

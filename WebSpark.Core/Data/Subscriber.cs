@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace WebSpark.Core.Data;
 
 public class Subscriber : BaseEntity

@@ -622,7 +622,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Domain");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.Recipe", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.Recipe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -698,7 +698,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Recipe");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.RecipeCategory", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.RecipeCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -737,7 +737,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("RecipeCategory");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.RecipeComment", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.RecipeComment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -779,7 +779,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("RecipeComment");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.RecipeImage", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.RecipeImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -919,7 +919,7 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.Recipe", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.Recipe", b =>
                 {
                     b.HasOne("WebSpark.Domain.Entities.WebSite", "Domain")
                         .WithMany()
@@ -927,7 +927,7 @@ namespace WebSpark.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebSpark.RecipeManager.Entities.RecipeCategory", "RecipeCategory")
+                    b.HasOne("WebSpark.Core.Entities.RecipeCategory", "RecipeCategory")
                         .WithMany("Recipe")
                         .HasForeignKey("RecipeCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -939,9 +939,9 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("RecipeCategory");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.RecipeComment", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.RecipeComment", b =>
                 {
-                    b.HasOne("WebSpark.RecipeManager.Entities.Recipe", "Recipe")
+                    b.HasOne("WebSpark.Core.Entities.Recipe", "Recipe")
                         .WithMany("RecipeComment")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -951,9 +951,9 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.RecipeImage", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.RecipeImage", b =>
                 {
-                    b.HasOne("WebSpark.RecipeManager.Entities.Recipe", "Recipe")
+                    b.HasOne("WebSpark.Core.Entities.Recipe", "Recipe")
                         .WithMany("RecipeImage")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -995,14 +995,14 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("Menus");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.Recipe", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.Recipe", b =>
                 {
                     b.Navigation("RecipeComment");
 
                     b.Navigation("RecipeImage");
                 });
 
-            modelBuilder.Entity("WebSpark.RecipeManager.Entities.RecipeCategory", b =>
+            modelBuilder.Entity("WebSpark.Core.Entities.RecipeCategory", b =>
                 {
                     b.Navigation("Recipe");
                 });

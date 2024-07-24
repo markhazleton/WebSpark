@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using WebSpark.Domain.Models;
-
 namespace WebSpark.Core.Data;
 
 public class Post : BaseEntity
@@ -10,7 +7,7 @@ public class Post : BaseEntity
     public int Id { get; set; }
     public int AuthorId { get; set; }
 
-    public PostType PostType { get; set; }
+    public Models.PostType PostType { get; set; }
 
     [Required]
     [StringLength(160)]

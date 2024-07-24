@@ -2,7 +2,7 @@
 using PromptSpark.Domain.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using WebSpark.RecipeManager.Models;
+using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
 
@@ -44,9 +44,9 @@ public class RecipePromptSparkService(
     /// <param name="category"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<RecipeModel> CreateMomGPTRecipe(string prompt, string category)
+    public async Task<WebSpark.Core.Models.RecipeModel> CreateMomGPTRecipe(string prompt, string category)
     {
-        RecipeModel recipeModel = new();
+        WebSpark.Core.Models.RecipeModel recipeModel = new();
         var recipeDefinition = await _definitionService.GetDefinitionDtoAsync(8);
         GPTDefinitionResponse defResponse = new()
         {
@@ -77,7 +77,7 @@ public class RecipePromptSparkService(
                 var recipe = JsonSerializer.Deserialize<RecipeData>(response.SystemResponse, options);
                 if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
                 {
-                    recipeModel = new RecipeModel
+                    recipeModel = new WebSpark.Core.Models.RecipeModel
                     {
                         Name = recipe.Name,
                         Description = recipe.Description,

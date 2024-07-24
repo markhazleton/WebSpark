@@ -16,7 +16,7 @@ namespace WebSpark.Core.Migrations
                 type: "TEXT",
                 maxLength: 100,
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
         }
 
         /// <inheritdoc />

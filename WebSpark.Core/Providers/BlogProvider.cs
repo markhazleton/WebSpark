@@ -1,11 +1,9 @@
 using Microsoft.Data.Sqlite;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
 
-public class BlogProvider : IBlogProvider, IDisposable
+public class BlogProvider : Interfaces.IBlogProvider, IDisposable
 {
     private readonly WebSparkDbContext _db;
     private readonly IStorageProvider _storageProvider;
@@ -16,11 +14,11 @@ public class BlogProvider : IBlogProvider, IDisposable
         _storageProvider = storageProvider;
     }
 
-    public async Task<BlogItem> GetBlogItem()
+    public async Task<Models.BlogItem> GetBlogItem()
     {
         var blog = await _db.Blogs.AsNoTracking().OrderBy(b => b.Id).FirstAsync();
         blog.Theme = blog.Theme.ToLower();
-        return new BlogItem
+        return new Models.BlogItem
         {
             Title = blog.Title,
             Description = blog.Description,
@@ -28,22 +26,22 @@ public class BlogProvider : IBlogProvider, IDisposable
             IncludeFeatured = blog.IncludeFeatured,
             ItemsPerPage = blog.ItemsPerPage,
             SocialFields = [],
-            Cover = string.IsNullOrEmpty(blog.Cover) ? Constants.DefaultCover : blog.Cover,
-            Logo = string.IsNullOrEmpty(blog.Logo) ? Constants.DefaultLogo : blog.Logo,
+            Cover = string.IsNullOrEmpty(blog.Cover) ? Models.Constants.DefaultCover : blog.Cover,
+            Logo = string.IsNullOrEmpty(blog.Logo) ? Models.Constants.DefaultLogo : blog.Logo,
             HeaderScript = blog.HeaderScript,
             FooterScript = blog.FooterScript,
             values = await GetValues(blog.Theme)
         };
     }
 
-    public async Task<BlogItem> GetBlog()
+    public async Task<Models.BlogItem> GetBlog()
     {
         return Create(await _db.Blogs.OrderBy(b => b.Id).AsNoTracking().FirstAsync());
     }
 
-    private BlogItem Create(Blog blog)
+    private Models.BlogItem Create(Blog blog)
     {
-        return new BlogItem
+        return new Models.BlogItem
         {
             Title = blog.Title,
             Description = blog.Description,
@@ -51,22 +49,22 @@ public class BlogProvider : IBlogProvider, IDisposable
             IncludeFeatured = blog.IncludeFeatured,
             ItemsPerPage = blog.ItemsPerPage,
             SocialFields = [],
-            Cover = string.IsNullOrEmpty(blog.Cover) ? Constants.DefaultCover : blog.Cover,
-            Logo = string.IsNullOrEmpty(blog.Logo) ? Constants.DefaultLogo : blog.Logo,
+            Cover = string.IsNullOrEmpty(blog.Cover) ? Models.Constants.DefaultCover : blog.Cover,
+            Logo = string.IsNullOrEmpty(blog.Logo) ? Models.Constants.DefaultLogo : blog.Logo,
             HeaderScript = blog.HeaderScript,
             FooterScript = blog.FooterScript,
             values = GetValues(blog.Theme).Result
         };
     }
 
-    public async Task<ICollection<CategoryItem>> GetBlogCategories()
+    public async Task<ICollection<Models.CategoryItem>> GetBlogCategories()
     {
         return Create(await _db.Categories.AsNoTracking().ToListAsync());
     }
 
-    private static ICollection<CategoryItem> Create(List<Category> categories)
+    private static ICollection<Models.CategoryItem> Create(List<Category> categories)
     {
-        return categories.Select(c => new CategoryItem
+        return categories.Select(c => new Models.CategoryItem
         {
             Id = c.Id,
             Description = c.Description,
@@ -76,7 +74,7 @@ public class BlogProvider : IBlogProvider, IDisposable
         }).ToList();
     }
 
-    public async Task<bool> Update(BlogItem blogItem)
+    public async Task<bool> Update(Models.BlogItem blogItem)
     {
         var blog = new Blog
         {

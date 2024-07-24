@@ -3,43 +3,30 @@ using Serilog;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
+using WebSpark.Core.Extensions;
+using WebSpark.Core.Models;
+using WebSpark.Core.Models.ViewModels;
 using WebSpark.Core.Providers;
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
-using WebSpark.Domain.ViewModels;
 
 namespace WebSpark.Web.Controllers;
-public class BlogController : BaseController
+public class BlogController(Core.Interfaces.IBlogProvider blogProvider,
+    IPostProvider postProvider,
+    IFeedProvider feedProvider,
+    IAuthorProvider authorProvider,
+    IThemeProvider themeProvider,
+    IStorageProvider storageProvider,
+    ICompositeViewEngine compositeViewEngine,
+    ILogger<BlogController> logger,
+    IConfiguration config,
+    Core.Interfaces.IWebsiteService websiteService) : BaseController(logger, config, websiteService)
 {
-    protected readonly IBlogProvider _blogProvider;
-    protected readonly IPostProvider _postProvider;
-    protected readonly IFeedProvider _feedProvider;
-    protected readonly IAuthorProvider _authorProvider;
-    protected readonly IThemeProvider _themeProvider;
-    protected readonly IStorageProvider _storageProvider;
-    protected readonly ICompositeViewEngine _compositeViewEngine;
-
-    public BlogController(IBlogProvider blogProvider,
-        IPostProvider postProvider,
-        IFeedProvider feedProvider,
-        IAuthorProvider authorProvider,
-        IThemeProvider themeProvider,
-        IStorageProvider storageProvider,
-        ICompositeViewEngine compositeViewEngine,
-        ILogger<BlogController> logger,
-        IConfiguration config,
-        IWebsiteService websiteService)
-        : base(logger, config, websiteService)
-    {
-        _blogProvider = blogProvider;
-        _postProvider = postProvider;
-        _feedProvider = feedProvider;
-        _authorProvider = authorProvider;
-        _themeProvider = themeProvider;
-        _storageProvider = storageProvider;
-        _compositeViewEngine = compositeViewEngine;
-    }
+    protected readonly Core.Interfaces.IBlogProvider _blogProvider = blogProvider;
+    protected readonly IPostProvider _postProvider = postProvider;
+    protected readonly IFeedProvider _feedProvider = feedProvider;
+    protected readonly IAuthorProvider _authorProvider = authorProvider;
+    protected readonly IThemeProvider _themeProvider = themeProvider;
+    protected readonly IStorageProvider _storageProvider = storageProvider;
+    protected readonly ICompositeViewEngine _compositeViewEngine = compositeViewEngine;
 
     public async Task<IActionResult> Index(int page = 1)
     {
@@ -197,12 +184,12 @@ public class BlogController : BaseController
             BlogVM model = new(BaseVM);
             ViewBag.Slug = slug;
 
-            PostModel postModel = await _postProvider.GetPostModel(slug);
+            Core.Models.PostModel postModel = await _postProvider.GetPostModel(slug);
             model.Older = postModel.Older;
             model.Newer = postModel.Newer;
             model.Post = postModel.Post;
             model.Related = postModel.Related;
-            model.PostListType = PostListType.Blog;
+            model.PostListType = Core.Models.PostListType.Blog;
 
             // If unpublished and unauthorized redirect to error / 404.
             //if (model.Post.Published == DateTime.MinValue && !User.Identity.IsAuthenticated)
@@ -217,7 +204,7 @@ public class BlogController : BaseController
             if (!model.Post.Author.Avatar.StartsWith("data:"))
                 model.Post.Author.Avatar = Url.Content($"~/{model.Post.Author.Avatar}");
 
-            if (model.Post.PostType == PostType.Page)
+            if (model.Post.PostType == Core.Models.PostType.Page)
             {
                 string viewPath = $"~/Views/Templates/{model.Template}/Blog/Page.cshtml";
                 if (IsViewExists(viewPath))
@@ -242,12 +229,12 @@ public class BlogController : BaseController
 
             if (!string.IsNullOrEmpty(category))
             {
-                model.PostListType = PostListType.Category;
+                model.PostListType = Core.Models.PostListType.Category;
                 model.Posts = await _postProvider.GetList(model.Pager, 0, category, "PF");
             }
             else if (string.IsNullOrEmpty(term))
             {
-                model.PostListType = PostListType.Blog;
+                model.PostListType = Core.Models.PostListType.Blog;
                 if (model.Blog.IncludeFeatured)
                     model.Posts = await _postProvider.GetList(model.Pager, 0, string.Empty, "FP");
                 else
@@ -255,7 +242,7 @@ public class BlogController : BaseController
             }
             else
             {
-                model.PostListType = PostListType.Search;
+                model.PostListType = Core.Models.PostListType.Search;
                 model.Blog.Title = term;
                 model.Blog.Description = string.Empty;
                 model.Posts = await _postProvider.Search(model.Pager, term, 0, "FP");

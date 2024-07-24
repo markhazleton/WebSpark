@@ -1,5 +1,4 @@
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Controllers;
 
@@ -15,7 +14,7 @@ namespace WebSpark.Web.Controllers;
 public class PageController(
     ILogger<PageController> logger,
     IConfiguration config,
-    IWebsiteService websiteService) :
+    Core.Interfaces.IWebsiteService websiteService) :
     BaseController(
         logger,
         config,

@@ -2,7 +2,6 @@ using System.IO;
 using System.Text.Json;
 using WebSpark.Core.Helpers;
 using WebSpark.Core.Infrastructure.BaseClasses;
-using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Data;
 
@@ -298,7 +297,7 @@ public class SeedDatabase : IDisposable
                 Selected = true,
                 IsFeatured = true,
                 PostCategories = [GetPostCategory(1, 1)],
-                PostType = PostType.Post,
+                PostType = Models.PostType.Post,
                 PostViews = 1,
                 Rating = 5,
             };
@@ -325,7 +324,7 @@ public class SeedDatabase : IDisposable
                 Selected = true,
                 IsFeatured = true,
                 PostCategories = [GetPostCategory(2, 2)],
-                PostType = PostType.Post,
+                PostType = Models.PostType.Post,
                 PostViews = 1,
                 Rating = 5,
             };
@@ -352,7 +351,7 @@ public class SeedDatabase : IDisposable
                 Selected = true,
                 IsFeatured = true,
                 PostCategories = [GetPostCategory(3, 3)],
-                PostType = PostType.Post,
+                PostType = Models.PostType.Post,
                 PostViews = 1,
                 Rating = 5,
             };

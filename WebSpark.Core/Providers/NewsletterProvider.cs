@@ -1,5 +1,5 @@
 using WebSpark.Core.Data;
-using WebSpark.Domain.Extensions;
+using WebSpark.Core.Extensions;
 
 namespace WebSpark.Core.Providers;
 public interface INewsletterProvider

@@ -1,10 +1,10 @@
 @model WebsiteVM
-@using WebSpark.Domain.Interfaces
-@using WebSpark.Domain.Resources
-@using WebSpark.Domain
+@using WebSpark.Core.Interfaces
+@using WebSpark.Core.Resources
+@using WebSpark.Core
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<Resource> _localizer
-@inject ICategoryProvider _categoryProvider
+@inject WebSpark.Core.Interfaces.ICategoryProvider _categoryProvider
 @inject IAuthorProvider _authorProvider
 @{
     var menu = Model.Menu?.Where(w => w.Title == Model.PageTitle).FirstOrDefault();

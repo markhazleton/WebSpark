@@ -1,11 +1,10 @@
 using WebSpark.Core.Data;
-using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
 
 public interface IAnalyticsProvider
 {
-    Task<AnalyticsModel> GetAnalytics();
+    Task<Models.AnalyticsModel> GetAnalytics();
     Task<bool> SaveDisplayType(int type);
     Task<bool> SaveDisplayPeriod(int period);
 }
@@ -19,18 +18,18 @@ public class AnalyticsProvider : IAnalyticsProvider
         _db = db;
     }
 
-    public async Task<AnalyticsModel> GetAnalytics()
+    public async Task<Models.AnalyticsModel> GetAnalytics()
     {
         var blog = await _db.Blogs.FirstOrDefaultAsync();
-        var model = new AnalyticsModel()
+        var model = new Models.AnalyticsModel()
         {
-            TotalPosts = _db.Posts.Where(p => p.PostType == PostType.Post).Count(),
-            TotalPages = _db.Posts.Where(p => p.PostType == PostType.Page).Count(),
+            TotalPosts = _db.Posts.Where(p => p.PostType == Models.PostType.Post).Count(),
+            TotalPages = _db.Posts.Where(p => p.PostType == Models.PostType.Page).Count(),
             TotalViews = _db.Posts.Select(v => v.PostViews).Sum(),
             TotalSubscribers = _db.Subscribers.Count(),
             LatestPostViews = GetLatestPostViews(),
-            DisplayType = blog.AnalyticsListType > 0 ? (AnalyticsListType)blog.AnalyticsListType : AnalyticsListType.Graph,
-            DisplayPeriod = blog.AnalyticsPeriod > 0 ? (AnalyticsPeriod)blog.AnalyticsPeriod : AnalyticsPeriod.Days7
+            DisplayType = blog.AnalyticsListType > 0 ? (Models.AnalyticsListType)blog.AnalyticsListType : Models.AnalyticsListType.Graph,
+            DisplayPeriod = blog.AnalyticsPeriod > 0 ? (Models.AnalyticsPeriod)blog.AnalyticsPeriod : Models.AnalyticsPeriod.Days7
         };
 
         return await Task.FromResult(model);
@@ -50,7 +49,7 @@ public class AnalyticsProvider : IAnalyticsProvider
         return await _db.SaveChangesAsync() > 0;
     }
 
-    private BarChartModel GetLatestPostViews()
+    private Models.BarChartModel GetLatestPostViews()
     {
         var blog = _db.Blogs.OrderBy(b => b.Id).First();
         var period = blog.AnalyticsPeriod == 0 ? 3 : blog.AnalyticsPeriod;
@@ -61,7 +60,7 @@ public class AnalyticsProvider : IAnalyticsProvider
 
         posts = posts.OrderBy(p => p.Published);
 
-        return new BarChartModel()
+        return new Models.BarChartModel()
         {
             Labels = posts.Select(p => p.Title).ToList(),
             Data = posts.Select(p => p.PostViews).ToList()
@@ -70,17 +69,17 @@ public class AnalyticsProvider : IAnalyticsProvider
 
     private static int GetDays(int id)
     {
-        switch ((AnalyticsPeriod)id)
+        switch ((Models.AnalyticsPeriod)id)
         {
-            case AnalyticsPeriod.Today:
+            case Models.AnalyticsPeriod.Today:
                 return 1;
-            case AnalyticsPeriod.Yesterday:
+            case Models.AnalyticsPeriod.Yesterday:
                 return 2;
-            case AnalyticsPeriod.Days7:
+            case Models.AnalyticsPeriod.Days7:
                 return 7;
-            case AnalyticsPeriod.Days30:
+            case Models.AnalyticsPeriod.Days30:
                 return 30;
-            case AnalyticsPeriod.Days90:
+            case Models.AnalyticsPeriod.Days90:
                 return 90;
             default:
                 throw new ApplicationException("Unknown analytics period");

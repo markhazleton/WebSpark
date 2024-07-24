@@ -1,8 +1,7 @@
 using Microsoft.Data.Sqlite;
 using WebSpark.Core.Data;
-using WebSpark.Domain.EditModels;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
+using WebSpark.Core.Interfaces;
+using WebSpark.Core.Models.EditModels;
 
 namespace WebSpark.Core.Providers;
 
@@ -11,7 +10,7 @@ namespace WebSpark.Core.Providers;
 /// Implements the <see cref="IMenuProvider" />
 /// </summary>
 /// <seealso cref="IMenuProvider" />
-public class MenuProvider : IMenuProvider, IDisposable, IMenuService
+public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IMenuService
 {
     private readonly WebSparkDbContext _context;
     /// <summary>
@@ -27,7 +26,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private static List<MenuModel> Create(List<Menu> list)
+    private static List<Models.MenuModel> Create(List<Menu> list)
     {
         if (list == null) return [];
         return [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];
@@ -38,11 +37,11 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="menu">The menu.</param>
     /// <returns>MenuModel.</returns>
-    private static MenuModel Create(Menu menu)
+    private static Models.MenuModel Create(Menu menu)
     {
-        if (menu == null) return new MenuModel();
+        if (menu == null) return new Models.MenuModel();
 
-        var item = new MenuModel()
+        var item = new Models.MenuModel()
         {
             Id = menu.Id,
             Title = menu.Title,
@@ -85,7 +84,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="menu">The menu.</param>
     /// <returns>Menu.</returns>
-    private Menu Create(MenuModel menu)
+    private Menu Create(Models.MenuModel menu)
     {
         if (menu == null) return new Menu();
         var dbMenu = new Menu()
@@ -158,17 +157,17 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         if (returnMenu == null)
             returnMenu = new MenuEditModel();
 
-        returnMenu.Parents = Create(menuList.Where(w => w.Parent == null).ToList()).Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Title }).ToList();
-        returnMenu.Parents.Insert(0, new LookupModel() { Value = string.Empty, Text = "None" });
+        returnMenu.Parents = Create(menuList.Where(w => w.Parent == null).ToList()).Select(s => new Models.LookupModel() { Value = s.Id.ToString(), Text = s.Title }).ToList();
+        returnMenu.Parents.Insert(0, new Models.LookupModel() { Value = string.Empty, Text = "None" });
 
-        returnMenu.Domains = (await _context.Set<WebSite>().ToListAsync()).Select(s => new LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
+        returnMenu.Domains = (await _context.Set<WebSite>().ToListAsync()).Select(s => new Models.LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
         return returnMenu;
     }
-    public async Task<MenuModel> GetMenuItemAsync(int Id)
+    public async Task<Models.MenuModel> GetMenuItemAsync(int Id)
     {
         var returnMenu = Create(await _context.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync());
         if (returnMenu == null)
-            returnMenu = new MenuModel();
+            returnMenu = new Models.MenuModel();
         return returnMenu;
     }
 
@@ -178,14 +177,14 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="Id">The identifier.</param>
     /// <returns>MenuModel.</returns>
-    public MenuModel GetMenuItem(int Id)
+    public Models.MenuModel GetMenuItem(int Id)
     {
         var returnMenu = Create(_context.Menu.Where(w => w.Id == Id)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
             .FirstOrDefault());
         if (returnMenu == null)
-            returnMenu = new MenuModel();
+            returnMenu = new Models.MenuModel();
 
         return returnMenu;
     }
@@ -194,7 +193,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// Gets the menu list.
     /// </summary>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    public IEnumerable<MenuModel> GetMenuList()
+    public IEnumerable<Models.MenuModel> GetMenuList()
     {
         return Create([.. _context.Menu.OrderBy(o => o.DisplayOrder)
             .Include(i => i.Parent)
@@ -207,7 +206,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="DomainId">The domain identifier.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    public List<MenuModel> GetSiteMenu(int DomainId)
+    public List<Models.MenuModel> GetSiteMenu(int DomainId)
     {
         return Create([.. _context.Menu.Where(w => w.Domain.Id == DomainId)
             .Include(i => i.Parent)
@@ -216,14 +215,14 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     }
 
 
-    public List<MenuModel> Save(List<MenuModel> saveMenus)
+    public List<Models.MenuModel> Save(List<Models.MenuModel> saveMenus)
     {
         if (saveMenus == null)
         {
             return null;
         }
 
-        var returnMenus = new List<MenuModel>();
+        var returnMenus = new List<Models.MenuModel>();
         var curMenus = GetMenuList();
 
         foreach (var menuItem in saveMenus)
@@ -247,7 +246,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// </summary>
     /// <param name="saveItem">The save item.</param>
     /// <returns>MenuModel.</returns>
-    public MenuModel Save(MenuModel saveItem)
+    public Models.MenuModel Save(Models.MenuModel saveItem)
     {
         if (saveItem == null)
         {
@@ -307,7 +306,7 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
         UpdateDisplayOrder();
         return GetMenuItem(saveItem.Id);
     }
-    public IEnumerable<MenuModel> GetAllMenuItems()
+    public IEnumerable<Models.MenuModel> GetAllMenuItems()
     {
         return GetMenuList();
     }

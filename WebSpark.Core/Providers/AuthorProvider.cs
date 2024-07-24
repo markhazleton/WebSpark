@@ -1,7 +1,6 @@
 using Serilog;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Models;
+using WebSpark.Core.Extensions;
 
 namespace WebSpark.Core.Providers;
 
@@ -9,11 +8,11 @@ public interface IAuthorProvider
 {
     Task<List<Author>> GetAuthors();
     Task<Author> FindByEmail(string email);
-    Task<bool> Verify(LoginModel model);
-    Task<bool> Register(RegisterModel model);
+    Task<bool> Verify(Models.LoginModel model);
+    Task<bool> Register(Models.RegisterModel model);
     Task<bool> Add(Author author);
     Task<bool> Update(Author author);
-    Task<bool> ChangePassword(RegisterModel model);
+    Task<bool> ChangePassword(Models.RegisterModel model);
     Task<bool> Remove(int id);
 }
 
@@ -38,7 +37,7 @@ public class AuthorProvider : IAuthorProvider
         return await Task.FromResult(_db.Authors.Where(a => a.Email == email).FirstOrDefault());
     }
 
-    public async Task<bool> Verify(LoginModel model)
+    public async Task<bool> Verify(Models.LoginModel model)
     {
         Log.Warning($"Verifying password for {model.Email}");
 
@@ -63,7 +62,7 @@ public class AuthorProvider : IAuthorProvider
         }
     }
 
-    public async Task<bool> Register(RegisterModel model)
+    public async Task<bool> Register(Models.RegisterModel model)
     {
         bool isAdmin = false;
         var author = await _db.Authors.Where(a => a.Email == model.Email).FirstOrDefaultAsync();
@@ -105,7 +104,7 @@ public class AuthorProvider : IAuthorProvider
             Email = model.Email,
             Password = model.Password.Hash(_salt),
             IsAdmin = isAdmin,
-            Avatar = string.Format(Constants.AvatarDataImage, model.Name.Substring(0, 1).ToUpper()),
+            Avatar = string.Format(Models.Constants.AvatarDataImage, model.Name.Substring(0, 1).ToUpper()),
             Bio = "The short author bio.",
             DateCreated = DateTime.UtcNow
         };
@@ -127,7 +126,7 @@ public class AuthorProvider : IAuthorProvider
 
         author.IsAdmin = false;
         author.Password = author.Password.Hash(_salt);
-        author.Avatar = string.Format(Constants.AvatarDataImage, author.DisplayName.Substring(0, 1).ToUpper());
+        author.Avatar = string.Format(Models.Constants.AvatarDataImage, author.DisplayName.Substring(0, 1).ToUpper());
         author.DateCreated = DateTime.UtcNow;
 
         blog.Authors.Add(author);
@@ -160,7 +159,7 @@ public class AuthorProvider : IAuthorProvider
         return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> ChangePassword(RegisterModel model)
+    public async Task<bool> ChangePassword(Models.RegisterModel model)
     {
         var existing = await _db.Authors
             .Where(a => a.Email == model.Email)

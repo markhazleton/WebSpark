@@ -1,15 +1,15 @@
-@model             WebsiteVM
+@model WebsiteVM
 @using System.Reflection;
 @{
     var currentYear = DateTime.UtcNow.Year.ToString();
     var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
 }
 
-<div class="text-center p-3 m-0 bg-dark" >
+<div class="text-center p-3 m-0 bg-dark">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-4 col-md-3 small mb-4 float-start text-light">
-                @Html.Raw(status.BuildVersion.ToString()) 
+                @Html.Raw(status.BuildVersion.ToString())
             </div>
             <div class="col-lg-4 col-md-6 mb-4  text-light">
                 &copy; @currentYear @Model.WebsiteName  -

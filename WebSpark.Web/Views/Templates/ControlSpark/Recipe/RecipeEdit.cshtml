@@ -1,5 +1,5 @@
-@model RecipeModel
-@using WebSpark.Domain
+@model WebSpark.Core.Models.RecipeModel
+@using WebSpark.Core
 @{
     Layout = "../layouts/_Layout.cshtml";
     var cats = Model?.RecipeCategories?.Select(s => new SelectListItem() { Text = s.Text, Value = s.Value, Selected = Model?.RecipeCategory?.Id.ToString() == s.Value ? true : false });

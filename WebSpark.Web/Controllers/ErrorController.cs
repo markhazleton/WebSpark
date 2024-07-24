@@ -1,23 +1,17 @@
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Extensions;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Controllers;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="configuration"></param>
 [Route("error/")]
-public class ErrorController : BaseController
+public class ErrorController(ILogger<ErrorController> logger,
+    IConfiguration config,
+    Core.Interfaces.IWebsiteService websiteService) : BaseController(logger, config, websiteService)
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="configuration"></param>
-    public ErrorController(ILogger<ErrorController> logger,
-        IConfiguration config,
-        IWebsiteService websiteService)
-        : base(logger, config, websiteService)
-    {
-
-    }
     /// <summary>
     /// 
     /// </summary>

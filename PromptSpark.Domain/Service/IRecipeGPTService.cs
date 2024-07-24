@@ -1,4 +1,4 @@
-﻿using WebSpark.RecipeManager.Models;
+﻿using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
 
@@ -13,5 +13,5 @@ public interface IRecipeGPTService
     /// <param name="prompt"></param>
     /// <param name="category"
     /// <returns></returns>
-    Task<RecipeModel> CreateMomGPTRecipe(string prompt, string category);
+    Task<WebSpark.Core.Models.RecipeModel> CreateMomGPTRecipe(string prompt, string category);
 }

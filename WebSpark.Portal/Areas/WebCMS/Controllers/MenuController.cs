@@ -1,14 +1,12 @@
-using WebSpark.Domain.EditModels;
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
+using WebSpark.Core.Extensions;
+using WebSpark.Core.Models.EditModels;
 
 namespace WebSpark.Portal.Areas.WebCMS.Controllers;
 
 public class MenuController(
     ILogger<MenuController> _logger,
-    IScopeInformation _scopeInfo,
-    IMenuService _menuService) : WebCMSBaseController
+    Core.Interfaces.IScopeInformation _scopeInfo,
+    Core.Interfaces.IMenuService _menuService) : WebCMSBaseController
 {
     // GET: MenuController
     public ActionResult Index()
@@ -34,7 +32,7 @@ public class MenuController(
     [ValidateAntiForgeryToken]
     public ActionResult Create(MenuEditModel item)
     {
-        var menuToUpdate = new MenuModel();
+        var menuToUpdate = new Core.Models.MenuModel();
         try
         {
             if (menuToUpdate != null)

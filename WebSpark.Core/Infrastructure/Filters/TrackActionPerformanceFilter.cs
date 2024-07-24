@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc.Filters;
-using WebSpark.Domain.Interfaces;
 
 namespace WebSpark.Core.Infrastructure.Filters;
 
@@ -10,7 +9,7 @@ public class TrackActionPerformanceFilter : IActionFilter
 {
     private IDisposable _hostScope;
     private readonly ILogger<TrackActionPerformanceFilter> _logger;
-    private readonly IScopeInformation _scopeInfo;
+    private readonly Interfaces.IScopeInformation _scopeInfo;
     private Stopwatch _timer;
     private IDisposable _userScope;
 
@@ -21,7 +20,7 @@ public class TrackActionPerformanceFilter : IActionFilter
     /// <param name="scopeInfo"></param>
     public TrackActionPerformanceFilter(
         ILogger<TrackActionPerformanceFilter> logger,
-        IScopeInformation scopeInfo)
+        Interfaces.IScopeInformation scopeInfo)
     {
         _logger = logger;
         _scopeInfo = scopeInfo;

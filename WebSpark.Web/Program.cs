@@ -3,9 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Providers;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
-using WebSpark.RecipeManager.Interfaces;
 using WebSpark.Web.Extensions;
 using Westwind.AspNetCore.Markdown;
 
@@ -25,11 +22,11 @@ builder.Services.AddDbContext<WebSparkDbContext>(options =>
 {
     options.UseSqlite(AppDbConnectionString);
 });
-builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
-builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
-builder.Services.AddScoped<IRecipeService, RecipeProvider>();
+builder.Services.AddSingleton<WebSpark.Core.Interfaces.IScopeInformation, WebSpark.Core.Models.ScopeInformation>();
+builder.Services.AddScoped<WebSpark.Core.Interfaces.IWebsiteService, WebsiteProvider>();
+builder.Services.AddScoped<WebSpark.Core.Interfaces.IRecipeService, RecipeProvider>();
 builder.Services.AddSingleton<WebRouteValueTransformer>();
-builder.Services.AddSingleton<IWebsiteServiceFactory, WebsiteServiceFactory>();
+builder.Services.AddSingleton<WebSpark.Core.Interfaces.IWebsiteServiceFactory, WebsiteServiceFactory>();
 
 
 builder.Services.AddControllersWithViews();

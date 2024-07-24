@@ -4,8 +4,7 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using System.Xml.Linq;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Models;
+using WebSpark.Core.Extensions;
 
 namespace WebSpark.Core.Providers
 {
@@ -95,12 +94,12 @@ namespace WebSpark.Core.Providers
             Post post = new Post()
             {
                 AuthorId = _userId,
-                PostType = PostType.Post,
+                PostType = Models.PostType.Post,
                 Title = syndicationItem.Title.Text,
                 Slug = await GetSlug(syndicationItem.Title.Text),
                 Description = GetDescription(syndicationItem.Title.Text),
                 Content = syndicationItem.Summary.Text,
-                Cover = Constants.DefaultCover,
+                Cover = Models.Constants.DefaultCover,
                 Published = syndicationItem.PublishDate.DateTime,
                 DateCreated = syndicationItem.PublishDate.DateTime,
                 DateUpdated = syndicationItem.LastUpdatedTime.DateTime
@@ -147,7 +146,7 @@ namespace WebSpark.Core.Providers
             if (string.IsNullOrEmpty(post.Content))
                 return;
 
-            if (post.Cover != Constants.DefaultCover)
+            if (post.Cover != Models.Constants.DefaultCover)
             {
                 var path = $"{post.AuthorId}/{post.Published.Year}/{post.Published.Month}";
 

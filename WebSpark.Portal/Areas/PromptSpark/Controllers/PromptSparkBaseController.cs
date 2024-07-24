@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 
@@ -8,6 +9,6 @@ public class PromptSparkBaseController() : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new Domain.ViewModels.ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

@@ -1,15 +1,13 @@
 using Microsoft.Data.Sqlite;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
 
-public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDisposable
+public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvider, IDisposable
 {
-    public async Task<List<CategoryItem>> Categories()
+    public async Task<List<Models.CategoryItem>> Categories()
     {
-        var cats = new List<CategoryItem>();
+        var cats = new List<Models.CategoryItem>();
 
         if (db.Posts != null && db.Posts.Any())
         {
@@ -17,7 +15,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
             {
                 if (!cats.Exists(c => c.Category.Equals(pc.Category.Content, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    cats.Add(new CategoryItem
+                    cats.Add(new Models.CategoryItem
                     {
                         Selected = false,
                         Id = pc.CategoryId,
@@ -37,7 +35,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
         return await Task.FromResult(cats);
     }
 
-    public async Task<List<CategoryItem>> SearchCategories(string term)
+    public async Task<List<Models.CategoryItem>> SearchCategories(string term)
     {
         var cats = await Categories();
 
@@ -47,14 +45,14 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
         return cats.Where(c => c.Category.ToLower().Contains(term.ToLower())).ToList();
     }
 
-    public async Task<CategoryItem> GetCategory(int categoryId)
+    public async Task<Models.CategoryItem> GetCategory(int categoryId)
     {
         return Create(await db.Categories.AsNoTracking()
             .Where(c => c.Id == categoryId)
             .FirstOrDefaultAsync());
     }
 
-    public async Task<ICollection<CategoryItem>> GetPostCategories(int postId)
+    public async Task<ICollection<Models.CategoryItem>> GetPostCategories(int postId)
     {
         return Create(await db.PostCategories.AsNoTracking()
             .Where(pc => pc.PostId == postId)
@@ -62,12 +60,12 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
             .ToListAsync());
     }
 
-    private static ICollection<CategoryItem> Create(List<Category> categories)
+    private static ICollection<Models.CategoryItem> Create(List<Category> categories)
     {
-        var cats = new List<CategoryItem>();
+        var cats = new List<Models.CategoryItem>();
         foreach (var cat in categories)
         {
-            cats.Add(new CategoryItem
+            cats.Add(new Models.CategoryItem
             {
                 Selected = false,
                 Id = cat.Id,
@@ -79,7 +77,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
         return cats;
     }
 
-    public async Task<bool> SaveCategory(CategoryItem category)
+    public async Task<bool> SaveCategory(Models.CategoryItem category)
     {
         //Category existing = await _db.Categories.AsNoTracking()
         //    .Where(c => c.Content.ToLower() == category.Content.ToLower()).FirstOrDefaultAsync();
@@ -98,7 +96,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
         return await db.SaveChangesAsync() > 0;
     }
 
-    private static CategoryItem Create(Category category)
+    private static Models.CategoryItem Create(Category category)
     {
         return
             new()
@@ -110,7 +108,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
                 DateCreated = category.DateCreated
             };
     }
-    public async Task<CategoryItem> SaveCategory(string tag)
+    public async Task<Models.CategoryItem> SaveCategory(string tag)
     {
         Category category = await db.Categories
             .AsNoTracking()
@@ -164,7 +162,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
         return false;
     }
 
-    private static Category Create(CategoryItem categoryItem)
+    private static Category Create(Models.CategoryItem categoryItem)
     {
         return new Category
         {
@@ -175,7 +173,7 @@ public class CategoryProvider(WebSparkDbContext db) : ICategoryProvider, IDispos
         };
     }
 
-    public async Task<bool> SavePostCategories(int postId, List<CategoryItem> categories)
+    public async Task<bool> SavePostCategories(int postId, List<Models.CategoryItem> categories)
     {
         List<PostCategory> existingPostCategories = await db.PostCategories.AsNoTracking()
             .Where(pc => pc.PostId == postId).ToListAsync();

@@ -1,10 +1,8 @@
 using WebSpark.Core.Providers;
-using WebSpark.RecipeManager.Interfaces;
-using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
-public class RecipeImageFileModel : RecipeImageModel
+public class RecipeImageFileModel : Core.Models.RecipeImageModel
 {
     public IFormFile UploadedImage { get; set; }
 }
@@ -21,7 +19,7 @@ public class RecipeImageFileModel : RecipeImageModel
 /// <param name="_recipeImageService"></param>
 public class RecipeImageController(
     ILogger<HomeController> _logger,
-    IRecipeService _recipeService,
+    Core.Interfaces.IRecipeService _recipeService,
     IRecipeImageService _recipeImageService) : RecipeBaseController
 {
     /// <summary>
@@ -119,7 +117,7 @@ public class RecipeImageController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, RecipeImageModel recipeImageModel)
+    public IActionResult Edit(int id, Core.Models.RecipeImageModel recipeImageModel)
     {
         if (id != recipeImageModel.Id)
         {

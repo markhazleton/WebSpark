@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebSpark.Core.Data;
+﻿namespace WebSpark.Core.Data;
 
 public partial class RecipeComment : BaseEntity
 {

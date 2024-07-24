@@ -1,5 +1,4 @@
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Interfaces;
+using WebSpark.Core.Extensions;
 
 namespace WebSpark.Web.Controllers;
 
@@ -14,7 +13,7 @@ public class SitemapController : BaseController
     /// <param name="logger"></param>
     /// <param name="config"></param>
     /// <param name="websiteService"></param>
-    public SitemapController(ILogger<SitemapController> logger, IConfiguration config, IWebsiteService websiteService) : base(
+    public SitemapController(ILogger<SitemapController> logger, IConfiguration config, Core.Interfaces.IWebsiteService websiteService) : base(
         logger,
         config,
         websiteService)

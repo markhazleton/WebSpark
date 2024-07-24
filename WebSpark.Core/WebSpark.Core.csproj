@@ -37,8 +37,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
-		<ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
+	  <Compile Update="Resources\Resource.Designer.cs">
+	    <DependentUpon>Resource.resx</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

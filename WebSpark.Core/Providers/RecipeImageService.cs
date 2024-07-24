@@ -1,22 +1,21 @@
 ﻿using WebSpark.Core.Data;
-using WebSpark.RecipeManager.Models;
 
 namespace WebSpark.Core.Providers;
 
 public interface IRecipeImageService
 {
-    void AddRecipeImage(RecipeImageModel recipeImageModel);
+    void AddRecipeImage(Models.RecipeImageModel recipeImageModel);
     void DeleteRecipeImage(int id);
-    RecipeImageModel GetRecipeImageById(int id);
-    IEnumerable<RecipeImageModel> GetRecipeImages();
-    void UpdateRecipeImage(RecipeImageModel recipeImageModel);
+    Models.RecipeImageModel GetRecipeImageById(int id);
+    IEnumerable<Models.RecipeImageModel> GetRecipeImages();
+    void UpdateRecipeImage(Models.RecipeImageModel recipeImageModel);
 }
 
 public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageService, IDisposable
 {
     private bool disposedValue;
 
-    private static RecipeImage ConvertToEntity(RecipeImageModel recipeImageModel, RecipeImage recipeImage = null)
+    private static RecipeImage ConvertToEntity(Models.RecipeImageModel recipeImageModel, RecipeImage recipeImage = null)
     {
         recipeImage ??= new RecipeImage();
         recipeImage.FileName = recipeImageModel.FileName;
@@ -27,16 +26,16 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
         return recipeImage;
     }
 
-    private static RecipeImageModel ConvertToModel(RecipeImage recipeImage)
+    private static Models.RecipeImageModel ConvertToModel(RecipeImage recipeImage)
     {
-        return new RecipeImageModel
+        return new Models.RecipeImageModel
         {
             Id = recipeImage.Id,
             FileName = recipeImage.FileName,
             FileDescription = recipeImage.FileDescription,
             DisplayOrder = recipeImage.DisplayOrder,
             ImageData = recipeImage.ImageData,
-            Recipe = new RecipeModel
+            Recipe = new Models.RecipeModel
             {
                 Id = recipeImage.Recipe.Id,
                 Name = recipeImage.Recipe.Name,
@@ -46,7 +45,7 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
         };
     }
 
-    public void AddRecipeImage(RecipeImageModel recipeImageModel)
+    public void AddRecipeImage(Models.RecipeImageModel recipeImageModel)
     {
         var recipeImage = ConvertToEntity(recipeImageModel);
         dbContext.RecipeImage.Add(recipeImage);
@@ -63,7 +62,7 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
         }
     }
 
-    public RecipeImageModel GetRecipeImageById(int id)
+    public Models.RecipeImageModel GetRecipeImageById(int id)
     {
         var recipeImage = dbContext.RecipeImage
             .Include(r => r.Recipe)
@@ -72,7 +71,7 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
         return recipeImage != null ? ConvertToModel(recipeImage) : null;
     }
 
-    public IEnumerable<RecipeImageModel> GetRecipeImages()
+    public IEnumerable<Models.RecipeImageModel> GetRecipeImages()
     {
         var recipeImages = dbContext.RecipeImage
             .Include(r => r.Recipe)
@@ -82,7 +81,7 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
         return recipeImages.Select(r => ConvertToModel(r));
     }
 
-    public void UpdateRecipeImage(RecipeImageModel recipeImageModel)
+    public void UpdateRecipeImage(Models.RecipeImageModel recipeImageModel)
     {
         var existingRecipeImage = dbContext.RecipeImage.SingleOrDefault(r => r.Id == recipeImageModel.Id) ?? throw new InvalidOperationException("Recipe image not found.");
         ConvertToEntity(recipeImageModel, existingRecipeImage);

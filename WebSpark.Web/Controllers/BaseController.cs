@@ -1,7 +1,8 @@
 using System.Text.Json;
+using WebSpark.Bootswatch.Model;
 using WebSpark.Bootswatch.Provider;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models;
+using WebSpark.Core.Models.ViewModels;
 using WebSpark.Web.Extensions;
 
 namespace WebSpark.Web.Controllers;
@@ -14,10 +15,10 @@ namespace WebSpark.Web.Controllers;
 /// <param name="logger"></param>
 /// <param name="configuration"></param>
 /// <param name="websiteService"></param>
-public class BaseController(ILogger logger, IConfiguration configuration, IWebsiteService websiteService) : Controller
+public class BaseController(ILogger logger, IConfiguration configuration, Core.Interfaces.IWebsiteService websiteService) : Controller
 {
     protected readonly ILogger _logger = logger;
-    protected readonly IWebsiteService _websiteService = websiteService;
+    protected readonly Core.Interfaces.IWebsiteService _websiteService = websiteService;
     protected readonly IConfiguration _config = configuration;
     private WebsiteVM? _baseView = null;
     protected readonly JsonSerializerOptions optionsJsonSerializer = new() { PropertyNameCaseInsensitive = true };
@@ -72,7 +73,7 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
                 _baseView = _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId).GetAwaiter().GetResult();
 
                 var styleService = new BootswatchStyleProvider();
-                _baseView.StyleList = styleService.Get();
+                _baseView.StyleList = Create(styleService.Get());
 
                 var RequestScheme = "https"; // HttpContext.Request.Scheme;
 
@@ -83,5 +84,28 @@ public class BaseController(ILogger logger, IConfiguration configuration, IWebsi
             }
             return _baseView;
         }
+    }
+
+    private static IEnumerable<StyleModel> Create(IEnumerable<BootswatchStyleModel> enumerable)
+    {
+        var list = new List<StyleModel>();
+        foreach (var item in enumerable)
+        {
+            list.Add(new StyleModel
+            {
+                name = item.name,
+                css = item.css,
+                description = item.description,
+                preview = item.preview,
+                scss = item.scss,
+                scssVariables = item.scssVariables,
+                cssCdn = item.cssCdn,
+                cssMin = item.cssMin,
+                less = item.less,
+                lessVariables = item.lessVariables,
+                thumbnail = item.thumbnail
+            });
+        }
+        return list;
     }
 }

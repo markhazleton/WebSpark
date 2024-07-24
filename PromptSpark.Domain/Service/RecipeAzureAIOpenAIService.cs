@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using WebSpark.RecipeManager.Models;
+using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
 
@@ -41,9 +41,9 @@ public class RecipeAzureAIOpenAIService : IRecipeGPTService
     /// <param name="category"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<RecipeModel> CreateMomGPTRecipe(string prompt, string category)
+    public async Task<WebSpark.Core.Models.RecipeModel> CreateMomGPTRecipe(string prompt, string category)
     {
-        RecipeModel recipeModel = new();
+        WebSpark.Core.Models.RecipeModel recipeModel = new();
         StringBuilder sb = new();
         sb.Append("You are MOM Recipe.  Write search engine optimized (SEO) friendly recipe for the Mechanics Of Motherhood web site recipe catalog.");
         sb.Append($"The recipe category is {category}. ");
@@ -83,7 +83,7 @@ public class RecipeAzureAIOpenAIService : IRecipeGPTService
                             servings = 4;
                         }
 
-                        recipeModel = new RecipeModel
+                        recipeModel = new WebSpark.Core.Models.RecipeModel
                         {
                             Name = recipe.Name,
                             Description = recipe.Description,

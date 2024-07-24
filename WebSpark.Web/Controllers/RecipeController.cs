@@ -1,8 +1,6 @@
 using System.Text.Json;
 using WebSpark.Core.Infrastructure;
-using WebSpark.Domain.Interfaces;
-using WebSpark.RecipeManager.Interfaces;
-using WebSpark.RecipeManager.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Controllers;
 
@@ -12,8 +10,8 @@ namespace WebSpark.Web.Controllers;
 public class RecipeController(
     ILogger<RecipeController> logger,
     IConfiguration config,
-    IWebsiteService websiteService,
-    IRecipeService recipeProvider) : BaseController(logger, config, websiteService)
+    Core.Interfaces.IWebsiteService websiteService,
+    Core.Interfaces.IRecipeService recipeProvider) : BaseController(logger, config, websiteService)
 {
     private RecipeVM? _viewModel;
     private const string RecipeViewKey = "RecipeViewKey";

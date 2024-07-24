@@ -1,5 +1,4 @@
-using WebSpark.Domain.Models;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Core.Helpers;
 
@@ -14,10 +13,10 @@ public static class MenuHelpers
     /// <param name="html">The HTML.</param>
     /// <param name="theModel">The model.</param>
     /// <returns>List&lt;LinkModel&gt;.</returns>
-    public static List<LinkModel> GetBreadCrumb(this HtmlHelper html, WebsiteVM theModel)
+    public static List<Models.LinkModel> GetBreadCrumb(this HtmlHelper html, WebsiteVM theModel)
     {
-        var myList = new List<LinkModel>();
-        var myMenu = new MenuModel();
+        var myList = new List<Models.LinkModel>();
+        var myMenu = new Models.MenuModel();
 
         if (html == null) return myList;
 
@@ -32,7 +31,7 @@ public static class MenuHelpers
                 0 &&
                 myList.Count == 0)
             {
-                myList.Add(new LinkModel() { Href = "/", Method = "Home" });
+                myList.Add(new Models.LinkModel() { Href = "/", Method = "Home" });
             }
             else
             {
@@ -52,7 +51,7 @@ public static class MenuHelpers
                     {
                         if (myList.Where(w => w.Method == myMenu.Title).FirstOrDefault() == null)
                         {
-                            myList.Add(new LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title });
+                            myList.Add(new Models.LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title });
                         }
                     }
                 }
@@ -68,7 +67,7 @@ public static class MenuHelpers
         {
             if (myList.Where(w => w.Method == myMenu.Title).FirstOrDefault() == null)
             {
-                myList.Add(new LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title });
+                myList.Add(new Models.LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title });
             }
         }
         return myList;

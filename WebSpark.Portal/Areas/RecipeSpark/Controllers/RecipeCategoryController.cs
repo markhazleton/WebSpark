@@ -1,6 +1,3 @@
-using WebSpark.RecipeManager.Interfaces;
-using WebSpark.RecipeManager.Models;
-
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
 /// <summary>
@@ -11,7 +8,7 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 /// </remarks>
 /// <param name="_logger"></param>
 /// <param name="_RecipeService"></param>
-public class RecipeCategoryController(ILogger<HomeController> _logger, IRecipeService _RecipeService) : RecipeBaseController
+public class RecipeCategoryController(ILogger<HomeController> _logger, Core.Interfaces.IRecipeService _RecipeService) : RecipeBaseController
 {
 
     // GET: RecipeCategoryController
@@ -33,7 +30,7 @@ public class RecipeCategoryController(ILogger<HomeController> _logger, IRecipeSe
     // GET: RecipeCategoryController/Create
     public ActionResult Create()
     {
-        return View(new RecipeCategoryModel());
+        return View(new Core.Models.RecipeCategoryModel());
     }
 
     // POST: RecipeCategoryController/Create

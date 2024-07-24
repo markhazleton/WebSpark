@@ -1,6 +1,5 @@
 using System.Text.Json;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 using WebSpark.Web.Extensions;
 
 namespace WebSpark.Web.Controllers;
@@ -15,7 +14,7 @@ namespace WebSpark.Web.Controllers;
 public class BootswatchController(
     ILogger<BootswatchController> logger,
     IConfiguration config,
-    IWebsiteService websiteService) : BaseController(logger, config, websiteService)
+    Core.Interfaces.IWebsiteService websiteService) : BaseController(logger, config, websiteService)
 {
 
     /// <summary>

@@ -10,7 +10,7 @@ public class BootswatchStyleProvider : IStyleProvider
     /// 
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<StyleModel> Get()
+    public IEnumerable<BootswatchStyleModel> Get()
     {
         return GetSiteStyles();
     }
@@ -20,17 +20,17 @@ public class BootswatchStyleProvider : IStyleProvider
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public StyleModel Get(string name)
+    public BootswatchStyleModel Get(string name)
     {
-        return GetSiteStyles()?.Where(w => w.name == name).FirstOrDefault() ?? new StyleModel();
+        return GetSiteStyles()?.Where(w => w.name == name).FirstOrDefault() ?? new BootswatchStyleModel();
     }
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    public static List<StyleModel> GetSiteStyles()
+    public static List<BootswatchStyleModel> GetSiteStyles()
     {
-        var siteStyle = new List<StyleModel>
+        var siteStyle = new List<BootswatchStyleModel>
         {
             new()
             {
@@ -74,9 +74,9 @@ public class BootswatchStyleProvider : IStyleProvider
     /// </summary>
     /// <param name="theme"></param>
     /// <returns></returns>
-    private static StyleModel Create(BootswatchStyle theme)
+    private static BootswatchStyleModel Create(BootswatchStyle theme)
     {
-        return new StyleModel()
+        return new BootswatchStyleModel()
         {
             scss = theme.scss,
             scssVariables = theme.scssVariables,

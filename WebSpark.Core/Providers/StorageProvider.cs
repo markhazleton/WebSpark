@@ -2,8 +2,7 @@ using Serilog;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
-using WebSpark.Domain.Extensions;
-using WebSpark.Domain.Models;
+using WebSpark.Core.Extensions;
 
 namespace WebSpark.Core.Providers;
 
@@ -11,8 +10,8 @@ public interface IStorageProvider
 {
     bool FileExists(string path);
     Task<IList<string>> GetThemes();
-    Task<ThemeSettings> GetThemeSettings(string theme);
-    Task<bool> SaveThemeSettings(string theme, ThemeSettings settings);
+    Task<Models.ThemeSettings> GetThemeSettings(string theme);
+    Task<bool> SaveThemeSettings(string theme, Models.ThemeSettings settings);
     Task<string> UploadBase64Image(string baseImg, string root, string path = "");
     Task<bool> UploadFormFile(IFormFile file, string path = "");
     Task<string> UploadFromWeb(Uri requestUri, string root, string path = "");
@@ -175,16 +174,16 @@ public class StorageProvider : IStorageProvider
         return await Task.FromResult(themes);
     }
 
-    public async Task<ThemeSettings> GetThemeSettings(string theme)
+    public async Task<Models.ThemeSettings> GetThemeSettings(string theme)
     {
-        var settings = new ThemeSettings();
+        var settings = new Models.ThemeSettings();
         var fileName = Path.Combine(ContentRoot, $"wwwroot{_slash}themes{_slash}{theme.ToLower()}{_slash}settings.json");
         if (File.Exists(fileName))
         {
             try
             {
                 string jsonString = File.ReadAllText(fileName);
-                settings = JsonSerializer.Deserialize<ThemeSettings>(jsonString);
+                settings = JsonSerializer.Deserialize<Models.ThemeSettings>(jsonString);
             }
             catch (Exception ex)
             {
@@ -196,7 +195,7 @@ public class StorageProvider : IStorageProvider
         return await Task.FromResult(settings);
     }
 
-    public async Task<bool> SaveThemeSettings(string theme, ThemeSettings settings)
+    public async Task<bool> SaveThemeSettings(string theme, Models.ThemeSettings settings)
     {
         var fileName = Path.Combine(ContentRoot, $"wwwroot{_slash}themes{_slash}{theme.ToLower()}{_slash}settings.json");
         try

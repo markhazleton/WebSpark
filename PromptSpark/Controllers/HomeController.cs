@@ -1,21 +1,16 @@
 ﻿using Markdig;
 using System.Diagnostics;
+using WebSpark.Core.Models.ViewModels;
 
 namespace PromptSpark.Controllers;
 
-public class HomeController : Controller
+public class HomeController(
+    ILogger<HomeController> logger,
+    IWebHostEnvironment env) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly IWebHostEnvironment _env;
-
-    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment env)
-    {
-        _logger = logger;
-        _env = env;
-    }
     public IActionResult KitchenSink()
     {
-        var filePath = Path.Combine(_env.WebRootPath, "kitchen_sink.html");
+        var filePath = Path.Combine(env.WebRootPath, "kitchen_sink.html");
         var htmlContent = System.IO.File.ReadAllText(filePath);
         return View((object)htmlContent);
     }
@@ -27,7 +22,7 @@ public class HomeController : Controller
         }
 
         // Construct the full file path
-        var filePath = Path.Combine(_env.WebRootPath, "markdown", $"{id}.md");
+        var filePath = Path.Combine(env.WebRootPath, "markdown", $"{id}.md");
 
         // Check if the file exists
         if (!System.IO.File.Exists(filePath))
@@ -61,7 +56,7 @@ public class HomeController : Controller
         }
 
         // Construct the full file path
-        var filePath = Path.Combine(_env.WebRootPath, "markdown", $"{id}.md");
+        var filePath = Path.Combine(env.WebRootPath, "markdown", $"{id}.md");
 
         // Check if the file exists
         if (!System.IO.File.Exists(filePath))
@@ -106,6 +101,6 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new WebSpark.Domain.ViewModels.ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

@@ -26,8 +26,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
 		<ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
-		<ProjectReference Include="..\WebSpark.Domain\WebSpark.Domain.csproj" />
-		<ProjectReference Include="..\WebSpark.RecipeManager\WebSpark.RecipeManager.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="wwwroot\site\mom\img\background.jpg">

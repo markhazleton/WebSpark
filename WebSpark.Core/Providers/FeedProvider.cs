@@ -1,6 +1,5 @@
 using Microsoft.SyndicationFeed;
 using Microsoft.SyndicationFeed.Atom;
-using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
 
@@ -21,7 +20,7 @@ public class FeedProvider : IFeedProvider
     public async Task<IEnumerable<AtomEntry>> GetEntries(string type, string host)
     {
         var items = new List<AtomEntry>();
-        var posts = await _postProvider.GetList(new Pager(1), 0, string.Empty, "P");
+        var posts = await _postProvider.GetList(new Models.Pager(1), 0, string.Empty, "P");
 
         foreach (var post in posts)
         {
@@ -37,7 +36,7 @@ public class FeedProvider : IFeedProvider
 
             if (post.Categories != null && post.Categories.Count > 0)
             {
-                foreach (CategoryItem category in post.Categories)
+                foreach (Models.CategoryItem category in post.Categories)
                 {
                     item.AddCategory(new SyndicationCategory(category.Category));
                 }

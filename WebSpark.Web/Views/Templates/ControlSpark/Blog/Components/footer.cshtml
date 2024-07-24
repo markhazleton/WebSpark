@@ -1,12 +1,13 @@
 @model WebsiteVM
-@using WebSpark.Domain.Resources
+@using WebSpark.Core.Resources
 @using Microsoft.Extensions.Localization
-@using WebSpark.Domain.Models;
+@using WebSpark.Core.Models;
 @using System.Reflection;
+@using WebSpark.Core.Models.ViewModels;
 @inject IStringLocalizer<Resource> _localizer
 @{
     var currentYear = DateTime.UtcNow.Year.ToString();
-    var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
+    var status = new WebSpark.Core.Models.ApplicationStatus(Assembly.GetExecutingAssembly());
 }
 @{
     var siteTitle = Model.PageTitle;

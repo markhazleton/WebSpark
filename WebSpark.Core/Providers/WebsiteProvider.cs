@@ -1,19 +1,16 @@
 using Microsoft.Extensions.DependencyInjection;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure;
-using WebSpark.Domain.EditModels;
-using WebSpark.Domain.Interfaces;
-using WebSpark.Domain.Models;
-using WebSpark.Domain.ViewModels;
-using WebSpark.RecipeManager.Models;
+using WebSpark.Core.Models.EditModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Core.Providers;
 
-public class WebsiteServiceFactory(IServiceProvider serviceProvider) : IWebsiteServiceFactory
+public class WebsiteServiceFactory(IServiceProvider serviceProvider) : Interfaces.IWebsiteServiceFactory
 {
-    public IWebsiteService Create()
+    public Interfaces.IWebsiteService Create()
     {
-        return serviceProvider.GetRequiredService<IWebsiteService>();
+        return serviceProvider.GetRequiredService<Interfaces.IWebsiteService>();
     }
 }
 
@@ -21,7 +18,7 @@ public class WebsiteServiceFactory(IServiceProvider serviceProvider) : IWebsiteS
 /// <summary>
 ///  Domain
 /// </summary>
-public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteService, IDisposable
+public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IWebsiteService, IDisposable
 {
     private bool disposedValue;
 
@@ -30,14 +27,14 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="website"></param>
     /// <returns></returns>
-    private WebsiteModel Create(WebSite website)
+    private Models.WebsiteModel Create(WebSite website)
     {
         if (website == null)
         {
-            return new WebsiteModel();
+            return new Models.WebsiteModel();
         }
 
-        var item = new WebsiteModel()
+        var item = new Models.WebsiteModel()
         {
             Id = website.Id,
             Name = website.Name,
@@ -63,7 +60,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="list"></param>
     /// <returns></returns>
-    private List<RecipeModel> Create(IEnumerable<Data.Recipe> list)
+    private List<Models.RecipeModel> Create(IEnumerable<Data.Recipe> list)
     {
         return list == null ? [] : [.. list.Select(Create).OrderBy(x => x.Name)];
     }
@@ -73,11 +70,11 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="Recipe">The recipe.</param>
     /// <returns>RecipeModel.</returns>
-    private RecipeModel Create(Data.Recipe Recipe)
+    private Models.RecipeModel Create(Data.Recipe Recipe)
     {
         return Recipe == null
-            ? new RecipeModel()
-            : new RecipeModel()
+            ? new Models.RecipeModel()
+            : new Models.RecipeModel()
             {
                 RecipeURL = FormatHelper.GetRecipeURL(Recipe.Name),
                 Id = Recipe.Id,
@@ -104,7 +101,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    private static WebSite Create(WebsiteModel domain)
+    private static WebSite Create(Models.WebsiteModel domain)
     {
         var item = new WebSite()
         {
@@ -127,7 +124,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private List<WebsiteModel> Create(List<WebSite> list)
+    private List<Models.WebsiteModel> Create(List<WebSite> list)
     {
         return list == null ? [] : [.. list.Select(Create).OrderBy(x => x.Name)];
     }
@@ -136,11 +133,11 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="rc">The rc.</param>
     /// <returns>RecipeCategoryModel.</returns>
-    private RecipeCategoryModel Create(RecipeCategory rc, bool LoadRecipes = false)
+    private Models.RecipeCategoryModel Create(RecipeCategory rc, bool LoadRecipes = false)
     {
         return rc == null
-            ? new RecipeCategoryModel()
-            : new RecipeCategoryModel()
+            ? new Models.RecipeCategoryModel()
+            : new Models.RecipeCategoryModel()
             {
                 DisplayOrder = rc.DisplayOrder,
                 IsActive = rc.IsActive,
@@ -151,7 +148,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
                 Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : []
             };
     }
-    private static List<MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
+    private static List<Models.MenuModel> Create(ICollection<Menu> list, bool LoadChild = false)
     {
         var menuList = list == null ? [] : list.Select(item => Create(item, LoadChild)).OrderBy(x => x.Title).ToList();
         foreach (var menu in menuList.Where(w => w.ParentId is null).OrderBy(o => o.DisplayOrder))
@@ -169,14 +166,14 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// </summary>
     /// <param name="menu">The menu.</param>
     /// <returns>MenuModel.</returns>
-    private static MenuModel Create(Menu menu, bool LoadChild = false)
+    private static Models.MenuModel Create(Menu menu, bool LoadChild = false)
     {
         if (menu == null)
         {
-            return new MenuModel();
+            return new Models.MenuModel();
         }
 
-        var item = new MenuModel()
+        var item = new Models.MenuModel()
         {
             Id = menu.Id,
             Title = menu.Title,
@@ -243,10 +240,10 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// <param name="list">The list.</param>
     /// <param name="DomainID">The website identifier.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private List<MenuModel> CreateRecipeMenu()
+    private List<Models.MenuModel> CreateRecipeMenu()
     {
         var categoryList = webDomainContext.RecipeCategory.ToList();
-        List<MenuModel> categoryMenu = categoryList == null ? [] : [.. categoryList.Select(GetMenuItem).OrderBy(x => x.DisplayOrder)];
+        List<Models.MenuModel> categoryMenu = categoryList == null ? [] : [.. categoryList.Select(GetMenuItem).OrderBy(x => x.DisplayOrder)];
 
         var list = webDomainContext.Recipe.Include(i => i.RecipeCategory).ToList();
         categoryMenu.AddRange(list == null ? [] : [.. list.Select(GetMenuItem).OrderBy(x => x.DisplayOrder)]);
@@ -255,11 +252,11 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     }
 
 
-    private MenuModel GetMenuItem(RecipeCategory category)
+    private Models.MenuModel GetMenuItem(RecipeCategory category)
     {
         return category == null
-            ? new MenuModel()
-            : new MenuModel()
+            ? new Models.MenuModel()
+            : new Models.MenuModel()
             {
                 ParentId = category?.Id,
                 Controller = "recipe",
@@ -285,11 +282,11 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
     /// <param name="recipe">The recipe.</param>
     /// <param name="domain">The website.</param>
     /// <returns>MenuModel.</returns>
-    private MenuModel GetMenuItem(Data.Recipe recipe)
+    private Models.MenuModel GetMenuItem(Data.Recipe recipe)
     {
         return recipe == null
-            ? new MenuModel()
-            : new MenuModel()
+            ? new Models.MenuModel()
+            : new Models.MenuModel()
             {
                 Id = recipe.Id,
                 ParentId = recipe.RecipeCategory?.Id,
@@ -327,18 +324,18 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
         return false;
     }
 
-    public List<WebsiteModel> Get()
+    public List<Models.WebsiteModel> Get()
     {
         return Create(webDomainContext.Domain.OrderBy(o => o.Name).ToList());
     }
 
-    public async Task<WebsiteModel> GetAsync(int id)
+    public async Task<Models.WebsiteModel> GetAsync(int id)
     {
         var returnMenu = Create(await webDomainContext.Set<WebSite>()
             .Where(w => w.Id == id)
             .Include(i => i.Menus).FirstOrDefaultAsync());
         if (returnMenu == null)
-            returnMenu = new WebsiteModel();
+            returnMenu = new Models.WebsiteModel();
         return returnMenu;
     }
 
@@ -393,7 +390,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : IWebsiteServi
         return website ??= new WebsiteEditModel();
     }
 
-    public WebsiteModel Save(WebsiteModel saveItem)
+    public Models.WebsiteModel Save(Models.WebsiteModel saveItem)
     {
         if (saveItem == null)
         {

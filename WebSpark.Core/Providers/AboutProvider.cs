@@ -1,12 +1,11 @@
 using System.Runtime.InteropServices;
 using WebSpark.Core.Data;
-using WebSpark.Domain.Models;
 
 namespace WebSpark.Core.Providers;
 
 public interface IAboutProvider
 {
-    Task<AboutModel> GetAboutModel();
+    Task<Models.AboutModel> GetAboutModel();
 }
 
 public class AboutProvider : IAboutProvider
@@ -17,14 +16,14 @@ public class AboutProvider : IAboutProvider
     {
         _db = db;
     }
-    public async Task<AboutModel> GetAboutModel()
+    public async Task<Models.AboutModel> GetAboutModel()
     {
-        var model = new AboutModel();
+        var model = new Models.AboutModel();
         model.DatabaseProvider = _db.Database.ProviderName;
         model.OperatingSystem = RuntimeInformation.OSDescription;
         try
         {
-            model.Build = new BuildVersion(Assembly.GetExecutingAssembly());
+            model.Build = new Models.BuildVersion(Assembly.GetExecutingAssembly());
             model.Version = model.Build.ToString();
         }
         catch

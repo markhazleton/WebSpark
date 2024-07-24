@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using WebSpark.Domain.Models;
-using WebSpark.Domain.ViewModels;
+using WebSpark.Core.Models.ViewModels;
 
 namespace WebSpark.Web.Helper;
 
@@ -16,10 +15,10 @@ public static class MenuHelper
     /// <param name="html">The HTML.</param>
     /// <param name="theModel">The model.</param>
     /// <returns>List&lt;LinkModel&gt;.</returns>
-    public static List<LinkModel> GetBreadCrumb(this IHtmlHelper html, WebsiteVM theModel)
+    public static List<Core.Models.LinkModel> GetBreadCrumb(this IHtmlHelper html, WebsiteVM theModel)
     {
-        var myList = new List<LinkModel>();
-        var myMenu = new MenuModel();
+        var myList = new List<Core.Models.LinkModel>();
+        var myMenu = new Core.Models.MenuModel();
 
         if (html == null) return myList;
 
@@ -34,7 +33,7 @@ public static class MenuHelper
                 0 &&
                 myList.Count == 0)
             {
-                myList.Add(new LinkModel() { Href = "/", Method = "Home" });
+                myList.Add(new Core.Models.LinkModel() { Href = "/", Method = "Home" });
             }
             else
             {
@@ -55,7 +54,7 @@ public static class MenuHelper
                     {
                         if (myList.Where(w => w.Method == myMenu.Title).FirstOrDefault() == null)
                         {
-                            myList.Add(new LinkModel() { Href = $"{myMenu.Url}", Method = myMenu.Title });
+                            myList.Add(new Core.Models.LinkModel() { Href = $"{myMenu.Url}", Method = myMenu.Title });
                         }
                     }
                 }
@@ -71,7 +70,7 @@ public static class MenuHelper
         {
             if (myList.Where(w => w.Method == myMenu.Title).FirstOrDefault() == null)
             {
-                myList.Add(new LinkModel() { Href = $"{myMenu.Url}", Method = myMenu.Title });
+                myList.Add(new Core.Models.LinkModel() { Href = $"{myMenu.Url}", Method = myMenu.Title });
             }
         }
         return myList;
@@ -83,7 +82,7 @@ public static class MenuHelper
     /// <param name="item">The item.</param>
     /// <param name="IsParent">if set to <c>true</c> [is parent].</param>
     /// <returns>System.String.</returns>
-    public static string IsActive(this IHtmlHelper html, MenuModel item, bool IsParent)
+    public static string IsActive(this IHtmlHelper html, Core.Models.MenuModel item, bool IsParent)
     {
         if (html == null || item == null)
             return string.Empty;

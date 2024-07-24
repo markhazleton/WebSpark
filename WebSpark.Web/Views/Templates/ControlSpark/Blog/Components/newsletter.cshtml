@@ -1,5 +1,5 @@
-@using WebSpark.Domain.Resources
-@using WebSpark.Domain
+@using WebSpark.Core.Resources
+@using WebSpark.Core
 @{
     var request = Url.ActionContext.HttpContext.Request;
     var absoluteUrl = $"{request.Scheme}://{request.Host.ToUriComponent()}{request.PathBase.ToUriComponent()}";

@@ -1,5 +1,4 @@
-using WebSpark.Domain.EditModels;
-using WebSpark.Domain.Interfaces;
+using WebSpark.Core.Models.EditModels;
 
 namespace WebSpark.Portal.Areas.WebCMS.Controllers;
 
@@ -13,9 +12,9 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers;
 /// <param name="logger"></param>
 /// <param name="scopeInfo"></param>
 public class WebsiteController(
-    IWebsiteService service,
+    Core.Interfaces.IWebsiteService service,
     ILogger<WebsiteController> logger,
-    IScopeInformation scopeInfo) : WebCMSBaseController
+    Core.Interfaces.IScopeInformation scopeInfo) : WebCMSBaseController
 {
 
 
