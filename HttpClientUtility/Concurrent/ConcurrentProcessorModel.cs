@@ -3,21 +3,17 @@
 /// <summary>
 /// Represents a model for concurrent processing tasks.
 /// </summary>
-public class ConcurrentProcessorModel
+/// <remarks>
+/// Initializes a new instance of the <see cref="ConcurrentProcessorModel"/> class with the specified task ID.
+/// </remarks>
+/// <param name="taskId">The task ID.</param>
+public class ConcurrentProcessorModel(int taskId)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ConcurrentProcessorModel"/> class with the specified task ID.
-    /// </summary>
-    /// <param name="taskId">The task ID.</param>
-    public ConcurrentProcessorModel(int taskId)
-    {
-        TaskId = taskId;
-    }
 
     /// <summary>
     /// Gets or sets the task ID.
     /// </summary>
-    public int TaskId { get; set; }
+    public int TaskId { get; set; } = taskId;
 
     /// <summary>
     /// Gets or sets the task count.

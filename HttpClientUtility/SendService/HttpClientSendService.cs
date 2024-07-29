@@ -84,7 +84,12 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
             throw new ArgumentException("The RequestMethod must be set.", nameof(httpSendResults));
         }
     }
-
+    /// <summary>
+    /// Create HttpRequestMessage
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="httpSendResults"></param>
+    /// <returns></returns>
     public HttpRequestMessage CreateHttpRequest<T>(HttpClientSendRequest<T> httpSendResults)
     {
         var request = new HttpRequestMessage(httpSendResults.RequestMethod, httpSendResults.RequestPath)

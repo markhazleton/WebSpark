@@ -4,6 +4,10 @@
 		<Authors>Mark Hazleton</Authors>
 		<Description>WebSpark is an open-source publishing platform Written in ASP.NET.</Description>
 		<Copyright>MarkHazleton.com</Copyright>
+		<Company>MarkHazleton.com</Company>
+		<NeutralLanguage>en</NeutralLanguage>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -34,6 +38,10 @@
 		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
 		<PackageReference Include="ReverseMarkdown" Version="4.6.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

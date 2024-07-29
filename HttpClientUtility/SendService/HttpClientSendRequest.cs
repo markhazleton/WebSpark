@@ -47,7 +47,9 @@ public class HttpClientSendRequest<T>
         Iteration = it;
         RequestPath = path;
     }
-
+    /// <summary>
+    /// Cache Duration in Minutes 
+    /// </summary>
     public int CacheDurationMinutes { get; set; } = 1;
 
     /// <summary>
@@ -83,6 +85,9 @@ public class HttpClientSendRequest<T>
     [NotMapped]
     public StringContent? RequestBody { get; set; }
 
+    /// <summary>
+    /// Request Method
+    /// </summary>
     [NotMapped]
     public HttpMethod RequestMethod { get; set; } = HttpMethod.Get;
 
@@ -96,7 +101,9 @@ public class HttpClientSendRequest<T>
     /// </summary>
     [NotMapped]
     public T? ResponseResults { get; set; }
-
+    /// <summary>
+    /// Result Age
+    /// </summary>
     public string ResultAge
     {
         get
@@ -150,7 +157,9 @@ public class HttpClientSendRequest<T>
     /// Number of retires to get a successful HTTP Client Request.
     /// </summary>
     public int Retries { get; set; }
-
+    /// <summary>
+    /// Status Code (HttpStatusCode) of the Http Client Request
+    /// </summary>
     public HttpStatusCode StatusCode { get; set; }
 }
 

@@ -3,256 +3,247 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Text;
 using System.Web;
 
-namespace WebSpark.Core.Extensions;
-
-public static class StringExtensions
+namespace WebSpark.Core.Extensions
 {
-    private static readonly Regex DashRemover = new("-");
-    private static readonly Regex LeadingSlashRemover = new("^/");
-    private static readonly Regex RegexStripHtml = new("<[^>]*>", RegexOptions.Compiled);
-    private static readonly Regex WhiteSpaceRemover = new(" ");
-
-    static string RemoveDiacritics(string text)
+    public static partial class StringExtensions
     {
-        var normalized = text.Normalize(NormalizationForm.FormD);
-        var sb = new StringBuilder();
+        private static readonly Regex DashRemover = MyRegex();
+        private static readonly Regex LeadingSlashRemover = MyRegex1();
+        private static readonly Regex RegexStripHtml = MyRegex2();
+        private static readonly Regex WhiteSpaceRemover = MyRegex3();
 
-        foreach (var c in
-            normalized.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
+        static string RemoveDiacritics(string text)
         {
-            sb.Append(c);
+            if (string.IsNullOrEmpty(text)) return text;
+
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+
+            foreach (var c in normalized.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark))
+            {
+                sb.Append(c);
+            }
+
+            return sb.ToString();
         }
 
-        return sb.ToString();
-    }
-
-    static string RemoveExtraHyphen(string text)
-    {
-        if (text.Contains("--"))
+        static string RemoveExtraHyphen(string text)
         {
-            text = text.Replace("--", "-");
-            return RemoveExtraHyphen(text);
-        }
+            while (text.Contains("--"))
+            {
+                text = text.Replace("--", "-");
+            }
 
-        return text;
-    }
-
-
-    static string RemoveIllegalCharacters(string text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
             return text;
         }
 
-        string[] chars = new string[] {
-            ":", "/", "?", "!", "#", "[", "]", "{", "}", "@", "*", ".", ",",
-            "\"","&", "'", "~", "$"
-        };
-
-        foreach (var ch in chars)
+        static string RemoveIllegalCharacters(string text)
         {
-            text = text.Replace(ch, string.Empty);
+            if (string.IsNullOrEmpty(text)) return text;
+
+            string[] chars = { ":", "/", "?", "!", "#", "[", "]", "{", "}", "@", "*", ".", ",", "\"", "&", "'", "~", "$" };
+
+            foreach (var ch in chars)
+            {
+                text = text.Replace(ch, string.Empty);
+            }
+
+            text = text.Replace("–", "-").Replace(" ", "-");
+            text = RemoveUnicodePunctuation(text);
+            text = RemoveDiacritics(text);
+            text = RemoveExtraHyphen(text);
+
+            return HttpUtility.HtmlEncode(text).Replace("%", string.Empty);
         }
 
-        text = text.Replace("–", "-");
-        text = text.Replace(" ", "-");
-
-        text = RemoveUnicodePunctuation(text);
-        text = RemoveDiacritics(text);
-        text = RemoveExtraHyphen(text);
-
-        return HttpUtility.HtmlEncode(text).Replace("%", string.Empty);
-    }
-
-    static string RemoveUnicodePunctuation(string text)
-    {
-        var normalized = text.Normalize(NormalizationForm.FormD);
-        var sb = new StringBuilder();
-
-        foreach (var c in
-            normalized.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.InitialQuotePunctuation &&
-                                  CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.FinalQuotePunctuation))
+        static string RemoveUnicodePunctuation(string text)
         {
-            sb.Append(c);
+            if (string.IsNullOrEmpty(text)) return text;
+
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+
+            foreach (var c in normalized.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.InitialQuotePunctuation &&
+                                                    CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.FinalQuotePunctuation))
+            {
+                sb.Append(c);
+            }
+
+            return sb.ToString();
         }
 
-        return sb.ToString();
-    }
-
-    public static string Capitalize(this string str)
-    {
-        if (string.IsNullOrEmpty(str))
-            return string.Empty;
-        char[] a = str.ToCharArray();
-        a[0] = char.ToUpper(a[0]);
-        return new string(a);
-    }
-
-    public static bool Contains(this string source, string toCheck, StringComparison comp)
-    {
-        return source.IndexOf(toCheck, comp) >= 0;
-    }
-
-    /// <summary>
-    /// Should extract title (file name) from file path or Url
-    /// </summary>
-    /// <param name="str">c:\foo\test.png</param>
-    /// <returns>test.png</returns>
-    public static string ExtractTitle(this string str)
-    {
-        if (str.Contains("\\"))
+        public static string Capitalize(this string str)
         {
-            return string.IsNullOrWhiteSpace(str) ? string.Empty : str.Substring(str.LastIndexOf("\\")).Replace("\\", string.Empty);
+            if (string.IsNullOrEmpty(str)) return string.Empty;
+            return char.ToUpper(str[0]) + str[1..];
         }
-        else if (str.Contains("/"))
+
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
-            return string.IsNullOrWhiteSpace(str) ? string.Empty : str.Substring(str.LastIndexOf("/")).Replace("/", string.Empty);
+            return source?.IndexOf(toCheck, comp) >= 0;
         }
-        else
+
+        public static string ExtractTitle(this string str)
         {
+            if (string.IsNullOrWhiteSpace(str)) return string.Empty;
+            var separator = str.Contains('\\') ? '\\' : str.Contains('/') ? '/' : '\0';
+            return separator == '\0' ? str : str[(str.LastIndexOf(separator) + 1)..];
+        }
+
+        public static string Hash(this string source, string salt)
+        {
+            var bytes = KeyDerivation.Pbkdf2(
+                password: source,
+                salt: Encoding.UTF8.GetBytes(salt),
+                prf: KeyDerivationPrf.HMACSHA512,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8);
+
+            return Convert.ToBase64String(bytes);
+        }
+
+        public static bool IsMatch(this string str1, string str2)
+        {
+            str1 = SanitizeForComparison(str1);
+            str2 = SanitizeForComparison(str2);
+            return string.Equals(str1, str2, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string MdToHtml(this string str)
+        {
+            var mpl = new MarkdownPipelineBuilder()
+                .UsePipeTables()
+                .UseAdvancedExtensions()
+                .Build();
+
+            return Markdown.ToHtml(str, mpl);
+        }
+
+        public static string RemoveScriptTags(this string str)
+        {
+            return string.IsNullOrEmpty(str) ? str : MyRegex4().Replace(str, string.Empty);
+        }
+
+        public static string ReplaceIgnoreCase(this string str, string search, string replacement)
+        {
+            return Regex.Replace(
+                str,
+                Regex.Escape(search),
+                replacement.Replace("$", "$$"),
+                RegexOptions.IgnoreCase
+            );
+        }
+
+        public static string SanitizeFileName(this string str)
+        {
+            return str.SanitizePath();
+        }
+
+        public static string SanitizePath(this string str)
+        {
+            if (string.IsNullOrWhiteSpace(str)) return string.Empty;
+
+            str = str.Replace("%2E", ".").Replace("%2F", "/");
+
+            if (str.Contains("..") || str.Contains("//"))
+                throw new ApplicationException("Invalid directory path");
+
             return str;
         }
-    }
 
-    public static string Hash(this string source, string salt)
-    {
-        var bytes = KeyDerivation.Pbkdf2(
-                  password: source,
-                  salt: Encoding.UTF8.GetBytes(salt),
-                  prf: KeyDerivationPrf.HMACSHA512,
-                  iterationCount: 10000,
-                  numBytesRequested: 256 / 8);
+        public static string StripHtml(this string str)
+        {
+            return string.IsNullOrWhiteSpace(str) ? string.Empty : RegexStripHtml.Replace(str, string.Empty).Trim();
+        }
 
-        return Convert.ToBase64String(bytes);
-    }
+        public static string ToSlug(this string title)
+        {
+            if (string.IsNullOrEmpty(title)) return string.Empty;
 
-    public static bool IsMatch(this string str1, string str2)
-    {
-        str1 = LeadingSlashRemover.Replace(str1, string.Empty);
-        str1 = WhiteSpaceRemover.Replace(str1, string.Empty);
-        str1 = DashRemover.Replace(str1, string.Empty);
-        str2 = LeadingSlashRemover.Replace(str2, string.Empty);
-        str2 = WhiteSpaceRemover.Replace(str2, string.Empty);
-        str2 = DashRemover.Replace(str2, string.Empty);
-        return string.Equals(str1, str2, StringComparison.OrdinalIgnoreCase);
-    }
+            var str = title.ToLowerInvariant().Trim('-', '_');
+            var bytes = Encoding.GetEncoding("utf-8").GetBytes(str);
+            str = Encoding.UTF8.GetString(bytes);
 
-    public static string MdToHtml(this string str)
-    {
-        var mpl = new MarkdownPipelineBuilder()
-            .UsePipeTables()
-            .UseAdvancedExtensions()
-            .Build();
+            str = Regex.Replace(str, @"\s", "-", RegexOptions.Compiled);
+            str = Regex.Replace(str, @"([-_]){2,}", "$1", RegexOptions.Compiled);
+            str = RemoveIllegalCharacters(str);
 
-        return Markdown.ToHtml(str, mpl);
-    }
+            return str;
+        }
 
-    //public static string Capitalize(this string str)
-    //{
-    //    if (string.IsNullOrEmpty(str))
-    //        return string.Empty;
-    //    char[] a = str.ToCharArray();
-    //    a[0] = char.ToUpper(a[0]);
-    //    return new string(a);
-    //}
+        public static string ToThumb(this string img)
+        {
+            if (img.IndexOf('/') < 1) return img;
 
-    //public static bool Contains(this string source, string toCheck, StringComparison comp)
-    //{
-    //    return source.IndexOf(toCheck, comp) >= 0;
-    //}
+            var first = img[..img.LastIndexOf('/')];
+            var second = img[img.LastIndexOf('/')..];
 
-    //public static string SanitizePath(this string str)
-    //{
-    //    if (string.IsNullOrWhiteSpace(str))
-    //        return string.Empty;
+            return $"{first}/thumbs{second}";
+        }
 
-    //    str = str.Replace("%2E", ".").Replace("%2F", "/");
+        public static string ToHtmlFromMarkdown(this string markdown)
+        {
+            return Markdown.ToHtml(markdown);
+        }
 
-    //    if (str.Contains("..") || str.Contains("//"))
-    //        throw new ApplicationException("Invalid directory path");
+        public static string ToLowerInvariant(this string str)
+        {
+            return str?.ToLowerInvariant();
+        }
 
-    //    return str;
-    //}
+        public static string ToUpperInvariant(this string str)
+        {
+            return str?.ToUpperInvariant();
+        }
 
-    public static string RemoveScriptTags(this string str)
-    {
-        Regex scriptRegex = new(@"<script[^>]*>[\s\S]*?</script>");
-        return scriptRegex.Replace(str, string.Empty);
-    }
+        public static bool IsNullOrWhiteSpace(this string str)
+        {
+            return string.IsNullOrWhiteSpace(str);
+        }
 
-    public static string ReplaceIgnoreCase(this string str, string search, string replacement)
-    {
-        string result = Regex.Replace(
-            str,
-            Regex.Escape(search),
-            replacement.Replace("$", "$$"),
-            RegexOptions.IgnoreCase
-        );
-        return result;
-    }
+        public static string ToBase64(this string str)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
+        }
 
-    public static string SanitizeFileName(this string str)
-    {
-        str = str.SanitizePath();
+        public static string FromBase64(this string base64)
+        {
+            if (string.IsNullOrEmpty(base64)) return base64;
+            return Encoding.UTF8.GetString(Convert.FromBase64String(base64));
+        }
 
-        //TODO: add filename specific validation here
+        public static string Truncate(this string str, int maxLength)
+        {
+            if (string.IsNullOrEmpty(str) || str.Length <= maxLength) return str;
+            return str[..maxLength];
+        }
 
-        return str;
-    }
+        public static bool ContainsAny(this string str, params string[] values)
+        {
+            if (string.IsNullOrEmpty(str) || values == null || values.Length == 0) return false;
+            foreach (var value in values)
+            {
+                if (str.Contains(value, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
 
-    public static string SanitizePath(this string str)
-    {
-        if (string.IsNullOrWhiteSpace(str))
-            return string.Empty;
+        private static string SanitizeForComparison(string str)
+        {
+            return LeadingSlashRemover.Replace(WhiteSpaceRemover.Replace(DashRemover.Replace(str, string.Empty), string.Empty), string.Empty);
+        }
 
-        str = str.Replace("%2E", ".").Replace("%2F", "/");
-
-        if (str.Contains("..") || str.Contains("//"))
-            throw new ApplicationException("Invalid directory path");
-
-        return str;
-    }
-
-    public static string StripHtml(this string str)
-    {
-        return string.IsNullOrWhiteSpace(str) ? string.Empty : RegexStripHtml.Replace(str, string.Empty).Trim();
-    }
-
-    /// <summary>
-    /// Converts title to valid URL slug
-    /// </summary>
-    /// <returns>Slug</returns>
-    public static string ToSlug(this string title)
-    {
-        var str = title.ToLowerInvariant();
-        str = str.Trim('-', '_');
-
-        if (string.IsNullOrEmpty(str))
-            return string.Empty;
-
-        var bytes = Encoding.GetEncoding("utf-8").GetBytes(str);
-        str = Encoding.UTF8.GetString(bytes);
-
-        str = Regex.Replace(str, @"\s", "-", RegexOptions.Compiled);
-
-        str = Regex.Replace(str, @"([-_]){2,}", "$1", RegexOptions.Compiled);
-
-        str = RemoveIllegalCharacters(str);
-
-        return str;
-    }
-    public static string ToThumb(this string img)
-    {
-        if (img.IndexOf('/') < 1) return img;
-
-        var first = img.Substring(0, img.LastIndexOf('/'));
-        var second = img.Substring(img.LastIndexOf('/'));
-
-        return $"{first}/thumbs{second}";
-    }
-    public static string ToHtmlFromMarkdown(this string markdown)
-    {
-        return Markdown.ToHtml(markdown);
+        [GeneratedRegex("-", RegexOptions.Compiled)]
+        private static partial Regex MyRegex();
+        [GeneratedRegex("^/", RegexOptions.Compiled)]
+        private static partial Regex MyRegex1();
+        [GeneratedRegex("<[^>]*>", RegexOptions.Compiled)]
+        private static partial Regex MyRegex2();
+        [GeneratedRegex(" ", RegexOptions.Compiled)]
+        private static partial Regex MyRegex3();
+        [GeneratedRegex(@"<script[^>]*>[\s\S]*?</script>")]
+        private static partial Regex MyRegex4();
     }
 }

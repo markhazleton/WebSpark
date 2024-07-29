@@ -8,7 +8,7 @@ public static class DateTimeExtensions
 
     public static string ToFriendlyShortDateString(this DateTime Date)
     {
-        return $"{Date.ToString("MMM dd")}, {Date.Year}";
+        return $"{Date:MMM dd}, {Date.Year}";
     }
 
     public static string ToFriendlyDateString(this DateTime Date)
@@ -18,7 +18,7 @@ public static class DateTimeExtensions
 
     static string FriendlyDate(DateTime date)
     {
-        string FormattedDate = string.Empty;
+        string FormattedDate;
         if (date.Date == DateTime.Today)
         {
             FormattedDate = "Today";

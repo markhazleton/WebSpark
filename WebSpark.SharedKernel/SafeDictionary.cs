@@ -5,14 +5,17 @@
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TValue"></typeparam>
-public sealed class SafeDictionary<TKey, TValue>
+public sealed class SafeDictionary<TKey, TValue> where TKey : notnull
 {
     private Dictionary<TKey, TValue> _Dictionary;
 
     /// <summary>
     ///
     /// </summary>
-    public SafeDictionary() { _Dictionary = []; }
+    public SafeDictionary()
+    {
+        _Dictionary = [];
+    }
 
     /// <summary>
     ///
@@ -35,7 +38,7 @@ public sealed class SafeDictionary<TKey, TValue>
     /// Get Value
     /// </summary>
     /// <param name="key"></param>
-    public TValue? GetValue(TKey? key)
+    public TValue? GetValue(TKey key)
     {
         if (_Dictionary is null)
         {
@@ -74,7 +77,7 @@ public sealed class SafeDictionary<TKey, TValue>
     /// </summary>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetValue(TKey? key, TValue? value)
+    public void SetValue(TKey key, TValue? value)
     {
         if (_Dictionary is null) { return; }
         if (key is null) { return; }

@@ -6,19 +6,21 @@ namespace HttpClientUtility.SendService;
 /// <summary>
 /// Implementation of IHttpClientService that caches HTTP responses using IMemoryCache.
 /// </summary>
-public sealed class HttpClientSendServiceCache : IHttpClientService
+public sealed class HttpClientSendServiceCache(
+    IHttpClientService service,
+    ILogger<HttpClientSendServiceCache> logger,
+    IMemoryCache cache) : IHttpClientService
 {
-    private readonly IMemoryCache _cache;
-    private readonly ILogger<HttpClientSendServiceCache> _logger;
-    private readonly IHttpClientService _service;
-
-    public HttpClientSendServiceCache(IHttpClientService service, ILogger<HttpClientSendServiceCache> logger, IMemoryCache cache)
-    {
-        _service = service ?? throw new ArgumentNullException(nameof(service));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-    }
-
+    private readonly IMemoryCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly ILogger<HttpClientSendServiceCache> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IHttpClientService _service = service ?? throw new ArgumentNullException(nameof(service));
+    /// <summary>
+    /// HttpClientSendServiceCache Constructor
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="statusCall"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
     public async Task<HttpClientSendRequest<T>> HttpClientSendAsync<T>(HttpClientSendRequest<T> statusCall, CancellationToken ct)
     {
         var cacheKey = statusCall.RequestPath;

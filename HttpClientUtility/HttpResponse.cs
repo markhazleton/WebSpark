@@ -75,6 +75,9 @@ public class HttpResponseContent<T>
     /// Gets a value indicating whether the HTTP response is successful.
     /// </summary>
     public bool IsSuccess { get; }
+    /// <summary>
+    /// Result Age in days, hours, minutes, and seconds.
+    /// </summary>
     public string ResultAge
     {
         get
