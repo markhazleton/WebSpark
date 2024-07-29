@@ -1,5 +1,4 @@
-﻿
-namespace WebSpark.Core.Infrastructure.BaseClasses;
+﻿namespace WebSpark.SharedKernel;
 
 /// <summary>
 /// Safe Dictionary

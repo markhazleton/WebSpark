@@ -21,7 +21,7 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
                         Id = pc.CategoryId,
                         Category = pc.Category.Content.ToLower(),
                         PostCount = 1,
-                        DateCreated = pc.Category.DateCreated
+                        DateCreated = pc.Category.CreatedDate
                     });
                 }
                 else
@@ -71,7 +71,7 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
                 Id = cat.Id,
                 Category = cat.Content,
                 Description = cat.Description,
-                DateCreated = cat.DateCreated
+                DateCreated = cat.CreatedDate
             });
         }
         return cats;
@@ -91,7 +91,7 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
 
         dbCategory.Content = category.Category;
         dbCategory.Description = category.Description;
-        dbCategory.DateUpdated = DateTime.UtcNow;
+        dbCategory.UpdatedDate = DateTime.UtcNow;
 
         return await db.SaveChangesAsync() > 0;
     }
@@ -105,7 +105,7 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
                 Id = category.Id,
                 Category = category.Content,
                 Description = category.Description,
-                DateCreated = category.DateCreated
+                DateCreated = category.CreatedDate
             };
     }
     public async Task<Models.CategoryItem> SaveCategory(string tag)
@@ -121,7 +121,7 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
         category = new Category()
         {
             Content = tag,
-            DateCreated = DateTime.UtcNow
+            CreatedDate = DateTime.UtcNow
         };
         db.Categories.Add(category);
         await db.SaveChangesAsync();
@@ -169,7 +169,7 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
             Id = categoryItem.Id,
             Content = categoryItem.Category,
             Description = categoryItem.Description,
-            DateCreated = categoryItem.DateCreated
+            CreatedDate = categoryItem.DateCreated
         };
     }
 

@@ -2,6 +2,7 @@ namespace WebSpark.Core.Data;
 
 public class MailSetting : BaseEntity
 {
+    [Key]
     public int Id { get; set; }
 
     [Required]
@@ -27,9 +28,5 @@ public class MailSetting : BaseEntity
     [StringLength(120)]
     public string ToName { get; set; }
     public bool Enabled { get; set; }
-
-    public DateTime DateCreated { get; set; }
-    public DateTime DateUpdated { get; set; }
-
     public Blog Blog { get; set; }
 }

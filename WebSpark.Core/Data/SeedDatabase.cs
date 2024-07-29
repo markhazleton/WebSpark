@@ -227,8 +227,6 @@ public class SeedDatabase : IDisposable
                 Avatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 250' width='250' height='250'%3E%3Crect width='250' height='250' fill='%23622aff'%3E%3C/rect%3E%3Ctext x='50%' y='53%' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='128px' fill='%23ffffff'%3EM%3C/text%3E%3C/svg%3E",
                 IsAdmin = true,
                 CreatedDate = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                DateCreated = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
                 CreatedID = 1,
                 UpdatedID = 1
@@ -247,8 +245,6 @@ public class SeedDatabase : IDisposable
                 AnalyticsListType = 2,
                 AnalyticsPeriod = 5,
                 CreatedDate = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                DateCreated = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
                 FooterScript = null,
                 HeaderScript = null,
@@ -286,8 +282,6 @@ public class SeedDatabase : IDisposable
                 Content = "How to focus on business value rather than technical wow.",
                 Cover = "data/2/2022/5/DSC00279.JPG",
                 CreatedDate = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                DateCreated = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
                 Published = DateTime.UtcNow,
                 CreatedID = 1,
@@ -313,8 +307,6 @@ public class SeedDatabase : IDisposable
                 Content = "This is a post from MOM.",
                 Cover = "data/2/2022/5/DSC00279.JPG",
                 CreatedDate = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                DateCreated = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
                 Published = DateTime.UtcNow,
                 CreatedID = 1,
@@ -340,8 +332,6 @@ public class SeedDatabase : IDisposable
                 Content = "This is a post from DAD.",
                 Cover = "data/2/2022/5/DSC00279.JPG",
                 CreatedDate = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                DateCreated = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
                 Published = DateTime.UtcNow,
                 CreatedID = 1,
@@ -378,8 +368,6 @@ public class SeedDatabase : IDisposable
                 Content = catName,
                 Description = catName,
                 CreatedDate = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                DateCreated = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow
             };
         }

@@ -205,13 +205,13 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
             }
         }
 
-        modelBuilder.Entity<Blog>().Property(b => b.DateUpdated).HasDefaultValueSql(sql);
-        modelBuilder.Entity<Post>().Property(p => p.DateUpdated).HasDefaultValueSql(sql);
-        modelBuilder.Entity<Author>().Property(a => a.DateUpdated).HasDefaultValueSql(sql);
-        modelBuilder.Entity<Category>().Property(c => c.DateUpdated).HasDefaultValueSql(sql);
-        modelBuilder.Entity<Subscriber>().Property(s => s.DateUpdated).HasDefaultValueSql(sql);
-        modelBuilder.Entity<Newsletter>().Property(n => n.DateUpdated).HasDefaultValueSql(sql);
-        modelBuilder.Entity<MailSetting>().Property(n => n.DateUpdated).HasDefaultValueSql(sql);
+        modelBuilder.Entity<Blog>().Property(b => b.UpdatedDate).HasDefaultValueSql(sql);
+        modelBuilder.Entity<Post>().Property(p => p.UpdatedDate).HasDefaultValueSql(sql);
+        modelBuilder.Entity<Author>().Property(a => a.UpdatedDate).HasDefaultValueSql(sql);
+        modelBuilder.Entity<Category>().Property(c => c.UpdatedDate).HasDefaultValueSql(sql);
+        modelBuilder.Entity<Subscriber>().Property(s => s.UpdatedDate).HasDefaultValueSql(sql);
+        modelBuilder.Entity<Newsletter>().Property(n => n.UpdatedDate).HasDefaultValueSql(sql);
+        modelBuilder.Entity<MailSetting>().Property(n => n.UpdatedDate).HasDefaultValueSql(sql);
 
         OnModelCreatingPartial(modelBuilder);
     }

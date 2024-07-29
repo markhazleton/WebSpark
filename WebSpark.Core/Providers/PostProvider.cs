@@ -1,10 +1,11 @@
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
+using WebSpark.Core.Models;
 
 namespace WebSpark.Core.Providers;
 public interface IPostProvider
 {
-    Task<List<Post>> GetPosts(Models.PublishedStatus filter, Models.PostType postType);
+    Task<List<Post>> GetPosts(PublishedStatus filter, PostType postType);
     Task<List<Post>> SearchPosts(string term);
     Task<Post> GetPostById(int id);
     Task<Post> GetPostBySlug(string slug);
@@ -13,12 +14,12 @@ public interface IPostProvider
     Task<bool> Update(Post post);
     Task<bool> Publish(int id, bool publish);
     Task<bool> Featured(int id, bool featured);
-    Task<IEnumerable<Models.PostItem>> GetPostItems();
-    Task<Models.PostModel> GetPostModel(string slug);
-    Task<List<Models.PostItem>> GetAllPostsAsync();
-    Task<IEnumerable<Models.PostItem>> GetPopular(Models.Pager pager, int author = 0);
-    Task<IEnumerable<Models.PostItem>> Search(Models.Pager pager, string term, int author = 0, string include = "", bool sanitize = false);
-    Task<IEnumerable<Models.PostItem>> GetList(Models.Pager pager, int author = 0, string category = "", string include = "", bool sanitize = true);
+    Task<IEnumerable<PostItem>> GetPostItems();
+    Task<PostModel> GetPostModel(string slug);
+    Task<List<PostItem>> GetAllPostsAsync();
+    Task<IEnumerable<PostItem>> GetPopular(Pager pager, int author = 0);
+    Task<IEnumerable<PostItem>> Search(Pager pager, string term, int author = 0, string include = "", bool sanitize = false);
+    Task<IEnumerable<PostItem>> GetList(Pager pager, int author = 0, string category = "", string include = "", bool sanitize = true);
     Task<bool> Remove(int id);
 }
 
@@ -35,15 +36,15 @@ public class PostProvider : IPostProvider
         _configuration = configuration;
     }
 
-    public async Task<List<Post>> GetPosts(Models.PublishedStatus filter, Models.PostType postType)
+    public async Task<List<Post>> GetPosts(PublishedStatus filter, PostType postType)
     {
         switch (filter)
         {
-            case Models.PublishedStatus.Published:
+            case PublishedStatus.Published:
                 return await _db.Posts.AsNoTracking().Where(p => p.PostType == postType).Where(p => p.Published > DateTime.MinValue).OrderByDescending(p => p.Published).ToListAsync();
-            case Models.PublishedStatus.Drafts:
+            case PublishedStatus.Drafts:
                 return await _db.Posts.AsNoTracking().Where(p => p.PostType == postType).Where(p => p.Published == DateTime.MinValue).OrderByDescending(p => p.Id).ToListAsync();
-            case Models.PublishedStatus.Featured:
+            case PublishedStatus.Featured:
                 return await _db.Posts.AsNoTracking().Where(p => p.PostType == postType).Where(p => p.IsFeatured).OrderByDescending(p => p.Id).ToListAsync();
             default:
                 return await _db.Posts.AsNoTracking().Where(p => p.PostType == postType).OrderByDescending(p => p.Id).ToListAsync();
@@ -61,12 +62,12 @@ public class PostProvider : IPostProvider
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Models.PostItem>> Search(Models.Pager pager, string term, int author = 0, string include = "", bool sanitize = false)
+    public async Task<IEnumerable<PostItem>> Search(Pager pager, string term, int author = 0, string include = "", bool sanitize = false)
     {
         term = term.ToLower();
         var skip = pager.CurrentPage * pager.ItemsPerPage - pager.ItemsPerPage;
 
-        var results = new List<Models.SearchResult>();
+        var results = new List<SearchResult>();
         var termList = term.ToLower().Split(' ').ToList();
         var categories = await _db.Categories.ToListAsync();
 
@@ -104,13 +105,13 @@ public class PostProvider : IPostProvider
             }
             if (rank > 0)
             {
-                results.Add(new Models.SearchResult { Rank = rank, Item = await PostToItem(p, sanitize) });
+                results.Add(new SearchResult { Rank = rank, Item = await PostToItem(p, sanitize) });
             }
         }
 
         results = [.. results.OrderByDescending(r => r.Rank)];
 
-        var posts = new List<Models.PostItem>();
+        var posts = new List<PostItem>();
         for (int i = 0; i < results.Count; i++)
         {
             posts.Add(results[i].Item);
@@ -124,14 +125,14 @@ public class PostProvider : IPostProvider
         return await _db.Posts.Where(p => p.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Models.PostItem>> GetPostItems()
+    public async Task<IEnumerable<PostItem>> GetPostItems()
     {
         var posts = await _db.Posts.ToListAsync();
-        var postItems = new List<Models.PostItem>();
+        var postItems = new List<PostItem>();
 
         foreach (var post in posts)
         {
-            postItems.Add(new Models.PostItem
+            postItems.Add(new PostItem
             {
                 Id = post.Id,
                 Title = post.Title,
@@ -139,7 +140,7 @@ public class PostProvider : IPostProvider
                 Content = post.Content,
                 Slug = post.Slug,
                 Author = Create(_db.Authors.Where(a => a.Id == post.AuthorId).FirstOrDefault()),
-                Cover = string.IsNullOrEmpty(post.Cover) ? Models.Constants.DefaultCover : post.Cover,
+                Cover = string.IsNullOrEmpty(post.Cover) ? Constants.DefaultCover : post.Cover,
                 Published = post.Published,
                 PostViews = post.PostViews,
                 Featured = post.IsFeatured
@@ -148,12 +149,12 @@ public class PostProvider : IPostProvider
 
         return postItems;
     }
-    private static Models.AuthorItem Create(Author? first)
+    private static AuthorItem Create(Author? first)
     {
         if (first == null)
-            return new Models.AuthorItem();
+            return new AuthorItem();
 
-        return new Models.AuthorItem
+        return new AuthorItem
         {
             Id = first.Id,
             DisplayName = first.DisplayName,
@@ -161,14 +162,14 @@ public class PostProvider : IPostProvider
             Avatar = first.Avatar,
             Bio = first.Bio,
             IsAdmin = first.IsAdmin,
-            DateCreated = first.DateCreated,
-            DateUpdated = first.DateUpdated
+            DateCreated = first.CreatedDate,
+            DateUpdated = first.UpdatedDate
         };
     }
 
-    public async Task<Models.PostModel> GetPostModel(string slug)
+    public async Task<PostModel> GetPostModel(string slug)
     {
-        var model = new Models.PostModel();
+        var model = new PostModel();
 
         var all = _db.Posts
            .AsNoTracking()
@@ -182,13 +183,13 @@ public class PostProvider : IPostProvider
         post.PostViews++;
         await _db.SaveChangesAsync();
 
-        model.Related = await Search(new Models.Pager(1), model.Post.Title, 0, "PF", true);
+        model.Related = await Search(new Pager(1), model.Post.Title, 0, "PF", true);
         model.Related = model.Related.Where(r => r.Id != model.Post.Id).ToList();
 
         return await Task.FromResult(model);
     }
 
-    private async Task SetOlderNewerPosts(string slug, Models.PostModel model, List<Post> all)
+    private async Task SetOlderNewerPosts(string slug, PostModel model, List<Post> all)
     {
         if (all != null && all.Count > 0)
         {
@@ -241,7 +242,7 @@ public class PostProvider : IPostProvider
             return false;
 
         post.Blog = _db.Blogs.First();
-        post.DateCreated = DateTime.UtcNow;
+        post.CreatedDate = DateTime.UtcNow;
 
         // sanitize HTML fields
         post.Content = post.Content.RemoveScriptTags();
@@ -290,7 +291,7 @@ public class PostProvider : IPostProvider
         return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<IEnumerable<Models.PostItem>> GetList(Models.Pager pager, int author = 0, string category = "", string include = "", bool sanitize = true)
+    public async Task<IEnumerable<PostItem>> GetList(Pager pager, int author = 0, string category = "", string include = "", bool sanitize = true)
     {
         var skip = pager.CurrentPage * pager.ItemsPerPage - pager.ItemsPerPage;
 
@@ -321,7 +322,7 @@ public class PostProvider : IPostProvider
         }
         pager.Configure(posts.Count);
 
-        var items = new List<Models.PostItem>();
+        var items = new List<PostItem>();
         foreach (var p in posts.Skip(skip).Take(pager.ItemsPerPage).ToList())
         {
             items.Add(await PostToItem(p, sanitize));
@@ -329,7 +330,7 @@ public class PostProvider : IPostProvider
         return await Task.FromResult(items);
     }
 
-    public async Task<IEnumerable<Models.PostItem>> GetPopular(Models.Pager pager, int author = 0)
+    public async Task<IEnumerable<PostItem>> GetPopular(Pager pager, int author = 0)
     {
         var skip = pager.CurrentPage * pager.ItemsPerPage - pager.ItemsPerPage;
 
@@ -344,7 +345,7 @@ public class PostProvider : IPostProvider
 
         pager.Configure(posts.Count);
 
-        var items = new List<Models.PostItem>();
+        var items = new List<PostItem>();
         foreach (var p in posts.Skip(skip).Take(pager.ItemsPerPage).ToList())
         {
             items.Add(await PostToItem(p, true));
@@ -364,9 +365,9 @@ public class PostProvider : IPostProvider
     }
 
 
-    async Task<Models.PostItem> PostToItem(Post p, bool sanitize = false)
+    async Task<PostItem> PostToItem(Post p, bool sanitize = false)
     {
-        var post = new Models.PostItem
+        var post = new PostItem
         {
             Id = p.Id,
             PostType = p.PostType,
@@ -387,13 +388,13 @@ public class PostProvider : IPostProvider
         if (post.Author != null)
         {
             if (string.IsNullOrEmpty(post.Author.Avatar))
-                string.Format(Models.Constants.AvatarDataImage, post.Author.DisplayName.Substring(0, 1).ToUpper());
+                string.Format(Constants.AvatarDataImage, post.Author.DisplayName.Substring(0, 1).ToUpper());
 
             post.Author.Email = sanitize ? "donotreply@us.com" : post.Author.Email;
         }
         return await Task.FromResult(post);
     }
-    public async Task<List<Models.PostItem>> GetAllPostsAsync()
+    public async Task<List<PostItem>> GetAllPostsAsync()
     {
         var items = await _db.Posts.Include(p => p.PostCategories).ThenInclude(t => t.Category).ToListAsync();
         var posts = items.Select(s => Create(s)).ToList();
@@ -401,9 +402,9 @@ public class PostProvider : IPostProvider
 
     }
 
-    private Models.PostItem Create(Post p)
+    private PostItem Create(Post p)
     {
-        return new Models.PostItem
+        return new PostItem
         {
             Id = p.Id,
             PostType = p.PostType,
@@ -411,13 +412,13 @@ public class PostProvider : IPostProvider
             Title = p.Title,
             Description = p.Description,
             Content = p.Content,
-            Categories = p.PostCategories.Select(s => new Models.CategoryItem()
+            Categories = p.PostCategories.Select(s => new CategoryItem()
             {
                 Id = s.CategoryId,
                 Description = s.Category.Description,
                 Category = s.Category.Content,
                 Selected = false,
-                DateCreated = s.Category.DateCreated
+                DateCreated = s.Category.CreatedDate
 
             }
             ).ToList(),
@@ -437,27 +438,27 @@ public class PostProvider : IPostProvider
         var items = new List<Post>();
         var pubfeatured = new List<Post>();
 
-        if (include.ToUpper().Contains(Models.Constants.PostDraft) || string.IsNullOrEmpty(include))
+        if (include.ToUpper().Contains(Constants.PostDraft) || string.IsNullOrEmpty(include))
         {
             var drafts = author > 0 ?
-                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.AuthorId == author && p.PostType == Models.PostType.Post).ToList() :
-                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.PostType == Models.PostType.Post)];
+                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.AuthorId == author && p.PostType == PostType.Post).ToList() :
+                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published == DateTime.MinValue && p.PostType == PostType.Post)];
             items = [.. items, .. drafts];
         }
 
-        if (include.ToUpper().Contains(Models.Constants.PostFeatured) || string.IsNullOrEmpty(include))
+        if (include.ToUpper().Contains(Constants.PostFeatured) || string.IsNullOrEmpty(include))
         {
             var featured = author > 0 ?
-                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.AuthorId == author && p.PostType == Models.PostType.Post).OrderByDescending(p => p.Published).ToList() :
-                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.PostType == Models.PostType.Post).OrderByDescending(p => p.Published)];
+                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.AuthorId == author && p.PostType == PostType.Post).OrderByDescending(p => p.Published).ToList() :
+                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && p.IsFeatured && p.PostType == PostType.Post).OrderByDescending(p => p.Published)];
             pubfeatured = [.. pubfeatured, .. featured];
         }
 
-        if (include.ToUpper().Contains(Models.Constants.PostPublished) || string.IsNullOrEmpty(include))
+        if (include.ToUpper().Contains(Constants.PostPublished) || string.IsNullOrEmpty(include))
         {
             var published = author > 0 ?
-                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.AuthorId == author && p.PostType == Models.PostType.Post).OrderByDescending(p => p.Published).ToList() :
-                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.PostType == Models.PostType.Post).OrderByDescending(p => p.Published)];
+                 _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.AuthorId == author && p.PostType == PostType.Post).OrderByDescending(p => p.Published).ToList() :
+                 [.. _db.Posts.Include(p => p.PostCategories).Where(p => p.Published > DateTime.MinValue && !p.IsFeatured && p.PostType == PostType.Post).OrderByDescending(p => p.Published)];
             pubfeatured = [.. pubfeatured, .. published];
         }
 

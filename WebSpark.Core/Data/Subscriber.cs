@@ -2,8 +2,7 @@ namespace WebSpark.Core.Data;
 
 public class Subscriber : BaseEntity
 {
-    public Subscriber() { }
-
+    [Key]
     public int Id { get; set; }
 
     [Required]
@@ -16,9 +15,5 @@ public class Subscriber : BaseEntity
     public string Country { get; set; }
     [StringLength(120)]
     public string Region { get; set; }
-
-    public DateTime DateCreated { get; set; }
-    public DateTime DateUpdated { get; set; }
-
     public Blog Blog { get; set; }
 }

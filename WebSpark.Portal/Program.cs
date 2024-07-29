@@ -6,6 +6,9 @@ using PromptSpark.Domain.Service;
 using Serilog;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
+using WebSpark.Core.Infrastructure.Logging;
+using WebSpark.Core.Interfaces;
+using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
 using Westwind.AspNetCore.Markdown;
 
@@ -17,7 +20,7 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddUserSecrets<Program>();
 
-WebSpark.Core.Infrastructure.Logging.LoggingUtility.ConfigureLogging(builder, "WebSparkPortal");
+LoggingUtility.ConfigureLogging(builder, "WebSparkPortal");
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -91,11 +94,11 @@ builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<WebSpark.Core.Interfaces.IScopeInformation, WebSpark.Core.Models.ScopeInformation>();
-builder.Services.AddScoped<WebSpark.Core.Interfaces.IWebsiteService, WebsiteProvider>();
-builder.Services.AddScoped<WebSpark.Core.Interfaces.IMenuService, MenuProvider>();
-builder.Services.AddScoped<WebSpark.Core.Interfaces.IRecipeService, RecipeProvider>();
-builder.Services.AddScoped<WebSpark.Core.Interfaces.IMenuProvider, MenuProvider>();
+builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
+builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
+builder.Services.AddScoped<IMenuService, MenuProvider>();
+builder.Services.AddScoped<IRecipeService, RecipeProvider>();
+builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddBlogProviders();
 

@@ -11,28 +11,26 @@ using WebSpark.Core.Data;
 namespace WebSpark.Core.Migrations
 {
     [DbContext(typeof(WebSparkDbContext))]
-    [Migration("20240619171041_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240724173747_FixDuplicateDateFields")]
+    partial class FixDuplicateDateFields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Author", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
@@ -44,14 +42,6 @@ namespace WebSpark.Core.Migrations
 
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
@@ -72,7 +62,9 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -84,7 +76,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Blog", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Blog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -106,16 +98,7 @@ namespace WebSpark.Core.Migrations
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("DATE('now')");
-
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("TEXT");
 
@@ -138,17 +121,17 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Theme")
-                        .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -158,7 +141,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Blogs");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Category", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,21 +158,14 @@ namespace WebSpark.Core.Migrations
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
                         .HasDefaultValueSql("DATE('now')");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -199,13 +175,13 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.MailSetting", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.MailSetting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BlogId")
+                    b.Property<int?>("BlogId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedDate")
@@ -213,14 +189,6 @@ namespace WebSpark.Core.Migrations
 
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("INTEGER");
@@ -249,7 +217,9 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -271,7 +241,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("MailSettings");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Menu", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Menu", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,16 +274,19 @@ namespace WebSpark.Core.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DomainId")
+                    b.Property<int?>("DomainId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Icon")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PageContent")
+                    b.Property<string>("KeyWords")
                         .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PageContent")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ParentId")
@@ -331,7 +304,6 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
@@ -344,7 +316,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Menu");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Newsletter", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Newsletter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -356,14 +328,6 @@ namespace WebSpark.Core.Migrations
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("DATE('now')");
-
                     b.Property<int>("PostId")
                         .HasColumnType("INTEGER");
 
@@ -371,7 +335,9 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -383,7 +349,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Newsletters");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Post", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -392,7 +358,7 @@ namespace WebSpark.Core.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BlogId")
+                    b.Property<int?>("BlogId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Content")
@@ -400,7 +366,6 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Cover")
-                        .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("TEXT");
 
@@ -409,14 +374,6 @@ namespace WebSpark.Core.Migrations
 
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -452,7 +409,9 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -466,7 +425,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.PostCategory", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.PostCategory", b =>
                 {
                     b.Property<int>("PostId")
                         .HasColumnType("INTEGER");
@@ -493,17 +452,219 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("PostCategories");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Subscriber", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Recipe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BlogId")
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("CommentCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CreatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("DomainId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Ingredients")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Keywords")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastViewDt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RecipeCategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Servings")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("UpdatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DomainId");
+
+                    b.HasIndex("RecipeCategoryId");
+
+                    b.ToTable("Recipe");
+                });
+
+            modelBuilder.Entity("WebSpark.Core.Data.RecipeCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CreatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("UpdatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RecipeCategory");
+                });
+
+            modelBuilder.Entity("WebSpark.Core.Data.RecipeComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CreatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("UpdatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeComment");
+                });
+
+            modelBuilder.Entity("WebSpark.Core.Data.RecipeImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CreatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FileDescription")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("BLOB");
+
+                    b.Property<int?>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("UpdatedID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeImage");
+                });
+
+            modelBuilder.Entity("WebSpark.Core.Data.Subscriber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("BlogId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
@@ -513,31 +674,23 @@ namespace WebSpark.Core.Migrations
                     b.Property<int?>("CreatedID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("DATE('now')");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Ip")
-                        .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Region")
-                        .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("DATE('now')");
 
                     b.Property<int?>("UpdatedID")
                         .HasColumnType("INTEGER");
@@ -549,7 +702,7 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Subscribers");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.WebSite", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.WebSite", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -588,7 +741,6 @@ namespace WebSpark.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Template")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -622,236 +774,31 @@ namespace WebSpark.Core.Migrations
                     b.ToTable("Domain");
                 });
 
-            modelBuilder.Entity("WebSpark.Core.Entities.Recipe", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Author", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AuthorName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("AverageRating")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("CommentCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CreatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DomainId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Ingredients")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Instructions")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("LastViewDt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("RatingCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RecipeCategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Servings")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UpdatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ViewCount")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DomainId");
-
-                    b.HasIndex("RecipeCategoryId");
-
-                    b.ToTable("Recipe");
-                });
-
-            modelBuilder.Entity("WebSpark.Core.Entities.RecipeCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasMaxLength(1500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CreatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UpdatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RecipeCategory");
-                });
-
-            modelBuilder.Entity("WebSpark.Core.Entities.RecipeComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CreatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UpdatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("RecipeComment");
-                });
-
-            modelBuilder.Entity("WebSpark.Core.Entities.RecipeImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CreatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("FileDescription")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UpdatedID")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("RecipeImage");
-                });
-
-            modelBuilder.Entity("WebSpark.Domain.Entities.Author", b =>
-                {
-                    b.HasOne("WebSpark.Domain.Entities.Blog", null)
+                    b.HasOne("WebSpark.Core.Data.Blog", null)
                         .WithMany("Authors")
                         .HasForeignKey("BlogId");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.MailSetting", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.MailSetting", b =>
                 {
-                    b.HasOne("WebSpark.Domain.Entities.Blog", "Blog")
+                    b.HasOne("WebSpark.Core.Data.Blog", "Blog")
                         .WithMany()
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogId");
 
                     b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Menu", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Menu", b =>
                 {
-                    b.HasOne("WebSpark.Domain.Entities.WebSite", "Domain")
+                    b.HasOne("WebSpark.Core.Data.WebSite", "Domain")
                         .WithMany("Menus")
                         .HasForeignKey("DomainId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("FK_Menu_Domain");
 
-                    b.HasOne("WebSpark.Domain.Entities.Menu", "Parent")
+                    b.HasOne("WebSpark.Core.Data.Menu", "Parent")
                         .WithMany("InverseParent")
                         .HasForeignKey("ParentId")
                         .HasConstraintName("FK_Menu_ParentMenu_ParentId");
@@ -861,9 +808,9 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Newsletter", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Newsletter", b =>
                 {
-                    b.HasOne("WebSpark.Domain.Entities.Post", "Post")
+                    b.HasOne("WebSpark.Core.Data.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -872,32 +819,30 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Post", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Post", b =>
                 {
-                    b.HasOne("WebSpark.Domain.Entities.Author", null)
+                    b.HasOne("WebSpark.Core.Data.Author", null)
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebSpark.Domain.Entities.Blog", "Blog")
+                    b.HasOne("WebSpark.Core.Data.Blog", "Blog")
                         .WithMany("Posts")
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogId");
 
                     b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.PostCategory", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.PostCategory", b =>
                 {
-                    b.HasOne("WebSpark.Domain.Entities.Category", "Category")
+                    b.HasOne("WebSpark.Core.Data.Category", "Category")
                         .WithMany("PostCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebSpark.Domain.Entities.Post", "Post")
+                    b.HasOne("WebSpark.Core.Data.Post", "Post")
                         .WithMany("PostCategories")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -908,26 +853,13 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Subscriber", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Recipe", b =>
                 {
-                    b.HasOne("WebSpark.Domain.Entities.Blog", "Blog")
+                    b.HasOne("WebSpark.Core.Data.WebSite", "Domain")
                         .WithMany()
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DomainId");
 
-                    b.Navigation("Blog");
-                });
-
-            modelBuilder.Entity("WebSpark.Core.Entities.Recipe", b =>
-                {
-                    b.HasOne("WebSpark.Domain.Entities.WebSite", "Domain")
-                        .WithMany()
-                        .HasForeignKey("DomainId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebSpark.Core.Entities.RecipeCategory", "RecipeCategory")
+                    b.HasOne("WebSpark.Core.Data.RecipeCategory", "RecipeCategory")
                         .WithMany("Recipe")
                         .HasForeignKey("RecipeCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -939,72 +871,79 @@ namespace WebSpark.Core.Migrations
                     b.Navigation("RecipeCategory");
                 });
 
-            modelBuilder.Entity("WebSpark.Core.Entities.RecipeComment", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.RecipeComment", b =>
                 {
-                    b.HasOne("WebSpark.Core.Entities.Recipe", "Recipe")
+                    b.HasOne("WebSpark.Core.Data.Recipe", "Recipe")
                         .WithMany("RecipeComment")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
                         .HasConstraintName("FK_RecipeComment_Recipe");
 
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("WebSpark.Core.Entities.RecipeImage", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.RecipeImage", b =>
                 {
-                    b.HasOne("WebSpark.Core.Entities.Recipe", "Recipe")
+                    b.HasOne("WebSpark.Core.Data.Recipe", "Recipe")
                         .WithMany("RecipeImage")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
                         .HasConstraintName("FK_RecipeImage_Recipe");
 
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Author", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Subscriber", b =>
+                {
+                    b.HasOne("WebSpark.Core.Data.Blog", "Blog")
+                        .WithMany()
+                        .HasForeignKey("BlogId");
+
+                    b.Navigation("Blog");
+                });
+
+            modelBuilder.Entity("WebSpark.Core.Data.Author", b =>
                 {
                     b.Navigation("Posts");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Blog", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Blog", b =>
                 {
                     b.Navigation("Authors");
 
                     b.Navigation("Posts");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Category", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Category", b =>
                 {
                     b.Navigation("PostCategories");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Menu", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Menu", b =>
                 {
                     b.Navigation("InverseParent");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.Post", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Post", b =>
                 {
                     b.Navigation("PostCategories");
                 });
 
-            modelBuilder.Entity("WebSpark.Domain.Entities.WebSite", b =>
-                {
-                    b.Navigation("Menus");
-                });
-
-            modelBuilder.Entity("WebSpark.Core.Entities.Recipe", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.Recipe", b =>
                 {
                     b.Navigation("RecipeComment");
 
                     b.Navigation("RecipeImage");
                 });
 
-            modelBuilder.Entity("WebSpark.Core.Entities.RecipeCategory", b =>
+            modelBuilder.Entity("WebSpark.Core.Data.RecipeCategory", b =>
                 {
                     b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("WebSpark.Core.Data.WebSite", b =>
+                {
+                    b.Navigation("Menus");
                 });
 #pragma warning restore 612, 618
         }

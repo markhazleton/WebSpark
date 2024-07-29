@@ -68,7 +68,7 @@ public class BlogProvider : Interfaces.IBlogProvider, IDisposable
         {
             Id = c.Id,
             Description = c.Description,
-            DateCreated = c.DateCreated,
+            DateCreated = c.CreatedDate,
             Selected = false,
             Category = c.Content,
         }).ToList();

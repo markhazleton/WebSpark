@@ -80,7 +80,7 @@ public class AuthorProvider : IAuthorProvider
                 Description = "Short Blog Description",
                 Theme = "Standard",
                 ItemsPerPage = 10,
-                DateCreated = DateTime.UtcNow
+                CreatedDate = DateTime.UtcNow
             };
 
             _db.Blogs.Add(blog);
@@ -107,7 +107,7 @@ public class AuthorProvider : IAuthorProvider
             IsAdmin = isAdmin,
             Avatar = string.Format(Constants.AvatarDataImage, model.Name.Substring(0, 1).ToUpper()),
             Bio = "The short author bio.",
-            DateCreated = DateTime.UtcNow
+            CreatedDate = DateTime.UtcNow
         };
 
         blog.Authors.Add(author);
@@ -128,7 +128,7 @@ public class AuthorProvider : IAuthorProvider
         author.IsAdmin = false;
         author.Password = author.Password.Hash(_salt);
         author.Avatar = string.Format(Constants.AvatarDataImage, author.DisplayName.Substring(0, 1).ToUpper());
-        author.DateCreated = DateTime.UtcNow;
+        author.CreatedDate = DateTime.UtcNow;
 
         blog.Authors.Add(author);
 

@@ -101,8 +101,8 @@ namespace WebSpark.Core.Providers
                 Content = syndicationItem.Summary.Text,
                 Cover = Models.Constants.DefaultCover,
                 Published = syndicationItem.PublishDate.DateTime,
-                DateCreated = syndicationItem.PublishDate.DateTime,
-                DateUpdated = syndicationItem.LastUpdatedTime.DateTime
+                CreatedDate = syndicationItem.PublishDate.DateTime,
+                UpdatedDate = syndicationItem.LastUpdatedTime.DateTime
             };
 
             if (syndicationItem.ElementExtensions != null)
@@ -129,8 +129,8 @@ namespace WebSpark.Core.Providers
                         Category = new Category
                         {
                             Content = category.Name,
-                            DateCreated = DateTime.UtcNow,
-                            DateUpdated = DateTime.UtcNow
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedDate = DateTime.UtcNow
                         }
                     });
                 }

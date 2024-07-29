@@ -36,7 +36,7 @@ public class NewsletterProvider : INewsletterProvider
         var existing = await _db.Subscribers.AsNoTracking().Where(s => s.Email == subscriber.Email).FirstOrDefaultAsync();
         if (existing == null)
         {
-            subscriber.DateCreated = DateTime.UtcNow;
+            subscriber.CreatedDate = DateTime.UtcNow;
             _db.Subscribers.Add(subscriber);
             return await _db.SaveChangesAsync() > 0;
         }
@@ -69,7 +69,7 @@ public class NewsletterProvider : INewsletterProvider
 
         if (existing != null)
         {
-            existing.DateUpdated = DateTime.UtcNow;
+            existing.UpdatedDate = DateTime.UtcNow;
             existing.Success = success;
         }
         else
@@ -77,7 +77,7 @@ public class NewsletterProvider : INewsletterProvider
             var newsletter = new Newsletter()
             {
                 PostId = postId,
-                DateCreated = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
                 Success = success,
                 Post = _db.Posts.Where(p => p.Id == postId).FirstOrDefault()
             };
@@ -143,7 +143,7 @@ public class NewsletterProvider : INewsletterProvider
                 FromName = mail.FromName,
                 ToName = mail.ToName,
                 Enabled = mail.Enabled,
-                DateCreated = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
                 Blog = _db.Blogs.FirstOrDefault()
             };
             _db.MailSettings.Add(newMail);

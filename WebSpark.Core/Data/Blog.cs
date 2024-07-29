@@ -2,6 +2,7 @@ namespace WebSpark.Core.Data;
 
 public class Blog : BaseEntity
 {
+    [Key]
     public int Id { get; set; }
     [StringLength(160)]
     public string Title { get; set; }
@@ -19,13 +20,8 @@ public class Blog : BaseEntity
     public string? HeaderScript { get; set; }
     [StringLength(2000)]
     public string? FooterScript { get; set; }
-
     public int AnalyticsListType { get; set; }
     public int AnalyticsPeriod { get; set; }
-
-    public DateTime DateCreated { get; set; }
-    public DateTime DateUpdated { get; set; }
-
     public List<Post> Posts { get; set; }
     public List<Author> Authors { get; set; }
 }

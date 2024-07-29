@@ -2,8 +2,8 @@ namespace WebSpark.Core.Data;
 
 public class Author : BaseEntity
 {
-    public Author() { }
-
+    [Key]
+    [Required]
     public int Id { get; set; }
 
     [Required]
@@ -21,9 +21,5 @@ public class Author : BaseEntity
     [StringLength(400)]
     public string Avatar { get; set; }
     public bool IsAdmin { get; set; }
-
-    public DateTime DateCreated { get; set; }
-    public DateTime DateUpdated { get; set; }
-
     public List<Post> Posts { get; set; }
 }
