@@ -2,16 +2,8 @@ namespace WebSpark.Core.Data;
 
 public partial class WebSite : BaseEntity
 {
-    public WebSite()
-    {
-        Menus = [];
-    }
-
-    [Key]
-    public int Id { get; set; }
-
     [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public string Description { get; set; }
     public string Template { get; set; }
     public string GalleryFolder { get; set; }
@@ -20,6 +12,5 @@ public partial class WebSite : BaseEntity
     public bool UseBreadCrumbUrl { get; set; }
     public int VersionNo { get; set; }
     public string Style { get; set; }
-
-    public virtual ICollection<Menu> Menus { get; set; }
+    public virtual ICollection<Menu> Menus { get; set; } = [];
 }

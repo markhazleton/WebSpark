@@ -106,9 +106,28 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
                 .WithMany(p => p.InverseParent)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Menu_ParentMenu_ParentId");
-        });
 
-        modelBuilder.Entity<Data.Recipe>(entity =>
+        });
+        // Many-to-many relationship between Menu and Keyword
+        modelBuilder.Entity<Menu>()
+            .HasMany(m => m.Keywords)
+            .WithMany(k => k.Menus)
+            .UsingEntity<Dictionary<string, object>>(
+                "MenuKeyword",
+                j => j.HasOne<Keyword>().WithMany().HasForeignKey("KeywordId"),
+                j => j.HasOne<Menu>().WithMany().HasForeignKey("MenuId"));
+
+
+        // Many-to-many relationship between ContentPart and Keyword
+        modelBuilder.Entity<ContentPart>()
+                .HasMany(cp => cp.Keywords)
+                .WithMany(k => k.ContentParts)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ContentPartKeyword",
+                    j => j.HasOne<Keyword>().WithMany().HasForeignKey("KeywordId"),
+                    j => j.HasOne<ContentPart>().WithMany().HasForeignKey("ContentPartId"));
+
+        modelBuilder.Entity<Recipe>(entity =>
        {
 
            entity.Property(e => e.AuthorName)
@@ -230,19 +249,20 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
     }
 
     public virtual DbSet<Author> Authors { get; set; }
-
     public virtual DbSet<Blog> Blogs { get; set; }
     public virtual DbSet<Category> Categories { get; set; }
-
     public virtual DbSet<WebSite> Domain { get; set; }
     public virtual DbSet<MailSetting> MailSettings { get; set; }
     public virtual DbSet<Menu> Menu { get; set; }
     public virtual DbSet<Newsletter> Newsletters { get; set; }
     public virtual DbSet<PostCategory> PostCategories { get; set; }
     public virtual DbSet<Post> Posts { get; set; }
-    public virtual DbSet<Data.Recipe> Recipe { get; set; }
+    public virtual DbSet<Recipe> Recipe { get; set; }
     public virtual DbSet<RecipeCategory> RecipeCategory { get; set; }
     public virtual DbSet<RecipeComment> RecipeComment { get; set; }
     public virtual DbSet<RecipeImage> RecipeImage { get; set; }
     public virtual DbSet<Subscriber> Subscribers { get; set; }
+    public virtual DbSet<Keyword> Keywords { get; set; }
+    public virtual DbSet<ContentPart> ContentParts { get; set; }
+
 }

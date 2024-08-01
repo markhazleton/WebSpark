@@ -5,38 +5,15 @@ using WebSpark.Core.Models.EditModels;
 
 namespace WebSpark.Core.Providers;
 
-/// <summary>
-/// Class DbMenu.
-/// Implements the <see cref="IMenuProvider" />
-/// </summary>
-/// <seealso cref="IMenuProvider" />
-public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IMenuService
+public class MenuProvider(WebSparkDbContext webDomainContext) 
+    : IMenuProvider, IDisposable, IMenuService
 {
-    private readonly WebSparkDbContext _context;
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MenuProvider" /> class.
-    /// </summary>
-    public MenuProvider(WebSparkDbContext webDomainContext)
-    {
-        _context = webDomainContext;
-    }
-
-    /// <summary>
-    /// Creates the specified list.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    /// <returns>List&lt;MenuModel&gt;.</returns>
     private static List<Models.MenuModel> Create(List<Menu> list)
     {
         if (list == null) return [];
-        return [.. list.Select(item => Create(item)).OrderBy(x => x.Title)];
+        return [.. list.Select(Create).OrderBy(x => x.Title)];
     }
 
-    /// <summary>
-    /// Creates the specified menu.
-    /// </summary>
-    /// <param name="menu">The menu.</param>
-    /// <returns>MenuModel.</returns>
     private static Models.MenuModel Create(Menu menu)
     {
         if (menu == null) return new Models.MenuModel();
@@ -47,43 +24,34 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
             Title = menu.Title,
             Url = menu.Url,
             Icon = menu.Icon,
-            DomainID = menu?.Domain?.Id ?? 0,
-            DomainName = menu?.Domain?.Name,
+            DomainID = menu.Domain?.Id ?? 0,
+            DomainName = menu.Domain?.Name,
             Description = menu.Description ?? menu.Title,
             Controller = menu.Controller,
             Action = menu.Action?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
             Argument = menu.Argument?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
-            ParentId = menu.Parent != null ? menu.Parent?.Id : null,
-            ParentController = menu.Parent != null ? menu.Parent?.Controller : string.Empty,
-            ParentTitle = menu.Parent != null ? menu.Parent?.Title : string.Empty,
+            ParentId = menu.Parent?.Id,
+            ParentController = menu.Parent?.Controller,
+            ParentTitle = menu.Parent?.Title,
             DisplayOrder = menu.DisplayOrder,
             PageContent = menu.PageContent,
-            VirtualPath = GetVirualPath(menu)
+            VirtualPath = GetVirtualPath(menu)
         };
 
-        if (string.IsNullOrEmpty(item.Url))
-        {
-            item.Url = item.VirtualPath.ToLower(CultureInfo.CurrentCulture).Replace(" ", string.Empty);
-        }
-        else
-        {
-            item.Url = item.Url.ToLower(CultureInfo.CurrentCulture).Replace(" ", string.Empty);
-        }
+        item.Url = string.IsNullOrEmpty(item.Url)
+            ? item.VirtualPath.ToLower(CultureInfo.CurrentCulture).Replace(" ", string.Empty)
+            : item.Url.ToLower(CultureInfo.CurrentCulture).Replace(" ", string.Empty);
+
         return item;
     }
 
-    private static string GetVirualPath(Menu menu)
+    private static string GetVirtualPath(Menu menu)
     {
-        return menu.Parent != null ?
-            $"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}" :
-            menu.Action.ToLower(CultureInfo.CurrentCulture);
+        return menu.Parent != null
+            ? $"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}"
+            : menu.Action.ToLower(CultureInfo.CurrentCulture);
     }
 
-    /// <summary>
-    /// Creates the specified menu.
-    /// </summary>
-    /// <param name="menu">The menu.</param>
-    /// <returns>Menu.</returns>
     private Menu Create(Models.MenuModel menu)
     {
         if (menu == null) return new Menu();
@@ -103,10 +71,10 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
             UpdatedID = 99,
             CreatedID = 99,
         };
-        var dbDomain = _context.Domain.Where(w => w.Id == menu.DomainID).FirstOrDefault();
+        var dbDomain = webDomainContext.Domain.Where(w => w.Id == menu.DomainID).FirstOrDefault();
         dbMenu.Domain = dbDomain;
 
-        var parentMenu = _context.Menu.Where(w => w.Id == menu.ParentId).FirstOrDefault();
+        var parentMenu = webDomainContext.Menu.Where(w => w.Id == menu.ParentId).FirstOrDefault();
         if (parentMenu != null)
         {
             dbMenu.Parent = parentMenu;
@@ -114,45 +82,32 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
         return dbMenu;
     }
 
-    /// <summary>
-    /// Updates the display order.
-    /// </summary>
     private void UpdateDisplayOrder()
     {
-        int Display = 10;
-        foreach (Menu item in _context.Menu.OrderBy(o => o.DisplayOrder))
+        int displayOrder = 10;
+        foreach (Menu item in webDomainContext.Menu.OrderBy(o => o.DisplayOrder))
         {
-            item.DisplayOrder = Display;
-            Display += 10;
+            item.DisplayOrder = displayOrder;
+            displayOrder += 10;
         }
-        _context.SaveChanges();
+        webDomainContext.SaveChanges();
     }
 
-    /// <summary>
-    /// Deletes the specified identifier.
-    /// </summary>
-    /// <param name="Id">The identifier.</param>
-    /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     public bool Delete(int Id)
     {
-        var deleteItem = _context.Menu.Where(w => w.Id == Id).FirstOrDefault();
+        var deleteItem = webDomainContext.Menu.Where(w => w.Id == Id).FirstOrDefault();
         if (deleteItem != null)
         {
-            _context.Menu.Remove(deleteItem);
-            _context.SaveChanges();
+            webDomainContext.Menu.Remove(deleteItem);
+            webDomainContext.SaveChanges();
             return true;
         }
         return false;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Id"></param>
-    /// <returns></returns>
     public async Task<MenuEditModel> GetMenuEditAsync(int Id)
     {
-        var menuList = _context.Menu.Include(i => i.Domain).ToList();
+        var menuList = webDomainContext.Menu.Include(i => i.Domain).ToList();
         var returnMenu = new MenuEditModel(Create(menuList.Where(w => w.Id == Id).FirstOrDefault()));
         if (returnMenu == null)
             returnMenu = new MenuEditModel();
@@ -160,60 +115,46 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
         returnMenu.Parents = Create(menuList.Where(w => w.Parent == null).ToList()).Select(s => new Models.LookupModel() { Value = s.Id.ToString(), Text = s.Title }).ToList();
         returnMenu.Parents.Insert(0, new Models.LookupModel() { Value = string.Empty, Text = "None" });
 
-        returnMenu.Domains = (await _context.Set<WebSite>().ToListAsync()).Select(s => new Models.LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
+        returnMenu.Domains = (await webDomainContext.Set<WebSite>().ToListAsync()).Select(s => new Models.LookupModel() { Value = s.Id.ToString(), Text = s.Name }).ToList();
         return returnMenu;
     }
+
     public async Task<Models.MenuModel> GetMenuItemAsync(int Id)
     {
-        var returnMenu = Create(await _context.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync());
+        var returnMenu = Create(await webDomainContext.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync());
         if (returnMenu == null)
             returnMenu = new Models.MenuModel();
         return returnMenu;
     }
 
-
-    /// <summary>
-    /// Gets the menu by identifier.
-    /// </summary>
-    /// <param name="Id">The identifier.</param>
-    /// <returns>MenuModel.</returns>
     public Models.MenuModel GetMenuItem(int Id)
     {
-        var returnMenu = Create(_context.Menu.Where(w => w.Id == Id)
+        var returnMenu = Create(webDomainContext.Menu.Where(w => w.Id == Id)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
             .FirstOrDefault());
-        if (returnMenu == null)
-            returnMenu = new Models.MenuModel();
+        returnMenu ??= new Models.MenuModel();
 
         return returnMenu;
     }
 
-    /// <summary>
-    /// Gets the menu list.
-    /// </summary>
-    /// <returns>List&lt;MenuModel&gt;.</returns>
     public IEnumerable<Models.MenuModel> GetMenuList()
     {
-        return Create([.. _context.Menu.OrderBy(o => o.DisplayOrder)
+        return Create(webDomainContext.Menu.OrderBy(o => o.DisplayOrder)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
-            .OrderBy(o => o.DisplayOrder)]);
+            .OrderBy(o => o.DisplayOrder)
+            .ToList());
     }
 
-    /// <summary>
-    /// Gets the site menu.
-    /// </summary>
-    /// <param name="DomainId">The domain identifier.</param>
-    /// <returns>List&lt;MenuModel&gt;.</returns>
     public List<Models.MenuModel> GetSiteMenu(int DomainId)
     {
-        return Create([.. _context.Menu.Where(w => w.Domain.Id == DomainId)
+        return Create(webDomainContext.Menu.Where(w => w.Domain.Id == DomainId)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
-            .OrderBy(o => o.DisplayOrder)]);
+            .OrderBy(o => o.DisplayOrder)
+            .ToList());
     }
-
 
     public List<Models.MenuModel> Save(List<Models.MenuModel> saveMenus)
     {
@@ -240,12 +181,6 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
         return returnMenus;
     }
 
-
-    /// <summary>
-    /// Saves the specified save item.
-    /// </summary>
-    /// <param name="saveItem">The save item.</param>
-    /// <returns>MenuModel.</returns>
     public Models.MenuModel Save(Models.MenuModel saveItem)
     {
         if (saveItem == null)
@@ -253,13 +188,13 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
             return null;
         }
 
-        if (saveItem?.Id == 0)
+        if (saveItem.Id == 0)
         {
             var saveMenu = Create(saveItem);
             try
             {
-                _context.Menu.Add(saveMenu);
-                _context.SaveChanges();
+                webDomainContext.Menu.Add(saveMenu);
+                webDomainContext.SaveChanges();
                 saveItem.Id = saveMenu.Id;
             }
             catch
@@ -271,8 +206,8 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
         {
             try
             {
-                var dbMenu = _context.Menu.Where(w => w.Id == saveItem.Id).FirstOrDefault();
-                var parentMenu = _context.Menu.Where(w => w.Id == saveItem.ParentId).FirstOrDefault();
+                var dbMenu = webDomainContext.Menu.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+                var parentMenu = webDomainContext.Menu.Where(w => w.Id == saveItem.ParentId).FirstOrDefault();
 
                 if (dbMenu != null)
                 {
@@ -285,17 +220,9 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
                     dbMenu.Url = saveItem.Url;
                     dbMenu.PageContent = saveItem.PageContent;
                     dbMenu.DisplayOrder = saveItem.DisplayOrder;
-                    if (parentMenu is null)
-                    {
-                        dbMenu.Parent = null;
-                    }
-                    else
-                    {
-                        dbMenu.Parent = parentMenu;
-                    }
+                    dbMenu.Parent = parentMenu;
 
-
-                    _context.SaveChanges();
+                    webDomainContext.SaveChanges();
                 }
             }
             catch
@@ -306,6 +233,7 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
         UpdateDisplayOrder();
         return GetMenuItem(saveItem.Id);
     }
+
     public IEnumerable<Models.MenuModel> GetAllMenuItems()
     {
         return GetMenuList();
@@ -314,23 +242,23 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
     public void Dispose()
     {
         SqliteConnection.ClearAllPools();
-        ((IDisposable)_context).Dispose();
+        ((IDisposable)webDomainContext).Dispose();
     }
 
     public async Task<bool> DeleteMenuAsync(int Id)
     {
-        var dbMenu = _context.Menu.Where(w => w.Id == Id).FirstOrDefault();
+        var dbMenu = webDomainContext.Menu.Where(w => w.Id == Id).FirstOrDefault();
         if (dbMenu != null)
         {
             try
             {
-                var childMenu = _context.Menu.Where(w => w.Parent.Id == Id);
+                var childMenu = webDomainContext.Menu.Where(w => w.Parent.Id == Id);
                 foreach (var child in childMenu)
                 {
                     child.Parent = null;
                 }
-                _context.Menu.Remove(dbMenu);
-                await _context.SaveChangesAsync();
+                webDomainContext.Menu.Remove(dbMenu);
+                await webDomainContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -340,5 +268,89 @@ public class MenuProvider : Interfaces.IMenuProvider, IDisposable, Interfaces.IM
             return await Task.FromResult(true);
         }
         return await Task.FromResult(false);
+    }
+
+    // New methods to handle keywords and content parts
+    public async Task AddKeywordToMenuAsync(int menuId, int keywordId)
+    {
+        var menu = await webDomainContext.Menu.FindAsync(menuId);
+        var keyword = await webDomainContext.Keywords.FindAsync(keywordId);
+
+        if (menu != null && keyword != null)
+        {
+            menu.Keywords.Add(keyword);
+            await webDomainContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task AddContentPartToMenuAsync(int menuId, int contentPartId)
+    {
+        var menu = await webDomainContext.Menu.FindAsync(menuId);
+        var contentPart = await webDomainContext.ContentParts.FindAsync(contentPartId);
+
+        if (menu != null && contentPart != null)
+        {
+            foreach (var keyword in contentPart.Keywords)
+            {
+                if (!menu.Keywords.Contains(keyword))
+                {
+                    menu.Keywords.Add(keyword);
+                }
+            }
+            await webDomainContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<ContentPart>> GetContentPartsForMenuAsync(int menuId)
+    {
+        var menu = await webDomainContext.Menu.Include(m => m.Keywords).FirstOrDefaultAsync(m => m.Id == menuId);
+
+        if (menu != null)
+        {
+            var contentParts = await webDomainContext.ContentParts
+                .Include(cp => cp.Keywords)
+                .Where(cp => cp.Keywords.Any(k => menu.Keywords.Contains(k)))
+                .ToListAsync();
+
+            return contentParts;
+        }
+        return new List<ContentPart>();
+    }
+
+    public async Task<Keyword> AddKeywordAsync(string name, string description)
+    {
+        var keyword = new Keyword
+        {
+            Name = name,
+            Description = description
+        };
+        webDomainContext.Keywords.Add(keyword);
+        await webDomainContext.SaveChangesAsync();
+        return keyword;
+    }
+
+    public async Task<ContentPart> AddContentPartAsync(string title, string description, string content)
+    {
+        var contentPart = new ContentPart
+        {
+            Title = title,
+            Description = description,
+            Content = content
+        };
+        webDomainContext.ContentParts.Add(contentPart);
+        await webDomainContext.SaveChangesAsync();
+        return contentPart;
+    }
+
+    public async Task AssociateContentPartWithKeywordAsync(int contentPartId, int keywordId)
+    {
+        var contentPart = await webDomainContext.ContentParts.FindAsync(contentPartId);
+        var keyword = await webDomainContext.Keywords.FindAsync(keywordId);
+
+        if (contentPart != null && keyword != null)
+        {
+            contentPart.Keywords.Add(keyword);
+            await webDomainContext.SaveChangesAsync();
+        }
     }
 }

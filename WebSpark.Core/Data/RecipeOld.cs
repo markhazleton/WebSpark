@@ -2,13 +2,9 @@
 
 public class RecipeOld
 {
-    public RecipeOld()
+    public Recipe GetRecipe(WebSite mom, RecipeCategory rcat)
     {
-    }
-
-    public Data.Recipe GetRecipe(WebSite mom, RecipeCategory rcat)
-    {
-        return new Data.Recipe()
+        return new Recipe()
         {
             Id = Id,
             Name = RecipeNM,
@@ -27,10 +23,6 @@ public class RecipeOld
             RecipeCategory = rcat
         };
     }
-
-
-
-
 
     public int Id { get; set; }
     public int RecipeCategoryID { get; set; }

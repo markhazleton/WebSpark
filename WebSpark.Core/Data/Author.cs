@@ -2,24 +2,20 @@ namespace WebSpark.Core.Data;
 
 public class Author : BaseEntity
 {
-    [Key]
-    [Required]
-    public int Id { get; set; }
-
     [Required]
     [EmailAddress]
     [StringLength(160)]
-    public string Email { get; set; }
+    public required string Email { get; set; }
     [Required]
     [StringLength(160)]
-    public string Password { get; set; }
+    public required string Password { get; set; }
     [Required]
     [StringLength(160)]
-    public string DisplayName { get; set; }
+    public required string DisplayName { get; set; }
     [StringLength(2000)]
-    public string Bio { get; set; }
+    public string? Bio { get; set; }
     [StringLength(400)]
-    public string Avatar { get; set; }
+    public string? Avatar { get; set; }
     public bool IsAdmin { get; set; }
     public List<Post> Posts { get; set; }
 }

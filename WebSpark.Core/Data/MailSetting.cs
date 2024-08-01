@@ -2,8 +2,6 @@ namespace WebSpark.Core.Data;
 
 public class MailSetting : BaseEntity
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required]
     [StringLength(160)]

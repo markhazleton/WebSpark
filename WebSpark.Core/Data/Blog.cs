@@ -2,8 +2,6 @@ namespace WebSpark.Core.Data;
 
 public class Blog : BaseEntity
 {
-    [Key]
-    public int Id { get; set; }
     [StringLength(160)]
     public string Title { get; set; }
     [StringLength(450)]

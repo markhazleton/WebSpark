@@ -1,6 +1,4 @@
 using Serilog;
-using System.IO;
-using System.Net.Http;
 using System.Text.Json;
 using WebSpark.Core.Extensions;
 

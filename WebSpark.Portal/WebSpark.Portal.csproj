@@ -21,9 +21,9 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.7" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.16.1" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.16.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
-		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.17.0" />
+		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.20.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />

@@ -2,9 +2,6 @@ namespace WebSpark.Core.Data;
 
 public class Subscriber : BaseEntity
 {
-    [Key]
-    public int Id { get; set; }
-
     [Required]
     [EmailAddress]
     [StringLength(160)]

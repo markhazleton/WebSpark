@@ -1,19 +1,20 @@
+using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure.BaseClasses;
 
 namespace WebSpark.Core.Helpers;
 
 public static class WebsiteHelper
 {
-    public static Data.Menu GetMenuPage(
+    public static Menu GetMenuPage(
         string Title,
         string Content,
         FontAwesomeIcons icon = FontAwesomeIcons.home,
-        Data.Menu parent = null,
+        Menu? parent = null,
         string controllerName = "Page",
         string actionName = "index",
-        string argumentName = null)
+        string argumentName = "")
     {
-        return new Data.Menu()
+        return new Menu()
         {
             DisplayOrder = 10,
             Title = Title,

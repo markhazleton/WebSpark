@@ -9,15 +9,6 @@ public class MenuModel
     private DateTime? _lastModified;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MenuModel" /> class.
-    /// </summary>
-    public MenuModel()
-    {
-        DisplayOrder = 1;
-        DisplayInNavigation = true;
-    }
-
-    /// <summary>
     /// Gets or sets the action.
     /// </summary>
     /// <value>The action.</value>
@@ -70,7 +61,7 @@ public class MenuModel
     /// </summary>
     /// <value><c>true</c> if [display in navigation]; otherwise, <c>false</c>.</value>
     [JsonPropertyName("display_navigation")]
-    public bool DisplayInNavigation { get; set; }
+    public bool DisplayInNavigation { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the display order.
@@ -80,7 +71,7 @@ public class MenuModel
     [DisplayName("Display Order")]
     [RegularExpression("([1-9][0-9]*)", ErrorMessage = "Please Enter Valid Number")]
     [Required]
-    public int DisplayOrder { get; set; }
+    public int DisplayOrder { get; set; } = 1;
 
     /// <summary>
     /// Gets or sets the domain identifier.
@@ -144,10 +135,6 @@ public class MenuModel
         }
         set { _lastModified = DateTime.TryParse(value, out var result) ? result : (DateTime?)null; }
     }
-
-
-
-
 
     /// <summary>
     /// Gets or sets the content of the page.

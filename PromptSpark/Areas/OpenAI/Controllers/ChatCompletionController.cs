@@ -20,19 +20,19 @@ public class ChatCompletionController(
         if (id == 0) Response.Redirect("/OpenAI/Chat");
         var definitionDto = await definitionService.GetDefinitionDtoAsync(id);
         definitionDto.ConversationId = Guid.NewGuid();
-
-        var session = _httpContextAccessor.HttpContext.Session;
-        session.SetString("DefinitionDto", JsonConvert.SerializeObject(definitionDto));
-
-
+        _httpContextAccessor?.HttpContext?.Session?.SetString("DefinitionDto", JsonConvert.SerializeObject(definitionDto));
         return View(definitionDto);
     }
 
     [HttpPost]
     public async Task<IActionResult> SendMessage([FromForm] string message, [FromForm] string conversationHistory)
     {
-        var session = _httpContextAccessor.HttpContext.Session;
-        var definitionDtoJson = session.GetString("DefinitionDto");
+        var definitionDtoJson = _httpContextAccessor?.HttpContext?.Session?.GetString("DefinitionDto");
+        if (string.IsNullOrEmpty(definitionDtoJson))
+        {
+            logger.LogError("DefinitionDto not found in session");
+            return BadRequest("DefinitionDto not found in session");
+        }
         var definitionDto = JsonConvert.DeserializeObject<DefinitionDto>(definitionDtoJson);
 
         if (!string.IsNullOrEmpty(message) && definitionDto != null)
@@ -48,16 +48,16 @@ public class ChatCompletionController(
 
     private ChatHistory GetChatHistory(string message, string conversationHistory, DefinitionDto? definitionDto)
     {
-        logger.LogWarning("Received message: {message} for {Name}", message, definitionDto.Name);
+        logger.LogWarning("Received message: {message} for {Name}", message, definitionDto?.Name);
         var chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage(definitionDto.Prompt);
+        chatHistory.AddSystemMessage(definitionDto?.Prompt ?? "Missing");
         chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
 
         // Parse the conversationHistory JSON string into a list of messages
         var messages = JsonConvert.DeserializeObject<List<string>>(conversationHistory);
 
         // Populate ChatHistory with messages from conversationHistory
-        for (int i = 0; i < messages.Count; i++)
+        for (int i = 0; i < messages?.Count; i++)
         {
             if (i % 2 == 0)
             {
@@ -68,7 +68,6 @@ public class ChatCompletionController(
                 chatHistory.AddSystemMessage(messages[i]); // Odd index - System
             }
         }
-
         return chatHistory;
     }
 

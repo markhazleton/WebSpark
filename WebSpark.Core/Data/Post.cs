@@ -11,8 +11,6 @@ public class Post : BaseEntity
     [Required]
     [StringLength(450)]
     public string Description { get; set; }
-    [Key]
-    public int Id { get; set; }
     public bool IsFeatured { get; set; }
     public List<PostCategory> PostCategories { get; set; }
 

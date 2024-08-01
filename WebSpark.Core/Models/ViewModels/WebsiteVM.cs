@@ -10,11 +10,9 @@ namespace WebSpark.Core.Models.ViewModels;
 public class WebsiteVM : IBaseViewModel
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="WebsiteVM" /> class.
+    /// Current Style
     /// </summary>
-    public WebsiteVM()
-    {
-    }
+    public string CurrentStyle { get; set; }
     public string FooterScript { get; set; }
     public string HeaderScript { get; set; }
     /// <summary>
@@ -90,9 +88,5 @@ public class WebsiteVM : IBaseViewModel
     /// <value>The website theme.</value>
     [JsonPropertyName("website_style")]
     public string WebsiteStyle { get; set; }
-    /// <summary>
-    /// Current Style
-    /// </summary>
-    public string CurrentStyle { get; set; }
 
 }

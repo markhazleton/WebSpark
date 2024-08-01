@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35017.193
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromptSpark.Domain", "PromptSpark.Domain\PromptSpark.Domain.csproj", "{2661D675-3D3D-443F-9EBB-26C2D63B4233}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientUtility", "HttpClientUtility\HttpClientUtility.csproj", "{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Bootswatch", "WebSpark.Bootswatch\WebSpark.Bootswatch.csproj", "{F6EF2571-B88C-4F19-84E9-0DD2FCE922E6}"
@@ -25,16 +23,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Portal", "WebSpark
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.SharedKernel", "WebSpark.SharedKernel\WebSpark.SharedKernel.csproj", "{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromptSpark.Domain", "PromptSpark.Domain\PromptSpark.Domain.csproj", "{7A6C8941-FBF9-487C-88EB-3D4965881B7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2661D675-3D3D-443F-9EBB-26C2D63B4233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2661D675-3D3D-443F-9EBB-26C2D63B4233}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2661D675-3D3D-443F-9EBB-26C2D63B4233}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2661D675-3D3D-443F-9EBB-26C2D63B4233}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,18 +67,22 @@ Global
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{2661D675-3D3D-443F-9EBB-26C2D63B4233} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{8FCAEF9A-D8A7-4F6A-9CA9-400A246591D3} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{F6EF2571-B88C-4F19-84E9-0DD2FCE922E6} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{72037BCF-A20C-41E3-B8F7-387EF5EE429D} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{2963B9DB-B81A-4B88-A92F-C3F7D7033E94} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{9BF4918C-CFB5-4077-9FB5-D804720259BA} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{7A6C8941-FBF9-487C-88EB-3D4965881B7A} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}

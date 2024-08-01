@@ -1,14 +1,6 @@
 namespace WebSpark.Core.Data;
 public partial class Recipe : BaseEntity
 {
-    public Recipe()
-    {
-        RecipeComment = [];
-        RecipeImage = [];
-    }
-
-    [Key]
-    public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public string Keywords { get; set; }
@@ -24,6 +16,6 @@ public partial class Recipe : BaseEntity
     public DateTime LastViewDt { get; set; }
     public virtual WebSite Domain { get; set; }
     public virtual RecipeCategory RecipeCategory { get; set; }
-    public virtual ICollection<RecipeComment> RecipeComment { get; set; }
-    public virtual ICollection<RecipeImage> RecipeImage { get; set; }
+    public virtual ICollection<RecipeComment> RecipeComment { get; set; } = [];
+    public virtual ICollection<RecipeImage> RecipeImage { get; set; } = [];
 }

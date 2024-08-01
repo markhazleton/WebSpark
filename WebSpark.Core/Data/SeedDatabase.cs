@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text.Json;
 using WebSpark.Core.Helpers;
 using WebSpark.Core.Infrastructure.BaseClasses;
