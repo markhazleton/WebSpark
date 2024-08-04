@@ -7,6 +7,63 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
 {
     private bool disposedValue;
 
+    ~GPTDefinitionTypeService()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: false);
+    }
+
+    void IDisposable.Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    private static bool IsDbContextAvailable(DbContext context)
+    {
+        try
+        {
+            // Attempt to access the database connection
+            var connectionState = context.Database.GetDbConnection().State;
+            // If no exception is thrown, the context is not disposed
+            return true;
+        }
+        catch (ObjectDisposedException)
+        {
+            // An ObjectDisposedException was thrown, indicating the context is disposed
+            return false;
+        }
+        catch
+        {
+            // Other exceptions might indicate different issues (e.g., connection problems)
+            return false; // Or handle differently
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                if (IsDbContextAvailable(context))
+                {
+                    context.ChangeTracker.Clear();
+                    context.Database.CloseConnection();
+                    context.Dispose();
+                }
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            disposedValue = true;
+        }
+    }
+
     // Delete a GPTDefinitionType record
     public async Task DeleteGPTDefinitionType(string definitionType)
     {
@@ -15,6 +72,27 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
         var typeToDelete = await context.DefinitionTypes.FirstOrDefaultAsync(dt => dt.DefinitionType == definitionType) ?? throw new InvalidOperationException("DefinitionType not found");
         context.DefinitionTypes.Remove(typeToDelete);
         await context.SaveChangesAsync();
+    }
+
+    public async Task<DefinitionResponseDto> FindDefinitionResponseByIdAsync(int id)
+    {
+        DefinitionResponseDto definitionResponse = new();
+        definitionResponse = await context.DefinitionResponses
+            .Where(w => w.Id == id)
+            .Select(s => s.ToDto())
+            .FirstOrDefaultAsync() ?? new DefinitionResponseDto();
+        return definitionResponse;
+    }
+
+    public async Task<UserPromptDto> FindUserPromptByUserPromptIdAsync(int id)
+    {
+        UserPromptDto userPrompt = new();
+        userPrompt = await context.Chats
+            .Include(i => i.GPTResponses)
+            .Where(w => w.Id == id)
+            .Select(s => s.ToDto())
+            .FirstOrDefaultAsync() ?? new UserPromptDto();
+        return userPrompt;
     }
 
     // Read all GPTDefinitionType records
@@ -40,7 +118,9 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
             .Select(s => s.ToDto())
             .ToListAsync()) ?? [];
 
-        definitionTypeReturn.Prompts = (await context.Chats.Where(w => w.DefinitionType == definitionType)
+        definitionTypeReturn.Prompts =
+            (await context.Chats.Include(i => i.GPTResponses)
+            .Where(w => w.DefinitionType == definitionType)
             .Select(s => s.ToDto())
             .ToListAsync()) ?? [];
 
@@ -71,64 +151,6 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
             context.DefinitionTypes.Update(existingType);
             await context.SaveChangesAsync();
         }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                if (IsDbContextAvailable(context))
-                {
-                    context.ChangeTracker.Clear();
-                    context.Database.CloseConnection();
-                    context.Dispose();
-                }
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
-            }
-
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
-            disposedValue = true;
-        }
-    }
-    bool IsDbContextAvailable(DbContext context)
-    {
-        try
-        {
-            // Attempt to access the database connection
-            var connectionState = context.Database.GetDbConnection().State;
-            // If no exception is thrown, the context is not disposed
-            return true;
-        }
-        catch (ObjectDisposedException)
-        {
-            // An ObjectDisposedException was thrown, indicating the context is disposed
-            return false;
-        }
-        catch
-        {
-            // Other exceptions might indicate different issues (e.g., connection problems)
-            return false; // Or handle differently
-        }
-    }
-
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    ~GPTDefinitionTypeService()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: false);
-    }
-
-    void IDisposable.Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }
 

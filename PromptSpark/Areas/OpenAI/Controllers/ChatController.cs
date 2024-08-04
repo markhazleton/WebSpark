@@ -1,4 +1,6 @@
-﻿namespace PromptSpark.Areas.OpenAI.Controllers;
+﻿using System.Text;
+
+namespace PromptSpark.Areas.OpenAI.Controllers;
 
 
 
@@ -66,5 +68,22 @@ public class ChatController(IGPTService service,
             definitionType.CurrentUserPromptId = definitionType.Prompts.FirstOrDefault()?.UserPromptId ?? 0;
         }
         return View(definitionType);
+    }
+    [HttpGet]
+    public async Task<IActionResult> Download(int id)
+    {
+        var response = await typeService.FindUserPromptByUserPromptIdAsync(id);
+        if (response == null)
+        {
+            return NotFound();
+        }
+        var content = response.DefinitionResponses.FirstOrDefault()?.SystemResponse ?? string.Empty;
+        // Strip the beginning and ending strings
+        if (content.StartsWith("```markdown") && content.EndsWith("```"))
+        {
+            content = content.Substring(11, content.Length - 14); // Remove '''markdown and '''
+        }
+        var fileContent = Encoding.UTF8.GetBytes(content);
+        return File(fileContent, "text/markdown", $"PromptResponse_{id}.md");
     }
 }

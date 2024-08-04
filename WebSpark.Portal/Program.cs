@@ -88,7 +88,7 @@ builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
 builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();
 builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
 builder.Services.AddScoped<IRecipeGPTService, RecipePromptSparkService>();
-
+builder.Services.AddScoped<IResponseService, ResponseService>();
 
 builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();

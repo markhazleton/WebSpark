@@ -12,3 +12,4 @@ public interface IGPTService
     Task RerunAllPrompts();
     Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse);
 }
+

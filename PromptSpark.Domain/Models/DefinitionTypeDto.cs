@@ -13,7 +13,8 @@ public enum OutputType
     Text,
     HTML,
     PUG,
-    Other
+    Other,
+    DevOpsMarkdown
 }
 
 public class DefinitionTypeDto

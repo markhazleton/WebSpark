@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UserPromptDto>
+﻿@model IEnumerable<DefinitionResponseDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -19,18 +19,19 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserPrompt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.UserPromptId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.UserPromptId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserPromptId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserPrompt)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ResponseId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ResponseId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ResponseId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 @section Scripts {

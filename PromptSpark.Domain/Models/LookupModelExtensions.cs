@@ -5,12 +5,19 @@ namespace PromptSpark.Domain.Models;
 
 public static class DefinitionResponseDto_Extension
 {
-    public static string MarkdownToHtml(string markdown)
+    public static string ContentToString(this DefinitionResponseDto response)
     {
-        if (string.IsNullOrEmpty(markdown))
+        if (string.IsNullOrEmpty(response.SystemResponse))
             return string.Empty;
-
-        return Markdown.ToHtml(markdown); // Convert markdown text to HTML
+        // switch on output type
+        return response.OutputType switch
+        {
+            OutputType.Markdown => MarkdownToHtml(response.SystemResponse),
+            OutputType.DevOpsMarkdown => MarkdownEncodeHtml(response.SystemResponse),
+            OutputType.HTML => response.SystemResponse,
+            OutputType.JSON => JSONtoHtml(response.SystemResponse),
+            _ => response.SystemResponse,
+        };
     }
 
     public static string JSONtoHtml(string json)
@@ -37,19 +44,21 @@ public static class DefinitionResponseDto_Extension
             return $"<p>Error parsing JSON: {System.Net.WebUtility.HtmlEncode(ex.Message)}</p>";
         }
     }
-
-    public static string ContentToString(this DefinitionResponseDto response)
+    public static string MarkdownEncodeHtml(string markdown)
     {
-        if (string.IsNullOrEmpty(response.SystemResponse))
+        if (string.IsNullOrEmpty(markdown))
             return string.Empty;
-        // switch on output type
-        return response.OutputType switch
-        {
-            OutputType.Markdown => MarkdownToHtml(response.SystemResponse),
-            OutputType.HTML => response.SystemResponse,
-            OutputType.JSON => JSONtoHtml(response.SystemResponse),
-            _ => response.SystemResponse,
-        };
+
+        // HTML encode the markdown text so it is safe to render in the browser
+        markdown = System.Net.WebUtility.HtmlEncode(markdown);
+        return markdown;
+    }
+    public static string MarkdownToHtml(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return string.Empty;
+
+        return Markdown.ToHtml(markdown); // Convert markdown text to HTML
     }
 }
 

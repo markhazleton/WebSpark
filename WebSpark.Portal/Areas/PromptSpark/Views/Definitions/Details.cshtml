@@ -10,7 +10,7 @@
 
     </div>
     <div class="col-4">
-        <a class="btn btn-success me-2" asp-controller="ChatCompletion" asp-area="OpenAI" asp-action="Index" asp-route-id="@Model?.DefinitionId">Let's Chat</a>
+        <a class="btn btn-success me-2" asp-controller="ChatCompletion" asp-area="PromptSpark" asp-action="Index" asp-route-id="@Model?.DefinitionId">Let's Chat</a>
         <a class="btn btn-primary me-2" asp-action="Edit" asp-route-id="@Model?.DefinitionId">Edit</a>
         <a class="btn btn-danger me-2" asp-action="Refresh" asp-route-id="@Model?.DefinitionId">Refresh</a>
         <a class="btn btn-secondary" asp-action="Index">Back to List</a>
