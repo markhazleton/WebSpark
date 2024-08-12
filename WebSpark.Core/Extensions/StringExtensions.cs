@@ -41,7 +41,7 @@ namespace WebSpark.Core.Extensions
         {
             if (string.IsNullOrEmpty(text)) return text;
 
-            string[] chars = { ":", "/", "?", "!", "#", "[", "]", "{", "}", "@", "*", ".", ",", "\"", "&", "'", "~", "$" };
+            string[] chars = [":", "/", "?", "!", "#", "[", "]", "{", "}", "@", "*", ".", ",", "\"", "&", "'", "~", "$"];
 
             foreach (var ch in chars)
             {

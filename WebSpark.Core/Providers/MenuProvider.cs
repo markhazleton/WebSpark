@@ -5,7 +5,7 @@ using WebSpark.Core.Models.EditModels;
 
 namespace WebSpark.Core.Providers;
 
-public class MenuProvider(WebSparkDbContext webDomainContext) 
+public class MenuProvider(WebSparkDbContext webDomainContext)
     : IMenuProvider, IDisposable, IMenuService
 {
     private static List<Models.MenuModel> Create(List<Menu> list)

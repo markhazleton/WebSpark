@@ -1,5 +1,4 @@
-﻿using PromptSpark.Domain.Data;
-using PromptSpark.Domain.Models;
+﻿using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Service;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
@@ -94,7 +93,7 @@ public class ResponsesController(IResponseService responseService) : PromptSpark
     // POST: Responses/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, 
+    public async Task<IActionResult> Edit(int id,
         DefinitionResponseDto gPTResponse)
     {
         if (id != gPTResponse.ResponseId)

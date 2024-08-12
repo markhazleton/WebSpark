@@ -1,0 +1,21 @@
+﻿@model CookbookViewModel
+@{
+    ViewData["Title"] = "Recipe Cookbook";
+}
+
+<div class="container">
+    <h1>Your Cookbook PDF is Ready!</h1>
+
+    @if (!string.IsNullOrEmpty(Model.PdfPath))
+    {
+        <p>
+            <a href="@Url.Content("~/" + Model.PdfPath)" target="_blank" class="btn btn-primary">
+                Download Cookbook
+            </a>
+        </p>
+    }
+    else
+    {
+        <p>An error occurred while generating your cookbook. Please try again later.</p>
+    }
+</div>

@@ -21,7 +21,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.7" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.16.2" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.17.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
 		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.20.0" />
 	</ItemGroup>
@@ -30,6 +30,7 @@
 	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
 	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
+	  <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
 	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
 	</ItemGroup>
 </Project>

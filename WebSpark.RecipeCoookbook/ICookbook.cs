@@ -1,7 +1,6 @@
-﻿namespace WebSpark.RecipeCookbook
+﻿namespace WebSpark.RecipeCookbook;
+
+public interface ICookbook
 {
-    public interface ICookbook
-    {
-        void MakeCookbook();
-    }
+    string? MakeCookbook();
 }

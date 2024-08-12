@@ -38,7 +38,7 @@ public class StorageProvider : IStorageProvider
         // it uses "mceclip0" as file name; randomize it for multiple uploads
         if (fileName.StartsWith("mceclip0"))
         {
-            Random rnd = new Random();
+            Random rnd = new();
             fileName = fileName.Replace("mceclip0", rnd.Next(100000, 999999).ToString());
         }
         return fileName.SanitizePath();
@@ -88,7 +88,7 @@ public class StorageProvider : IStorageProvider
         }
         if (title.Contains("encrypted-tbn") || title.Contains("base64,"))
         {
-            Random rnd = new Random();
+            Random rnd = new();
             title = $"{(rnd.Next(1000, 9999))}.png";
         }
 
@@ -224,7 +224,7 @@ public class StorageProvider : IStorageProvider
         VerifyPath(path);
         string imgSrc = GetImgSrcValue(baseImg);
 
-        Random rnd = new Random();
+        Random rnd = new();
 
         if (imgSrc.StartsWith("data:image/png;base64,"))
         {
@@ -289,7 +289,7 @@ public class StorageProvider : IStorageProvider
              Path.Combine(_storageRoot, fileName) :
              Path.Combine(_storageRoot, $"{path}{_slash}{fileName}");
 
-        HttpClient client = new HttpClient();
+        HttpClient client = new();
         var response = await client.GetAsync(requestUri);
         using (var fs = new FileStream(filePath, FileMode.CreateNew))
         {

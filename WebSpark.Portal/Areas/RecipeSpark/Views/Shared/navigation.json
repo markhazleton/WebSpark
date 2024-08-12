@@ -11,6 +11,10 @@
     {
       "text": "Category",
       "url": "/RecipeSpark/RecipeCategory"
+    },
+    {
+      "text": "Cook Book",
+      "url": "/RecipeSpark/CookBook"
     }
   ]
 }

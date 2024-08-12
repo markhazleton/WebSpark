@@ -91,7 +91,7 @@ namespace WebSpark.Core.Providers
 
         async Task<Post> GetPost(SyndicationItem syndicationItem)
         {
-            Post post = new Post()
+            Post post = new()
             {
                 AuthorId = _userId,
                 PostType = Models.PostType.Post,
@@ -199,7 +199,7 @@ namespace WebSpark.Core.Providers
         async Task ImportFiles(Post post)
         {
             var rgx = @"(?i)<a\b[^>]*?>(?<text>.*?)</a>";
-            string[] exts = new string[] { "zip", "7z", "xml", "pdf", "doc", "docx", "xls", "xlsx", "mp3", "mp4", "avi" };
+            string[] exts = ["zip", "7z", "xml", "pdf", "doc", "docx", "xls", "xlsx", "mp3", "mp4", "avi"];
 
             if (string.IsNullOrEmpty(post.Content))
                 return;
