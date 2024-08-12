@@ -1,4 +1,7 @@
-﻿using iText.Kernel.Events;
+﻿using iText.IO.Font.Constants;
+using iText.Kernel.Colors;
+using iText.Kernel.Events;
+using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
@@ -16,7 +19,7 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
     private readonly ILogger<Cookbook> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly IRecipeService _recipeService = recipeService ?? throw new ArgumentNullException(nameof(recipeService));
 
-    private static void AddRecipePage(Document doc, RecipeModel? recipe)
+    private static void AddRecipePage(Document doc, RecipeModel? recipe, Style recipeTitleStyle, Style bodyStyle)
     {
         if (recipe == null) return;
 
@@ -25,21 +28,20 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
 
         // Add recipe title
         Paragraph recipeTitle = new Paragraph(recipe.Name)
-            .SetFontSize(16)
-            .SetBold()
-            .SetMarginTop(10);
+            .AddStyle(recipeTitleStyle);
 
         doc.Add(recipeTitle);
-        // Add the recipe details
-        doc.Add(new Paragraph($"Author: {recipe.AuthorNM}"));
-        doc.Add(new Paragraph($"Description: {recipe.Description}"));
-        doc.Add(new Paragraph($"Ingredients: {recipe.Ingredients}"));
-        doc.Add(new Paragraph($"Instructions: {recipe.Instructions}"));
-        doc.Add(new Paragraph($"Servings: {recipe.Servings}"));
-        doc.Add(new Paragraph(" ")); // Add space between content
+
+        // Add the recipe details with styled paragraphs
+        doc.Add(new Paragraph($"Source: {recipe.AuthorNM}").AddStyle(bodyStyle));
+        doc.Add(new Paragraph($"{recipe.Description}").AddStyle(bodyStyle));
+        doc.Add(new Paragraph($"Ingredients: {recipe.Ingredients}").AddStyle(bodyStyle));
+        doc.Add(new Paragraph($"Instructions: {recipe.Instructions}").AddStyle(bodyStyle));
+        doc.Add(new Paragraph($"Servings: {recipe.Servings}").AddStyle(bodyStyle));
+        doc.Add(new Paragraph(" ").AddStyle(bodyStyle)); // Add space between content
     }
 
-    private static void GenerateCookbookPDF(Document doc, List<RecipeModel> recipes, List<TocEntry> tocEntries)
+    private static void GenerateCookbookPDF(Document doc, List<RecipeModel> recipes, List<TocEntry> tocEntries, Style categoryTitleStyle, Style recipeTitleStyle, Style bodyStyle)
     {
         // Group recipes by category
         var recipesByCategory = recipes
@@ -51,9 +53,7 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
         {
             // Add category title
             Paragraph categoryTitle = new Paragraph(categoryGroup.Key ?? "Unknown Category")
-                .SetFontSize(18)
-                .SetBold()
-                .SetMarginTop(20);
+                .AddStyle(categoryTitleStyle);
 
             doc.Add(categoryTitle);
 
@@ -63,32 +63,26 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
 
             foreach (var recipe in categoryGroup)
             {
-                AddRecipePage(doc, recipe);
+                AddRecipePage(doc, recipe, recipeTitleStyle, bodyStyle);
             }
+
             // Add a page break after each category (optional)
             doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         }
     }
 
-    private static void InsertTableOfContents(Document doc, List<TocEntry> tocEntries)
+    private static void InsertTableOfContents(Document doc, List<TocEntry> tocEntries, Style tocTitleStyle, Style tocEntryStyle)
     {
-        // Go back to the first page for the TOC
-        doc.GetPdfDocument().SetDefaultPageSize(doc.GetPdfDocument().GetDefaultPageSize());
-
         // Add TOC title
         Paragraph tocTitle = new Paragraph("Table of Contents")
-            .SetTextAlignment(TextAlignment.CENTER)
-            .SetFontSize(18)
-            .SetBold()
-            .SetMarginBottom(20);
+            .AddStyle(tocTitleStyle);
         doc.Add(tocTitle);
 
         // Add TOC entries
         foreach (var entry in tocEntries)
         {
             Paragraph tocEntry = new Paragraph(entry.Title)
-                .SetFontSize(12)
-                .SetMarginBottom(10);
+                .AddStyle(tocEntryStyle);
 
             tocEntry.AddTabStops(new TabStop(500, TabAlignment.RIGHT));
             tocEntry.Add(new Tab());
@@ -100,9 +94,23 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
         doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE)); // Add a page break after TOC
     }
 
-    public string? MakeCookbook()
+    private static void AddTitlePage(Document doc, string name, string description, Style titleStyle, Style descStyle)
     {
-        string outputPath = "Cookbook.pdf";
+        Paragraph title = new Paragraph(name)
+            .AddStyle(titleStyle);
+
+        Paragraph desc = new Paragraph(description)
+            .AddStyle(descStyle);
+
+        doc.Add(title);
+        doc.Add(desc);
+
+        // Add a page break after the title page
+        doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+    }
+
+    public string? MakeCookbook(string outputPath, string name, string description)
+    {
         try
         {
             PdfWriter writer = new PdfWriter(outputPath);
@@ -114,14 +122,60 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
             Document doc = new Document(pdfDoc);
             List<TocEntry> tocEntries = new List<TocEntry>();
 
+            // Define styles
+            Style titleStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD))
+                .SetFontSize(36)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetFontColor(ColorConstants.BLACK);
+
+            Style descStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.HELVETICA))
+                .SetFontSize(18)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetFontColor(ColorConstants.DARK_GRAY);
+
+            Style categoryTitleStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD))
+                .SetFontSize(24)
+                .SetFontColor(ColorConstants.BLUE)
+                .SetMarginTop(20);
+
+            Style recipeTitleStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD))
+                .SetFontSize(16)
+                .SetFontColor(ColorConstants.DARK_GRAY)
+                .SetMarginTop(10);
+
+            Style bodyStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.HELVETICA))
+                .SetFontSize(12)
+                .SetFontColor(ColorConstants.BLACK);
+
+            Style tocTitleStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD))
+                .SetFontSize(18)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetFontColor(ColorConstants.BLACK)
+                .SetMarginBottom(20);
+
+            Style tocEntryStyle = new Style()
+                .SetFont(PdfFontFactory.CreateFont(StandardFonts.HELVETICA))
+                .SetFontSize(12)
+                .SetFontColor(ColorConstants.BLACK)
+                .SetMarginBottom(10);
+
+            // Add title page
+            AddTitlePage(doc, name, description, titleStyle, descStyle);
+
             // Reserve space for TOC
             doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
             // Generate content grouped by category and collect TOC data
-            GenerateCookbookPDF(doc, _recipeService.Get().ToList(), tocEntries);
+            GenerateCookbookPDF(doc, _recipeService.Get().ToList(), tocEntries, categoryTitleStyle, recipeTitleStyle, bodyStyle);
 
             // Insert the TOC at the beginning
-            InsertTableOfContents(doc, tocEntries);
+            InsertTableOfContents(doc, tocEntries, tocTitleStyle, tocEntryStyle);
 
             doc.Close();
             pdfDoc.Close();

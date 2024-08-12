@@ -2,5 +2,5 @@
 
 public interface ICookbook
 {
-    string? MakeCookbook();
+    string? MakeCookbook(string outputPath, string name, string description);
 }
