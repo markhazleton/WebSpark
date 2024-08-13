@@ -18,12 +18,17 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Web", "WebSpark.Web\WebSpark.Web.csproj", "{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{83E5AC53-6F44-4CDB-9127-01082E0D143F}"
+	ProjectSection(SolutionItems) = preProject
+		TriviaSpark.Core\TriviaSpark.Core.csproj = TriviaSpark.Core\TriviaSpark.Core.csproj
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Portal", "WebSpark.Portal\WebSpark.Portal.csproj", "{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.SharedKernel", "WebSpark.SharedKernel\WebSpark.SharedKernel.csproj", "{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromptSpark.Domain", "PromptSpark.Domain\PromptSpark.Domain.csproj", "{7A6C8941-FBF9-487C-88EB-3D4965881B7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Main", "WebSpark.Main\WebSpark.Main.csproj", "{14AE6E12-66E5-4660-9124-4B2C76633267}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +76,10 @@ Global
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14AE6E12-66E5-4660-9124-4B2C76633267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14AE6E12-66E5-4660-9124-4B2C76633267}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14AE6E12-66E5-4660-9124-4B2C76633267}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14AE6E12-66E5-4660-9124-4B2C76633267}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,8 +19,8 @@
 		<Exec Command="npm run build" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.8" />
 		<PackageReference Include="Microsoft.SemanticKernel" Version="1.17.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
 		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.20.0" />
