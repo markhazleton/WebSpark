@@ -1,8 +1,13 @@
-﻿const fs = require('fs');
-const path = require('path');
-const CleanCSS = require('clean-css');
-const UglifyJS = require('uglify-js');
-const sass = require('sass');
+﻿import fs from 'fs';
+import path from 'path';
+import CleanCSS from 'clean-css';
+import UglifyJS from 'uglify-js';
+import sass from 'sass';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Function to minify CSS and copy original files
 function minifyAndCopyCSS() {
@@ -12,28 +17,22 @@ function minifyAndCopyCSS() {
     const scssOutputFile = 'compiled_style.css';  // Temporary output file for compiled SCSS
     const minifiedOutputFile = 'style.min.css';
 
-    // Compile SCSS to CSS
     const result = sass.compile(scssInputPath + 'main.scss', {
-        outputStyle: 'expanded'  // Expanded for initial compilation, minification will handle compression
+        outputStyle: 'expanded'
     });
 
-    // Write the compiled CSS to a temporary file
     fs.writeFileSync(cssOutputPath + scssOutputFile, result.css);
     fs.writeFileSync(distOutputPath + 'main.css', result.css);
 
-    // Minify the compiled CSS along with other CSS files
     let output = new CleanCSS({}).minify([
         cssOutputPath + scssOutputFile,
         cssOutputPath + 'site.css'
     ]);
 
-    // Write the final minified CSS to the distribution folder
     fs.writeFileSync(distOutputPath + minifiedOutputFile, output.styles);
 
-    // Copy the original CSS files to the distribution folder
     fs.copyFileSync(cssOutputPath + 'site.css', distOutputPath + 'site.css');
 
-    // Optionally, clean up the temporary file
     fs.unlink(cssOutputPath + scssOutputFile, (err) => {
         if (err) {
             console.error('Error deleting file:', err);
@@ -62,13 +61,11 @@ function minifyAndCopyJS() {
         'site.js': fs.readFileSync(inputPath + 'site.js', 'utf8')
     };
 
-    // Minify JavaScript files
     const result = UglifyJS.minify(files);
 
     if (!result.error) {
         fs.writeFileSync(outputPath + outputFile, result.code);
 
-        // Copy original JavaScript files to the distribution folder
         fs.copyFileSync(jqueryJSPath, outputPath + 'jquery.js');
         fs.copyFileSync(bootstrapJSPath, outputPath + 'bootstrap.bundle.js');
         fs.copyFileSync(popperJSPath, outputPath + 'popper.js');
@@ -79,6 +76,5 @@ function minifyAndCopyJS() {
     }
 }
 
-// Run the functions
 minifyAndCopyCSS();
 minifyAndCopyJS();

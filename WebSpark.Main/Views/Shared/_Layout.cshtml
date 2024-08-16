@@ -21,39 +21,20 @@
     <title>@ViewData["Title"] - Web Spark</title>
     <link rel="canonical" href="@GetCanonicalUrl()" />
     <link rel="stylesheet" href="~/dist/css/style.min.css" asp-append-version="true" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <!-- Brand/logo -->
-                <a class="navbar-brand" href="/">
-                    <img src="~/dist/images/PromptSpark-icon-transparent.webp" alt="Web Spark" style="height: 50px;">
-                </a>
-                <!-- Toggler button -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <!-- Navbar links -->
-                <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Explore</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        @await Html.PartialAsync("_navbar")
     </header>
     <main class="container-fluid main-content pb-3">
+        <section class="bg-white py-10 container-fluid">
+            @await Html.PartialAsync("_nav_area")
+        </section>
+        <hr class="m-0" />
         @RenderBody()
     </main>
-
-    @await Html.PartialAsync("/Views/Shared/_Footer.cshtml")
-
+    @await Html.PartialAsync("_Footer")
 
     <script src="~/dist/js/scripts.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

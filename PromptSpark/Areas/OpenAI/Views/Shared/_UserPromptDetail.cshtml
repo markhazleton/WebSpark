@@ -48,7 +48,7 @@
                 </h2>
                 <div id="collapse@(item.Index)" class="accordion-collapse collapse @(isFirst ? "show" : "")" aria-expanded="@(isFirst ? "true" : "false")" aria-labelledby="heading@(item.Index)">
                     <div class="accordion-body">
-                        <pre>@item.Value.ContentToString())</pre>
+                        @Html.Raw(item.Value.ContentToString())
                     </div>
                     <div class="p-2">
                         <a class="text-warning font-weight-bold" href="#" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover focus" data-bs-placement="right" data-bs-title="@item.Value.GPTName" data-bs-content="@item.Value.ToString()" data-bs-custom-class="custom-popover">

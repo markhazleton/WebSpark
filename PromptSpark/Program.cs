@@ -5,7 +5,6 @@ using PromptSpark.Domain.Data;
 using PromptSpark.Utilities;
 using Serilog;
 using WebSpark.Core.Infrastructure.Logging;
-using WebSpark.UserIdentity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configure services
@@ -24,16 +23,6 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
-var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
-builder.Services.AddDbContext<WebSparkUserContext>(options =>
-    options.UseSqlite(adminConnectionString));
-
-builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
-        .AddEntityFrameworkStores<WebSparkUserContext>()
-        .AddDefaultUI()
-        .AddDefaultTokenProviders()
-        .AddUserManager<ApplicationUserManager>();
 
 var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
@@ -74,7 +63,9 @@ builder.Services.AddScoped<IUserPromptService, UserPromptService>();
 builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
 builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();
 builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
-
+builder.Services.AddRazorPages();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Configure middleware

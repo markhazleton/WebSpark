@@ -1,0 +1,20 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Async",
+      "url": "/Async/"
+    },
+    {
+      "text": "Definition Types",
+      "url": "/PromptSpark/DefinitionTypes"
+    },
+    {
+      "text": "UserPrompts",
+      "url": "/PromptSpark/UserPrompts"
+    },
+    {
+      "text": "Responses",
+      "url": "/PromptSpark/Responses"
+    }
+  ]
+}

@@ -103,7 +103,7 @@ public class RecipeModel
     /// <summary>
     /// RecipeCategory
     /// </summary>
-    public Models.RecipeCategoryModel RecipeCategory { get; set; }
+    public RecipeCategoryModel RecipeCategory { get; set; }
     /// <summary>
     /// Gets or sets the recipe category identifier.
     /// </summary>

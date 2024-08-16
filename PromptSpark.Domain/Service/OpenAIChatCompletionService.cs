@@ -170,14 +170,13 @@ public class OpenAIChatCompletionService(
     }
     public async Task<UserPromptDto> RefreshUserPromptResponses(UserPromptDto userPrompt)
     {
-        // Find the userPromptId to update
+        // Validate the UserPromtId exists
         var userPromptDto = await FindResponseByUserPromptIdAsync(userPrompt.UserPromptId);
         if (userPromptDto == null)
             return new();
 
-        // get the user userPromptId from the database
         var dbUserPrompt = await context.Chats
-            .Include(r => r.GPTResponses).Where(w => w.DefinitionType == userPromptDto.DefinitionType)
+            .Include(r => r.GPTResponses)
             .FirstOrDefaultAsync(r => r.Id == userPrompt.UserPromptId);
 
         // Get list of all Definitions
@@ -211,11 +210,7 @@ public class OpenAIChatCompletionService(
                 if (definitionResponse.Created < DateTime.Now.AddDays(-10))
                     definitionResponse.Created = DateTime.Now.AddDays(-5);
 
-                if (definitionResponse.SystemResponse == "No Answer"
-                    || definitionResponse.Updated.AddDays(1) < DateTime.Now)
-                {
-                    definitionResponse = await UpdateGPTResponse(definitionResponse);
-                }
+                definitionResponse = await UpdateGPTResponse(definitionResponse);
             }
         }
         context.Chats.Update(dbUserPrompt);

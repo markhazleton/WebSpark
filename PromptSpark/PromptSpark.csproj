@@ -19,12 +19,9 @@
 		<Exec Command="npm run build-assets" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="1.12.0" />
 		<PackageReference Include="CsvHelper" Version="33.0.1" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.8" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
@@ -47,6 +44,5 @@
 	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
 	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
-	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
 	</ItemGroup>
 </Project>

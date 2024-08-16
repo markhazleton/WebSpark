@@ -18,9 +18,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Web", "WebSpark.Web\WebSpark.Web.csproj", "{2CEE0D3D-B5AD-4C46-B25D-2E3034851E8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{83E5AC53-6F44-4CDB-9127-01082E0D143F}"
-	ProjectSection(SolutionItems) = preProject
-		TriviaSpark.Core\TriviaSpark.Core.csproj = TriviaSpark.Core\TriviaSpark.Core.csproj
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Portal", "WebSpark.Portal\WebSpark.Portal.csproj", "{8629E691-74D3-49DB-9EB3-B95CF5F11CF5}"
 EndProject
@@ -29,6 +26,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromptSpark.Domain", "PromptSpark.Domain\PromptSpark.Domain.csproj", "{7A6C8941-FBF9-487C-88EB-3D4965881B7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Main", "WebSpark.Main\WebSpark.Main.csproj", "{14AE6E12-66E5-4660-9124-4B2C76633267}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncSpark", "AsyncSpark\AsyncSpark.csproj", "{B5178E0B-FF7C-414E-BC8C-CF409609636D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +79,10 @@ Global
 		{14AE6E12-66E5-4660-9124-4B2C76633267}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14AE6E12-66E5-4660-9124-4B2C76633267}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14AE6E12-66E5-4660-9124-4B2C76633267}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +95,7 @@ Global
 		{9BF4918C-CFB5-4077-9FB5-D804720259BA} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{B5178E0B-FF7C-414E-BC8C-CF409609636D} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}

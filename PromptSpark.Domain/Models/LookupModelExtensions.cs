@@ -14,7 +14,7 @@ public static class DefinitionResponseDto_Extension
         {
             OutputType.Markdown => MarkdownToHtml(response.SystemResponse),
             OutputType.DevOpsMarkdown => MarkdownEncodeHtml(response.SystemResponse),
-            OutputType.HTML => response.SystemResponse,
+            //    OutputType.HTML => response.SystemResponse,
             OutputType.JSON => JSONtoHtml(response.SystemResponse),
             _ => response.SystemResponse,
         };
@@ -49,9 +49,9 @@ public static class DefinitionResponseDto_Extension
         if (string.IsNullOrEmpty(markdown))
             return string.Empty;
 
-        // HTML encode the markdown text so it is safe to render in the browser
-        markdown = System.Net.WebUtility.HtmlEncode(markdown);
-        return markdown;
+        markdown = markdown.Replace("<", "&lt;");
+
+        return $"<pre>{markdown}</pre>";
     }
     public static string MarkdownToHtml(string markdown)
     {
