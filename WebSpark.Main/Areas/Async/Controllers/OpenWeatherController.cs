@@ -1,24 +1,18 @@
-﻿using AsyncSpark.HttpGetCall;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.Models;
-using WebSpark.Core.Models;
-
 namespace WebSpark.Main.Areas.Async.Controllers;
 
-
-
-
 /// <summary>
-/// 
+/// OpenWeatherController
 /// </summary>
-/// <remarks>
-/// 
-/// </remarks>
 /// <param name="logger"></param>
 /// <param name="weatherService"></param>
 /// <param name="cache"></param>
-public class OpenWeatherController(ILogger<HomeController> logger, IOpenWeatherMapClient weatherService, IMemoryCache cache) : AsyncBaseController
+public class OpenWeatherController(
+    ILogger<HomeController> logger, 
+    IOpenWeatherMapClient weatherService, 
+    IMemoryCache cache) : AsyncBaseController
 {
     private const string LocationCacheKey = "LocationCacheKey";
     private readonly ILogger<HomeController> _logger = logger;
@@ -42,8 +36,7 @@ public class OpenWeatherController(ILogger<HomeController> logger, IOpenWeatherM
 
     private List<CurrentWeather> GetCurrentWeatherList()
     {
-        List<CurrentWeather>? theList;
-        if (cache.TryGetValue("CurrentWeatherList", out theList))
+        if (cache.TryGetValue("CurrentWeatherList", out List<CurrentWeather>? theList))
         {
 
         }
@@ -64,7 +57,7 @@ public class OpenWeatherController(ILogger<HomeController> logger, IOpenWeatherM
         {
             theList = [];
         }
-        if (theList.Where(w => w.Location?.Name == currentWeather?.Location?.Name).Any())
+        if (theList.Any(w => w.Location?.Name == currentWeather?.Location?.Name))
         {
             // Location is already in list
         }
@@ -102,7 +95,5 @@ public class OpenWeatherController(ILogger<HomeController> logger, IOpenWeatherM
         }
         return View(myList);
     }
-
-
 
 }

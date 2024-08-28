@@ -41,7 +41,7 @@ footer {
 
 /* Main Content Area */
 main.main-content {
-    padding-top: 120px; /* Slightly more than the height of the header */
+    padding-top: 60px; /*  Slightly more than the height of the header */
     padding-bottom: 60px; /* Slightly more than the height of the footer */
     overflow-y: auto; /* Allows scrolling */
     height: calc(100vh - 60px); /* Full viewport height minus header/footer adjustments */
@@ -109,3 +109,16 @@ body {
     font-size: 0.875rem; /* Smaller font size */
     font-weight: bold; /* Bold font */
 }
+.navbar-nav .nav-link {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .navbar-nav .nav-link:hover {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+
+    .navbar-nav .nav-link.active {
+        background-color: #6c757d;
+        color: #fff;
+    }

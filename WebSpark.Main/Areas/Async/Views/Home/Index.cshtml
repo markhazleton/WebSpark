@@ -1,6 +1,45 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Async in .NET 8 - Demonstration Site";
 }
-<h1>Async Home Page</h1>
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">
+            <i class="bi bi-lightning-fill text-primary"></i> Mastering Async in .NET 8
+        </h1>
+        <p class="lead">
+            Explore the power of asynchronous programming in .NET 8 with our comprehensive demonstration. Learn how to enhance your web applications with modern async patterns, including HttpClient decorators, HttpClientFactory integration, Polly resilience strategies, and advanced logging and telemetry.
+        </p>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4 text-center">
+            <i class="bi bi-arrow-repeat display-1 text-success"></i>
+            <h3>Async with HttpClient</h3>
+            <p>
+                Discover how to make efficient asynchronous HTTP requests using HttpClient and leverage the decorator pattern for enhanced functionality like retry, logging, and caching.
+            </p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="bi bi-shield-lock-fill display-1 text-warning"></i>
+            <h3>Polly & HttpClientFactory</h3>
+            <p>
+                Learn to create resilient HTTP clients with HttpClientFactory and Polly, implementing strategies such as retries, circuit breakers, and more, all using async methods.
+            </p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="bi bi-bar-chart-fill display-1 text-info"></i>
+            <h3>Logging & Telemetry</h3>
+            <p>
+                Integrate robust async logging and telemetry in your .NET 8 applications. Track performance, monitor errors, and gather insights with minimal impact on your application's performance.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- SEO Optimized Meta Description -->
+@section Scripts {
+    <script>
+        document.querySelector('meta[name="description"]').setAttribute("content", "Learn asynchronous programming in .NET 8. Master HttpClient async, HttpClientFactory with Polly, async logging, and telemetry in your web applications. Improve performance and resilience with our step-by-step guide and demonstrations.");
+    </script>
+}

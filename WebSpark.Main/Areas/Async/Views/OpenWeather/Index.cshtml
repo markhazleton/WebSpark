@@ -1,18 +1,17 @@
 ﻿@using OpenWeatherMapClient.Models
 @model List<CurrentWeather>
 @{
-    ViewData["Title"] = "Open Weather";
+    ViewData["Title"] = "Open Weather - Asynchronous Data Fetching with Caching";
 }
 
-    <style>
-        .iframe-container 
-        {
-            overflow: hidden;
-            padding-top: 56.25%;
-            position: relative;
-        }
-        .iframe-container iframe 
-        {
+<style>
+    .iframe-container {
+        overflow: hidden;
+        padding-top: 56.25%;
+        position: relative;
+    }
+
+        .iframe-container iframe {
             border: 0;
             height: 100%;
             left: 0;
@@ -20,96 +19,119 @@
             top: 0;
             width: 100%;
         }
-    </style>
+</style>
 
-
-<div>
+<div class="container my-5">
     <div class="row">
-        <div class="card-body text-left">
+        <div class="col-md-12">
+            <h1 class="display-5 text-center mb-4">
+                <i class="bi bi-cloud-sun-fill text-primary"></i> Open Weather: Efficient Async Data Fetching with Polly and Caching
+            </h1>
+            <p class="lead text-center">
+                This demo showcases how to use asynchronous programming and caching in .NET 8 to efficiently fetch and display weather data from the OpenWeatherMap API. By leveraging async methods, in-memory caching, and robust error handling, this approach ensures a responsive and reliable user experience.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card-body">
             <form method="get">
-                <span class="font-weight-bold" style="margin-bottom: 5px">Get Weather</span>
-                <div class="row">
-                    <div class="col-sm-9">
+                <div class="mb-3">
+                    <label for="weatherCity" class="form-label font-weight-bold">Get Weather</label>
+                    <div class="input-group">
                         <input id="weatherCity" name="location" class="form-control" type="text" placeholder="City name" />
+                        <button type="submit" id="getWeather" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Get
+                        </button>
                     </div>
-                    <div class="col-sm-3">
-                            <button type="submit" id="getWeather" class="btn btn-primary">Get</button>
-                    </div>
-                 </div>
+                </div>
             </form>
         </div>
     </div>
+
     <div class="row">
-            @foreach (var item in @Model)
-            {
-        <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 ">
-            <div class="card" style="">
-                @if (@item.Success)
-                {
-                    <div class="card-header text-white bg-primary">
-                        Weather for @item.Location.Name
-                    </div>
-                    <div class="card-body">
-<div class="iframe-container">
-     <iframe loading="lazy" frameborder="0" src="https://www.bing.com/maps/embed?h=280&w=625&cp=@item.Location.Latitude~@item.Location.Longitude&lvl=11&typ=d&sty=r&src=SHELL&FORM=MBEDV8" scrolling="no">
-     </iframe>
-</div>
-                        <h6 class="card-subtitle mb-2 text-muted">Observed at @item.ObservationTime</h6>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Conditions</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.Conditions</div>
+        @foreach (var item in @Model)
+        {
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                <div class="card mb-4">
+                    @if (@item.Success)
+                    {
+                        <div class="card-header text-white bg-primary">
+                            <i class="bi bi-geo-alt-fill"></i> Weather for @item.Location.Name
                         </div>
+                        <div class="card-body">
+                            <div class="iframe-container mb-3">
+                                <iframe loading="lazy" frameborder="0" src="https://www.bing.com/maps/embed?h=280&w=625&cp=@item.Location.Latitude~@item.Location.Longitude&lvl=11&typ=d&sty=r&src=SHELL&FORM=MBEDV8" scrolling="no"></iframe>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted"><i class="bi bi-clock"></i> Observed at @item.ObservationTime</h6>
 
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Visibility</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.Visibility.ToString("#0.00") miles</div>
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-thermometer-half"></i> Temperature</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.Temperature.ToString("#0.0") &deg; F</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-droplet-half"></i> Humidity</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.Humidity.ToString("#0.0") %</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-wind"></i> Wind</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.WindDirection.Abbreviation @item.CurrentConditions.WindSpeed.ToString("#0.0") mph</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-cloud"></i> Conditions</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.Conditions</div>
+                            </div>
+
+                            <p class="text-muted text-center mt-3">
+                                <i class="bi bi-clock-history"></i> Fetch time: @item.FetchTime | <strong>Time Since Fetch: @item.ObservationAge </strong>
+                            </p>
                         </div>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Cloud Cover</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.CloudCover %</div>
+                    }
+                    else
+                    {
+                        <div class="card-header text-white bg-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i> @item.ErrorMessage
                         </div>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Temperature</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.Temperature.ToString("#0.0") &deg; F</div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Humidity</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.Humidity.ToString("#0.0") %</div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Barometer</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.Pressure.ToString("#0.00") in/Hg</div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Wind</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.WindDirection.Abbreviation @item.CurrentConditions.WindSpeed.ToString("#0.0") mph</div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-6 font-weight-bold text-left">Rainfall (1 hour)</div>
-                            <div class="col-sm-6 text-right">@item.CurrentConditions.RainfallOneHour.ToString("#0.00") in</div>
-                        </div>
-
-                        <p class="text-muted text-center" style="margin: 6px">
-                            Fetch time: @item.FetchTime
-                        </p>
-                        <p><strong>Time Since Fetch: @item.ObservationAge </strong></p>
-                    </div>
-                }
-                else
-                {
-                    <div class="card-header text-white bg-danger">
-                        @item.ErrorMessage 
-                    </div>
-                }
+                    }
+                </div>
             </div>
+        }
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3 class="display-6"><i class="bi bi-info-circle-fill text-info"></i> What This Demo Demonstrates</h3>
+            <p>
+                This demo demonstrates the benefits of using asynchronous programming combined with caching to handle data retrieval efficiently in .NET applications. By fetching data asynchronously, the application remains responsive, providing a better user experience even when accessing external services like the OpenWeatherMap API. In-memory caching helps to reduce API call frequency, improve performance, and minimize costs associated with excessive API requests.
+            </p>
+            <h4><i class="bi bi-check-circle-fill text-success"></i> Key Benefits:</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><i class="bi bi-lightning-fill text-primary"></i> <strong>Improved Performance:</strong> Asynchronous calls prevent blocking the main thread, keeping the application responsive.</li>
+                <li class="list-group-item"><i class="bi bi-save-fill text-warning"></i> <strong>Reduced API Usage:</strong> Caching minimizes unnecessary API calls, saving bandwidth and reducing latency.</li>
+                <li class="list-group-item"><i class="bi bi-shield-fill-exclamation text-danger"></i> <strong>Resilience:</strong> With proper error handling, the application can gracefully manage failed API calls without crashing.</li>
+            </ul>
+
+            <h4><i class="bi bi-arrow-right-circle-fill text-primary"></i> Alternative Approaches:</h4>
+            <p>
+                While this demo uses in-memory caching, alternatives include distributed caching solutions like Redis or SQL-based caching for more complex scenarios requiring persistence across multiple servers. Another approach could involve using cloud-native caching solutions such as Azure Cache for Redis, which provides high availability and scalability. Additionally, built-in resilience features in API management tools like Azure API Management can offer similar retry and fault tolerance capabilities.
+            </p>
+
+            <h4><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices:</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><i class="bi bi-gear-fill text-secondary"></i> <strong>Set Appropriate Cache Expirations:</strong> Ensure cached data remains relevant by setting sensible expiration times.</li>
+                <li class="list-group-item"><i class="bi bi-bar-chart-fill text-info"></i> <strong>Monitor API Usage:</strong> Regularly monitor and adjust caching strategies to optimize performance and cost-efficiency.</li>
+                <li class="list-group-item"><i class="bi bi-diagram-3-fill text-success"></i> <strong>Combine Async and Polly:</strong> Use Polly for retries and circuit breakers to further enhance the resilience of your async operations.</li>
+            </ul>
         </div>
-            }
     </div>
 </div>
+
+<!-- SEO Optimized Meta Description -->
+@section Scripts {
+    <script>
+        document.querySelector('meta[name="description"]').setAttribute("content", "Explore the benefits of asynchronous data fetching with caching in .NET 8 using the OpenWeatherMap API. Learn how async programming, in-memory caching, and error handling can enhance performance, reduce API calls, and improve user experience.");
+    </script>
+}

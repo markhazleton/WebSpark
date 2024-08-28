@@ -1,10 +1,6 @@
 ﻿{
   "menuItems": [
     {
-      "text": "Async",
-      "url": "/Async/"
-    },
-    {
       "text": "Polly",
       "url": "/Async/Polly"
     },

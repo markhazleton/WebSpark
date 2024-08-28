@@ -2,38 +2,86 @@
 @model IEnumerable<HttpGetCallResults>
 
 @{
-    ViewData["Title"] = "Bulk Calls";
+    ViewData["Title"] = "Bulk Calls - Asynchronous HTTP Requests with .NET 8";
 }
 
-<h1>Bulk Calls</h1>
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <h1 class="display-4">
+                <i class="bi bi-arrow-repeat text-primary"></i> Bulk Calls Demo
+            </h1>
+            <p class="lead">
+                Explore how to handle multiple asynchronous HTTP GET requests efficiently using .NET 8. This demo demonstrates best practices for managing concurrency, handling timeouts, and optimizing performance with async programming.
+            </p>
+        </div>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Iteration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ElapsedMilliseconds)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompletionDate)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Iteration)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.ElapsedMilliseconds)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.CompletionDate)
-            </td>
-        </tr>
+    <div class="row">
+        <div class="col-md-12">
+            <h2><i class="bi bi-file-earmark-text-fill text-info"></i> BulkCallsController Documentation</h2>
+            <p>
+                The <strong>BulkCallsController</strong> in this async demo project showcases the implementation of bulk asynchronous HTTP GET requests to a specified endpoint. By leveraging .NET's async capabilities, this controller demonstrates how to efficiently manage a large number of network requests without overwhelming system resources.
+            </p>
+            <h4><i class="bi bi-gear-fill text-success"></i> Key Features:</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><i class="bi bi-lightning-fill text-primary"></i> <strong>Concurrent HTTP Requests:</strong> Handles multiple HTTP GET requests concurrently using async tasks and `SemaphoreSlim` to limit the number of simultaneous requests, ensuring controlled parallelism and resource usage.</li>
+                <li class="list-group-item"><i class="bi bi-shield-lock-fill text-warning"></i> <strong>Thread Safety:</strong> Uses locks to ensure thread safety when adding results to the shared list, preventing data corruption in multi-threaded environments.</li>
+                <li class="list-group-item"><i class="bi bi-clock-fill text-danger"></i> <strong>Timeouts and Cancellations:</strong> Implements `CancellationTokenSource` with a timeout to cancel long-running requests, demonstrating best practices for managing task lifetimes in async workflows.</li>
+                <li class="list-group-item"><i class="bi bi-bar-chart-line-fill text-info"></i> <strong>Performance Optimization:</strong> By using asynchronous task coordination with `Task.WhenAll`, the controller efficiently handles bulk requests, significantly reducing overall execution time compared to sequential processing.</li>
+            </ul>
+
+            <h4><i class="bi bi-box-arrow-right text-danger"></i> Alternative Approaches:</h4>
+            <p>
+                While the BulkCallsController effectively demonstrates handling bulk requests with `SemaphoreSlim` for concurrency control, other approaches could include:
+            </p>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><i class="bi bi-diagram-3-fill text-secondary"></i> <strong>Parallel.ForEach:</strong> Offers an alternative for concurrent processing but requires careful management of exceptions and concurrency controls.</li>
+                <li class="list-group-item"><i class="bi bi-cloud-fill text-primary"></i> <strong>TPL Dataflow:</strong> Provides advanced options for data buffering and parallel task execution, making it suitable for complex data processing workflows.</li>
+                <li class="list-group-item"><i class="bi bi-box-seam text-success"></i> <strong>Cloud-Native Solutions:</strong> Leveraging Azure Functions or other serverless platforms with built-in scaling can offload concurrency management to cloud infrastructure.</li>
+            </ul>
+
+            <h4><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices:</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><i class="bi bi-graph-up-arrow text-info"></i> <strong>Monitor and Log:</strong> Use logging and telemetry to monitor the performance and health of bulk async operations, enabling proactive tuning of concurrency levels and timeouts.</li>
+                <li class="list-group-item"><i class="bi bi-sliders text-secondary"></i> <strong>Adjust Concurrency:</strong> Optimize the maximum thread count (`maxThreads`) based on system capabilities and endpoint performance to balance resource usage and throughput.</li>
+                <li class="list-group-item"><i class="bi bi-exclamation-triangle-fill text-danger"></i> <strong>Handle Failures Gracefully:</strong> Implement retry logic or circuit breakers using libraries like Polly to handle transient failures and improve resilience.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3><i class="bi bi-list-ul text-primary"></i> Bulk Call Results</h3>
+            <table class="table table-striped table-bordered mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th><i class="bi bi-hash"></i> Iteration</th>
+                        <th><i class="bi bi-stopwatch"></i> Elapsed Time (ms)</th>
+                        <th><i class="bi bi-calendar-event"></i> Completion Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Iteration</td>
+                            <td>@item.ElapsedMilliseconds</td>
+                            <td>@item.CompletionDate</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p class="text-muted text-center">
+                The table above shows the results of performing multiple asynchronous HTTP GET calls to the specified endpoint. Each row represents an individual request, detailing its execution time and completion date.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- SEO Optimized Meta Description -->
+@section Scripts {
+    <script>
+        document.querySelector('meta[name="description"]').setAttribute("content", "Explore the BulkCallsController in .NET 8 for handling bulk asynchronous HTTP requests. Learn how to optimize performance, manage concurrency, and implement robust error handling with async programming.");
+    </script>
 }
-    </tbody>
-</table>
