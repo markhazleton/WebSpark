@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Main", "WebSpark.M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncSpark", "AsyncSpark\AsyncSpark.csproj", "{B5178E0B-FF7C-414E-BC8C-CF409609636D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWeatherMapClient", "OpenWeatherMapClient\OpenWeatherMapClient.csproj", "{32C4C6A4-1846-47DD-890D-96953AE283E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5178E0B-FF7C-414E-BC8C-CF409609636D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +102,7 @@ Global
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{B5178E0B-FF7C-414E-BC8C-CF409609636D} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{32C4C6A4-1846-47DD-890D-96953AE283E0} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}

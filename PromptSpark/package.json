@@ -11,7 +11,9 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "datatables.net-bs5": "^2.1.4",
-    "jquery": "^3.7.1"
+    "jquery": "^3.7.1",
+    "prismjs": "^1.29.0",
+    "terser": "^5.31.6"
   },
   "devDependencies": {
     "bootswatch": "^5.3.3",

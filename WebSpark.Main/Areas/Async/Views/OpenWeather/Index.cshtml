@@ -1,0 +1,115 @@
+﻿@using OpenWeatherMapClient.Models
+@model List<CurrentWeather>
+@{
+    ViewData["Title"] = "Open Weather";
+}
+
+    <style>
+        .iframe-container 
+        {
+            overflow: hidden;
+            padding-top: 56.25%;
+            position: relative;
+        }
+        .iframe-container iframe 
+        {
+            border: 0;
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    </style>
+
+
+<div>
+    <div class="row">
+        <div class="card-body text-left">
+            <form method="get">
+                <span class="font-weight-bold" style="margin-bottom: 5px">Get Weather</span>
+                <div class="row">
+                    <div class="col-sm-9">
+                        <input id="weatherCity" name="location" class="form-control" type="text" placeholder="City name" />
+                    </div>
+                    <div class="col-sm-3">
+                            <button type="submit" id="getWeather" class="btn btn-primary">Get</button>
+                    </div>
+                 </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+            @foreach (var item in @Model)
+            {
+        <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 ">
+            <div class="card" style="">
+                @if (@item.Success)
+                {
+                    <div class="card-header text-white bg-primary">
+                        Weather for @item.Location.Name
+                    </div>
+                    <div class="card-body">
+<div class="iframe-container">
+     <iframe loading="lazy" frameborder="0" src="https://www.bing.com/maps/embed?h=280&w=625&cp=@item.Location.Latitude~@item.Location.Longitude&lvl=11&typ=d&sty=r&src=SHELL&FORM=MBEDV8" scrolling="no">
+     </iframe>
+</div>
+                        <h6 class="card-subtitle mb-2 text-muted">Observed at @item.ObservationTime</h6>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Conditions</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.Conditions</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Visibility</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.Visibility.ToString("#0.00") miles</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Cloud Cover</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.CloudCover %</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Temperature</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.Temperature.ToString("#0.0") &deg; F</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Humidity</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.Humidity.ToString("#0.0") %</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Barometer</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.Pressure.ToString("#0.00") in/Hg</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Wind</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.WindDirection.Abbreviation @item.CurrentConditions.WindSpeed.ToString("#0.0") mph</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 font-weight-bold text-left">Rainfall (1 hour)</div>
+                            <div class="col-sm-6 text-right">@item.CurrentConditions.RainfallOneHour.ToString("#0.00") in</div>
+                        </div>
+
+                        <p class="text-muted text-center" style="margin: 6px">
+                            Fetch time: @item.FetchTime
+                        </p>
+                        <p><strong>Time Since Fetch: @item.ObservationAge </strong></p>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-header text-white bg-danger">
+                        @item.ErrorMessage 
+                    </div>
+                }
+            </div>
+        </div>
+            }
+    </div>
+</div>

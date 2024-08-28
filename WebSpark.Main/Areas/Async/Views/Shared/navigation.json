@@ -5,16 +5,18 @@
       "url": "/Async/"
     },
     {
-      "text": "Definition Types",
-      "url": "/PromptSpark/DefinitionTypes"
+      "text": "Polly",
+      "url": "/Async/Polly"
     },
     {
-      "text": "UserPrompts",
-      "url": "/PromptSpark/UserPrompts"
+      "text": "Bulk Calls",
+      "url": "/Async/BulkCalls"
     },
     {
-      "text": "Responses",
-      "url": "/PromptSpark/Responses"
+      "text": "Open Weather",
+      "url": "/Async/OpenWeather"
     }
+
   ]
 }
+

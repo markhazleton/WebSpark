@@ -5,6 +5,11 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+@import "../../node_modules/datatables.net-bs5/css/dataTables.bootstrap5.css";
+@import "../../node_modules/datatables.net-responsive-bs5/css/responsive.bootstrap5.css";
+@import "../../node_modules/datatables.net-colreorder-bs5/css/colReorder.bootstrap5.css";
+@import "../../node_modules/prismjs/themes/prism.css";
+@import "../../node_modules/prismjs/themes/prism-coy.css";
 :root,
 [data-bs-theme=light] {
   --bs-blue: #2196f3;

@@ -1,12 +1,12 @@
 ﻿{
   "menuItems": [
     {
-      "text": "Definitions",
-      "url": "/PromptSpark/Definitions"
+      "text": "Core Sparks",
+      "url": "/PromptSpark/DefinitionTypes"
     },
     {
-      "text": "Definition Types",
-      "url": "/PromptSpark/DefinitionTypes"
+      "text": "Spark Variants",
+      "url": "/PromptSpark/Definitions"
     },
     {
       "text": "UserPrompts",

@@ -4,7 +4,7 @@
   "author": "Mark Hazleton",
   "license": "MIT",
   "version": "1.0.0",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "build-assets": "node npm_build.js",
     "compile-scss": "sass wwwroot/Styles/main.scss wwwroot/css/style.css"
@@ -12,8 +12,12 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
-    "datatables.net-bs5": "^2.1.4",
     "bootstrap-icons": "^1.11.3",
+    "datatables.net": "^2.1.4",
+    "datatables.net-bs5": "^2.1.4",
+    "datatables.net-colreorder": "^2.0.4",
+    "datatables.net-datetime": "^1.5.3",
+    "datatables.net-responsive": "^3.0.2",
     "jquery": "^3.7.1"
   },
   "devDependencies": {
