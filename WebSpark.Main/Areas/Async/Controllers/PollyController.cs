@@ -7,8 +7,6 @@ using System.Net.Http.Headers;
 
 namespace WebSpark.Main.Areas.Async.Controllers;
 
-
-
 /// <summary>
 /// Controller for demonstrating the use of Polly for handling retries in HTTP requests.
 /// </summary>

@@ -5,14 +5,14 @@ namespace HttpClientUtility.SendService;
 
 
 /// <summary>
-/// Class HttpClientSendServiceTelemetry adds telemetry to the IHttpClientService implementation
+/// Class HttpClientSendServiceTelemetry adds telemetry to the IHttpClientSendService implementation
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="HttpClientSendServiceTelemetry"/> class
 /// </remarks>
 /// <param name="logger">ILogger instance</param>
-/// <param name="service">IHttpClientService instance</param>
-public class HttpClientSendServiceTelemetry(ILogger<HttpClientSendServiceTelemetry> logger, IHttpClientService service) : IHttpClientService
+/// <param name="service">IHttpClientSendService instance</param>
+public class HttpClientSendServiceTelemetry(ILogger<HttpClientSendServiceTelemetry> logger, IHttpClientSendService service) : IHttpClientSendService
 {
 
     /// <summary>

@@ -4,16 +4,16 @@ using Microsoft.Extensions.Logging;
 namespace HttpClientUtility.SendService;
 
 /// <summary>
-/// Implementation of IHttpClientService that caches HTTP responses using IMemoryCache.
+/// Implementation of IHttpClientSendService that caches HTTP responses using IMemoryCache.
 /// </summary>
 public sealed class HttpClientSendServiceCache(
-    IHttpClientService service,
+    IHttpClientSendService service,
     ILogger<HttpClientSendServiceCache> logger,
-    IMemoryCache cache) : IHttpClientService
+    IMemoryCache cache) : IHttpClientSendService
 {
     private readonly IMemoryCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly ILogger<HttpClientSendServiceCache> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly IHttpClientService _service = service ?? throw new ArgumentNullException(nameof(service));
+    private readonly IHttpClientSendService _service = service ?? throw new ArgumentNullException(nameof(service));
     /// <summary>
     /// HttpClientSendServiceCache Constructor
     /// </summary>

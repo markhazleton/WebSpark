@@ -10,8 +10,8 @@ namespace WebSpark.Main.Areas.Async.Controllers;
 /// <param name="weatherService"></param>
 /// <param name="cache"></param>
 public class OpenWeatherController(
-    ILogger<HomeController> logger, 
-    IOpenWeatherMapClient weatherService, 
+    ILogger<HomeController> logger,
+    IOpenWeatherMapClient weatherService,
     IMemoryCache cache) : AsyncBaseController
 {
     private const string LocationCacheKey = "LocationCacheKey";

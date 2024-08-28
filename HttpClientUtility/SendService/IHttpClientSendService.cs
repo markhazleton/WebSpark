@@ -2,7 +2,7 @@
 /// <summary>
 /// HttpClientService interface to send HTTP requests.
 /// </summary>
-public interface IHttpClientService
+public interface IHttpClientSendService
 {
     /// <summary>
     /// HttpClientSendAsync

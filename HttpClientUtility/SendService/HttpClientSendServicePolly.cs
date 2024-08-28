@@ -9,11 +9,11 @@ namespace HttpClientUtility.SendService;
 /// <summary>
 /// Represents a HttpClientSendService implementation that uses Polly for retry and circuit breaker policies.
 /// </summary>
-public class HttpClientSendServicePolly : IHttpClientService
+public class HttpClientSendServicePolly : IHttpClientSendService
 {
     private readonly ILogger<HttpClientSendServicePolly> _logger;
     private readonly List<string> _errorList = [];
-    private readonly IHttpClientService _service;
+    private readonly IHttpClientSendService _service;
     private readonly AsyncRetryPolicy _retryPolicy;
     private readonly AsyncCircuitBreakerPolicy _circuitBreakerPolicy;
     private readonly HttpClientSendPollyOptions _options;
@@ -26,7 +26,7 @@ public class HttpClientSendServicePolly : IHttpClientService
     /// <param name="options">The HttpClientSendPollyOptions.</param>
     public HttpClientSendServicePolly(
         ILogger<HttpClientSendServicePolly>? logger,
-        IHttpClientService? service,
+        IHttpClientSendService? service,
         HttpClientSendPollyOptions? options)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));

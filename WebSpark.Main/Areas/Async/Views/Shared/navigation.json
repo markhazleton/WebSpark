@@ -11,7 +11,9 @@
     {
       "text": "Open Weather",
       "url": "/Async/OpenWeather"
-    }
+    },
+    { "text": "Joke",
+      "url": "/Async/Joke"}
 
   ]
 }

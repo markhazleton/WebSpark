@@ -13,7 +13,7 @@ namespace HttpClientUtility.Concurrent;
 /// </remarks>
 /// <param name="taskDataFactory">The factory function to create task data.</param>
 /// <param name="service">The HttpClientService instance.</param>
-public class HttpClientConcurrentProcessor(Func<int, HttpClientConcurrentModel> taskDataFactory, SendService.IHttpClientService service) : ConcurrentProcessor<HttpClientConcurrentModel>(taskDataFactory)
+public class HttpClientConcurrentProcessor(Func<int, HttpClientConcurrentModel> taskDataFactory, SendService.IHttpClientSendService service) : ConcurrentProcessor<HttpClientConcurrentModel>(taskDataFactory)
 {
 
     /// <summary>

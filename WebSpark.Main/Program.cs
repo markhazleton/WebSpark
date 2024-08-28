@@ -1,5 +1,6 @@
 using AsyncSpark.HttpGetCall;
 using HttpClientUtility.FullService;
+using HttpClientUtility.SendService;
 using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.OpenApi.Models;
@@ -64,6 +65,32 @@ builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
     IOpenWeatherMapClient withCachingDecorator = new WeatherServiceCachingDecorator(withLoggingDecorator, memoryCache, loggerCaching);
     return withCachingDecorator;
 });
+
+builder.Services.AddSingleton(serviceProvider =>
+{
+    IHttpClientSendService baseService = new HttpClientSendService(
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendService>>(),
+        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
+
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var retryOptions = configuration.GetSection("HttpClientSendPollyOptions").Get<HttpClientSendPollyOptions>();
+    IHttpClientSendService pollyService = new HttpClientSendServicePolly(
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendServicePolly>>(),
+        baseService,
+        retryOptions);
+
+    IHttpClientSendService telemetryService = new HttpClientSendServiceTelemetry(
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceTelemetry>>(),
+        pollyService);
+
+    IHttpClientSendService cacheService = new HttpClientSendServiceCache(
+        telemetryService,
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceCache>>(),
+        serviceProvider.GetRequiredService<IMemoryCache>());
+
+    return cacheService;
+});
+
 
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
