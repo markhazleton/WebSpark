@@ -1,4 +1,4 @@
-﻿using AsyncSpark.HttpGetCall;
+﻿using HttpClientUtility.GetService;
 using WebSpark.Core.Models;
 
 namespace WebSpark.Main.Areas.Async.Controllers;

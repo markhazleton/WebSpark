@@ -1,4 +1,4 @@
-﻿namespace PromptSpark.Utilities
+﻿namespace WebSpark.Main.Utilities
 {
     public class ChatMessage
     {

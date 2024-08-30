@@ -1,0 +1,57 @@
+﻿@model ArtWork
+
+@{
+    ViewBag.Title = "Artwork Details";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4"><i class="bi bi-info-circle-fill"></i> @Model.title</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ImageUrl" alt="@Model.title" class="img-fluid rounded mb-4" />
+        </div>
+        <div class="col-md-6">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th scope="row">Title</th>
+                        <td>@Model.title</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Artist</th>
+                        <td>@Model.artist_title</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Style</th>
+                        <td>@Model.style_title</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Materials</th>
+                        <td>@string.Join(", ", Model.material_titles)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Artist Details</th>
+                        <td>@Model.artist_display</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Date</th>
+                        <td>@Model.date_display</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Dimensions</th>
+                        <td>@Model.dimensions</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Medium</th>
+                        <td>@Model.medium_display</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-arrow-left-circle"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>

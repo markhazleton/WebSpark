@@ -1,0 +1,20 @@
+﻿@model string
+@{
+    ViewData["Title"] = "The Kitchen Sink";
+}
+
+<div class="text-center">
+    <h1 class="display-4">The Kitchen Sink</h1>
+
+    <div class="alert alert-info" role="alert">
+        This is a view of all the UI elements available with Bootstrap 5. 
+    </div>
+</div>
+
+<div class="container-fluid">
+    @Html.Raw(Model)
+</div>
+
+
+
+

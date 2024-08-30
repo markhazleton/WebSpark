@@ -1,5 +1,4 @@
-﻿using AsyncSpark.Models;
-using AsyncSpark.Services;
+﻿using HttpClientUtility.MockService;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using System.Net;

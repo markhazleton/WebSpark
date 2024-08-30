@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Search Artworks by Style";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4"><i class="bi bi-search"></i> Search Artworks by Style</h2>
+
+    <form asp-action="SearchByStyle" method="post" class="mb-4">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="style">Select Style</label>
+            <select class="form-select" name="style" id="style" aria-label="Select an art style">
+                <option selected disabled>Choose a style...</option>
+                <option value="Impressionism">Impressionism</option>
+                <option value="Cubism">Cubism</option>
+                <option value="Renaissance">Renaissance</option>
+                <option value="Abstract">Abstract</option>
+                <option value="Surrealism">Surrealism</option>
+            </select>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    @if (Model != null)
+    {
+        <hr />
+        <h3>Search Results</h3>
+        <partial name="ArtList" model="@Model" />
+    }
+</div>

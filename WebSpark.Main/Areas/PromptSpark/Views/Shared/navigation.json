@@ -1,0 +1,10 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Explore Sparks",
+      "url": "/PromptSpark/Chat"
+    }
+
+  ]
+}
+

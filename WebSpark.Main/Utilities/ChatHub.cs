@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace PromptSpark.Utilities;
+namespace WebSpark.Main.Utilities;
 public class ChatHub : Hub
 {
     public async Task SendMessage(string user, string message)

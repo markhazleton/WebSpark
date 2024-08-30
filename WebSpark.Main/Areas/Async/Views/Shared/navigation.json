@@ -12,8 +12,14 @@
       "text": "Open Weather",
       "url": "/Async/OpenWeather"
     },
-    { "text": "Joke",
-      "url": "/Async/Joke"}
+    {
+      "text": "Joke",
+      "url": "/Async/Joke"
+    },
+    {
+      "text": "Art Institute",
+      "url": "/Async/ArtInstitute"
+    }
 
   ]
 }

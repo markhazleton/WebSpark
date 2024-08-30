@@ -1,99 +1,69 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using HttpClientUtility.MemoryCache;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.Models;
+
 namespace WebSpark.Main.Areas.Async.Controllers;
 
 /// <summary>
 /// OpenWeatherController
 /// </summary>
-/// <param name="logger"></param>
-/// <param name="weatherService"></param>
-/// <param name="cache"></param>
+/// <param name="_logger"></param>
+/// <param name="_weatherClient"></param>
+/// <param name="_cacheManager"></param>
 public class OpenWeatherController(
-    ILogger<HomeController> logger,
-    IOpenWeatherMapClient weatherService,
-    IMemoryCache cache) : AsyncBaseController
+    ILogger<HomeController> _logger,
+    IOpenWeatherMapClient _weatherClient,
+    IMemoryCacheManager _cacheManager) : AsyncBaseController
 {
-    private const string LocationCacheKey = "LocationCacheKey";
-    private readonly ILogger<HomeController> _logger = logger;
+    private const string CurrentWeatherListCacheKey = "CurrentWeatherList";
 
-    private string VerifyLocation(string? location)
+    private List<CurrentWeather> AddCurrentWeatherList(CurrentWeather currentWeather)
     {
-        string? theLocation = location;
-        if (location is null)
+        var theList = GetCurrentWeatherList();
+        if (!theList.Any(w => w.Location?.Name == currentWeather?.Location?.Name))
         {
-            if (cache.TryGetValue(LocationCacheKey, out theLocation))
-            {
-            }
-            else
-            {
-                theLocation = "Dallas";
-            }
+            theList.Add(currentWeather);
+            _cacheManager.Set(CurrentWeatherListCacheKey, theList, 30); // Cache time in minutes
         }
-        cache.Set(LocationCacheKey, theLocation ?? "Dallas", TimeSpan.FromMinutes(30));
-        return theLocation ?? "Dallas";
+        return theList;
     }
 
     private List<CurrentWeather> GetCurrentWeatherList()
     {
-        if (cache.TryGetValue("CurrentWeatherList", out List<CurrentWeather>? theList))
+        return _cacheManager.Get(CurrentWeatherListCacheKey, () =>
         {
-
-        }
-        else
-        {
-            theList = [];
-        }
-        cache.Set("CurrentWeatherList", theList ?? [], TimeSpan.FromMinutes(30));
-        return theList ?? [];
-    }
-    private List<CurrentWeather> AddCurrentWeatherList(CurrentWeather currentWeather)
-    {
-        List<CurrentWeather>? theList;
-        if (cache.TryGetValue("CurrentWeatherList", out theList))
-        {
-        }
-        else
-        {
-            theList = [];
-        }
-        if (theList.Any(w => w.Location?.Name == currentWeather?.Location?.Name))
-        {
-            // Location is already in list
-        }
-        else
-        {
-            theList.Add(currentWeather);
-        }
-        cache.Set("CurrentWeatherList", theList ?? [], TimeSpan.FromMinutes(30));
-        return theList ?? [];
+            return new List<CurrentWeather>();
+        }, 30); // Cache time in minutes
     }
 
     /// <summary>
-    /// 
+    /// Handles fetching and caching current weather information.
     /// </summary>
-    /// <param name="location"></param>
-    /// <returns></returns>
+    /// <param name="location">Optional location to fetch weather data for. Defaults to "Dallas" if null.</param>
+    /// <returns>An IActionResult representing the view of current weather data.</returns>
     public async Task<IActionResult> Index(string? location = null)
     {
+        location ??= "Dallas";  // Default location if none provided
         var myList = GetCurrentWeatherList();
-        string theLocation = VerifyLocation(location);
 
-        if (myList.Where(w => w.Location?.Name == theLocation).Any())
+        if (myList.Any(w => w.Location?.Name == location))
         {
-            _logger.LogInformation("Location {theLocation} is already in the list", theLocation);
+            _logger.LogInformation("Location {location} is already in the list", location);
         }
         else
         {
-            CurrentWeather conditions = await weatherService.GetCurrentWeatherAsync(theLocation);
+            var conditions = await _weatherClient.GetCurrentWeatherAsync(location);
             if (!conditions.Success)
             {
-                conditions.ErrorMessage = $"{conditions.ErrorMessage} received for location:{theLocation}";
+                conditions.ErrorMessage = $"{conditions.ErrorMessage} received for location: {location}";
                 _logger.LogError(conditions.ErrorMessage);
+            }
+            else
+            {
+                _logger.LogInformation("Successfully retrieved weather data for {location}", location);
             }
             myList = AddCurrentWeatherList(conditions);
         }
         return View(myList);
     }
-
 }

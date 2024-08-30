@@ -1,11 +1,10 @@
 ﻿namespace OpenWeatherMapClient.WeatherService;
 
-public class WeatherServiceCachingDecorator(IOpenWeatherMapClient weatherService, IMemoryCache cache, ILogger<WeatherServiceCachingDecorator> logger) : IOpenWeatherMapClient
+public class WeatherServiceCachingDecorator(
+    IOpenWeatherMapClient _weatherService, 
+    IMemoryCache _cache, 
+    ILogger<WeatherServiceCachingDecorator> _logger) : IOpenWeatherMapClient
 {
-    private readonly IMemoryCache _cache = cache;
-    private readonly IOpenWeatherMapClient _innerWeatherService = weatherService;
-    private readonly ILogger<WeatherServiceCachingDecorator> _logger = logger;
-
     public async Task<CurrentWeather> GetCurrentWeatherAsync(string location)
     {
         string cacheKey = $"WeatherConditions::{location}";
@@ -16,7 +15,7 @@ public class WeatherServiceCachingDecorator(IOpenWeatherMapClient weatherService
         }
         else
         {
-            currentWeather = await _innerWeatherService.GetCurrentWeatherAsync(location);
+            currentWeather = await _weatherService.GetCurrentWeatherAsync(location);
             if (currentWeather.Success)
             {
                 if (location.Equals(currentWeather?.Location?.Name?.ToLower(), StringComparison.CurrentCultureIgnoreCase))
@@ -40,10 +39,9 @@ public class WeatherServiceCachingDecorator(IOpenWeatherMapClient weatherService
         }
         else
         {
-            var locationForecast = await _innerWeatherService.GetForecastAsync(location);
+            var locationForecast = await _weatherService.GetForecastAsync(location);
             _cache.Set(cacheKey, locationForecast, TimeSpan.FromMinutes(30));
             return locationForecast;
-
         }
     }
 }

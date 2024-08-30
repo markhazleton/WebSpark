@@ -1,0 +1,282 @@
+﻿@model CsvViewModel
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="card-title mb-0"><i class="bi bi-lightning"></i> Data Spark - CSV File Analysis</h5>
+    </div>
+    <div class="card-body">
+
+        <!-- Overview Section -->
+        <div class="mb-4 p-3 bg-light rounded shadow-sm">
+            <h6 class="mb-2"><i class="bi bi-info-circle"></i> Data Overview</h6>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Table Name:</strong> @Model.FileName</li>
+                <li class="list-group-item"><strong>Number of Columns:</strong> @Model.ColumnCount</li>
+                <li class="list-group-item"><strong>Number of Rows:</strong> @Model.RowCount </li>
+            </ul>
+        </div>
+
+        <h6 class="mb-3"><i class="bi bi-table"></i> Head (First 5 Rows)</h6>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        @foreach (var column in Model.Head.Columns)
+                        {
+                            <th>@column.Name</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Head.Rows)
+                    {
+                        <tr>
+                            @foreach (var value in row)
+                            {
+                                <td>@value</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <h6 class="mt-4 mb-3"><i class="bi bi-graph-up"></i> Info</h6>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        @foreach (var column in Model.Info.Columns)
+                        {
+                            <th>@column.Name</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Info.Rows)
+                    {
+                        <tr>
+                            @foreach (var value in row)
+                            {
+                                <td>@value</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <h6 class="mt-4 mb-3"><i class="bi bi-graph-up"></i> Statistics</h6>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        @foreach (var column in Model.Description.Columns)
+                        {
+                            <th>@column.Name</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Description.Rows)
+                    {
+                        <tr>
+                            @foreach (var value in row)
+                            {
+                                <td>@value</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="mt-5 mb-4">
+
+        <h6 class="mt-4 mb-3"><i class="bi bi-info-circle"></i> Column Details</h6>
+        <div class="accordion" id="columnAnalysisAccordion">
+            @foreach (var column in Model.ColumnDetails)
+            {
+                // Get analysis summary for each column using column.Observations list of string 
+                var analysisSummary = string.Join(", ", column.Observations);
+                var columnId = column.Column.Replace(" ", "_");
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading-@columnId">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@columnId" aria-expanded="false" aria-controls="collapse-@columnId">
+                            <div>
+                                <strong>@column.Column</strong>
+                                <div class="small text-muted">@analysisSummary</div> <!-- Display summary as small text under column name -->
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapse-@columnId" class="accordion-collapse collapse" aria-labelledby="heading-@columnId" data-bs-parent="#columnAnalysisAccordion">
+                        <div class="accordion-body">
+                            <h6>Column Data</h6>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>Type</th>
+                                        <td>@column.Type</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Non-Null Count</th>
+                                        <td>@column.NonNullCount</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Null Count</th>
+                                        <td>@column.NullCount</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Unique Count</th>
+                                        <td>@column.UniqueCount</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Most Common Value</th>
+                                        <td>@column.MostCommonValue</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Min</th>
+                                        <td>@column.Min</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Max</th>
+                                        <td>@column.Max</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Mean</th>
+                                        <td>@(double.IsNaN(column.Mean) ? "N/A" : column.Mean.ToString("F2"))</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Standard Deviation</th>
+                                        <td>@(double.IsNaN(column.StandardDeviation) ? "N/A" : column.StandardDeviation.ToString("F2"))</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Skewness</th>
+                                        <td>@(double.IsNaN(column.Skewness) ? "N/A" : column.Skewness.ToString("F2"))</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h6>Analysis Summary</h6>
+                            <p>@analysisSummary</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="container mt-4">
+            <h2 class="mb-3">Bivariate Analysis Results</h2>
+
+            @if (Model.BivariateAnalyses.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Column 1</th>
+                                <th scope="col">Column 2</th>
+                                <th scope="col">Observations</th>
+                                <th scope="col">Visualization Recommendations</th>
+                                <th scope="col">Insight Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var analysis in Model.BivariateAnalyses.OrderByDescending(ba => ba.InsightScore))
+                            {
+                                <tr>
+                                    <td>@analysis.Column1</td>
+                                    <td>@analysis.Column2</td>
+                                    <td>
+                                        <ul class="list-unstyled">
+                                            @foreach (var observation in analysis.Observations)
+                                            {
+                                                <li><i class="bi bi-info-circle-fill me-2 text-primary"></i>@observation</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="list-unstyled">
+                                            @foreach (var recommendation in analysis.VisualizationRecommendations)
+                                            {
+                                                <li><i class="bi bi-bar-chart-fill me-2 text-success"></i>@recommendation</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>@($"{analysis.InsightScore:P0}")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    No bivariate analyses available.
+                </div>
+            }
+
+            <hr class="my-4">
+
+            <div class="bg-light p-4 rounded">
+                <h4 class="mb-3">Understanding Bivariate Analysis in Data Science</h4>
+                <p>
+                    Bivariate analysis is a statistical method used to determine the relationship between two variables. It is one of the simplest forms of quantitative (statistical) analysis. The purpose of bivariate analysis is to understand the strength, direction, and nature of the association between two variables.
+                </p>
+                <p>
+                    In data science, bivariate analysis helps in identifying correlations, patterns, and potential causations between variables. This analysis forms the foundation for building predictive models and making data-driven decisions. Depending on the types of variables (numeric vs. categorical), different statistical tests and visualizations, such as scatter plots, box plots, and heatmaps, are used to explore and present the data insights effectively.
+                </p>
+                <p>
+                    By leveraging bivariate analysis, data scientists can uncover relationships that might be critical in predicting outcomes, understanding customer behaviors, optimizing processes, or any number of other data-driven applications.
+                </p>
+            </div>
+        </div>
+
+        <h5 class="mb-3"><i class="bi bi-book"></i> Data Analysis Attribute Definitions</h5>
+        <p>This section provides definitions and explanations of the column attributes captured during the data analysis. Understanding these concepts will help you interpret and leverage data insights effectively.</p>
+
+        <div class="list-group">
+            <div class="list-group-item">
+                <h6><i class="bi bi-123"></i> Type</h6>
+                <p>The type of data in the column, such as numeric (e.g., integers, floats) or categorical (e.g., strings). Numeric data is suitable for statistical calculations and visualizations like histograms and scatter plots, while categorical data is best represented with bar or pie charts.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-check2-square"></i> Non-Null Count</h6>
+                <p>The number of entries in the column that are not missing (non-null). High non-null counts indicate good data quality, as more complete data generally leads to more reliable analyses.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-exclamation-circle"></i> Null Count</h6>
+                <p>The number of missing values in the column. Missing data can affect the validity of your analysis. Strategies to handle missing data include imputation, deletion, or ignoring depending on the context.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-unique"></i> Unique Count</h6>
+                <p>The number of unique values in the column. This attribute helps identify if the data is categorical, ordinal, or potentially an identifier (like IDs). For instance, high unique counts in a categorical column suggest many levels, which could complicate analysis.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-star"></i> Most Common Value</h6>
+                <p>The most frequently occurring value in the column. This can highlight dominant categories or typical values in numeric data. Understanding the mode of a column can guide expectations and checks for data consistency.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-arrow-down-up"></i> Min and Max</h6>
+                <p>The minimum and maximum values in the column, which define the range. Knowing these limits helps in identifying outliers and understanding the spread of data. Extreme min or max values may indicate potential data entry errors or true outliers.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-calculator"></i> Mean</h6>
+                <p>The average value of the column's data. It provides a central tendency measure, especially useful for normally distributed data. However, the mean can be affected by outliers, which may skew the interpretation.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-bar-chart-line"></i> Standard Deviation</h6>
+                <p>Standard deviation measures the spread of the data around the mean. A higher standard deviation indicates more variability, while a lower one suggests that the data points are close to the mean. Understanding variability helps in assessing the reliability and predictability of the data.</p>
+            </div>
+            <div class="list-group-item">
+                <h6><i class="bi bi-graph-up-arrow"></i> Skewness</h6>
+                <p>Skewness measures the asymmetry of the data distribution. A skewness near zero indicates a symmetric distribution. Positive skewness indicates a longer right tail, while negative skewness indicates a longer left tail. Skewed data can impact statistical analyses that assume normality.</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-end">
+        <a href="@Url.Action("Index", "Csv")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+

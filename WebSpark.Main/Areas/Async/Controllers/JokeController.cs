@@ -3,10 +3,13 @@ using System.Net;
 
 namespace WebSpark.Main.Areas.Async.Controllers;
 
+
 /// <summary>
 /// Controller for handling joke API calls.
 /// </summary>
-public class JokeController(ILogger<JokeController> logger, HttpClientUtility.SendService.IHttpClientSendService getCallService) : AsyncBaseController
+public class JokeController(
+    ILogger<JokeController> logger, 
+    IHttpClientSendService getCallService) : AsyncBaseController
 {
     /// <summary>
     /// Retrieves a random joke from the Joke API.

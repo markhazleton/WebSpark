@@ -25,10 +25,13 @@
     <div class="row">
         <div class="col-md-12">
             <h1 class="display-5 text-center mb-4">
-                <i class="bi bi-cloud-sun-fill text-primary"></i> Open Weather: Efficient Async Data Fetching with Polly and Caching
+                <i class="bi bi-cloud-sun-fill text-primary"></i> Open Weather: Efficient Async Data Fetching with Caching
             </h1>
             <p class="lead text-center">
-                This demo showcases how to use asynchronous programming and caching in .NET 8 to efficiently fetch and display weather data from the OpenWeatherMap API. By leveraging async methods, in-memory caching, and robust error handling, this approach ensures a responsive and reliable user experience.
+                This demo showcases how to use asynchronous programming and caching in .NET 8 
+                to efficiently fetch and display weather data from the OpenWeatherMap API. 
+                By leveraging async methods, in-memory caching, and robust error handling, 
+                this approach ensures a responsive and reliable user experience.
             </p>
         </div>
     </div>
@@ -50,7 +53,7 @@
     </div>
 
     <div class="row">
-        @foreach (var item in @Model)
+        @foreach (var item in @Model.Where(w=>w.Success))
         {
             <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
                 <div class="card mb-4">
@@ -100,33 +103,129 @@
             </div>
         }
     </div>
-
     <div class="row mt-5">
         <div class="col-md-12">
             <h3 class="display-6"><i class="bi bi-info-circle-fill text-info"></i> What This Demo Demonstrates</h3>
             <p>
-                This demo demonstrates the benefits of using asynchronous programming combined with caching to handle data retrieval efficiently in .NET applications. By fetching data asynchronously, the application remains responsive, providing a better user experience even when accessing external services like the OpenWeatherMap API. In-memory caching helps to reduce API call frequency, improve performance, and minimize costs associated with excessive API requests.
+                This demo showcases the integration of asynchronous programming and custom caching strategies in .NET applications, specifically through the use of a custom <strong>MemoryCacheManager</strong> implementation. By utilizing asynchronous data retrieval with caching, the application remains responsive and performs optimally when accessing external services like the OpenWeatherMap API. The <strong>MemoryCacheManager</strong> not only tracks cache keys efficiently but also offers advanced cache management capabilities, such as eviction handling and in-memory locks, ensuring high performance and reduced API call frequency, ultimately lowering costs.
             </p>
+
             <h4><i class="bi bi-check-circle-fill text-success"></i> Key Benefits:</h4>
             <ul class="list-group mb-4">
-                <li class="list-group-item"><i class="bi bi-lightning-fill text-primary"></i> <strong>Improved Performance:</strong> Asynchronous calls prevent blocking the main thread, keeping the application responsive.</li>
-                <li class="list-group-item"><i class="bi bi-save-fill text-warning"></i> <strong>Reduced API Usage:</strong> Caching minimizes unnecessary API calls, saving bandwidth and reducing latency.</li>
-                <li class="list-group-item"><i class="bi bi-shield-fill-exclamation text-danger"></i> <strong>Resilience:</strong> With proper error handling, the application can gracefully manage failed API calls without crashing.</li>
+                <li class="list-group-item">
+                    <i class="bi bi-lightning-fill text-primary"></i>
+                    <strong>Improved Performance:</strong> Asynchronous programming keeps the application responsive by preventing main thread blocking, allowing for smooth user interactions.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-save-fill text-warning"></i>
+                    <strong>Optimized Resource Usage:</strong> The <strong>MemoryCacheManager</strong> minimizes unnecessary API calls, saving bandwidth and reducing latency by efficiently managing cached data.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-shield-fill-exclamation text-danger"></i>
+                    <strong>Enhanced Resilience:</strong> Advanced error handling and in-memory locking capabilities allow the application to gracefully handle failed API calls and race conditions, maintaining stability.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-gear-fill text-secondary"></i>
+                    <strong>Custom Cache Management:</strong> The custom <strong>MemoryCacheManager</strong> provides flexibility in managing cache entries, including setting cache expirations and tracking key existence, which is crucial for maintaining data relevance.
+                </li>
             </ul>
+
+            <h4><i class="bi bi-arrow-right-circle-fill text-primary"></i> Key Code Samples:</h4>
+
+            <h5><i class="bi bi-clipboard-fill text-secondary"></i> Asynchronous Data Retrieval:</h5>
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+public async Task<IActionResult> Index(string? location = null)
+{
+    location ??= "Dallas";  // Default location if none provided
+    var myList = GetCurrentWeatherList();
+
+    if (!myList.Any(w => w.Location?.Name == location))
+    {
+        var conditions = await _weatherClient.GetCurrentWeatherAsync(location);
+        if (!conditions.Success)
+        {
+            conditions.ErrorMessage = $"{conditions.ErrorMessage} received for location: {location}";
+            _logger.LogError(conditions.ErrorMessage);
+        }
+        myList = AddCurrentWeatherList(conditions);
+    }
+    else
+    {
+        _logger.LogInformation("Location {location} is already in the list", location);
+    }
+    return View(myList);
+}
+</code>
+</pre>
+            <p>This code demonstrates the use of asynchronous programming to fetch current weather data without blocking the main thread, providing a seamless user experience.</p>
+
+            <h5><i class="bi bi-clipboard-fill text-secondary"></i> Custom Caching with MemoryCacheManager:</h5>
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+private List<CurrentWeather> GetCurrentWeatherList()
+{
+    return _cacheManager.Get(CurrentWeatherListCacheKey, () =>
+    {
+        return new List<CurrentWeather>();
+    }, 30); // Cache time in minutes
+}
+
+private List<CurrentWeather> AddCurrentWeatherList(CurrentWeather currentWeather)
+{
+    var theList = GetCurrentWeatherList();
+    if (!theList.Any(w => w.Location?.Name == currentWeather?.Location?.Name))
+    {
+        theList.Add(currentWeather);
+        _cacheManager.Set(CurrentWeatherListCacheKey, theList, 30); // Cache time in minutes
+    }
+    return theList;
+}
+</code>
+</pre>
+            <p>These methods illustrate how the custom <strong>MemoryCacheManager</strong> is used to efficiently manage caching of weather data, reducing unnecessary API calls and improving application performance.</p>
+
+            <h5><i class="bi bi-clipboard-fill text-secondary"></i> Combining Async with Polly for Resilience:</h5>
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+public async Task<CurrentWeather> GetWeatherWithRetryAsync(string location)
+{
+    var policy = Policy
+        .Handle<Exception>()
+        .RetryAsync(3, (exception, retryCount) =>
+        {
+            _logger.LogWarning($"Retry {retryCount} for {location} due to {exception.Message}");
+        });
+
+    return await policy.ExecuteAsync(() => _weatherClient.GetCurrentWeatherAsync(location));
+}
+</code>
+</pre>
+            <p>Using Polly with asynchronous methods helps manage retries and transient faults, enhancing the resilience of the application.</p>
 
             <h4><i class="bi bi-arrow-right-circle-fill text-primary"></i> Alternative Approaches:</h4>
             <p>
-                While this demo uses in-memory caching, alternatives include distributed caching solutions like Redis or SQL-based caching for more complex scenarios requiring persistence across multiple servers. Another approach could involve using cloud-native caching solutions such as Azure Cache for Redis, which provides high availability and scalability. Additionally, built-in resilience features in API management tools like Azure API Management can offer similar retry and fault tolerance capabilities.
+                While this demo utilizes an in-memory caching strategy with the <strong>MemoryCacheManager</strong>, other alternatives include distributed caching solutions like Redis or SQL-based caching for scenarios requiring persistence across multiple servers. For cloud environments, solutions like <strong>Azure Cache for Redis</strong> provide high availability, scalability, and integrated security features. Additionally, leveraging built-in resilience features in tools such as <strong>Azure API Management</strong> can further enhance API performance and reliability through retry policies and fault tolerance mechanisms.
             </p>
 
             <h4><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices:</h4>
             <ul class="list-group">
-                <li class="list-group-item"><i class="bi bi-gear-fill text-secondary"></i> <strong>Set Appropriate Cache Expirations:</strong> Ensure cached data remains relevant by setting sensible expiration times.</li>
-                <li class="list-group-item"><i class="bi bi-bar-chart-fill text-info"></i> <strong>Monitor API Usage:</strong> Regularly monitor and adjust caching strategies to optimize performance and cost-efficiency.</li>
-                <li class="list-group-item"><i class="bi bi-diagram-3-fill text-success"></i> <strong>Combine Async and Polly:</strong> Use Polly for retries and circuit breakers to further enhance the resilience of your async operations.</li>
+                <li class="list-group-item">
+                    <i class="bi bi-hourglass-split text-secondary"></i>
+                    <strong>Set Appropriate Cache Expirations:</strong> Define sensible expiration times to keep cached data up-to-date and relevant, avoiding stale information.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-bar-chart-fill text-info"></i>
+                    <strong>Monitor and Optimize Caching Strategies:</strong> Regularly review API usage patterns and adjust caching strategies to maintain performance and cost-efficiency.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-diagram-3-fill text-success"></i>
+                    <strong>Combine Async Operations with Polly:</strong> Utilize Polly to implement retries, circuit breakers, and fallback strategies alongside asynchronous methods to enhance the resilience of your application.
+                </li>
             </ul>
         </div>
     </div>
+
 </div>
 
 <!-- SEO Optimized Meta Description -->

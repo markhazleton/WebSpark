@@ -1,13 +1,21 @@
-using AsyncSpark.HttpGetCall;
 using HttpClientUtility.FullService;
+using HttpClientUtility.GetService;
+using HttpClientUtility.MemoryCache;
 using HttpClientUtility.SendService;
 using HttpClientUtility.StringConverter;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.OpenApi.Models;
+using Microsoft.SemanticKernel;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.WeatherService;
+using PromptSpark.Domain.Data;
+using PromptSpark.Domain.Service;
+using ScottPlot.Statistics;
 using Serilog;
 using WebSpark.Core.Infrastructure.Logging;
+using WebSpark.Main.Areas.DataSpark.Services;
+using WebSpark.Main.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +27,6 @@ builder.Configuration
     .AddUserSecrets<Program>();
 
 LoggingUtility.ConfigureLogging(builder, "WebSparkMain");
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -27,6 +34,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddSingleton<IMemoryCacheManager, MemoryCacheManager>();
+
+var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
+builder.Services.AddDbContext<GPTDbContext>(options =>
+    options.UseSqlite(GPTDbConnectionString));
 
 builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>();
 builder.Services.AddHttpClient("HttpClientService", client =>
@@ -66,6 +78,7 @@ builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
     return withCachingDecorator;
 });
 
+// Register the HttpClientSendService with Decorator Pattern
 builder.Services.AddSingleton(serviceProvider =>
 {
     IHttpClientSendService baseService = new HttpClientSendService(
@@ -91,6 +104,38 @@ builder.Services.AddSingleton(serviceProvider =>
     return cacheService;
 });
 
+// Register the HttpClientFullService with Decorator Pattern
+builder.Services.AddScoped(serviceProvider =>
+{
+    IHttpClientFullService baseService = new HttpClientFullService(
+        serviceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider.GetRequiredService<IStringConverter>()
+    );
+
+    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(
+        baseService);
+
+    return telemetryService;
+});
+
+// Register the OpenAIChatCompletionService
+string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
+string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
+builder.Services.AddOpenAIChatCompletion(modelId, apikey);
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    // Configuring JSON serializer options if needed
+    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+});
+builder.Services.AddSingleton<ChatHistoryStore>();
+builder.Services.AddScoped<IUserPromptService, UserPromptService>();
+builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
+builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();
+builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
+
+// Data Spark services
+builder.Services.AddTransient<CsvProcessingService>();
+
 
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
@@ -107,16 +152,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddScoped(serviceProvider =>
-{
-    IHttpClientFullService baseService = new HttpClientFullService(
-        serviceProvider.GetRequiredService<IHttpClientFactory>(),
-        serviceProvider.GetRequiredService<IStringConverter>()
-    );
-    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(
-        baseService);
-    return telemetryService;
-});
+
 
 var app = builder.Build();
 
@@ -158,9 +194,19 @@ app.UseEndpoints(endpoints =>
         name: "areaRoute",
         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
     );
+
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+        );
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+        );
+
+    endpoints.MapHub<ChatHub>("/chatHub");
+
 });
 
 app.Run();
