@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
-    "datatables.net-bs5": "^2.1.4",
+    "datatables.net-bs5": "^2.1.5",
     "jquery": "^3.7.1",
     "prismjs": "^1.29.0",
     "terser": "^5.31.6"
