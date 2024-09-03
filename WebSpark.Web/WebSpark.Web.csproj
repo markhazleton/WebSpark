@@ -8,6 +8,7 @@
 		<Deterministic>false</Deterministic>
 		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
 		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
+		<UserSecretsId>efeb8dc1-482a-48ce-b6c3-0ed2a1211314</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
