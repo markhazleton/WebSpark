@@ -11,7 +11,7 @@ public class CsvViewModel
     public string Message { get; set; }
     public string FileName { get; set; }
     public string FilePath { get; set; }
-    public long RowCount { get; set; }     
+    public long RowCount { get; set; }
     public int ColumnCount { get; set; }
     public DataFrame Info { get; internal set; } = new();
 }

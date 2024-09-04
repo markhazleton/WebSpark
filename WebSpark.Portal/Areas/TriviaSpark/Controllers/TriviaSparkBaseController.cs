@@ -3,11 +3,8 @@
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 
 /// <summary>
-/// RecipeBaseController 
+/// TriviaSparkBaseController 
 /// </summary>
-/// <remarks>
-/// RecipeBaseController Constructor
-/// </remarks>
 [Area("TriviaSpark")]
 public class TriviaSparkBaseController() : Controller
 {
