@@ -3,7 +3,7 @@ using PromptSpark.Domain.Service;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 
-[Area("PromptSpark")]
+[Authorize]
 public class ResponsesController(IResponseService responseService) : PromptSparkBaseController
 {
 

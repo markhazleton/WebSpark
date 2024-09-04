@@ -31,26 +31,50 @@
                     <ul class="navbar-nav nav-pills">
                         @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
                         {
+                            // Attempt to get the "role" property
+                            string role = "anonymous"; // Default value
+                            if (item.TryGetProperty("role", out var roleElement))
+                            {
+                                role = roleElement.GetString();
+                            }
                             var url = item.GetProperty("url").GetString();
                             var text = item.GetProperty("text").GetString();
                             var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
 
-                            @if (isActive)
+                            if (role == "admin" && User.Identity.IsAuthenticated)
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="@url">@text</a>
-                                </li>
+                                @if (isActive)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="@url">@text</a>
+                                    </li>
 
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="@url">@text</a>
+                                    </li>
+
+                                }
                             }
-                            else
+                            if (role == "anonymous")
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link " href="@url">@text</a>
-                                </li>
+                                @if (isActive)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="@url">@text</a>
+                                    </li>
 
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link " href="@url">@text</a>
+                                    </li>
+
+                                }
                             }
-
-
                         }
                     </ul>
                 </div>

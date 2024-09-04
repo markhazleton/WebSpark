@@ -1,22 +1,27 @@
 ﻿{
   "menuItems": [
     {
+      "role": "anonymous",
       "text": "Explore Sparks",
       "url": "/PromptSpark/Chat"
     },
     {
+      "role": "admin",
       "text": "Core Sparks",
       "url": "/PromptSpark/DefinitionTypes"
     },
     {
+      "role": "admin",
       "text": "Spark Variants",
       "url": "/PromptSpark/Definitions"
     },
     {
+      "role": "admin",
       "text": "UserPrompts",
       "url": "/PromptSpark/UserPrompts"
     },
     {
+      "role": "admin",
       "text": "Responses",
       "url": "/PromptSpark/Responses"
     }

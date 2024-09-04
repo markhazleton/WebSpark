@@ -1,11 +1,12 @@
-﻿@model DefinitionTypeDto
+﻿@using PromptSpark.Domain.Models
+@model DefinitionTypeDto
 
 @{
     ViewData["Title"] = "Core Spark";
-    int SelectedPromptId = Model.CurrentUserPromptId;
-    var text = "";
-    var displayText = "";
+    var definitionType = Model.DefinitionType;
+    var userPrompt = Model.Prompts.FirstOrDefault(w => w.UserPromptId == Model.CurrentUserPromptId);
 }
+
 <span class="badge rounded-pill bg-primary">Core Spark (@Model.DefinitionType)</span>
 <div class="row">
     <div class="col-8">
@@ -13,95 +14,51 @@
         <p>@Model.Description</p>
     </div>
     <div class="col-4">
-        <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+        <a class="btn btn-secondary" asp-action="Index">Back to Core Sparks</a>
     </div>
 </div>
 
-<span class="badge rounded-pill bg-primary">Variants for the Core Spark (@Model.DefinitionType)</span>
-<div class="row">
-    @foreach (var item in Model.Definitions)
-    {
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-            <div class="card">
-                <div class="card-header bg-secondary-subtle">
-                    <h5 class="card-title">@item.Name</h5>
-                </div>
-                <div class="card-body" style="background-color: transparent;">
-                    <p class="card-text">@item.Description</p>
-                </div>
-                <div class="card-footer" style="background-color: transparent;">
-                    <a class="btn btn-success" asp-action="Index" asp-controller="ChatCompletion" asp-area="PromptSpark" asp-route-id="@item.DefinitionId">Chat</a>
-                </div>
-            </div>
-        </div>
-    }
-</div>
-
-
-<span class="badge rounded-pill bg-primary">Select User Prompt for the Core Spark (@Model.DefinitionType) To View Responses</span>
-<select id="chatDropdown" class="form-control">
-    @foreach (var item in Model.Prompts)
-    {
-        if (item.UserPrompt.Length > 60)
+@if (Model.CurrentUserPromptId == 0)
+{
+    <span class="badge rounded-pill bg-primary">User Prompts for the Core Spark (@Model.DefinitionType)</span>
+    <ul class="list-group">
+        @foreach (var item in Model.Prompts)
         {
-            text = item.UserPrompt;
-            displayText = text.Substring(0, 60) + "...";
-        }
-        else
-        {
-            text = item.UserPrompt;
-            displayText = item.UserPrompt;
-        }
+            var displayText = item.UserPrompt.Length > 120 ? item.UserPrompt.Substring(0, 120) + "..." : item.UserPrompt;
 
-        if (!string.IsNullOrEmpty(item.UserPrompt))
-        {
-            if (item.UserPromptId == SelectedPromptId)
-            {
-                <option value="@item.UserPromptId" selected>@Html.Raw(displayText)</option>
-            }
-            else
-            {
-                <option value="@item.UserPromptId">@Html.Raw(displayText)</option>
-            }
+            <li class="list-group-item">
+                <a href="/PromptSpark/Chat/Details/@definitionType?UserPromptId=@item.UserPromptId" class="text-decoration-none">
+                    @displayText
+                </a>
+            </li>
         }
-    }
-</select>
-<hr />
+    </ul>
 
-<div id="chatDetails"></div>
+    
+}
+else
+{
+    @await Html.PartialAsync("_UserPromptDetail", userPrompt)
+
+
+    <div class="col-4">
+        <a class="btn btn-secondary" href="/promptspark/chat/details/@Model.DefinitionType">Back to Prompts</a>
+    </div>
+
+}
+
+
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl, { html: true })
             });
             var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
                 return new bootstrap.Popover(popoverTriggerEl);
             });
-            var dropdown = document.getElementById('chatDropdown');
-            dropdown.addEventListener('change', function () {
-                var selectedPrompt = this.value;
-                if (selectedPrompt) {
-                    fetch('@Url.Action("GetChatDetails", "Chat")?id=' + encodeURIComponent(selectedPrompt))
-                        .then(response => response.text())
-                        .then(html => {
-                            // Set the innerHTML of the chatDetails container to the fetched HTML
-                            var container = document.getElementById('chatDetails');
-                            container.innerHTML = html;
-
-                            // Initialize all popovers within the newly added content
-                            var popoverTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="popover"]'));
-                            popoverTriggerList.forEach(function (popoverTriggerEl) {
-                                new bootstrap.Popover(popoverTriggerEl);
-                            });
-                        })
-                        .catch(error => console.error('Error loading the chat details:', error));
-                }
-            });
-            // Trigger change event on page load
-            dropdown.dispatchEvent(new Event('change'));
         });
     </script>
 }

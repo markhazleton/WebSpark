@@ -64,10 +64,7 @@ public class ChatController(IGPTService service,
         definitionType.CurrentUserPromptId = definitionType
             .Prompts.Where(w => w.UserPromptId == UserPromptId)
             .FirstOrDefault()?.UserPromptId ?? 0;
-        if (definitionType.CurrentUserPromptId == 0)
-        {
-            definitionType.CurrentUserPromptId = definitionType.Prompts.FirstOrDefault()?.UserPromptId ?? 0;
-        }
+  
         return View(definitionType);
     }
 }
