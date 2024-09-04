@@ -32,12 +32,14 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
+		<PackageReference Include="MimeKit" Version="4.7.1" />
 		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
 		<PackageReference Include="ReverseMarkdown" Version="4.6.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
+		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -11,14 +11,12 @@ using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
-using ScottPlot.Statistics;
 using Serilog;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Main.Areas.DataSpark.Services;
 using WebSpark.Main.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Configure services
 builder.Configuration
     .AddEnvironmentVariables()

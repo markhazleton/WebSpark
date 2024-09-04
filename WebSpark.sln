@@ -23,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.SharedKernel", "We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromptSpark.Domain", "PromptSpark.Domain\PromptSpark.Domain.csproj", "{7A6C8941-FBF9-487C-88EB-3D4965881B7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSpark.Main", "WebSpark.Main\WebSpark.Main.csproj", "{14AE6E12-66E5-4660-9124-4B2C76633267}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWeatherMapClient", "OpenWeatherMapClient\OpenWeatherMapClient.csproj", "{32C4C6A4-1846-47DD-890D-96953AE283E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClientCrawler", "HttpClientCrawler\HttpClientCrawler.csproj", "{6308CBE4-3388-4FA1-95CC-0AC1F1216204}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,14 +69,14 @@ Global
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{14AE6E12-66E5-4660-9124-4B2C76633267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{14AE6E12-66E5-4660-9124-4B2C76633267}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{14AE6E12-66E5-4660-9124-4B2C76633267}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{14AE6E12-66E5-4660-9124-4B2C76633267}.Release|Any CPU.Build.0 = Release|Any CPU
 		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32C4C6A4-1846-47DD-890D-96953AE283E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +90,7 @@ Global
 		{2D0F6727-B391-4EFA-9C7E-FC3B0A2F1198} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{32C4C6A4-1846-47DD-890D-96953AE283E0} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{6308CBE4-3388-4FA1-95CC-0AC1F1216204} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}

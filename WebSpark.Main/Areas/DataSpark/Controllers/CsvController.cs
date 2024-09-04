@@ -4,7 +4,7 @@ using WebSpark.Main.Areas.DataSpark.Services;
 namespace WebSpark.Main.Areas.DataSpark.Controllers
 {
     public class CsvController(
-        IConfiguration configuration, 
+        IConfiguration configuration,
         CsvProcessingService csvProcessingService) : DataSparkBaseController
     {
         [HttpGet]

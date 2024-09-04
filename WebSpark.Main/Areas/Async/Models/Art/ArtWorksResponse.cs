@@ -1,5 +1,4 @@
-﻿using WebSpark.Main.Areas.Async.Controllers;
-
+﻿
 namespace WebSpark.Main.Areas.Async.Models.Art;
 
 public class ArtWorksResponse

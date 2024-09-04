@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Select Column for Analysis";
+}
+
+<h2>Select Column for Analysis</h2>
+
+<form asp-action="AnalyzeColumn" method="post">
+    <div class="form-group">
+        <label for="column">Choose a column:</label>
+        <select id="column" name="column" class="form-control">
+            @foreach (var col in ViewBag.Columns)
+            {
+                <option value="@col">@col</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Analyze</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Message
+    </div>
+}

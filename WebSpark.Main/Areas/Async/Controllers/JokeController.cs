@@ -8,7 +8,7 @@ namespace WebSpark.Main.Areas.Async.Controllers;
 /// Controller for handling joke API calls.
 /// </summary>
 public class JokeController(
-    ILogger<JokeController> logger, 
+    ILogger<JokeController> logger,
     IHttpClientSendService getCallService) : AsyncBaseController
 {
     /// <summary>

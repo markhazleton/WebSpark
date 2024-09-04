@@ -1,0 +1,236 @@
+﻿@using OpenWeatherMapClient.Models
+@model List<CurrentWeather>
+@{
+    ViewData["Title"] = "Open Weather - Asynchronous Data Fetching with Caching";
+}
+
+<style>
+    .iframe-container {
+        overflow: hidden;
+        padding-top: 56.25%;
+        position: relative;
+    }
+
+        .iframe-container iframe {
+            border: 0;
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+</style>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="display-5 text-center mb-4">
+                <i class="bi bi-cloud-sun-fill text-primary"></i> Open Weather: Efficient Async Data Fetching with Caching
+            </h1>
+            <p class="lead text-center">
+                This demo showcases how to use asynchronous programming and caching in .NET 8 
+                to efficiently fetch and display weather data from the OpenWeatherMap API. 
+                By leveraging async methods, in-memory caching, and robust error handling, 
+                this approach ensures a responsive and reliable user experience.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card-body">
+            <form method="get">
+                <div class="mb-3">
+                    <label for="weatherCity" class="form-label font-weight-bold">Get Weather</label>
+                    <div class="input-group">
+                        <input id="weatherCity" name="location" class="form-control" type="text" placeholder="City name" />
+                        <button type="submit" id="getWeather" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Get
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var item in @Model.Where(w=>w.Success))
+        {
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                <div class="card mb-4">
+                    @if (@item.Success)
+                    {
+                        <div class="card-header text-white bg-primary">
+                            <i class="bi bi-geo-alt-fill"></i> Weather for @item.Location.Name
+                        </div>
+                        <div class="card-body">
+                            <div class="iframe-container mb-3">
+                                <iframe loading="lazy" frameborder="0" src="https://www.bing.com/maps/embed?h=280&w=625&cp=@item.Location.Latitude~@item.Location.Longitude&lvl=11&typ=d&sty=r&src=SHELL&FORM=MBEDV8" scrolling="no"></iframe>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted"><i class="bi bi-clock"></i> Observed at @item.ObservationTime</h6>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-thermometer-half"></i> Temperature</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.Temperature.ToString("#0.0") &deg; F</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-droplet-half"></i> Humidity</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.Humidity.ToString("#0.0") %</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-wind"></i> Wind</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.WindDirection.Abbreviation @item.CurrentConditions.WindSpeed.ToString("#0.0") mph</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 font-weight-bold text-left"><i class="bi bi-cloud"></i> Conditions</div>
+                                <div class="col-sm-6 text-right">@item.CurrentConditions.Conditions</div>
+                            </div>
+
+                            <p class="text-muted text-center mt-3">
+                                <i class="bi bi-clock-history"></i> Fetch time: @item.FetchTime | <strong>Time Since Fetch: @item.ObservationAge </strong>
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card-header text-white bg-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i> @item.ErrorMessage
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3 class="display-6"><i class="bi bi-info-circle-fill text-info"></i> What This Demo Demonstrates</h3>
+            <p>
+                This demo showcases the integration of asynchronous programming and custom caching strategies in .NET applications, specifically through the use of a custom <strong>MemoryCacheManager</strong> implementation. By utilizing asynchronous data retrieval with caching, the application remains responsive and performs optimally when accessing external services like the OpenWeatherMap API. The <strong>MemoryCacheManager</strong> not only tracks cache keys efficiently but also offers advanced cache management capabilities, such as eviction handling and in-memory locks, ensuring high performance and reduced API call frequency, ultimately lowering costs.
+            </p>
+
+            <h4><i class="bi bi-check-circle-fill text-success"></i> Key Benefits:</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item">
+                    <i class="bi bi-lightning-fill text-primary"></i>
+                    <strong>Improved Performance:</strong> Asynchronous programming keeps the application responsive by preventing main thread blocking, allowing for smooth user interactions.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-save-fill text-warning"></i>
+                    <strong>Optimized Resource Usage:</strong> The <strong>MemoryCacheManager</strong> minimizes unnecessary API calls, saving bandwidth and reducing latency by efficiently managing cached data.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-shield-fill-exclamation text-danger"></i>
+                    <strong>Enhanced Resilience:</strong> Advanced error handling and in-memory locking capabilities allow the application to gracefully handle failed API calls and race conditions, maintaining stability.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-gear-fill text-secondary"></i>
+                    <strong>Custom Cache Management:</strong> The custom <strong>MemoryCacheManager</strong> provides flexibility in managing cache entries, including setting cache expirations and tracking key existence, which is crucial for maintaining data relevance.
+                </li>
+            </ul>
+
+            <h4><i class="bi bi-arrow-right-circle-fill text-primary"></i> Key Code Samples:</h4>
+
+            <h5><i class="bi bi-clipboard-fill text-secondary"></i> Asynchronous Data Retrieval:</h5>
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+public async Task<IActionResult> Index(string? location = null)
+{
+    location ??= "Dallas";  // Default location if none provided
+    var myList = GetCurrentWeatherList();
+
+    if (!myList.Any(w => w.Location?.Name == location))
+    {
+        var conditions = await _weatherClient.GetCurrentWeatherAsync(location);
+        if (!conditions.Success)
+        {
+            conditions.ErrorMessage = $"{conditions.ErrorMessage} received for location: {location}";
+            _logger.LogError(conditions.ErrorMessage);
+        }
+        myList = AddCurrentWeatherList(conditions);
+    }
+    else
+    {
+        _logger.LogInformation("Location {location} is already in the list", location);
+    }
+    return View(myList);
+}
+</code>
+</pre>
+            <p>This code demonstrates the use of asynchronous programming to fetch current weather data without blocking the main thread, providing a seamless user experience.</p>
+
+            <h5><i class="bi bi-clipboard-fill text-secondary"></i> Custom Caching with MemoryCacheManager:</h5>
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+private List<CurrentWeather> GetCurrentWeatherList()
+{
+    return _cacheManager.Get(CurrentWeatherListCacheKey, () =>
+    {
+        return new List<CurrentWeather>();
+    }, 30); // Cache time in minutes
+}
+
+private List<CurrentWeather> AddCurrentWeatherList(CurrentWeather currentWeather)
+{
+    var theList = GetCurrentWeatherList();
+    if (!theList.Any(w => w.Location?.Name == currentWeather?.Location?.Name))
+    {
+        theList.Add(currentWeather);
+        _cacheManager.Set(CurrentWeatherListCacheKey, theList, 30); // Cache time in minutes
+    }
+    return theList;
+}
+</code>
+</pre>
+            <p>These methods illustrate how the custom <strong>MemoryCacheManager</strong> is used to efficiently manage caching of weather data, reducing unnecessary API calls and improving application performance.</p>
+
+            <h5><i class="bi bi-clipboard-fill text-secondary"></i> Combining Async with Polly for Resilience:</h5>
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+public async Task<CurrentWeather> GetWeatherWithRetryAsync(string location)
+{
+    var policy = Policy
+        .Handle<Exception>()
+        .RetryAsync(3, (exception, retryCount) =>
+        {
+            _logger.LogWarning($"Retry {retryCount} for {location} due to {exception.Message}");
+        });
+
+    return await policy.ExecuteAsync(() => _weatherClient.GetCurrentWeatherAsync(location));
+}
+</code>
+</pre>
+            <p>Using Polly with asynchronous methods helps manage retries and transient faults, enhancing the resilience of the application.</p>
+
+            <h4><i class="bi bi-arrow-right-circle-fill text-primary"></i> Alternative Approaches:</h4>
+            <p>
+                While this demo utilizes an in-memory caching strategy with the <strong>MemoryCacheManager</strong>, other alternatives include distributed caching solutions like Redis or SQL-based caching for scenarios requiring persistence across multiple servers. For cloud environments, solutions like <strong>Azure Cache for Redis</strong> provide high availability, scalability, and integrated security features. Additionally, leveraging built-in resilience features in tools such as <strong>Azure API Management</strong> can further enhance API performance and reliability through retry policies and fault tolerance mechanisms.
+            </p>
+
+            <h4><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices:</h4>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <i class="bi bi-hourglass-split text-secondary"></i>
+                    <strong>Set Appropriate Cache Expirations:</strong> Define sensible expiration times to keep cached data up-to-date and relevant, avoiding stale information.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-bar-chart-fill text-info"></i>
+                    <strong>Monitor and Optimize Caching Strategies:</strong> Regularly review API usage patterns and adjust caching strategies to maintain performance and cost-efficiency.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-diagram-3-fill text-success"></i>
+                    <strong>Combine Async Operations with Polly:</strong> Utilize Polly to implement retries, circuit breakers, and fallback strategies alongside asynchronous methods to enhance the resilience of your application.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!-- SEO Optimized Meta Description -->
+@section Scripts {
+    <script>
+        document.querySelector('meta[name="description"]').setAttribute("content", "Explore the benefits of asynchronous data fetching with caching in .NET 8 using the OpenWeatherMap API. Learn how async programming, in-memory caching, and error handling can enhance performance, reduce API calls, and improve user experience.");
+    </script>
+}

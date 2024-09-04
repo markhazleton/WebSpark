@@ -1,6 +1,12 @@
 using HttpClientUtility.FullService;
+using HttpClientUtility.GetService;
+using HttpClientUtility.MemoryCache;
+using HttpClientUtility.SendService;
 using HttpClientUtility.StringConverter;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.SemanticKernel;
+using OpenWeatherMapClient.Interfaces;
+using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using Serilog;
@@ -10,6 +16,7 @@ using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
+using WebSpark.Portal.Areas.DataSpark.Services;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
 
@@ -22,7 +29,6 @@ builder.Configuration
     .AddUserSecrets<Program>();
 
 LoggingUtility.ConfigureLogging(builder, "WebSparkPortal");
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -30,6 +36,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddSingleton<IMemoryCacheManager, MemoryCacheManager>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
 builder.Services.AddDbContext<WebSparkUserContext>(options =>
@@ -40,8 +48,6 @@ builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
         .AddDefaultUI()
         .AddDefaultTokenProviders()
         .AddUserManager<ApplicationUserManager>();
-
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
 builder.Services.AddDbContext<WebSparkDbContext>(options =>
@@ -74,6 +80,75 @@ builder.Services.AddScoped(serviceProvider =>
 
     return telemetryService;
 });
+// Register the HttpGetCallService with Decorator Pattern
+builder.Services.AddScoped(serviceProvider =>
+{
+    var logger = serviceProvider.GetRequiredService<ILogger<HttpGetCallService>>();
+    var telemetryLogger = serviceProvider.GetRequiredService<ILogger<HttpGetCallServiceTelemetry>>();
+    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+    IHttpGetCallService baseService = new HttpGetCallService(logger, httpClientFactory);
+    IHttpGetCallService telemetryService = new HttpGetCallServiceTelemetry(telemetryLogger, baseService);
+    return telemetryService;
+});
+
+
+// Register the OpenWeatherMapClient with Decorator Pattern
+builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
+{
+    string apiKey = builder.Configuration["OpenWeatherMapApiKey"] ?? "KEYMISSING";
+    var logger = serviceProvider.GetRequiredService<ILogger<WeatherServiceClient>>();
+    var loggerLogging = serviceProvider.GetRequiredService<ILogger<WeatherServiceLoggingDecorator>>();
+    var loggerCaching = serviceProvider.GetRequiredService<ILogger<WeatherServiceCachingDecorator>>();
+    var memoryCache = serviceProvider.GetRequiredService<IMemoryCache>();
+    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+
+    IOpenWeatherMapClient concreteService = new WeatherServiceClient(apiKey, httpClientFactory, logger);
+    IOpenWeatherMapClient withLoggingDecorator = new WeatherServiceLoggingDecorator(concreteService, loggerLogging);
+    IOpenWeatherMapClient withCachingDecorator = new WeatherServiceCachingDecorator(withLoggingDecorator, memoryCache, loggerCaching);
+    return withCachingDecorator;
+});
+
+// Register the HttpClientSendService with Decorator Pattern
+builder.Services.AddSingleton(serviceProvider =>
+{
+    IHttpClientSendService baseService = new HttpClientSendService(
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendService>>(),
+        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
+
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var retryOptions = configuration.GetSection("HttpClientSendPollyOptions").Get<HttpClientSendPollyOptions>();
+    IHttpClientSendService pollyService = new HttpClientSendServicePolly(
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendServicePolly>>(),
+        baseService,
+        retryOptions);
+
+    IHttpClientSendService telemetryService = new HttpClientSendServiceTelemetry(
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceTelemetry>>(),
+        pollyService);
+
+    IHttpClientSendService cacheService = new HttpClientSendServiceCache(
+        telemetryService,
+        serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceCache>>(),
+        serviceProvider.GetRequiredService<IMemoryCache>());
+
+    return cacheService;
+});
+
+// Register the HttpClientFullService with Decorator Pattern
+builder.Services.AddScoped(serviceProvider =>
+{
+    IHttpClientFullService baseService = new HttpClientFullService(
+        serviceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider.GetRequiredService<IStringConverter>()
+    );
+
+    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(
+        baseService);
+
+    return telemetryService;
+});
+
+// Register the OpenAIChatCompletionService
 
 string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
@@ -90,6 +165,8 @@ builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>(
 builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
 builder.Services.AddScoped<IRecipeGPTService, RecipePromptSparkService>();
 builder.Services.AddScoped<IResponseService, ResponseService>();
+// Data Spark services
+builder.Services.AddTransient<CsvProcessingService>();
 
 builder.Services.AddMarkdown();
 builder.Services.AddControllersWithViews();

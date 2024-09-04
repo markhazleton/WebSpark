@@ -1,0 +1,188 @@
+﻿@model HttpClientSendRequest<JokeModel>
+@{
+    ViewData["Title"] = "Joke API - Random Jokes";
+}
+
+<div class="container my-5">
+    <div class="card border-info">
+        <div class="card-header">
+            <h1>
+                <i class="bi bi-emoji-smile text-primary"></i> Here's Your Joke (Category: @Model.ResponseResults?.category)
+            </h1>
+        </div>
+        <div class="card-body">
+            @if (Model.ResponseResults == null || Model.ResponseResults.error)
+            {
+                <p class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> There was an error getting the joke.</p>
+            }
+            else
+            {
+                @if (Model.ResponseResults.type == "single")
+                {
+                    <p class="lead">@Model.ResponseResults.joke</p>
+                }
+                else if (Model.ResponseResults.type == "twopart")
+                {
+                    <dl>
+                        <dt class="font-weight-bold"><i class="bi bi-chat-right-quote"></i> @Model.ResponseResults.setup</dt>
+                        <dd class="text-muted"><i class="bi bi-arrow-right"></i> @Model.ResponseResults.delivery</dd>
+                    </dl>
+                }
+            }
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong><i class="bi bi-stopwatch"></i> API Response Time:</strong> @Model.ElapsedMilliseconds ms
+                </div>
+                <div class="col-md-6">
+                    <strong><i class="bi bi-calendar-event"></i> Completion Date:</strong> @Model.CompletionDate?.ToString("yyyy.MM.dd hh:mm:ss.ffff") 
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <strong><i class="bi bi-link-45deg"></i> Source:</strong> <a href="@Model.RequestPath" target="_blank">@Model.RequestPath</a>
+                </div>
+                <div class="col-md-6">
+                    <strong><i class="bi bi-clock-history"></i> Cache Age:</strong> @Model.ResultAge
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <strong><i class="bi bi-arrow-repeat"></i> Number of Retries:</strong> @Model.Retries
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <strong><i class="bi bi-shield-check"></i> Status Code:</strong> @Model.StatusCode
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Index", "Joke")" class="btn btn-primary">
+                    <i class="bi bi-arrow-clockwise"></i> Get a New Joke
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="display-6"><i class="bi bi-info-circle-fill text-info"></i> Understanding the Joke Controller in the Async Demo Project</h2>
+    <p>
+        The <strong>JokeController</strong> is a critical component of the Async Demo project, designed to demonstrate the use of asynchronous programming in .NET 8 for making external API calls. This controller specifically interacts with the <strong>Joke API</strong> to fetch random jokes, illustrating how to handle external data sources in a non-blocking, efficient manner.
+    </p>
+</div>
+<div class="container mt-5">
+    <h3 class="display-6"><i class="bi bi-graph-up-arrow text-info"></i> Understanding the API Request Metrics</h3>
+    <p>When interacting with external APIs, capturing and understanding request metrics is crucial for monitoring performance, diagnosing issues, and optimizing the user experience. Below are explanations of each metric captured during the Joke API request:</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4><i class="bi bi-stopwatch-fill text-primary"></i> API Response Time</h4>
+            <p>
+                <strong>API Response Time</strong> measures the time it takes for the server to process the request and send back a response. In this example, a response time of <strong>177 ms</strong> indicates a quick response, which is generally desirable for a smooth user experience. Faster response times lead to better application performance and improved user satisfaction.
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <h4><i class="bi bi-calendar2-check-fill text-success"></i> Completion Date</h4>
+            <p>
+                The <strong>Completion Date</strong> (<strong>2024.08.28 08:21:19.9766</strong>) captures the exact date and time when the API call was completed. This timestamp is useful for logging and monitoring purposes, allowing developers to correlate request times with other events or issues in the system.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4><i class="bi bi-link-45deg text-warning"></i> Source</h4>
+            <p>
+                The <strong>Source</strong> (<a href="@Model.RequestPath" target="_blank">@Model.RequestPath</a>) shows the exact URL that was used for the API request. This includes parameters such as joke categories and filters, which define the kind of data requested. Understanding the source URL helps in debugging and verifying that the correct data endpoints are being used.
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <h4><i class="bi bi-clock-history text-danger"></i> Cache Age</h4>
+            <p>
+                The <strong>Cache Age</strong> metric indicates how long the cached result has been stored before being used. A value like <strong>0 days, 0 hours, 0 minutes, 0 seconds</strong> suggests that the response was freshly fetched and not served from cache. This metric helps in understanding caching efficiency and data freshness, which are key for performance optimization.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4><i class="bi bi-arrow-repeat text-info"></i> Number of Retries</h4>
+            <p>
+                <strong>Number of Retries</strong> (<strong>0</strong>) indicates how many times the API call was retried before success. Retries can occur due to transient errors such as network issues. A value of zero means the request was successful on the first attempt, which is ideal. Tracking retries helps identify potential stability issues in external services.
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <h4><i class="bi bi-check-circle-fill text-success"></i> Status Code</h4>
+            <p>
+                The <strong>Status Code</strong> (<strong>OK</strong>) represents the HTTP status of the API request. A status of "OK" (200) indicates that the request was processed successfully without errors. Monitoring status codes is essential for error handling and ensuring that the application responds correctly to various scenarios, including failures or partial successes.
+            </p>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <h2 class="display-6"><i class="bi bi-info-circle-fill text-info"></i> Understanding the Joke Controller in the Async Demo Project</h2>
+    <p>
+        The <strong>JokeController</strong> is a critical component of the Async Demo project, designed to demonstrate the use of asynchronous programming in .NET 8 for making external API calls. This controller specifically interacts with the <strong>Joke API</strong> to fetch random jokes, illustrating how to handle external data sources in a non-blocking, efficient manner.
+    </p>
+    <p>
+        In modern web applications, responsiveness and performance are paramount. The JokeController leverages asynchronous calls through the <code>HttpClient</code> in combination with <code>IHttpClientSendService</code> to fetch data without blocking the main thread. This approach ensures that the application remains responsive, even when waiting for external resources, such as third-party APIs, to return data.
+    </p>
+    <p>
+        The integration of <strong>HttpClientSendRequest&lt;T&gt;</strong> provides a robust model for handling API requests and responses, encapsulating details such as the request path, response status, error handling, retries, and elapsed time for each request. This abstraction not only makes the code more readable and maintainable but also simplifies error handling and response management by centralizing these concerns within a reusable model.
+    </p>
+    <h3><i class="bi bi-puzzle-fill text-warning"></i> Key Features of the JokeController:</h3>
+    <ul class="list-group mb-4">
+        <li class="list-group-item"><i class="bi bi-lightning-fill text-primary"></i> <strong>Asynchronous API Calls:</strong> Demonstrates how to use async/await with HttpClient to fetch data asynchronously, ensuring the application remains responsive.</li>
+        <li class="list-group-item"><i class="bi bi-cloud-check-fill text-success"></i> <strong>Error Handling:</strong> Proper error handling is implemented to log issues and provide user-friendly feedback when the joke data cannot be retrieved.</li>
+        <li class="list-group-item"><i class="bi bi-stopwatch-fill text-info"></i> <strong>Performance Metrics:</strong> Displays response time and other performance metrics, helping developers understand the efficiency of their async operations.</li>
+        <li class="list-group-item"><i class="bi bi-arrow-repeat text-danger"></i> <strong>Retry Logic:</strong> Demonstrates retry mechanisms, crucial for dealing with transient faults in API communication, ensuring that temporary issues do not lead to permanent failures.</li>
+    </ul>
+
+    <h3><i class="bi bi-diagram-3-fill text-secondary"></i> How It Fits into the Async Demo Project:</h3>
+    <p>
+        The Async Demo project is designed to showcase various aspects of asynchronous programming in .NET 8, focusing on practical applications that developers can use in real-world scenarios. The JokeController serves as a practical example of integrating third-party APIs in an async context, highlighting key techniques such as:
+    </p>
+    <ul class="list-group mb-4">
+        <li class="list-group-item"><i class="bi bi-bar-chart-line-fill text-primary"></i> <strong>Optimizing Application Responsiveness:</strong> By using async calls, the controller ensures that fetching jokes from an external API does not block the main application thread, thereby optimizing the user experience.</li>
+        <li class="list-group-item"><i class="bi bi-shield-lock-fill text-warning"></i> <strong>Improving Application Resilience:</strong> The use of retry policies and robust error handling improves the overall resilience of the application, making it better suited to handle the unreliable nature of external services.</li>
+        <li class="list-group-item"><i class="bi bi-layers-fill text-success"></i> <strong>Encapsulation of Request Logic:</strong> By encapsulating request and response handling within the HttpClientSendRequest model, the controller simplifies the management of API interactions, making the codebase more maintainable and easier to extend.</li>
+    </ul>
+
+    <h3><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices Demonstrated:</h3>
+    <ul class="list-group mb-4">
+        <li class="list-group-item"><i class="bi bi-gear-fill text-secondary"></i> <strong>Use of Async/Await:</strong> Shows how to correctly implement async/await for external calls, reducing the likelihood of deadlocks and improving performance.</li>
+        <li class="list-group-item"><i class="bi bi-layout-text-sidebar-reverse text-info"></i> <strong>Separation of Concerns:</strong> The controller separates business logic from view rendering, adhering to MVC principles and enhancing code maintainability.</li>
+        <li class="list-group-item"><i class="bi bi-bar-chart-fill text-primary"></i> <strong>Monitoring and Logging:</strong> Logging performance metrics and errors helps in diagnosing issues and tuning the application's async performance.</li>
+    </ul>
+
+    <p>
+        By exploring the JokeController and its implementation in the Async Demo project, developers can gain valuable insights into how to integrate asynchronous programming patterns effectively in their .NET applications. This controller not only serves as an educational tool but also as a practical example of improving application performance and resilience through modern development practices.
+    </p>
+</div>
+
+<div class="container mt-5">
+    <h3 class="display-6"><i class="bi bi-chat-dots-fill text-primary"></i> About JokeAPI</h3>
+    <p>
+        <strong>JokeAPI</strong> is a RESTful service that provides access to a wide range of jokes from various categories, such as Programming, Miscellaneous, Dark, Pun, and more. The API is highly customizable, allowing users to filter jokes based on criteria such as language, joke type (single or two-part), and even safety filters like NSFW, religious, political, or other sensitive content flags.
+    </p>
+    <p>
+        This API is particularly useful for developers who want to add humor to their applications in a structured and safe manner. JokeAPI supports multiple response formats, including JSON, XML, YAML, and plain text, making it versatile for integration into different types of projects. With a simple GET request, developers can fetch jokes that meet specific needs and preferences, enhancing the user experience in applications.
+    </p>
+    <p>
+        We are using JokeAPI in this demo to highlight how easy it is to integrate third-party APIs with .NET 8, leveraging async/await for non-blocking calls and ensuring that the application remains responsive and efficient. The API's robust error handling and customizable options align well with best practices in modern web development.
+    </p>
+    <p class="text-muted">
+        For more information about JokeAPI and its features, visit their official documentation at <a href="https://v2.jokeapi.dev/" target="_blank">JokeAPI v2</a>. We thank them for providing a fun and engaging way to demonstrate the power of async programming in our project.
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelector('meta[name="description"]').setAttribute("content", "Explore how the JokeController in .NET 8 uses JokeAPI for async API calls. Learn about JokeAPI's features, including joke categories, filters, and integration tips for enhancing your web applications.");
+    </script>
+}

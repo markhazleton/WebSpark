@@ -1,0 +1,26 @@
+﻿{
+  "menuItems": [
+    {
+      "text": "Polly",
+      "url": "/AsyncSpark/Polly"
+    },
+    {
+      "text": "Bulk Calls",
+      "url": "/AsyncSpark/BulkCalls"
+    },
+    {
+      "text": "Open Weather",
+      "url": "/AsyncSpark/OpenWeather"
+    },
+    {
+      "text": "Joke",
+      "url": "/AsyncSpark/Joke"
+    },
+    {
+      "text": "Art Institute",
+      "url": "/AsyncSpark/ArtInstitute"
+    }
+
+  ]
+}
+

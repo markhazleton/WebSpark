@@ -2,6 +2,8 @@
 @{
     int ResponseCount = Model.DefinitionResponses.Count();
     int ResponseIndex = 0;
+    var link = $"/PromptSpark/Chat/Details/{Model.DefinitionType}?UserPromptId={Model.UserPromptId}";
+    var download_link = $"/PromptSpark/Chat/Download/{Model.UserPromptId}";
 }
 @functions {
     public string FormatTimeMS(long timeMs)
@@ -16,13 +18,16 @@
 <div class="row">
     <div class="col-8">
         <dl>
-            <dt>User Prompt</dt>
-            <dd class="text-dark-emphasis">@Model.UserPrompt</dd>
+            <dt><a href="@link" class="card-header-pills">Link to This Prompt</a></dt>
+            <dd class="text-dark-emphasis">
+                @Model.UserPrompt
+            </dd>
             @if (!string.IsNullOrEmpty(Model.UserExpectedResponse))
             {
                 <dt>Expected Response</dt>
                 <dd>@Model.UserExpectedResponse</dd>
             }
+            <dt><a href="@download_link" class="card-header-pills">Download Response</a></dt>
         </dl>
     </div>
     <div class="col-4">
@@ -43,7 +48,7 @@
                 </h2>
                 <div id="collapse@(item.Index)" class="accordion-collapse collapse @(isFirst ? "show" : "")" aria-expanded="@(isFirst ? "true" : "false")" aria-labelledby="heading@(item.Index)">
                     <div class="accordion-body">
-                        <p>@Html.Raw((item.Value.ContentToString()))</p>
+                        @Html.Raw(item.Value.ContentToString())
                     </div>
                     <div class="p-2">
                         <a class="text-warning font-weight-bold" href="#" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover focus" data-bs-placement="right" data-bs-title="@item.Value.GPTName" data-bs-content="@item.Value.ToString()" data-bs-custom-class="custom-popover">
@@ -69,4 +74,4 @@
 <br />
 <br />
 <br />
-<hr/>
+<hr />

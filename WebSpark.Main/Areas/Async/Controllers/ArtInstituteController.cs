@@ -20,7 +20,7 @@ namespace WebSpark.Main.Areas.Async.Controllers
         {
             return View("SearchByStyle");
         }
-        
+
 
         // 1. Search Artworks by Style
         [HttpPost]
@@ -33,7 +33,7 @@ namespace WebSpark.Main.Areas.Async.Controllers
             }
             var searchUrl = $"https://api.artic.edu/api/v1/artworks/search?query[term][is_public_domain]=true&[term][material_titles]=oil paint&limit=20&fields=id,title,image_id,artist_title,material_titles&q={style}";
 
-//            var searchUrl = $"{BaseUrl}/search?query[term][style_title]={style}&limit=20&fields=id,title,image_id,artist_title,material_titles,style_title&q={style}";
+            //            var searchUrl = $"{BaseUrl}/search?query[term][style_title]={style}&limit=20&fields=id,title,image_id,artist_title,material_titles,style_title&q={style}";
             var artListRequest = new HttpClientSendRequest<ArtWorksResponse> { RequestPath = searchUrl };
             artListRequest.CacheDurationMinutes = 60;
             artListRequest.Retries = 1;
