@@ -24,7 +24,7 @@
 		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.8" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.17.2" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.18.2" />
 		<PackageReference Include="Microsoft.Data.Analysis" Version="0.21.1" />
 		<PackageReference Include="ScottPlot" Version="5.0.38" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
