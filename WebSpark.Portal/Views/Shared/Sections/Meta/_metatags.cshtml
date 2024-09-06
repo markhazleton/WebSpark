@@ -1,0 +1,116 @@
+﻿@using System.IO
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
+@{
+    // Retrieve the necessary parts of the URL from the request
+    var request = ViewContext.HttpContext.Request;
+    var scheme = request.Scheme; 
+    var host = request.Host; 
+    var path = request.Path; 
+    var queryString = request.QueryString; 
+
+    // Construct the canonical URL based on the current path
+    var canonicalUrl = $"{scheme}://{host}{path}{queryString}";
+
+
+    // Safely retrieve route data values and handle potential nulls
+    var areaName = ViewContext.RouteData.Values["area"]?.ToString() ?? string.Empty;
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    var idName = ViewContext.RouteData.Values["id"]?.ToString() ?? string.Empty;
+    actionName = actionName == "Index" ? string.Empty : actionName;
+    controllerName = controllerName == "Home" ? string.Empty : controllerName;
+    // Construct the current path based on area, controller, and action
+    var currentPath = !string.IsNullOrEmpty(areaName)
+        ? $"/{areaName}/{controllerName}/{actionName}/{idName}"
+        : $"/{controllerName}/{actionName}/{idName}";
+
+    currentPath = currentPath.Replace("//", "/"); // Remove any double slashes due to empty values
+
+    // Path to the navigation JSON file
+    var jsonFile = !string.IsNullOrEmpty(areaName)
+        ? System.IO.Path.Combine(Environment.ContentRootPath, "Areas", areaName, "Views", "Shared", "navigation.json")
+        : System.IO.Path.Combine(Environment.ContentRootPath, "Views", "Shared", "navigation.json");
+
+    JsonDocument menuItems = null;
+    try
+    {
+        // Check if the JSON file exists
+        if (File.Exists(jsonFile))
+        {
+            string json = File.ReadAllText(jsonFile);
+            try
+            {
+                // Attempt to parse the JSON file
+                menuItems = JsonDocument.Parse(json);
+            }
+            catch (JsonException jsonEx)
+            {
+                // Handle JSON parsing errors
+                Console.WriteLine($"Error parsing JSON: {jsonEx.Message}");
+                menuItems = null; // Set to null if parsing fails
+            }
+        }
+        else
+        {
+            // Log or handle the missing file scenario if needed
+            Console.WriteLine($"JSON file not found: {jsonFile}");
+        }
+    }
+    catch (IOException ioEx)
+    {
+        // Handle errors related to file I/O
+        Console.WriteLine($"Error reading JSON file: {ioEx.Message}");
+    }
+
+    // Initialize meta tags with default values
+    var Title = ViewData["Title"] as string ?? "Default Title";
+    var Description = ViewData["Description"] as string ?? $"The WebSpark {Title} page.";
+
+    // If menu items are available, try to find matching data
+    if (menuItems != null)
+    {
+        try
+        {
+            foreach (var item in menuItems.RootElement.EnumerateArray())
+            {
+                // Safely check for properties and update Title and Description if found
+                if (item.TryGetProperty("url", out var urlProp) && urlProp.GetString() == currentPath)
+                {
+                    if (item.TryGetProperty("title", out var titleProp))
+                    {
+                        Title = titleProp.GetString() ?? Title; // Fallback to existing Title if null
+                    }
+                    if (item.TryGetProperty("description", out var descProp))
+                    {
+                        Description = descProp.GetString() ?? Description; // Fallback to existing Description if null
+                    }
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any unexpected errors when enumerating or accessing properties
+            Console.WriteLine($"Error processing menu items: {ex.Message}");
+        }
+    }
+}
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>@Title - WebSpark</title>
+<meta name="description" content="@Description" />
+<meta name="keywords" content="ASP.NET, Web Development" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Mark Hazleton" />
+<link rel="canonical" href="@canonicalUrl" />
+<meta property="og:title" content="@Title" />
+<meta property="og:description" content="@Description" />
+<meta property="og:image" content="https://webspark.markhazleton.com/image.jpg" />
+<meta property="og:url" content="@canonicalUrl" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="@Title" />
+<meta name="twitter:description" content="@Description" />
+<meta name="twitter:image" content="https://webspark.markhazleton.com/image.jpg" />

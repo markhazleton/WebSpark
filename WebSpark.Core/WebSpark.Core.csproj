@@ -43,10 +43,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Compile Update="Resources\Resource.Designer.cs">
 	    <DependentUpon>Resource.resx</DependentUpon>
 	    <DesignTime>True</DesignTime>

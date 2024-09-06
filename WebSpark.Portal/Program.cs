@@ -12,7 +12,6 @@ using PromptSpark.Domain.Service;
 using Serilog;
 using System.Reflection;
 using WebSpark.Core.Data;
-using WebSpark.Core.Extensions;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
@@ -86,66 +85,7 @@ builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
 // HTTP Clients
 // ========================
 // Base HTTP Client
-builder.Services.AddHttpClient("HttpClientService", client =>
-{
-    client.Timeout = TimeSpan.FromMilliseconds(90000);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.DefaultRequestHeaders.Add("User-Agent", "HttpClientService");
-    client.DefaultRequestHeaders.Add("X-Request-ID", Guid.NewGuid().ToString());
-    client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
-});
-
-// Full Service HTTP Client with Telemetry
-builder.Services.AddScoped(serviceProvider =>
-{
-    IHttpClientFullService baseService = new HttpClientFullService(
-        serviceProvider.GetRequiredService<IHttpClientFactory>(),
-        serviceProvider.GetRequiredService<IStringConverter>());
-
-    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(baseService);
-
-    return telemetryService;
-});
-
-// HTTP Get Call Service with Decorator Pattern
-builder.Services.AddScoped(serviceProvider =>
-{
-    var logger = serviceProvider.GetRequiredService<ILogger<HttpGetCallService>>();
-    var telemetryLogger = serviceProvider.GetRequiredService<ILogger<HttpGetCallServiceTelemetry>>();
-    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
-    IHttpGetCallService baseService = new HttpGetCallService(logger, httpClientFactory);
-    IHttpGetCallService telemetryService = new HttpGetCallServiceTelemetry(telemetryLogger, baseService);
-
-    return telemetryService;
-});
-
-// HTTP Send Service with Decorator Pattern
-builder.Services.AddSingleton(serviceProvider =>
-{
-    IHttpClientSendService baseService = new HttpClientSendService(
-        serviceProvider.GetRequiredService<ILogger<HttpClientSendService>>(),
-        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
-
-    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    var retryOptions = configuration.GetSection("HttpClientSendPollyOptions").Get<HttpClientSendPollyOptions>();
-
-    IHttpClientSendService pollyService = new HttpClientSendServicePolly(
-        serviceProvider.GetRequiredService<ILogger<HttpClientSendServicePolly>>(),
-        baseService,
-        retryOptions);
-
-    IHttpClientSendService telemetryService = new HttpClientSendServiceTelemetry(
-        serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceTelemetry>>(),
-        pollyService);
-
-    IHttpClientSendService cacheService = new HttpClientSendServiceCache(
-        telemetryService,
-        serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceCache>>(),
-        serviceProvider.GetRequiredService<IMemoryCache>());
-
-    return cacheService;
-});
+RegisterHttpClientUtilities(builder);
 
 // ========================
 // OpenWeatherMap Client
@@ -264,3 +204,67 @@ app.UseEndpoints(endpoints =>
 Log.CloseAndFlush();
 
 app.Run();
+
+static void RegisterHttpClientUtilities(WebApplicationBuilder builder)
+{
+    builder.Services.AddHttpClient("HttpClientService", client =>
+    {
+        client.Timeout = TimeSpan.FromMilliseconds(90000);
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+        client.DefaultRequestHeaders.Add("User-Agent", "HttpClientService");
+        client.DefaultRequestHeaders.Add("X-Request-ID", Guid.NewGuid().ToString());
+        client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
+    });
+
+    // Full Service HTTP Client with Telemetry
+    builder.Services.AddScoped(serviceProvider =>
+    {
+        IHttpClientFullService baseService = new HttpClientFullService(
+            serviceProvider.GetRequiredService<IHttpClientFactory>(),
+            serviceProvider.GetRequiredService<IStringConverter>());
+
+        IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(baseService);
+
+        return telemetryService;
+    });
+
+    // HTTP Get Call Service with Decorator Pattern
+    builder.Services.AddScoped(serviceProvider =>
+    {
+        var logger = serviceProvider.GetRequiredService<ILogger<HttpGetCallService>>();
+        var telemetryLogger = serviceProvider.GetRequiredService<ILogger<HttpGetCallServiceTelemetry>>();
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+
+        IHttpGetCallService baseService = new HttpGetCallService(logger, httpClientFactory);
+        IHttpGetCallService telemetryService = new HttpGetCallServiceTelemetry(telemetryLogger, baseService);
+
+        return telemetryService;
+    });
+
+    // HTTP Send Service with Decorator Pattern
+    builder.Services.AddSingleton(serviceProvider =>
+    {
+        IHttpClientSendService baseService = new HttpClientSendService(
+            serviceProvider.GetRequiredService<ILogger<HttpClientSendService>>(),
+            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
+
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var retryOptions = configuration.GetSection("HttpClientSendPollyOptions").Get<HttpClientSendPollyOptions>();
+
+        IHttpClientSendService pollyService = new HttpClientSendServicePolly(
+            serviceProvider.GetRequiredService<ILogger<HttpClientSendServicePolly>>(),
+            baseService,
+            retryOptions);
+
+        IHttpClientSendService telemetryService = new HttpClientSendServiceTelemetry(
+            serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceTelemetry>>(),
+            pollyService);
+
+        IHttpClientSendService cacheService = new HttpClientSendServiceCache(
+            telemetryService,
+            serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceCache>>(),
+            serviceProvider.GetRequiredService<IMemoryCache>());
+
+        return cacheService;
+    });
+}
