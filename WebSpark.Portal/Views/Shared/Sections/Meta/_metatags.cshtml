@@ -1,13 +1,14 @@
 ﻿@using System.IO
 @using System.Text.Json
+@using System.Text.RegularExpressions
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
 @{
     // Retrieve the necessary parts of the URL from the request
     var request = ViewContext.HttpContext.Request;
-    var scheme = request.Scheme; 
-    var host = request.Host; 
-    var path = request.Path; 
-    var queryString = request.QueryString; 
+    var scheme = request.Scheme;
+    var host = request.Host;
+    var path = request.Path;
+    var queryString = request.QueryString;
 
     // Construct the canonical URL based on the current path
     var canonicalUrl = $"{scheme}://{host}{path}{queryString}";
@@ -25,14 +26,14 @@
         ? $"/{areaName}/{controllerName}/{actionName}/{idName}"
         : $"/{controllerName}/{actionName}/{idName}";
 
-    currentPath = currentPath.Replace("//", "/"); // Remove any double slashes due to empty values
+    currentPath = Regex.Replace(currentPath, "/+", "/");
 
     // Path to the navigation JSON file
     var jsonFile = !string.IsNullOrEmpty(areaName)
         ? System.IO.Path.Combine(Environment.ContentRootPath, "Areas", areaName, "Views", "Shared", "navigation.json")
         : System.IO.Path.Combine(Environment.ContentRootPath, "Views", "Shared", "navigation.json");
 
-    JsonDocument menuItems = null;
+    NavigationMenu? menuItems = null; // Initialize as nullable to check for null later
     try
     {
         // Check if the JSON file exists
@@ -42,7 +43,7 @@
             try
             {
                 // Attempt to parse the JSON file
-                menuItems = JsonDocument.Parse(json);
+                menuItems = JsonSerializer.Deserialize<NavigationMenu>(json);
             }
             catch (JsonException jsonEx)
             {
@@ -64,27 +65,22 @@
     }
 
     // Initialize meta tags with default values
-    var Title = ViewData["Title"] as string ?? "Default Title";
+    var Title = ViewData["Title"] as string ?? "WebSpark Page";
     var Description = ViewData["Description"] as string ?? $"The WebSpark {Title} page.";
+    var Keywords = ViewData["Keywords"] as string ?? "ASP.NET, Web Development";
 
     // If menu items are available, try to find matching data
-    if (menuItems != null)
+    if (menuItems != null && menuItems?.MenuItems != null)
     {
         try
         {
-            foreach (var item in menuItems.RootElement.EnumerateArray())
+            foreach (var item in menuItems.MenuItems)
             {
                 // Safely check for properties and update Title and Description if found
-                if (item.TryGetProperty("url", out var urlProp) && urlProp.GetString() == currentPath)
+                if (currentPath.StartsWith(item.Url))
                 {
-                    if (item.TryGetProperty("title", out var titleProp))
-                    {
-                        Title = titleProp.GetString() ?? Title; // Fallback to existing Title if null
-                    }
-                    if (item.TryGetProperty("description", out var descProp))
-                    {
-                        Description = descProp.GetString() ?? Description; // Fallback to existing Description if null
-                    }
+                    Title = item.Text ?? Title; // Fallback to existing Title if null
+                    Description = item.Description ?? Description; // Fallback to existing Description if null
                     break;
                 }
             }
@@ -95,13 +91,17 @@
             Console.WriteLine($"Error processing menu items: {ex.Message}");
         }
     }
+    // ViewData overrides for Title and Description
+    Title = ViewData["Title"] as string ?? Title;
+    Description = ViewData["Description"] as string ?? Description;
+    Keywords = ViewData["Keywords"] as string ?? "ASP.NET, Web Development";
 }
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>@Title - WebSpark</title>
 <meta name="description" content="@Description" />
-<meta name="keywords" content="ASP.NET, Web Development" />
+<meta name="keywords" content="@Keywords" />
 <meta name="robots" content="index, follow" />
 <meta name="author" content="Mark Hazleton" />
 <link rel="canonical" href="@canonicalUrl" />

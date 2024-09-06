@@ -127,7 +127,7 @@
     </dl>
 </div>
 <div>
-    @using (Html.BeginForm("Delete", "Menu", new { id = Model.Id, area = "Admin" }, FormMethod.Post))
+    @using (Html.BeginForm("Delete", "NavigationMenu", new { id = Model.Id, area = "Admin" }, FormMethod.Post))
     {
         <input type="submit" value="Delete" />
     }
