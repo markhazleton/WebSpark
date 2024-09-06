@@ -1,0 +1,70 @@
+﻿@using WebSpark.Portal.Areas.AsyncSpark.Models.Nasa
+@model HttpClientSendRequest<NasaPictureListDto>
+
+@{
+    ViewData["Title"] = "NASA Picture of the Day";
+}
+
+<div class="container my-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white">
+            <h1 class="display-4"><i class="bi bi-star-fill"></i> NASA Picture of the Day</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @if (Model.ResponseResults != null)
+                {
+                    foreach (var item in Model.ResponseResults)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="card-title">@item.Title</h5>
+                                </div>
+                                <a href="@item.HdUrl" target="_blank" class="text-decoration-none">
+                                    <img src="@item.Url" class="card-img-top" alt="@item.Title" style="max-height: 300px; object-fit: cover;">
+                                </a>
+                                <div class="card-body">
+                                    <p class="card-text">@item.Explanation</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <p><strong>API Request Duration:</strong> @Model.ElapsedMilliseconds milliseconds</p>
+            <p><strong>Data Source:</strong> @Model.RequestPath</p>
+            <p><strong>Data Age:</strong> @Model.ResultAge</p>
+        </div>
+    </div>
+
+    <div class="mt-5 p-4 bg-light rounded">
+        <h2>Understanding the NASA API</h2>
+        <p>The NASA API offers developers access to a vast collection of space-related data, including images, videos, and scientific information. The <strong>NASA Picture of the Day</strong> feature, for instance, provides daily images captured by NASA along with detailed explanations, making space exploration accessible to everyone.</p>
+        <p>The <strong>Astronomy Picture of the Day (APOD)</strong> is one of NASA's most popular websites, featuring daily images of space with detailed explanations. This API allows developers to access these images and metadata, making it ideal for applications that repurpose NASA's content. Use parameters like <code>date</code>, <code>start_date</code>, and <code>count</code> to fetch images for specific dates or ranges.</p>
+        <p>Learn more in the <a href="https://github.com/nasa/apod-api" target="_blank">APOD API GitHub repository</a>.</p>
+
+        <h3>How This Controller Demonstrates Efficient API Usage</h3>
+        <p>Our custom controller leverages the <code>IHttpClientSendService</code> to handle API requests efficiently. By caching responses on the server, it reduces redundant calls to NASA's API, thus optimizing performance and reducing load times. This approach not only saves bandwidth but also improves the user experience by delivering cached content instantly when available, demonstrating the power of smart API request management.</p>
+        <pre class="language-csharp">
+            <code class="language-csharp">
+public async Task<IActionResult> Index(CancellationToken ct = default)
+{
+    var apiRequest = new HttpClientSendRequest<NasaPictureListDto>
+    {
+        CacheDurationMinutes = 500,
+        RequestPath = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&count=5"
+    };
+
+    apiRequest = await _service.HttpClientSendAsync(apiRequest, ct).ConfigureAwait(false);
+    ViewBag.ApiResponse = apiRequest.ResponseResults ?? new List<NasaPictureDto>();
+    return View(apiRequest);
+}
+        </code></pre>
+
+        <p>This approach ensures a smooth and responsive user experience by delivering cached content quickly when available, showcasing the efficiency and reliability of <code>IHttpClientSendService</code>.</p>
+    </div>
+</div>
+</div>
