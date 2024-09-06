@@ -2,7 +2,6 @@
 // * * Import variables  * *
 // * * * * * * * * * * * * *
 
-@import "../../../node_modules/bootswatch/dist/materia/_variables";
 @import './variables';
 
 // * * * * * * * * * * *
@@ -17,15 +16,26 @@
 
 // Import Bootstrap variables first to ensure availability to Bootswatch
 @import "../../../node_modules/bootstrap/scss/bootstrap";
-@import "../../../node_modules/bootswatch/dist/materia/bootswatch";
-@import "../../../node_modeule/bootstrap-icons/font/bootstrap-icons.css";
+
+// Import Bootstrap Icons
+@import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";
+
+// Import Font Awesome 
+@import "../../../node_modules/fontawesome-free/css/all"; // Import Font Awesome
 
 // Import DataTables Bootstrap 5 styling
-@import "../../../node_modules/datatables.net-bs5/css/dataTables.bootstrap5.css";
+@import "../../../node_modules/datatables.net-bs5/css/dataTables.bootstrap5";
 
 // Import DataTables extensions styling
-@import "../../../node_modules/datatables.net-responsive-bs5/css/responsive.bootstrap5.css";
-@import "../../../node_modules/datatables.net-colreorder-bs5/css/colReorder.bootstrap5.css";
+@import "../../../node_modules/datatables.net-responsive-bs5/css/responsive.bootstrap5";
+@import "../../../node_modules/datatables.net-colreorder-bs5/css/colReorder.bootstrap5";
+
+// Import PrismJS base styles
+@import "../../../node_modules/prismjs/themes/prism";
+
+// If you want to use a specific theme (e.g., "prism-okaidia"), import it instead:
+@import "../../../node_modules/prismjs/themes/prism-coy";
+
 
 // * * * * * * * * * * * * * * *
 // * * Import global styling * *

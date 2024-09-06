@@ -44,4 +44,8 @@
 	  <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
 	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\dist\css\" />
+	  <Folder Include="wwwroot\dist\js\" />
+	</ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿@model             CsvViewModel
+﻿@model  CsvViewModel
 
 <div class="card shadow-sm">
     <div class="card-header">
@@ -91,7 +91,7 @@
 
         <hr class="mt-5 mb-4">
 
-        <h6 class="mt-4 mb-3"><i class="bi bi-info-circle"></i> Column Details</h6>
+        <h6 class="mt-4 mb-3"><i class="bi bi-info-circle"></i> Univariate Analysis</h6>
         <div class="accordion" id="columnAnalysisAccordion">
             @foreach (var column in Model.ColumnDetails)
             {
@@ -110,7 +110,9 @@
                     </h2>
                     <div id="collapse-@columnId" class="accordion-collapse collapse" aria-labelledby="heading-@columnId" data-bs-parent="#columnAnalysisAccordion">
                         <div class="accordion-body">
-                            <h6>Column Data</h6>
+                            <div id="svg-container-@columnId" class="chart-container">
+                                <p>Click to load analysis for @columnId...</p>
+                            </div>
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr>
@@ -155,7 +157,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-
                             <h6>Analysis Summary</h6>
                             <p>@analysisSummary</p>
                         </div>
@@ -280,3 +281,31 @@
     </div>
 </div>
 
+@section PageScripts {
+    <script>
+        $(document).ready(function () {
+            // Load the analysis when an accordion item is expanded
+            $('.accordion-collapse').on('shown.bs.collapse', function () {
+                var column = $(this).attr('id').replace('collapse-', '');
+                var svgContainer = $('#svg-container-' + column);
+
+                if (!svgContainer.data('loaded')) {
+                    $.ajax({
+                        url: '@Url.Action("Analyze", "Univariate", new { area = "DataSpark" })',
+                        type: 'POST',
+                        data: { fileName: '@Model.FileName', columnName: column },
+                        success: function (data) {
+                            svgContainer.html(data);
+                            svgContainer.data('loaded', true); // Prevent reloading on collapse toggle
+                            console.log("Analysis loaded successfully for:", column);
+                        },
+                        error: function (xhr, status, error) {
+                            svgContainer.html('<p class="text-danger">Error loading analysis for ' + column + ': ' + error + '</p>');
+                            console.error("Error loading analysis for:", column, error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

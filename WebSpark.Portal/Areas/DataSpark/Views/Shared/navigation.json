@@ -3,6 +3,10 @@
     {
       "text": "CSV Analyze",
       "url": "/DataSpark/csv"
+    },
+    {
+      "text": "Univariate",
+      "url": "/DataSpark/univariate"
     }
 
   ]

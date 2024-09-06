@@ -1,0 +1,19 @@
+﻿@model UnivariateViewModel
+
+<div class="container mt-5">
+    <h2 class="text-center">Univariate Analysis Results for @Model.SelectedColumn</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <div class="text-center mt-4">
+            <img src="@Url.Content($"~/{Model.ImagePath}")" alt="Histogram" class="img-fluid" />
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-warning mt-3" role="alert">
+            @Model.Message
+        </div>
+    }
+</div>

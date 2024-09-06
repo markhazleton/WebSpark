@@ -45,4 +45,7 @@
 	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\dist\js\" />
+	</ItemGroup>
 </Project>

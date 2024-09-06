@@ -1,16 +1,15 @@
 'use strict';
-const autoprefixer = require('autoprefixer')
+const autoprefixer = require('autoprefixer');
 const fs = require('fs');
 const packageJSON = require('../package.json');
 const upath = require('upath');
-const postcss = require('postcss')
+const postcss = require('postcss');
 const sass = require('sass');
 const sh = require('shelljs');
 const cssnano = require('cssnano');
 
 const stylesPath = '../src/scss/styles.scss';
-const destPath = upath.resolve(upath.dirname(__filename), '../wwwroot/css/styles.css');
-
+const destPath = upath.resolve(upath.dirname(__filename), '../wwwroot/dist/css/webspark.min.css'); // Updated to .min.css
 
 module.exports = function renderSCSS() {
     
@@ -19,7 +18,7 @@ module.exports = function renderSCSS() {
         includePaths: [
             upath.resolve(upath.dirname(__filename), '../node_modules')
         ],
-      });
+    });
 
     const destPathDirname = upath.dirname(destPath);
     if (!sh.test('-e', destPathDirname)) {
@@ -28,12 +27,14 @@ module.exports = function renderSCSS() {
 
     postcss([
         autoprefixer,
-        cssnano(),
-    ]).process(results.css, { from: 'styles.css', to: 'styles.css' }).then(result => {
+        cssnano(), // This minifies the CSS
+    ]).process(results.css, { from: 'styles.css', to: 'webspark.min.css' }) // Updated to match the minified output
+      .then(result => {
         result.warnings().forEach(warn => {
             console.warn(warn.toString());
         });
         fs.writeFileSync(destPath, result.css.toString());
+        console.log(`CSS compiled and minified to: ${destPath}`);
     });
 };
 
@@ -43,4 +44,4 @@ const entryPoint = `/*!
 * Licensed under ${packageJSON.license} (https://github.com/BlackrockDigital/${packageJSON.name}/blob/master/LICENSE)
 */
 @import "${stylesPath}"
-`
+`;

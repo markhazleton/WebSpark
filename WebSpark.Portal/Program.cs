@@ -10,6 +10,7 @@ using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
 using Serilog;
+using System.Reflection;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Infrastructure.Logging;
@@ -21,45 +22,70 @@ using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
-// Configure services
+
+// ========================
+// Configuration
+// ========================
 builder.Configuration
     .AddEnvironmentVariables()
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddUserSecrets<Program>();
 
+// ========================
+// Logging Configuration
+// ========================
 LoggingUtility.ConfigureLogging(builder, "WebSparkPortal");
+
+// ========================
+// Caching Services
+// ========================
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSingleton<IMemoryCacheManager, MemoryCacheManager>();
+
+// ========================
+// Session Configuration
+// ========================
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddSingleton<IMemoryCacheManager, MemoryCacheManager>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+// ========================
+// Database Contexts
+// ========================
+// Admin User Context
 var adminConnectionString = builder.Configuration.GetValue("WebSparkUserContext", "Data Source=c:\\websites\\WebSpark\\ControlSparkUser.db");
 builder.Services.AddDbContext<WebSparkUserContext>(options =>
     options.UseSqlite(adminConnectionString));
 
-builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
-        .AddEntityFrameworkStores<WebSparkUserContext>()
-        .AddDefaultUI()
-        .AddDefaultTokenProviders()
-        .AddUserManager<ApplicationUserManager>();
-
+// Main Application Context
 var AppDbConnectionString = builder.Configuration.GetValue("WebSparkContext", "Data Source=c:\\websites\\WebSpark\\webspark.db");
 builder.Services.AddDbContext<WebSparkDbContext>(options =>
 {
     options.UseSqlite(AppDbConnectionString);
 });
 
+// GPT Context
 var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
     options.UseSqlite(GPTDbConnectionString));
 
-builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>();
+// ========================
+// Identity Configuration
+// ========================
+builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
+    .AddEntityFrameworkStores<WebSparkUserContext>()
+    .AddDefaultUI()
+    .AddDefaultTokenProviders()
+    .AddUserManager<ApplicationUserManager>();
+
+// ========================
+// HTTP Clients
+// ========================
+// Base HTTP Client
 builder.Services.AddHttpClient("HttpClientService", client =>
 {
     client.Timeout = TimeSpan.FromMilliseconds(90000);
@@ -68,47 +94,33 @@ builder.Services.AddHttpClient("HttpClientService", client =>
     client.DefaultRequestHeaders.Add("X-Request-ID", Guid.NewGuid().ToString());
     client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
 });
+
+// Full Service HTTP Client with Telemetry
 builder.Services.AddScoped(serviceProvider =>
 {
     IHttpClientFullService baseService = new HttpClientFullService(
         serviceProvider.GetRequiredService<IHttpClientFactory>(),
-        serviceProvider.GetRequiredService<IStringConverter>()
-    );
+        serviceProvider.GetRequiredService<IStringConverter>());
 
-    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(
-        baseService);
+    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(baseService);
 
     return telemetryService;
 });
-// Register the HttpGetCallService with Decorator Pattern
+
+// HTTP Get Call Service with Decorator Pattern
 builder.Services.AddScoped(serviceProvider =>
 {
     var logger = serviceProvider.GetRequiredService<ILogger<HttpGetCallService>>();
     var telemetryLogger = serviceProvider.GetRequiredService<ILogger<HttpGetCallServiceTelemetry>>();
     var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+
     IHttpGetCallService baseService = new HttpGetCallService(logger, httpClientFactory);
     IHttpGetCallService telemetryService = new HttpGetCallServiceTelemetry(telemetryLogger, baseService);
+
     return telemetryService;
 });
 
-
-// Register the OpenWeatherMapClient with Decorator Pattern
-builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
-{
-    string apiKey = builder.Configuration["OpenWeatherMapApiKey"] ?? "KEYMISSING";
-    var logger = serviceProvider.GetRequiredService<ILogger<WeatherServiceClient>>();
-    var loggerLogging = serviceProvider.GetRequiredService<ILogger<WeatherServiceLoggingDecorator>>();
-    var loggerCaching = serviceProvider.GetRequiredService<ILogger<WeatherServiceCachingDecorator>>();
-    var memoryCache = serviceProvider.GetRequiredService<IMemoryCache>();
-    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
-    IOpenWeatherMapClient concreteService = new WeatherServiceClient(apiKey, httpClientFactory, logger);
-    IOpenWeatherMapClient withLoggingDecorator = new WeatherServiceLoggingDecorator(concreteService, loggerLogging);
-    IOpenWeatherMapClient withCachingDecorator = new WeatherServiceCachingDecorator(withLoggingDecorator, memoryCache, loggerCaching);
-    return withCachingDecorator;
-});
-
-// Register the HttpClientSendService with Decorator Pattern
+// HTTP Send Service with Decorator Pattern
 builder.Services.AddSingleton(serviceProvider =>
 {
     IHttpClientSendService baseService = new HttpClientSendService(
@@ -117,6 +129,7 @@ builder.Services.AddSingleton(serviceProvider =>
 
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
     var retryOptions = configuration.GetSection("HttpClientSendPollyOptions").Get<HttpClientSendPollyOptions>();
+
     IHttpClientSendService pollyService = new HttpClientSendServicePolly(
         serviceProvider.GetRequiredService<ILogger<HttpClientSendServicePolly>>(),
         baseService,
@@ -134,69 +147,86 @@ builder.Services.AddSingleton(serviceProvider =>
     return cacheService;
 });
 
-// Register the HttpClientFullService with Decorator Pattern
-builder.Services.AddScoped(serviceProvider =>
+// ========================
+// OpenWeatherMap Client
+// ========================
+builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
 {
-    IHttpClientFullService baseService = new HttpClientFullService(
-        serviceProvider.GetRequiredService<IHttpClientFactory>(),
-        serviceProvider.GetRequiredService<IStringConverter>()
-    );
+    string apiKey = builder.Configuration["OpenWeatherMapApiKey"] ?? "KEYMISSING";
+    var logger = serviceProvider.GetRequiredService<ILogger<WeatherServiceClient>>();
+    var loggerLogging = serviceProvider.GetRequiredService<ILogger<WeatherServiceLoggingDecorator>>();
+    var loggerCaching = serviceProvider.GetRequiredService<ILogger<WeatherServiceCachingDecorator>>();
+    var memoryCache = serviceProvider.GetRequiredService<IMemoryCache>();
+    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
-    IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(
-        baseService);
+    IOpenWeatherMapClient concreteService = new WeatherServiceClient(apiKey, httpClientFactory, logger);
+    IOpenWeatherMapClient withLoggingDecorator = new WeatherServiceLoggingDecorator(concreteService, loggerLogging);
+    IOpenWeatherMapClient withCachingDecorator = new WeatherServiceCachingDecorator(withLoggingDecorator, memoryCache, loggerCaching);
 
-    return telemetryService;
+    return withCachingDecorator;
 });
 
-// Register the OpenAIChatCompletionService
-
-string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
-string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
-builder.Services.AddOpenAIChatCompletion(modelId, apikey);
-builder.Services.AddSignalR().AddJsonProtocol(options =>
-{
-    // Configuring JSON serializer options if needed
-    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
-});
+// ========================
+// Application Services
+// ========================
+builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>();
+builder.Services.AddSingleton<ApplicationStatus>(new ApplicationStatus(Assembly.GetExecutingAssembly()));
 builder.Services.AddSingleton<ChatHistoryStore>();
+builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
+
+// Scoped Services
 builder.Services.AddScoped<IUserPromptService, UserPromptService>();
 builder.Services.AddScoped<IGPTDefinitionService, GPTDefinitionService>();
 builder.Services.AddScoped<IGPTDefinitionTypeService, GPTDefinitionTypeService>();
 builder.Services.AddScoped<IGPTService, OpenAIChatCompletionService>();
 builder.Services.AddScoped<IRecipeGPTService, RecipePromptSparkService>();
 builder.Services.AddScoped<IResponseService, ResponseService>();
-// Data Spark services
-builder.Services.AddTransient<CsvProcessingService>();
-
-builder.Services.AddMarkdown();
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-
-builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
 builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
 builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
-builder.Services.AddBlogProviders();
-
 builder.Services.AddScoped<ICookbook, Cookbook>();
 
+// Transient Services
+builder.Services.AddTransient<CsvProcessingService>();
 
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(360);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-// We need to use MVC so we can use a Razor Configuration SiteTemplate
-// have to let MVC know we have a controller
+// ========================
+// Markdown Support
+// ========================
+builder.Services.AddMarkdown();
+
+// ========================
+// MVC and Razor Pages
+// ========================
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+// Add MVC for specific areas
 builder.Services.AddMvc()
     .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
+// ========================
+// SignalR Configuration
+// ========================
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    // Configuring JSON serializer options if needed
+    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+});
+
+// ========================
+// OpenAI Chat Completion Service
+// ========================
+string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
+string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
+builder.Services.AddOpenAIChatCompletion(modelId, apikey);
+
 var app = builder.Build();
 
-// Configure middleware
+// ========================
+// Middleware Configuration
+// ========================
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -212,11 +242,12 @@ app.UseStaticFiles(); // For serving static files
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession(); // Add this line
+app.UseSession(); // Session middleware
 
-// Configure endpoints
+// ========================
+// Endpoint Configuration
+// ========================
 app.MapRazorPages();
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -229,7 +260,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<ChatHub>("/chatHub");
 });
 
-app.Run();
-
 // Ensure to flush and close the log when the application shuts down
 Log.CloseAndFlush();
+
+app.Run();

@@ -1,0 +1,17 @@
+// Import Bootstrap variables first to ensure availability to Bootswatch
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+// Import Bootstrap Icons
+@import "../../../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+
+// Import Feather Icons
+@import "../../../node_modules/feather-icons/dist/feather.css";
+
+// Import PrismJS base styles
+@import "../../../node_modules/prismjs/themes/prism";
+
+// If you want to use a specific theme (e.g., "prism-okaidia"), import it instead:
+@import "../../../node_modules/prismjs/themes/prism-coy";
+
+// If you're using any PrismJS plugins that require additional styles, import them as well
+// @import "../../node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css";

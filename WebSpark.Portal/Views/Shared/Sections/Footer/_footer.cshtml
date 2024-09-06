@@ -12,11 +12,6 @@
     <div class="container px-5">
         <div class="row gx-5 ">
             <div class="col-4 small text-md-start">
-                @status.BuildVersion.ToString()
-                <br />
-                <a href="https://github.com/markhazleton/webspark" target="_blank">GitHub Repo</a>
-                <br />
-                Copyright &copy; <a href="https://markhazleton.com">Mark Hazleton</a> 2002-@currentYear
                 <div class="icon-list-social mb-3">
                     <a class="icon-list-social-link" href="https://www.linkedin.com/in/markhazleton/"><i class="fab fa-linkedin"></i></a>
                     <a class="icon-list-social-link" href="https://github.com/markhazleton/"><i class="fab fa-github"></i></a>
@@ -42,13 +37,11 @@
                         <i class="bi bi-envelope"></i>
                     </a>
                 </div>
-
-
-
             </div>
             <div class="col-4 text-md-end small">
-                Last Built: @status.BuildDate.ToLocalTime().ToLongDateString() <br />
-                <a href="https://markhazleton.com" target="_blank" title="Mark Hazleton, Lifelong Learner, not sidetracked by sizzle">Mark Hazleton</a>
+                @status.BuildVersion.ToString()
+                <br />
+                Copyright &copy; <a href="https://markhazleton.com">Mark Hazleton</a> 2002-@currentYear
             </div>
         </div>
     </div>

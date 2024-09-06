@@ -1,38 +1,46 @@
 'use strict';
 const fs = require('fs');
-const packageJSON = require('../package.json');
-const upath = require('upath');
-const sh = require('shelljs');
+const path = require('path');
+const UglifyJS = require('uglify-js');
 
 module.exports = function renderScripts() {
+    minifyAndCopyJS();
+};
 
-    const sourcePath = upath.resolve(upath.dirname(__filename), '../src/js');
-    const destPath = upath.resolve(upath.dirname(__filename), '../wwwroot/.');
+function minifyAndCopyJS() {
+    const inputPath = path.join(__dirname, '../src/js/');  // Custom scripts
+    const bootstrapJSPath = path.join(__dirname, '../node_modules/bootstrap/dist/js/bootstrap.bundle.js');  // Bootstrap JS
+    const jqueryJSPath = path.join(__dirname, '../node_modules/jquery/dist/jquery.js');  // jQuery
+    const featherJSPath = path.join(__dirname, '../node_modules/feather-icons/dist/feather.min.js');  // Feather Icons
+    const outputPath = path.join(__dirname, '../wwwroot/dist/js/');  // Output directory
+    const outputFile = 'webspark.min.js';
 
-    sh.cp('-R', sourcePath, destPath);
+    // DataTables paths
+    const dataTablesJSPath = path.join(__dirname, '../node_modules/datatables.net/js/dataTables.js');  // DataTables core
+    const dataTablesBS5Path = path.join(__dirname, '../node_modules/datatables.net-bs5/js/dataTables.bootstrap5.js');  // DataTables Bootstrap 5 integration
 
-    const sourcePathScriptsJS = upath.resolve(upath.dirname(__filename), '../src/js/scripts.js');
-    const destPathScriptsJS = upath.resolve(upath.dirname(__filename), '../wwwroot/js/scripts.js');
-
-    const copyright = `/*!
-    * Start Bootstrap - ${packageJSON.title} v${packageJSON.version} (${packageJSON.homepage})
-    * Copyright 2013-${new Date().getFullYear()} ${packageJSON.author}
-    * Licensed under ${packageJSON.license} (https://github.com/BlackrockDigital/${packageJSON.name}/blob/master/LICENSE)
-    */
-    `;
-    const scriptsJS = fs.readFileSync(sourcePathScriptsJS);
-
-    function writeFileWithRetry(filePath, data, retries = 5, delay = 1000) {
-        fs.writeFile(filePath, data, (err) => {
-            if (err && err.code === 'EBUSY' && retries > 0) {
-                setTimeout(() => {
-                    writeFileWithRetry(filePath, data, retries - 1, delay);
-                }, delay);
-            } else if (err) {
-                throw err;
-            }
-        });
+    // Ensure the output directory exists
+    if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath, { recursive: true });
     }
 
-    writeFileWithRetry(destPathScriptsJS, copyright + scriptsJS);
-};
+    // Order of loading scripts
+    const files = {
+        'jquery.js': fs.readFileSync(jqueryJSPath, 'utf8'),                          // jQuery
+        'datatables.js': fs.readFileSync(dataTablesJSPath, 'utf8'),                  // DataTables core
+        'datatables-bs5.js': fs.readFileSync(dataTablesBS5Path, 'utf8'),             // DataTables Bootstrap 5
+        'bootstrap.js': fs.readFileSync(bootstrapJSPath, 'utf8'),                    // Bootstrap JS
+        'feather.js': fs.readFileSync(featherJSPath, 'utf8'),                        // Feather Icons
+        'webspark.js': fs.readFileSync(path.join(inputPath, 'webspark.js'), 'utf8'), // Custom script
+    };
+
+    // Minify and combine JavaScript files
+    const result = UglifyJS.minify(files);
+
+    if (!result.error) {
+        fs.writeFileSync(path.join(outputPath, outputFile), result.code);
+        console.log(`Minified JS files successfully written to ${path.join(outputPath, outputFile)}`);
+    } else {
+        console.error('Error minifying JS:', result.error);
+    }
+}

@@ -5,7 +5,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table" id="displayTable">
     <thead>
         <tr>
             <th>
@@ -49,3 +49,18 @@
         }
     </tbody>
 </table>
+@section PageScripts {
+    <script>
+        $(document).ready(function ()
+        {
+            var table = $('#displayTable').DataTable(
+                {
+                    paging: false,
+                    scrollY: '40vh',
+                    scrollCollapse: true,
+                    stateSave: false,
+                    colReorder: true
+                });
+        });
+    </script>
+}

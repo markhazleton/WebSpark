@@ -5,10 +5,26 @@ namespace WebSpark.Core.Models;
 /// </summary>
 public sealed class BuildVersion
 {
+    [JsonPropertyName("buildDate")]
+    public DateTime BuildDate { get; set; }
+
+    [JsonPropertyName("build")]
+    public int Build { get; set; }
+
+    [JsonPropertyName("majorVersion")]
+    public int MajorVersion { get; set; }
+
+    [JsonPropertyName("minorVersion")]
+    public int MinorVersion { get; set; }
+
+    [JsonPropertyName("revision")]
+    public int Revision { get; set; }
+
     public BuildVersion()
     {
 
     }
+
     /// <summary>
     /// Build Version
     /// </summary>
@@ -22,6 +38,7 @@ public sealed class BuildVersion
         Revision = oVer?.Revision ?? 0;
         BuildDate = GetBuildDate(assembly);
     }
+
     private DateTime GetBuildDate(Assembly assembly)
     {
         const string BuildVersionMetadataPrefix = "+build";
@@ -41,6 +58,7 @@ public sealed class BuildVersion
         }
         return DateTime.MinValue;
     }
+
     /// <summary>
     /// Override the To String Function to Format Version
     /// </summary>
@@ -49,28 +67,5 @@ public sealed class BuildVersion
     {
         return $"Version: {MajorVersion}.{MinorVersion}.{Build}.{Revision}";
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    public DateTime BuildDate { get; set; }
-    /// <summary>
-    /// Build
-    /// </summary>
-    public int Build { get; set; }
-
-    /// <summary>
-    /// Major Version
-    /// </summary>
-    public int MajorVersion { get; set; }
-
-    /// <summary>
-    /// Minor Version
-    /// </summary>
-    public int MinorVersion { get; set; }
-
-    /// <summary>
-    /// Revision
-    /// </summary>
-    public int Revision { get; set; }
 }
 

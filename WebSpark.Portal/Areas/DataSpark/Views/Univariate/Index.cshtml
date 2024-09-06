@@ -1,0 +1,26 @@
+﻿@model UnivariateViewModel
+
+<div class="container mt-5">
+    <h1 class="display-4 text-center">Univariate Analysis</h1>
+    <p class="text-center">Upload a CSV file to perform univariate analysis on a selected column.</p>
+
+    <form asp-action="Upload" enctype="multipart/form-data" method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="file" class="form-label">Select CSV File</label>
+            <input type="file" name="file" class="form-control" id="file" accept=".csv" required>
+            <div class="invalid-feedback">
+                Please select a valid CSV file.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            Upload
+        </button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-warning mt-3" role="alert">
+            @Model.Message
+        </div>
+    }
+</div>

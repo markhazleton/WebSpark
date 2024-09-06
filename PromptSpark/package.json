@@ -5,8 +5,7 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "build-assets": "node npm_build.js",
-    "compile-scss": "sass wwwroot/Styles/main.scss wwwroot/css/style.css"
+    "build-assets": "node src/promptspark/npm_build.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",

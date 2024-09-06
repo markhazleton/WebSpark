@@ -1,52 +1,48 @@
-﻿namespace WebSpark.Core.Models;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 
-/// <summary>
-/// 
-/// </summary>
+namespace WebSpark.Core.Models;
+
 public class ApplicationStatus
 {
-    readonly Assembly _assembly;
+    [JsonPropertyName("buildDate")]
+    public DateTime BuildDate { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="assembly"></param>
+    [JsonPropertyName("buildVersion")]
+    public BuildVersion BuildVersion { get; set; } = new BuildVersion();
+
+    [JsonPropertyName("features")]
+    public Dictionary<string, string> Features { get; set; } = new Dictionary<string, string>();
+
+    [JsonPropertyName("messages")]
+    public List<string> Messages { get; set; } = new List<string>();
+
+    [JsonPropertyName("region")]
+    public string Region { get; set; } = Environment.GetEnvironmentVariable("Region") ?? Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME");
+
+    [JsonPropertyName("status")]
+    public ServiceStatus Status { get; set; } = ServiceStatus.Online;
+
+    [JsonPropertyName("tests")]
+    public Dictionary<string, string> Tests { get; set; } = new Dictionary<string, string>();
+
+    public ApplicationStatus() { }
+
     public ApplicationStatus(Assembly assembly)
     {
-        _assembly = assembly;
 
-        var oVer = _assembly?.GetName().Version;
-        BuildDate = GetBuildDate(_assembly);
-        BuildVersion = new Models.BuildVersion()
+        var oVer = assembly?.GetName().Version;
+        BuildDate = GetBuildDate(assembly);
+        BuildVersion = new BuildVersion()
         {
-            MajorVersion = oVer.Major,
-            MinorVersion = oVer.Minor,
-            Build = oVer.Build,
-            Revision = oVer.Revision,
-            BuildDate = GetBuildDate()
+            MajorVersion = oVer?.Major ?? 0,
+            MinorVersion = oVer?.Minor ?? 0,
+            Build = oVer?.Build ?? 0,
+            Revision = oVer?.Revision ?? 0,
+            BuildDate = BuildDate
         };
     }
 
-    private DateTime GetBuildDate()
-    {
-        const string BuildVersionMetadataPrefix = "+build";
-
-        var attribute = _assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-        if (attribute?.InformationalVersion != null)
-        {
-            var value = attribute.InformationalVersion;
-            var index = value.IndexOf(BuildVersionMetadataPrefix);
-            if (index > 0)
-            {
-                value = value.Substring(index + BuildVersionMetadataPrefix.Length);
-                if (DateTime.TryParseExact(value, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
-                {
-                    return result;
-                }
-            }
-        }
-        return default;
-    }
     private static DateTime GetBuildDate(Assembly? assembly)
     {
         if (assembly == null) return DateTime.MinValue;
@@ -68,30 +64,4 @@ public class ApplicationStatus
         }
         return DateTime.MinValue;
     }
-
-    public DateTime BuildDate { get; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public Models.BuildVersion BuildVersion { get; set; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public Dictionary<string, string> Features { get; set; } = [];
-    /// <summary>
-    /// 
-    /// </summary>
-    public List<string> Messages { get; set; } = [];
-    /// <summary>
-    /// 
-    /// </summary>
-    public string Region { get; set; } = Environment.GetEnvironmentVariable("Region") ?? Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME");
-    /// <summary>
-    /// 
-    /// </summary>
-    public Models.ServiceStatus Status { get; set; } = Models.ServiceStatus.Online;
-    /// <summary>
-    /// 
-    /// </summary>
-    public Dictionary<string, string> Tests { get; set; } = [];
 }
