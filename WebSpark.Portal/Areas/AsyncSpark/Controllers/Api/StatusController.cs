@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using System.Reflection;
-using WebSpark.Core.Models;
+﻿using WebSpark.Core.Models;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
 

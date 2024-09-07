@@ -73,7 +73,7 @@ public class PollyController : AsyncSparkBaseController
         StopWatch.Start();
 
         // Set the base address for the HttpClient
-        _httpClient.BaseAddress = new Uri($"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/");
+        _httpClient.BaseAddress = new Uri($"{Request.Scheme}://{Request.Host}{Request.PathBase}/");
 
         var context = new Context { { RetryCountKey, 0 }, { "ResultsList", new List<string>() } };
         var mockResults = new MockResults { LoopCount = loopCount, MaxTimeMS = maxTimeMs };
@@ -83,7 +83,7 @@ public class PollyController : AsyncSparkBaseController
         {
             // Execute the HTTP request with retry logic
             response = await _httpIndexPolicy.ExecuteAsync(ctx =>
-                HttpClientJsonExtensions.PostAsJsonAsync(_httpClient, "remote/Results", mockResults, Cts.Token), context);
+                HttpClientJsonExtensions.PostAsJsonAsync(_httpClient, "api/asyncspark/remote/results", mockResults, Cts.Token), context);
 
             if (response.IsSuccessStatusCode)
             {

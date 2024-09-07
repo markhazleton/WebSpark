@@ -167,6 +167,30 @@ var app = builder.Build();
 // ========================
 // Middleware Configuration
 // ========================
+// Middleware to enforce lowercase routes
+//app.Use(async (context, next) =>
+//{
+//    var request = context.Request;
+//    var path = request.Path.Value;
+
+//    // Check if the path contains any uppercase characters
+//    if (path != null && path.Any(char.IsUpper))
+//    {
+//        // Convert the path to lowercase
+//        var lowercasePath = path.ToLowerInvariant();
+
+//        // Construct the new URL with the lowercase path
+//        var newUrl = $"{request.Scheme}://{request.Host}{lowercasePath}{request.QueryString}";
+
+//        // Redirect to the lowercase URL with a 301 (Permanent Redirect) status code
+//        context.Response.Redirect(newUrl, true);
+//        return;
+//    }
+//    await next();
+//});
+
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -178,7 +202,20 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // For serving static files
+app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+    // context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';");
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Permissions-Policy", "geolocation=(), camera=(), microphone=()");
+    await next();
+});
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -188,17 +225,16 @@ app.UseSession(); // Session middleware
 // Endpoint Configuration
 // ========================
 app.MapRazorPages();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "areaRoute",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-    );
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-    endpoints.MapHub<ChatHub>("/chatHub");
-});
+app.MapControllerRoute(
+    name: "areaRoute",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+);
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
+app.MapHub<ChatHub>("/chatHub");
+
 
 // Ensure to flush and close the log when the application shuts down
 Log.CloseAndFlush();
