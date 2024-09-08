@@ -35,10 +35,10 @@ public class MockResults
     /// <summary>
     /// Return Message from calling for results
     /// </summary>
-    public string? Message { get; set; } = "init";
+    public string? Message { get; set; } = "initialization";
 
     /// <summary>
     /// Return Value from calling for results
     /// </summary>
-    public string? ResultValue { get; set; } = "empty";
+    public string? ResultValue { get; set; } = "initialization";
 }

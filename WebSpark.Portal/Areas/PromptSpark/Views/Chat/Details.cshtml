@@ -1,16 +1,24 @@
 ﻿@using PromptSpark.Domain.Models
+@using System.Globalization
 @model DefinitionTypeDto
 
 @{
-    ViewData["Title"] = "Core Spark";
     var definitionType = Model.DefinitionType;
     var userPrompt = Model.Prompts.FirstOrDefault(w => w.UserPromptId == Model.CurrentUserPromptId);
+
+    TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
+    definitionType = textInfo.ToTitleCase(definitionType.ToLower());
+
+    ViewData["Title"] = $"Core Spark - {definitionType}";
+    ViewData["Description"] = $"{definitionType}:{Model.Description}";
+    ViewData["Keywords"] = "Sparks, Prompt Spark, Large Language Models, Core Sparks";
+
 }
 
-<span class="badge rounded-pill bg-primary">Core Spark (@Model.DefinitionType)</span>
+<span class="badge rounded-pill bg-primary">Core Spark (@definitionType)</span>
 <div class="row">
     <div class="col-8">
-        <h1>@Model.DefinitionType</h1>
+        <h1>@definitionType</h1>
         <p>@Model.Description</p>
     </div>
     <div class="col-4">
@@ -20,14 +28,14 @@
 
 @if (Model.CurrentUserPromptId == 0)
 {
-    <span class="badge rounded-pill bg-primary">User Prompts for the Core Spark (@Model.DefinitionType)</span>
+    <span class="badge rounded-pill bg-primary">User Prompts for the Core Spark (@definitionType)</span>
     <ul class="list-group">
         @foreach (var item in Model.Prompts)
         {
             var displayText = item.UserPrompt.Length > 120 ? item.UserPrompt.Substring(0, 120) + "..." : item.UserPrompt;
 
             <li class="list-group-item">
-                <a href="/PromptSpark/Chat/Details/@definitionType?UserPromptId=@item.UserPromptId" class="text-decoration-none">
+                <a href="/promptspark/chat/details/@definitionType?UserPromptId=@item.UserPromptId" class="text-decoration-none">
                     @displayText
                 </a>
             </li>

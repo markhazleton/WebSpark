@@ -2,63 +2,56 @@
 using System.Globalization;
 using WebSpark.Portal.Areas.DataSpark.Models;
 
-namespace WebSpark.Portal.Areas.DataSpark.Services
+namespace WebSpark.Portal.Areas.DataSpark.Services;
+
+/// <summary>
+/// Service for processing CSV files.
+/// </summary>
+public class CsvProcessingService
 {
-    public class CsvProcessingService
+    /// <summary>
+    /// Process the CSV file with fallback to the safe method if an error occurs.
+    /// </summary>
+    /// <param name="filePath">The path of the CSV file.</param>
+    /// <returns>The processed CsvViewModel.</returns>
+    public CsvViewModel ProcessCsvWithFallback(string filePath)
     {
-        public CsvViewModel ProcessCsvFast(string filePath)
+        try
         {
-            var model = new CsvViewModel
-            {
-                FilePath = filePath,
-                FileName = Path.GetFileName(filePath)
-            };
-
-            try
-            {
-                using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                // Load the DataFrame with automatic column type detection
-                var dataFrame = DataFrame.LoadCsv(
-                    stream,
-                    separator: ',',
-                    header: true,
-                    encoding: Encoding.UTF8,
-                    cultureInfo: CultureInfo.InvariantCulture
-                );
-
-                model.RowCount = dataFrame.Rows.Count;
-                model.ColumnCount = dataFrame.Columns.Count;
-                model.ColumnDetails = dataFrame.GetColumnAnalysis();
-                model.BivariateAnalyses = dataFrame.GetBivariateAnalysis();
-                model.Info = dataFrame.Info();
-                model.Description = dataFrame.Description();
-                model.Head = dataFrame.Head(5);
-
-
-            }
-            catch (Exception ex)
-            {
-                model.Message = $"Error processing file: {ex.Message}";
-                throw; // Rethrow the exception to allow fallback
-            }
-            return model;
+            // Attempt to process the CSV using the fast method
+            return ProcessCsv(filePath, useSafeMethod: false);
         }
-
-        public CsvViewModel ProcessCsvSafe(string filePath)
+        catch
         {
-            var model = new CsvViewModel
-            {
-                FilePath = filePath,
-                FileName = Path.GetFileName(filePath)
-            };
+            // If an error occurs, fall back to the safer method
+            return ProcessCsv(filePath, useSafeMethod: true);
+        }
+    }
 
-            try
-            {
-                using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+    /// <summary>
+    /// Process the CSV file with an option to use a safe method.
+    /// </summary>
+    /// <param name="filePath">The path of the CSV file.</param>
+    /// <param name="useSafeMethod">If true, loads all columns as strings; otherwise, uses type detection.</param>
+    /// <returns>The processed CsvViewModel.</returns>
+    private static CsvViewModel ProcessCsv(string filePath, bool useSafeMethod)
+    {
+        var model = new CsvViewModel
+        {
+            FilePath = filePath,
+            FileName = Path.GetFileName(filePath)
+        };
 
+        try
+        {
+            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            DataFrame dataFrame;
+
+            if (useSafeMethod)
+            {
                 // Load all columns as strings to avoid automatic parsing issues
-                var dataFrame = DataFrame.LoadCsv(
+                dataFrame = DataFrame.LoadCsv(
                     stream,
                     separator: ',',
                     header: true,
@@ -66,36 +59,43 @@ namespace WebSpark.Portal.Areas.DataSpark.Services
                     encoding: Encoding.UTF8,
                     cultureInfo: CultureInfo.InvariantCulture
                 );
-
-                model.RowCount = dataFrame.Rows.Count;
-                model.ColumnCount = dataFrame.Columns.Count;
-                model.ColumnDetails = dataFrame.GetColumnAnalysis();
-                model.BivariateAnalyses = dataFrame.GetBivariateAnalysis();
-                model.Info = dataFrame.Info();
-                model.Description = dataFrame.Description();
-                model.Head = dataFrame.Head(5);
-
-
             }
-            catch (Exception ex)
+            else
             {
-                model.Message = $"Error processing file: {ex.Message}";
+                // Load the DataFrame with automatic column type detection
+                dataFrame = DataFrame.LoadCsv(
+                    stream,
+                    separator: ',',
+                    header: true,
+                    encoding: Encoding.UTF8,
+                    cultureInfo: CultureInfo.InvariantCulture
+                );
             }
-            return model;
-        }
 
-        public CsvViewModel ProcessCsvWithFallback(string filePath)
+            PopulateCsvViewModel(model, dataFrame);
+        }
+        catch (Exception ex)
         {
-            try
-            {
-                // Attempt to process the CSV using the fast method
-                return ProcessCsvFast(filePath);
-            }
-            catch
-            {
-                // If an error occurs, fall back to the safer method
-                return ProcessCsvSafe(filePath);
-            }
+            model.Message = $"Error processing file: {ex.Message}";
+            if (!useSafeMethod) throw; // Rethrow the exception only if not using the safe method
         }
+
+        return model;
+    }
+
+    /// <summary>
+    /// Populates the CsvViewModel with details from the DataFrame.
+    /// </summary>
+    /// <param name="model">The CsvViewModel to populate.</param>
+    /// <param name="dataFrame">The DataFrame containing the CSV data.</param>
+    private static void PopulateCsvViewModel(CsvViewModel model, DataFrame dataFrame)
+    {
+        model.RowCount = dataFrame.Rows.Count;
+        model.ColumnCount = dataFrame.Columns.Count;
+        model.ColumnDetails = dataFrame.GetUnivariateAnalysis();
+        model.BivariateAnalyses = dataFrame.GetBivariateAnalysis();
+        model.Info = dataFrame.Info();
+        model.Description = dataFrame.Description();
+        model.Head = dataFrame.Head(5);
     }
 }

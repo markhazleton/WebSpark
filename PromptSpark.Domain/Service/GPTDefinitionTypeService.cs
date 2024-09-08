@@ -108,19 +108,21 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
         if (string.IsNullOrWhiteSpace(definitionType))
             throw new ArgumentException("Invalid definition type", nameof(definitionType));
 
+        definitionType = definitionType.ToLower();
+
         var definitionTypeReturn = await context.DefinitionTypes
-            .Where(w => w.DefinitionType == definitionType)
+            .Where(w => w.DefinitionType.ToLower() == definitionType)
             .Select(s => s.ToDto())
             .FirstOrDefaultAsync() ?? new DefinitionTypeDto();
 
         definitionTypeReturn.Definitions = (await context.Definitions
-            .Where(w => w.DefinitionType == definitionType)
+            .Where(w => w.DefinitionType.ToLower() == definitionType)
             .Select(s => s.ToDto())
             .ToListAsync()) ?? [];
 
         definitionTypeReturn.Prompts =
             (await context.Chats.Include(i => i.GPTResponses)
-            .Where(w => w.DefinitionType == definitionType)
+            .Where(w => w.DefinitionType.ToLower() == definitionType)
             .Select(s => s.ToDto())
             .ToListAsync()) ?? [];
 

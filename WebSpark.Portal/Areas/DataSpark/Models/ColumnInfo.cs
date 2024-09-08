@@ -2,6 +2,8 @@
 
 public class ColumnInfo
 {
+    public bool IsNumeric { get; set; }
+    public bool IsCategory { get; set; }
     public string Column { get; set; }
     public string Type { get; set; }
     public long NonNullCount { get; set; }

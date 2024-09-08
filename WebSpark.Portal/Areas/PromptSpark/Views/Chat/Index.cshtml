@@ -1,7 +1,12 @@
-﻿@model IEnumerable<DefinitionTypeDto>
+﻿@using System.Globalization
+@model IEnumerable<DefinitionTypeDto>
 
 @{
-    ViewData["Title"] = "Sparks";
+    TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
+
+    ViewData["Title"] = "Core Sparks - PromptSpark";
+    ViewData["Description"] = "A Spark in Prompt Spark defines the core behavior and output expectations for Large Language Models, detailing requirements and guidelines for evaluating different implementations or variants.";
+    ViewData["Keywords"] = "Sparks, Prompt Spark, Large Language Models, Core Sparks";
 }
 
 @section Styles 
@@ -110,11 +115,13 @@
     <div class="row" id="cardContainer">
         @foreach (var item in Model)
         {
+            var definitionType = textInfo.ToTitleCase(item.DefinitionType.ToLower());
+
             <div class="col-md-4 mb-4 card-item animate__animated animate__fadeInUp" data-outputtype="@item.OutputType" data-definitiontype="@item.DefinitionType">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <a href="@Url.Action("Details", new { id = item.DefinitionType })" class="d-flex align-items-center">
-                            <i class="fas fa-link me-2"></i>@item.DefinitionType
+                            <i class="fas fa-link me-2"></i>@definitionType
                         </a>
                         <a href="@Url.Action("Details", new { id = item.DefinitionType })" class="btn btn-sm btn-primary">
                             <i class="fas fa-info-circle"></i> Details

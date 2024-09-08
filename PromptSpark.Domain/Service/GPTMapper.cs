@@ -10,7 +10,7 @@ public static class GPTMapper
         if (definitionType == null) return new DefinitionTypeDto();
         return new DefinitionTypeDto
         {
-            DefinitionType = definitionType.DefinitionType,
+            DefinitionType = definitionType.DefinitionType.ToLower(),
             Description = definitionType.Description,
             OutputType = definitionType.OutputType,
             Created = definitionType.Created,
@@ -22,7 +22,7 @@ public static class GPTMapper
         if (definitionType == null) return new GPTDefinitionType();
         return new GPTDefinitionType
         {
-            DefinitionType = definitionType.DefinitionType,
+            DefinitionType = definitionType.DefinitionType.ToLower(),
             OutputType = definitionType.OutputType,
             Description = definitionType.Description ?? definitionType.DefinitionType,
             Created = definitionType.Created,

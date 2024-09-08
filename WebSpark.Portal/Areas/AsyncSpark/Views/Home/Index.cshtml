@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Async in .NET 8 - Demonstration Site";
+    ViewData["Description"] = "Explore the power of asynchronous programming in .NET 8 with our comprehensive demonstration. Learn how to enhance your web applications with modern async patterns, including HttpClient decorators, HttpClientFactory integration, Polly resilience strategies, and advanced logging and telemetry.";
+    ViewData["Keywords"] = "async, .NET 8, HttpClient, HttpClientFactory, Polly, logging, telemetry";
 }
 
 <div class="container mt-5">
@@ -40,96 +42,90 @@
 <div class="container my-5">
     <div class="card mb-5">
         <div class="card-header">
-            <h2><i class="bi bi-cloud-sun-fill text-primary"></i> Open Weather Demo</h2>
+            <h2><i class="bi bi-journal-code text-secondary"></i> Decorator Pattern with HttpClient</h2>
         </div>
         <div class="card-body">
             <p>
-                The <strong>Open Weather Demo</strong> demonstrates how to interact with the OpenWeatherMap API asynchronously to fetch current weather data for various locations. This demo emphasizes efficient use of API requests, error handling, and caching to improve the user experience by displaying real-time weather information with minimal latency.
+                The <strong>Decorator Pattern</strong> is a structural design pattern that allows behavior to be added to individual objects, dynamically, without affecting the behavior of other objects from the same class. In this demo, we showcase how to use the decorator pattern with <code>HttpClient</code> to add features such as logging, retries, and error handling in a modular and maintainable way.
             </p>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <i class="bi bi-lightning-fill text-success"></i> <strong>Asynchronous Data Retrieval:</strong> Utilizes async programming to fetch weather data without blocking the main application thread, ensuring a smooth and responsive user interface.
-                </li>
-                <li class="list-group-item">
-                    <i class="bi bi-hdd-network-fill text-info"></i> <strong>Caching Mechanism:</strong> Implements caching to store recent weather data, reducing the need for repetitive API calls and improving data access speeds.
-                </li>
-                <li class="list-group-item">
-                    <i class="bi bi-exclamation-triangle-fill text-warning"></i> <strong>Error Handling:</strong> Demonstrates robust error handling to manage common API issues such as missing data, network failures, and unauthorized requests, providing clear feedback to users.
-                </li>
-                <li class="list-group-item">
-                    <i class="bi bi-geo-alt-fill text-danger"></i> <strong>Location Management:</strong> Allows users to select or input different locations, with the application verifying and caching the location details to streamline repeated queries and enhance usability.
-                </li>
-            </ul>
+
+            <h4><i class="bi bi-code-slash text-success"></i> Example: HttpClient Logging Decorator</h4>
+            <pre class="language-csharp"><code class="language-csharp">
+// Base Decorator Class
+public class HttpClientDecorator : HttpClient
+{
+    protected readonly HttpClient _client;
+
+    public HttpClientDecorator(HttpClient client)
+    {
+        _client = client;
+    }
+}
+
+// Logging Decorator
+public class LoggingHttpClientDecorator : HttpClientDecorator
+{
+    public LoggingHttpClientDecorator(HttpClient client) : base(client) { }
+
+    public async Task<HttpResponseMessage> GetAsync(string requestUri)
+    {
+        Console.WriteLine($"Making request to {requestUri}");
+        var response = await _client.GetAsync(requestUri);
+        Console.WriteLine($"Received response: {response.StatusCode}");
+        return response;
+    }
+}
+            </code></pre>
+
+            <h4><i class="bi bi-shield-check text-primary"></i> Example: Adding Resilience with Polly</h4>
+            <p>
+                Polly is a .NET resilience and transient-fault-handling library that allows you to define policies such as retries, circuit breakers, and fallbacks. Below is an example of how to integrate Polly with HttpClient using the decorator pattern:
+            </p>
+            <pre class="language-csharp"><code class="language-csharp">
+// Polly Decorator
+public class PollyHttpClientDecorator : HttpClientDecorator
+{
+    public PollyHttpClientDecorator(HttpClient client) : base(client) { }
+
+    public async Task<HttpResponseMessage> GetAsync(string requestUri)
+    {
+        var retryPolicy = Policy
+            .Handle<HttpRequestException>()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
+        return await retryPolicy.ExecuteAsync(() => _client.GetAsync(requestUri));
+    }
+}
+            </code></pre>
+
+            <p>
+                By combining different decorators, you can build a powerful, extensible HttpClient that can handle a variety of cross-cutting concerns such as logging and error handling without cluttering your business logic.
+            </p>
         </div>
         <div class="card-footer text-muted">
-            <i class="bi bi-thermometer-sun"></i> See how the Open Weather Demo integrates API data seamlessly into web applications, showcasing practical uses of async calls and caching strategies to deliver up-to-date weather information efficiently.
+            <i class="bi bi-cpu"></i> Enhance your .NET 8 applications by leveraging the decorator pattern and Polly for a resilient and maintainable HTTP client architecture.
         </div>
     </div>
 
     <div class="card mb-5">
         <div class="card-header">
-            <h2><i class="bi bi-palette-fill text-secondary"></i> Art Institute Demo</h2>
+            <h2><i class="bi bi-gear-fill text-secondary"></i> Best Practices for Using Decorators</h2>
         </div>
         <div class="card-body">
-            <p>
-                The <strong>Art Institute Demo</strong> demonstrates how to fetch and display public domain artworks asynchronously from the Art Institute of Chicago's API. Using caching techniques, the application reduces the number of API requests, improving performance and ensuring a smooth user experience.
-            </p>
             <ul class="list-group">
-                <li class="list-group-item"><i class="bi bi-lightning-charge-fill text-success"></i> Asynchronous Data Fetching: Ensures that the application remains responsive by performing non-blocking API calls.</li>
-                <li class="list-group-item"><i class="bi bi-save-fill text-warning"></i> Caching: Reduces load times and saves bandwidth by storing frequent requests.</li>
-                <li class="list-group-item"><i class="bi bi-bar-chart-line-fill text-info"></i> Performance Metrics: Displays response time, cache age, and other key metrics for monitoring and optimization.</li>
+                <li class="list-group-item">
+                    <i class="bi bi-arrow-right-circle-fill text-primary"></i> <strong>Single Responsibility:</strong> Each decorator should handle one specific concern, such as logging or retries, keeping the implementation clean and focused.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-arrow-right-circle-fill text-primary"></i> <strong>Dependency Injection:</strong> Use dependency injection to manage decorators, allowing for easy swapping and configuration.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-arrow-right-circle-fill text-primary"></i> <strong>Testing:</strong> Decorators should be independently testable, ensuring each functionality can be verified in isolation.
+                </li>
             </ul>
         </div>
         <div class="card-footer text-muted">
-            <i class="bi bi-clock-history"></i> Check out how we integrate public APIs efficiently, ensuring data freshness with minimal API call redundancy.
-        </div>
-    </div>
-
-    <div class="card mb-5">
-        <div class="card-header">
-            <h2><i class="bi bi-emoji-smile text-primary"></i> Joke API Demo</h2>
-        </div>
-        <div class="card-body">
-            <p>
-                The <strong>Joke API Demo</strong> highlights how to interact with the JokeAPI to fetch random jokes asynchronously. This demo illustrates the importance of handling API errors gracefully and ensuring that API requests are optimized for performance.
-            </p>
-            <ul class="list-group">
-                <li class="list-group-item"><i class="bi bi-arrow-repeat text-danger"></i> Error Handling: Demonstrates how to manage API errors, ensuring a smooth user experience even when things go wrong.</li>
-                <li class="list-group-item"><i class="bi bi-stopwatch text-secondary"></i> Performance Tracking: Monitors API response times, helping developers fine-tune their async calls.</li>
-            </ul>
-        </div>
-        <div class="card-footer text-muted">
-            <i class="bi bi-gear-fill"></i> Explore how async techniques can make your application more engaging and responsive.
-        </div>
-    </div>
-
-    <div class="card mb-5">
-        <div class="card-header">
-            <h2><i class="bi bi-link-45deg text-info"></i> Key Points When Calling Public APIs</h2>
-        </div>
-        <div class="card-body">
-            <p>
-                Successfully integrating public APIs requires attention to detail and understanding common pitfalls. Here are some key points to keep in mind:
-            </p>
-            <ul class="list-group">
-                <li class="list-group-item"><i class="bi bi-shield-lock-fill text-warning"></i> <strong>HTTP Status Codes:</strong> A 403 Forbidden error usually indicates that the server understands your request but refuses to authorize it. This can happen due to incorrect request structure or missing headers.</li>
-                <li class="list-group-item"><i class="bi bi-reception-4 text-success"></i> <strong>Headers Matter:</strong> APIs often expect specific headers like User-Agent, Accept, and Accept-Language. These headers identify the client and specify the expected response type.</li>
-                <li class="list-group-item"><i class="bi bi-person-badge-fill text-primary"></i> <strong>User-Agent Header:</strong> Many public APIs use the User-Agent header to validate the request. Using a common browser User-Agent string often helps resolve access issues.</li>
-                <li class="list-group-item"><i class="bi bi-key-fill text-danger"></i> <strong>Authentication and API Keys:</strong> Ensure that API keys, tokens, or other credentials are correctly included in the request headers. Missing or incorrect credentials are a common cause of failed API calls.</li>
-                <li class="list-group-item"><i class="bi bi-shield-exclamation text-warning"></i> <strong>CORS Policies:</strong> Cross-Origin Resource Sharing policies can affect API access, particularly in web applications. Ensure requests comply with server-side CORS policies.</li>
-                <li class="list-group-item"><i class="bi bi-diagram-3 text-secondary"></i> <strong>Consistency with Tools like Postman:</strong> Tools like Postman automatically handle headers and authentication. When replicating these requests in code, ensure the same details are included to avoid discrepancies.</li>
-            </ul>
-        </div>
-        <div class="card-footer">
-            <h4 class="mt-3"><i class="bi bi-tools"></i> Practical Steps for Success</h4>
-            <ul>
-                <li>Inspect headers from successful requests in tools like Postman and replicate them in your code.</li>
-                <li>Use network inspection tools such as browser developer tools, Postman, or Fiddler to compare requests and troubleshoot issues.</li>
-                <li>Double-check that authentication details such as API keys or tokens are correctly implemented in your requests.</li>
-            </ul>
-            <p>
-                Understanding these concepts ensures that your API calls are structured correctly, authenticated, and aligned with server expectations, leading to successful interactions with public APIs.
-            </p>
+            <i class="bi bi-lightbulb-fill text-warning"></i> Implementing decorators correctly will lead to more maintainable, scalable, and robust applications.
         </div>
     </div>
 
@@ -145,8 +141,3 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        document.querySelector('meta[name="description"]').setAttribute("content", "Explore async programming in .NET 8 with practical demos and key insights on calling public APIs. Learn about performance optimization, error handling, and caching techniques to build responsive applications.");
-    </script>
-}

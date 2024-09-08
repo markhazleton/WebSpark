@@ -19,6 +19,35 @@
 		<Exec Command="npm run build" />
 	</Target>
 	<ItemGroup>
+	  <None Remove="src\images\GPT-Entity-Diagram.png" />
+	  <None Remove="src\images\PromptSpark-icon-transparent.webp" />
+	  <None Remove="src\images\PromptSpark-icon.png" />
+	  <None Remove="src\images\PromptSpark-icon.webp" />
+	  <None Remove="src\images\PromptSpark.webp" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="src\images\GPT-Entity-Diagram.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark-icon-transparent.webp">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark-icon.png">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\PromptSpark-icon.webp">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="src\images\promptspark.webp">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="33.0.1" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />

@@ -64,7 +64,7 @@
         "browser-sync": "3.0.2",
         "chokidar": "3.6.0",
         "clean-css-cli": "^5.6.3",
-        "concurrently": "8.2.2",
+        "concurrently": "9.0.0",
         "cssnano": "^7.0.6",
         "dotenv": "16.4.5",
         "ncp": "^2.0.0",

@@ -2,7 +2,9 @@
 @model MockResults
 @{
     ViewData["Title"] = "Async API Polly Page - Resilient API Calls with Polly in .NET 8";
-    var bgColorClass = Model?.ResultValue == "-1" ? "bg-danger" : "bg-success"; // Using Bootstrap background color classes
+    ViewData["Description"] = "Learn how to build resilient .NET 8 web applications using Polly for advanced retry strategies. Explore the power of asynchronous programming to handle transient faults in HTTP requests efficiently.";
+    ViewData["Keywords"] = "async, .NET 8, Polly, resilience, retry, circuit breaker, timeout, MockService, async methods";
+    var bgColorClass = Model?.Message != "Task Complete" ? "bg-danger" : "bg-success"; // Using Bootstrap background color classes
 }
 
 <div class="container-fluid my-5">
@@ -19,7 +21,6 @@
 
     <div class="row">
         <div class="col-md-4">
-            <!-- Apply Bootstrap classes for styling -->
             <dl class="@bgColorClass text-white rounded p-3">
                 <dt class="text-start ps-2"><i class="bi bi-loop"></i> Loop Count</dt>
                 <dd class="text-start ps-2 border-bottom">@Model?.LoopCount</dd>
@@ -102,54 +103,101 @@
     </div>
 </div>
 
-
 <div class="container-fluid mt-5">
     <div class="row">
         <div class="col-md-12">
-            <h2 class="display-5 text-center mb-4"><i class="bi bi-book-fill text-primary"></i> Understanding Polly: History, Purpose, and Best Practices</h2>
+            <h2 class="display-5 text-center mb-4"><i class="bi bi-book-fill text-primary"></i> Understanding Polly: Features, Purpose, and Best Practices</h2>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            <h3><i class="bi bi-clock-history"></i> History and Purpose of Polly</h3>
+            <h3><i class="bi bi-clock-history"></i> Features of Polly</h3>
             <p>
-                Polly is a .NET resilience and transient-fault-handling library that originated as an open-source project to address the growing need for robust fault-handling in modern, distributed applications. Initially released in 2012, Polly has gained significant traction among developers due to its intuitive syntax and powerful capabilities. Its core purpose is to provide developers with a flexible and reliable way to handle transient faults in network operations, database connections, and other external dependencies.
+                Polly provides a suite of resilience strategies that help make your .NET applications robust and fault-tolerant. Key features include:
             </p>
-            <p>
-                By implementing Polly, developers can apply resilience strategies such as retries, circuit breakers, bulkhead isolation, timeouts, and fallback operations, all using async and synchronous patterns. This approach empowers applications to withstand temporary issues, such as network timeouts or throttling, without crashing or failing outright.
-            </p>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <i class="bi bi-arrow-repeat text-success"></i> <strong>Retry:</strong> Polly’s retry feature allows you to automatically retry failed operations, with customizable delay strategies such as exponential backoff and jitter to avoid synchronized retries that can overwhelm a service.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-shield-fill text-warning"></i> <strong>Circuit Breaker:</strong> Circuit breakers stop repetitive attempts to access a service when it’s known to be down, allowing the service time to recover before new requests are allowed.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-clock-fill text-primary"></i> <strong>Timeouts:</strong> Timeouts automatically cancel requests that exceed a specified duration, helping to prevent your application from hanging due to unresponsive services.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-arrow-down-up text-info"></i> <strong>Bulkhead Isolation:</strong> Bulkheads limit the number of concurrent calls to a particular resource, preventing overloads by isolating failures to a specific section of the application.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-umbrella-fill text-danger"></i> <strong>Fallback:</strong> Fallback strategies provide alternative actions when all other policies fail, such as returning a default response or invoking a secondary service.
+                </li>
+            </ul>
         </div>
         <div class="col-md-6">
-            <h3><i class="bi bi-people-fill"></i> Public Acceptance and Benefits</h3>
+            <h3><i class="bi bi-people-fill"></i> Purpose and Best Practices</h3>
             <p>
-                Polly has been widely adopted by the .NET community and is often seen as the de facto standard for resilience handling in .NET applications. It is used by developers and companies of all sizes, including large enterprises and startups, to enhance the stability and reliability of their software solutions. The public's acceptance of Polly stems from its ease of use, extensive documentation, and strong community support, making it an essential tool in the .NET ecosystem.
+                The primary purpose of Polly is to help developers build resilient applications that can handle transient faults gracefully. By using Polly, you can create systems that are not only robust against temporary outages but also optimize user experience by avoiding unnecessary failures and retries.
             </p>
-            <p>
-                Key benefits of using Polly include improved application reliability, better user experience, and reduced operational costs by minimizing downtime. Polly’s ability to elegantly handle retries with jitter, manage transient errors gracefully, and implement sophisticated resilience patterns has made it a trusted choice for developers aiming to build resilient and robust .NET applications.
-            </p>
+
+            <h4 class="mt-4"><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices</h4>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <span class="fw-bold">Start with Retries:</span> Begin with basic retry logic, but ensure that retries are well-thought-out with exponential backoff to avoid overwhelming the service.
+                </li>
+                <li class="list-group-item">
+                    <span class="fw-bold">Use Circuit Breakers:</span> Combine retries with circuit breakers to prevent cascading failures and avoid self-inflicted Denial of Service (DoS) scenarios where too many retries flood a struggling backend service.
+                </li>
+                <li class="list-group-item">
+                    <span class="fw-bold">Combine Multiple Policies:</span> Mix retries with fallbacks, circuit breakers, and bulkhead isolation to build a comprehensive resilience strategy.
+                </li>
+                <li class="list-group-item">
+                    <span class="fw-bold">Monitor and Log:</span> Implement logging and monitoring to track the performance of Polly policies in real-time, allowing for adjustments based on actual system behavior.
+                </li>
+                <li class="list-group-item">
+                    <span class="fw-bold">Test in Staging Environments:</span> Regularly test the configurations in a staging environment to validate that policies behave as expected under simulated failure conditions.
+                </li>
+            </ul>
         </div>
     </div>
 
     <div class="row mt-4">
         <div class="col-md-6">
-            <h3><i class="bi bi-tools"></i> Alternative Approaches to Polly</h3>
+            <h3><i class="bi bi-diagram-3"></i> Understanding the Retry Model</h3>
             <p>
-                While Polly is highly regarded, alternative approaches exist for handling transient faults in .NET applications. Developers can manually implement basic retry logic or use other libraries such as <strong>Resilience4j</strong> (popular in the Java world but adaptable) or native <strong>ASP.NET Core</strong> middleware for resilience patterns. However, these alternatives often lack the flexibility, ease of integration, and community backing that Polly offers.
+                The retry model in Polly is designed to handle transient faults such as network blips or temporary service outages. By retrying an operation a specified number of times with defined delays, you can often succeed without user intervention. However, it’s crucial to configure retries correctly:
             </p>
             <p>
-                Another approach is leveraging cloud-native solutions like <strong>Azure Application Gateway</strong> or <strong>API Management</strong> which provide built-in retry and circuit-breaking capabilities. While these solutions are effective, they may involve higher costs and can be overkill for simpler scenarios where Polly excels.
+                <strong>Potential Pitfall - Self-inflicted DoS</strong>: Poorly configured retries, especially with immediate retries or too many attempts, can lead to a self-inflicted Denial of Service (DoS) attack. When a backend service is under load or stress, excessive retries can exacerbate the problem by increasing traffic precisely when the service is least capable of handling it. To mitigate this risk, use strategies like:
             </p>
+            <ul>
+                <li><strong>Exponential Backoff:</strong> Increase the delay between retries exponentially to reduce the retry rate over time.</li>
+                <li><strong>Jitter:</strong> Add randomness to retry intervals to avoid synchronized retries from multiple clients.</li>
+                <li><strong>Max Retry Attempts:</strong> Limit the number of retries to prevent excessive load on struggling services.</li>
+            </ul>
         </div>
         <div class="col-md-6">
-            <h3><i class="bi bi-lightbulb-fill"></i> Best Practices for Using Polly</h3>
-            <ul class="list-group">
-                <li class="list-group-item"><i class="bi bi-arrow-repeat text-success"></i> <strong>Start with Retries:</strong> Implement basic retry logic with exponential backoff and jitter to handle transient faults.</li>
-                <li class="list-group-item"><i class="bi bi-exclamation-triangle text-warning"></i> <strong>Use Circuit Breakers:</strong> Protect downstream systems from overload by breaking the circuit when a threshold of failures is met, allowing time for recovery.</li>
-                <li class="list-group-item"><i class="bi bi-diagram-3 text-primary"></i> <strong>Combine Policies:</strong> Leverage multiple Polly policies together, such as combining retries with circuit breakers and fallbacks, to build comprehensive resilience strategies.</li>
-                <li class="list-group-item"><i class="bi bi-speedometer2 text-info"></i> <strong>Monitor and Log:</strong> Integrate logging and telemetry to monitor the performance of Polly policies and adjust configurations based on real-world data.</li>
-                <li class="list-group-item"><i class="bi bi-sliders text-danger"></i> <strong>Test and Tune:</strong> Regularly test the effectiveness of Polly configurations in staging environments to ensure they handle expected failure scenarios appropriately.</li>
+            <h3><i class="bi bi-slash-circle"></i> Circuit Breakers - When to Use Them</h3>
+            <p>
+                Circuit breakers are critical in preventing repeated calls to a failing service, which can lead to cascading failures in a distributed system. They work by opening a circuit after a specified number of failures, temporarily stopping requests to give the service time to recover.
+            </p>
+
+            <h4 class="mt-4"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Use Cases for Circuit Breakers</h4>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <span class="fw-bold">Protecting Services:</span> Use circuit breakers to protect critical services from being overwhelmed by repeated failure requests.
+                </li>
+                <li class="list-group-item">
+                    <span class="fw-bold">Graceful Degradation:</span> During outages, circuit breakers allow your application to degrade gracefully rather than fail completely.
+                </li>
+                <li class="list-group-item">
+                    <span class="fw-bold">Recovery Monitoring:</span> Circuit breakers automatically test the service periodically to determine if it has recovered and, if so, resume normal operations.
+                </li>
             </ul>
+
+            <p class="mt-3">
+                By incorporating circuit breakers alongside retries, you can create a balanced approach that keeps your application responsive without overloading your backend systems.
+            </p>
         </div>
     </div>
 
@@ -165,10 +213,59 @@
     </div>
 </div>
 
-<!-- SEO Optimized Meta Description -->
-@section Scripts {
-    <script>
-        document.querySelector('meta[name="description"]').setAttribute("content", "Discover the history, purpose, and benefits of Polly in .NET 8. Learn best practices, alternative approaches, and how Polly enhances application resilience through retries, circuit breakers, and more.");
-    </script>
-}
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="display-5 text-center mb-4"><i class="bi bi-book-fill text-primary"></i> Understanding the AsyncMockService and Its Role in Polly Demos</h2>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-md-6">
+            <h3><i class="bi bi-cpu-fill"></i> What is AsyncMockService?</h3>
+            <p>
+                The <strong>AsyncMockService</strong> is a utility class used to simulate various asynchronous operations that are common in real-world applications. It includes methods that represent long-running tasks, support for cancellation, and handling of exceptions, making it an ideal target endpoint for demonstrating how Polly can be used to manage resilience in asynchronous programming.
+            </p>
+            <p>
+                This service is designed to mimic scenarios such as processing heavy computations, handling cancellations gracefully, and dealing with unexpected errors. These examples provide a practical demonstration of how Polly's resilience strategies can be applied to enhance the stability and reliability of .NET applications under varying conditions.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h3><i class="bi bi-gear-wide-connected"></i> Key Methods in AsyncMockService</h3>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <i class="bi bi-arrow-repeat"></i> <strong>ExampleMethodAsync:</strong> Demonstrates continuous work that checks for cancellation requests, simulating a task that can be stopped gracefully using cancellation tokens.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-hourglass-split"></i> <strong>LongRunningCancellableOperation:</strong> A long-running task that loops for a specified number of iterations, introducing delays and checking for cancellations. This method throws a <code>TaskCanceledException</code> when a cancellation is requested, illustrating proper cancellation handling in async operations.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-hourglass-bottom"></i> <strong>LongRunningOperation:</strong> Simulates a long-running operation without cancellation support, useful for testing how Polly handles retries on operations that do not natively support cancellation.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-shield-lock"></i> <strong>LongRunningOperationWithCancellationTokenAsync:</strong> An advanced method that combines long-running operations with a cancellation token using a <code>TaskCompletionSource</code>. This pattern ensures that operations can be cancelled properly and results can be returned or cancelled based on task completion.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-clock-history"></i> <strong>LongRunningTask:</strong> A comprehensive demonstration of handling long-running tasks with cancellation, exception management, and performance logging. This method showcases how to log progress, handle exceptions, and respect cancellation requests, making it ideal for testing Polly's circuit breakers and retry logic.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-tools"></i> <strong>PerformTaskAsync:</strong> A utility method that performs a unit of work with optional delays and error simulation. It checks for cancellation requests and can throw exceptions to demonstrate error handling.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12 text-center">
+            <p class="lead">
+                The <strong>AsyncMockService</strong> provides a versatile set of methods that simulate real-world async scenarios, 
+                making it an excellent tool for demonstrating how Polly's resilience strategies can be applied to manage transient 
+                faults, cancellations, and errors effectively. Whether you are testing retries, circuit breakers, or timeout strategies, 
+                the <strong>AsyncMockService</strong> offers practical examples to explore and refine your approach to building resilient .NET applications.
+            </p>
+            <a href="https://github.com/markhazleton/webspark" target="_blank" class="btn btn-outline-primary">
+                <i class="bi bi-box-arrow-up-right"></i> Learn More About AsyncMockService on GitHub repository for WebSpark
+            </a>
+        </div>
+    </div>
+</div>

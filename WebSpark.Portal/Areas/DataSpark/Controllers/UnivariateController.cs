@@ -1,27 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Data;
-using ScottPlot;
-using System;
+﻿using System.Data;
 using WebSpark.Portal.Areas.DataSpark.Models;
-using ScottPlot.Grids;
 
 namespace WebSpark.Portal.Areas.DataSpark.Controllers
 {
-    public class UnivariateController : DataSparkBaseController
+    public class UnivariateController(
+        IConfiguration configuration,
+        ILogger<UnivariateController> logger) : DataSparkBaseController<UnivariateController>(logger)
     {
-        private readonly IConfiguration _configuration;
-
-        public UnivariateController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         [HttpGet]
         public IActionResult Index()
         {
@@ -39,7 +24,7 @@ namespace WebSpark.Portal.Areas.DataSpark.Controllers
             try
             {
                 // Get output folder from configuration
-                var outputFolder = _configuration["CsvOutputFolder"];
+                var outputFolder = configuration["CsvOutputFolder"];
 
                 if (string.IsNullOrEmpty(outputFolder))
                 {
@@ -91,7 +76,7 @@ namespace WebSpark.Portal.Areas.DataSpark.Controllers
 
 
 
-                var outputFolder = _configuration["CsvOutputFolder"];
+                var outputFolder = configuration["CsvOutputFolder"];
                 var filePath = Path.Combine(outputFolder, fileName);
 
                 if (!System.IO.File.Exists(filePath) || string.IsNullOrEmpty(columnName))

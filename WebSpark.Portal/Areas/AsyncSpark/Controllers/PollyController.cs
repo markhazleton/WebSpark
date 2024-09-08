@@ -1,45 +1,31 @@
 ﻿using HttpClientUtility.MockService;
 using Polly;
+using Polly.CircuitBreaker;
 using Polly.Retry;
 using System.Diagnostics;
 using System.Net;
-using System.Net.Http.Headers;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 
 /// <summary>
 /// Controller for demonstrating the use of Polly for handling retries in HTTP requests.
 /// </summary>
-public class PollyController : AsyncSparkBaseController
+/// <remarks>
+/// Initializes a new instance of the <see cref="PollyController"/> class.
+/// </remarks>
+/// <param name="logger">The logger instance for logging information.</param>
+public class PollyController(
+    ILogger<PollyController> logger,
+    IHttpClientFactory clientFactory) : AsyncSparkBaseController
 {
-    private readonly ILogger<PollyController> _logger;
-    private readonly AsyncRetryPolicy<HttpResponseMessage> _httpIndexPolicy;
-    private const string RetryCountKey = "retrycount";
-    private readonly HttpClient _httpClient;
-    private static readonly Stopwatch StopWatch = new();
-    private static readonly Random Jitter = new();
-    private readonly CancellationTokenSource Cts;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PollyController"/> class.
-    /// </summary>
-    /// <param name="logger">The logger instance for logging information.</param>
-    public PollyController(ILogger<PollyController> logger, IHttpClientFactory clientFactory)
+    private AsyncRetryPolicy<HttpResponseMessage> GetAsyncRetryPolicy(Random Jitter, string RetryCountKey)
     {
-        _logger = logger;
-        Cts = new CancellationTokenSource();
 
-        // Initialize HttpClient and set default request headers
-        _httpClient = clientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.Accept.Clear();
-        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        // Initialize Polly retry policy with exponential backoff and jitter
-        _httpIndexPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+        // Initialize Polly retry policy with quick retries for demo purposes and jitter
+        var _httpIndexPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
             .WaitAndRetryAsync(
                 3,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(1, retryAttempt) / 2)
-                                + TimeSpan.FromSeconds(Jitter.Next(0, 1)),
+                retryAttempt => TimeSpan.FromMilliseconds(100) + TimeSpan.FromMilliseconds(Jitter.Next(0, 100)),
                 onRetry: (response, timespan, retryCount, context) =>
                 {
                     context[RetryCountKey] = retryCount;
@@ -55,8 +41,26 @@ public class PollyController : AsyncSparkBaseController
                         results?.Add($"Retry {retryCount}: {message}");
                     }
 
-                    _logger.LogWarning($"Request failed with {response.Result?.StatusCode}. Waiting {timespan} before next retry. Retry attempt {retryCount}.");
+                    logger.LogWarning("Request failed with {StatusCode}. Waiting {Timespan} before next retry. Retry attempt {RetryCount}.",
+                                        response.Result?.StatusCode, timespan, retryCount);
                 });
+        return _httpIndexPolicy;
+    }
+
+    private AsyncCircuitBreakerPolicy<HttpResponseMessage> GetCircuitBreakPolicy()
+    {
+        // Circuit breaker to open after 3 consecutive failed attempts and reset after 10 seconds
+        var _circuitBreakerPolicy = Policy
+            .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+            .CircuitBreakerAsync(3, TimeSpan.FromSeconds(10),
+                onBreak: (outcome, breakDelay) =>
+                {
+                    logger.LogWarning("Circuit breaker opened due to {StatusCode}. Waiting {BreakDelay} before next attempt.",
+                                       outcome.Result?.StatusCode, breakDelay);
+                },
+                onReset: () => logger.LogInformation("Circuit breaker reset."),
+                onHalfOpen: () => logger.LogInformation("Circuit breaker half-open: Testing the service again."));
+        return _circuitBreakerPolicy;
     }
 
     /// <summary>
@@ -68,22 +72,35 @@ public class PollyController : AsyncSparkBaseController
     [HttpGet]
     public async Task<IActionResult> Index(int loopCount = 1, int maxTimeMs = 1000)
     {
+        string RetryCountKey = "retrycount";
+        Stopwatch StopWatch = new();
+        Random Jitter = new();
+
         // Start timing the operation
         StopWatch.Reset();
         StopWatch.Start();
 
-        // Set the base address for the HttpClient
-        _httpClient.BaseAddress = new Uri($"{Request.Scheme}://{Request.Host}{Request.PathBase}/");
-
+        using var cts = new CancellationTokenSource(maxTimeMs); // Apply handling for the cancellation token source
         var context = new Context { { RetryCountKey, 0 }, { "ResultsList", new List<string>() } };
-        var mockResults = new MockResults { LoopCount = loopCount, MaxTimeMS = maxTimeMs };
+        MockResults mockResults = new() { LoopCount = loopCount, MaxTimeMS = maxTimeMs };
         HttpResponseMessage response = new(HttpStatusCode.InternalServerError);
-
         try
         {
-            // Execute the HTTP request with retry logic
-            response = await _httpIndexPolicy.ExecuteAsync(ctx =>
-                HttpClientJsonExtensions.PostAsJsonAsync(_httpClient, "api/asyncspark/remote/results", mockResults, Cts.Token), context);
+            var _circuitBreakerPolicy = GetCircuitBreakPolicy();
+            var _httpIndexPolicy = GetAsyncRetryPolicy(Jitter, RetryCountKey);
+            var BaseAddress = new Uri($"{Request.Scheme}://{Request.Host}{Request.PathBase}/");
+            var _httpClient = clientFactory.CreateClient("PollyController");
+
+            // Create the HTTP request message
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseAddress}api/asyncspark/remote/results")
+            {
+                Content = JsonContent.Create(mockResults)
+            };
+
+            // Execute the HTTP request with retry and circuit breaker logic
+            response = await _circuitBreakerPolicy.ExecuteAsync(ctx =>
+                _httpIndexPolicy.ExecuteAsync(innerCtx =>
+                    _httpClient.SendAsync(request, cts.Token), ctx), context);
 
             if (response.IsSuccessStatusCode)
             {
@@ -91,24 +108,46 @@ public class PollyController : AsyncSparkBaseController
             }
             else
             {
-                // wrap in try/catch to handle exceptions when reading the response content
+                // Specific exception handling with fallback to general exception
                 try
                 {
                     mockResults = await response.Content.ReadFromJsonAsync<MockResults>();
                 }
+                catch (HttpRequestException ex)
+                {
+                    logger.LogError(ex, "An HTTP request error occurred while reading the response content.");
+                    mockResults.Message = $"HTTP Error: {ex.Message}";
+                }
+                catch (TaskCanceledException ex)
+                {
+                    logger.LogError(ex, "The operation was canceled, likely due to a timeout.");
+                    mockResults.Message = $"Timeout Error: {ex.Message}";
+                }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An error occurred while reading the response content.");
+                    logger.LogError(ex, "An error occurred while reading the response content.");
                     mockResults.Message = $"Error: {ex.Message}";
                 }
-
-                mockResults.ResultValue = response.StatusCode.ToString();
-
             }
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogError(ex, "An HTTP request error occurred while executing the request.");
+            mockResults.Message = $"HTTP Error: {ex.Message}";
+        }
+        catch (TaskCanceledException ex)
+        {
+            logger.LogError(ex, "The operation was canceled, likely due to a timeout.");
+            mockResults.Message = $"Timeout Error: {ex.Message}";
+        }
+        catch (BrokenCircuitException ex)
+        {
+            logger.LogError(ex, "The circuit is open; requests are not being sent.");
+            mockResults.Message = $"Circuit Breaker Open: {ex.Message}";
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while executing the HTTP request.");
+            logger.LogError(ex, "An error occurred while executing the HTTP request.");
             mockResults.Message = $"Error: {ex.Message}";
         }
 
@@ -117,10 +156,13 @@ public class PollyController : AsyncSparkBaseController
         mockResults.RunTimeMS = StopWatch.ElapsedMilliseconds;
 
         // Retrieve the list of results and store them in the mockResults message
-        if (context.TryGetValue("ResultsList", out var resultsList))
+        if (mockResults.Message != "Task Complete")
         {
-            var results = resultsList as List<string>;
-            mockResults.Message += "<hr/>" + string.Join(";<br/> ", results);
+            if (context.TryGetValue("ResultsList", out var resultsList))
+            {
+                var results = resultsList as List<string>;
+                mockResults.Message += "<hr/>" + string.Join(";<br/> ", results);
+            }
         }
 
         // Return the results to the view
