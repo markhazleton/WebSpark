@@ -1,3 +1,4 @@
+using HttpClientCrawler.Crawler;
 using HttpClientUtility.FullService;
 using HttpClientUtility.GetService;
 using HttpClientUtility.MemoryCache;
@@ -110,7 +111,7 @@ builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
 // Application Services
 // ========================
 builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>();
-builder.Services.AddSingleton<ApplicationStatus>(new ApplicationStatus(Assembly.GetExecutingAssembly()));
+builder.Services.AddSingleton(new ApplicationStatus(Assembly.GetExecutingAssembly()));
 builder.Services.AddSingleton<ChatHistoryStore>();
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
 
@@ -149,6 +150,19 @@ builder.Services.AddMvc()
 // ========================
 // SignalR Configuration
 // ========================
+// Add CORS configuration if needed for SignalR
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyHeader()
+               .AllowAnyMethod()
+               .SetIsOriginAllowed(_ => true)  // Allows all origins
+               .AllowCredentials();            // Necessary for SignalR
+    });
+});
+
+// SignalR Configuration
 builder.Services.AddSignalR().AddJsonProtocol(options =>
 {
     // Configuring JSON serializer options if needed
@@ -220,6 +234,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession(); // Session middleware
+app.UseCors("AllowAllOrigins"); // Apply CORS policy for SignalR
+
 
 // ========================
 // Endpoint Configuration
@@ -234,6 +250,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<CrawlHub>("/crawlHub");
 
 
 // Ensure to flush and close the log when the application shuts down

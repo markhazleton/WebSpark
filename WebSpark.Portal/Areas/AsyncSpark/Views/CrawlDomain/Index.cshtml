@@ -1,0 +1,264 @@
+﻿@using WebSpark.Portal.Areas.AsyncSpark.Models.CrawlDomain
+@model CrawlDomainViewModel
+
+@{
+    ViewData["Title"] = "Crawl Domain with SignalR Updates";
+    ViewData["Description"] = "Demonstration of a Domain Site Crawler implemented with SignalR for feedback";
+    ViewData["Keywords"] = "SignalR, .NET 8, MVC, Real-Time Communication, Site Crawler";
+}
+
+<h1 class="display-6 text-center my-4"><i class="bi bi-search"></i> Crawl Domain</h1>
+
+<form method="post" class="container">
+    <div class="mb-3">
+        <label asp-for="StartPath" class="form-label"><i class="bi bi-link-45deg"></i> Select Start Path:</label>
+        <select asp-for="StartPath" class="form-select">
+            <option value="https://controlorigins.com">controlorigins.com</option>
+            <option value="https://markhazleton.com">markhazleton.com</option>
+            <option value="https://pm.controlorigins.com">pm.controlorigins.com</option>
+            <option value="https://travel.frogsfolly.com">travel.frogsfolly.com</option>
+            <option value="https://frogsfolly.com">frogsfolly.com</option>
+            <option value="https://mechanicsofmotherhood.com">MechanicsOfMotherhood.com</option>
+            <option value="https://texecon.com">Texecon.com</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MaxPagesCrawled" class="form-label"><i class="bi bi-layers"></i> Maximum Pages Crawled:</label>
+        <input asp-for="MaxPagesCrawled" class="form-control" type="number" min="1" max="900" />
+    </div>
+    <button type="submit" class="btn btn-primary" id="crawlButton"><i class="bi bi-play-circle"></i> Start Crawling</button>
+</form>
+
+<div class="text-center mt-4 loading-spinner" style="display:none;">
+    <i class="bi bi-arrow-repeat fa-spin fa-3x"></i>
+    <p class="mt-2">Crawling in progress...</p>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h3 class="card-title"><i class="bi bi-info-circle"></i> Crawl Status</h3>
+    </div>
+    <div class="card-body">
+        <p id="url-found"></p>
+        @if (Model?.CrawlResults != null && Model?.CrawlResults?.Count > 0)
+        {
+            <table class="table table-striped mt-4" id="crawlResults">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Iteration</th>
+                        <th>Request Path</th>
+                        <th>Links Found</th>
+                        <th>Completion Date</th>
+                        <th>Elapsed Milliseconds</th>
+                        <th>Status Code</th>
+                        <th>Retries</th>
+                        <th>Errors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CrawlResults)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Iteration)</td>
+                            <td><a href="@item.RequestPath" target="_blank" class="text-decoration-none"><i class="bi bi-box-arrow-up-right"></i> @item.RequestPath</a></td>
+                            <td>@Html.DisplayFor(modelItem => item.CrawlLinks.Count)</td>
+                            <td>@Html.DisplayFor(modelItem => item.CompletionDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ElapsedMilliseconds)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StatusCode)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Retries)</td>
+                            <td>@string.Join(", ", item.ErrorList)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+
+<div class="mt-4">
+    <h2>Discussion on Domain Crawler Implementation</h2>
+    <p>The Domain Crawler controller demonstrates asynchronous patterns in .NET 8, leveraging HttpClient and SignalR to build a responsive site crawler. It utilizes the async/await syntax to perform efficient, non-blocking web requests, allowing multiple pages to be crawled concurrently.</p>
+
+    <h3>Key Features</h3>
+    <ul>
+        <li><strong>Asynchronous Crawling:</strong> The crawler uses async/await for non-blocking I/O operations.</li>
+        <li><strong>Error Handling and Resilience:</strong> Incorporates Polly for retries and fallback strategies.</li>
+        <li><strong>Real-Time Updates:</strong> SignalR is used to provide real-time notifications of the crawling status to the users.</li>
+        <li><strong>Bootstrap 5 Integration:</strong> Utilizes Bootstrap 5 styles and icons for a modern and responsive UI.</li>
+    </ul>
+
+    <h3>Best Practices for Building Site Crawlers</h3>
+    <ol>
+        <li>Use asynchronous programming to handle I/O-bound operations efficiently.</li>
+        <li>Implement rate limiting and adhere to website crawling policies, including respecting robots.txt rules.</li>
+        <li>Ensure robust error handling with libraries like Polly to manage transient faults gracefully.</li>
+        <li>Maintain search engine-friendly content by using semantic HTML and accessible designs.</li>
+    </ol>
+</div>
+
+<div class="mt-4">
+    <h2>Code Sample</h2>
+    <pre class="language-csharp"><code class="language-csharp">
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using HttpClientCrawler.Crawler;
+
+public class CrawlDomainController : Controller
+{
+    private readonly IHubContext<CrawlHub> _hubContext;
+    private readonly SiteCrawler _siteCrawler;
+
+    public CrawlDomainController(IHubContext<CrawlHub> hubContext, IHttpClientSendService service, ILogger<SiteCrawler> logger)
+    {
+        _hubContext = hubContext;
+        _siteCrawler = new SiteCrawler(hubContext, service, logger);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Index(CrawlDomainViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        model.IsCrawling = true;
+        await _hubContext.Clients.All.SendAsync("UrlFound", "Crawl Started");
+        try
+        {
+            model.CrawlResults = await _siteCrawler.CrawlAsync(model.MaxPagesCrawled, model.StartPath);
+        }
+        finally
+        {
+            model.IsCrawling = false;
+            await _hubContext.Clients.All.SendAsync("UrlFound", "Crawl Complete");
+            await Task.Delay(3000);
+        }
+        return View(model);
+    }
+}
+    </code></pre>
+</div>
+
+<section class="container my-4">
+    <h2 class="display-6 text-center">Using SignalR in ASP.NET Web Applications</h2>
+    <p class="lead">SignalR enables real-time web functionality in ASP.NET applications, allowing servers to push content to clients instantly.</p>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-gear-fill"></i> Step-by-Step Setup
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">1. Add SignalR Package</h3>
+            <pre class="language-bash"><code class="language-bash">dotnet add package Microsoft.AspNetCore.SignalR</code></pre>
+
+            <h3 class="card-title">2. Configure SignalR in <code>Program.cs</code></h3>
+            <pre class="language-csharp"><code class="language-csharp">
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSignalR();
+var app = builder.Build();
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub&lt;ChatHub&gt;("/chatHub");
+});
+app.Run();
+            </code></pre>
+
+            <h5 class="card-title">3. Create a SignalR Hub</h5>
+            <pre class="language-csharp"><code class="language-csharp">
+using Microsoft.AspNetCore.SignalR;
+
+public class ChatHub : Hub
+{
+    public async Task SendMessage(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessage", user, message);
+    }
+}
+            </code></pre>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-code-square"></i> Client-Side Setup
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">4. Include SignalR JavaScript Client</h3>
+            <pre class="language-html">
+                <code class="language-html">
+                    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"&gt;&lt;/script&gt;
+                </code>
+            </pre>
+            <h3 class="card-title">5. Initialize SignalR Connection</h3>
+            <pre class="language-javascript"><code class="language-javascript">
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/chatHub")
+    .build();
+
+connection.on("ReceiveMessage", (user, message) => {
+    console.log(`${user}: ${message}`);
+});
+
+connection.start().catch(err => console.error(err.toString()));
+            </code></pre>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-shield-lock-fill"></i> Best Practices
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="bi bi-check-circle-fill text-success"></i> Use HTTPS to secure SignalR connections.</li>
+                <li class="list-group-item"><i class="bi bi-check-circle-fill text-success"></i> Implement retry logic for robust error handling.</li>
+                <li class="list-group-item"><i class="bi bi-check-circle-fill text-success"></i> Scale out with a backplane for multiple servers.</li>
+                <li class="list-group-item"><i class="bi bi-check-circle-fill text-success"></i> Optimize payload sizes to enhance performance.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var table = $('#crawlResults').DataTable(
+                {
+                    paging: false,
+                    scrollY: '40vh',
+                    scrollCollapse: true,
+                    stateSave: false,
+                    colReorder: true
+                });
+        });
+    </script>
+}
+
+@section PageScripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
+    <script>
+        // Establish SignalR connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/crawlHub")
+            .build();
+
+        connection.on("UrlFound", function(numUrlsFound) {
+            const found = document.querySelector("p#url-found");
+            found.innerHTML = numUrlsFound + "<br/>";
+            const spinner = document.querySelector(".loading-spinner");
+            const results = document.querySelector("table#crawlResults");
+            if (isCrawling) {
+                spinner.style.display = "block";
+                results.style.display = "none";
+            } else {
+                spinner.style.display = "none";
+                results.style.display = "block";
+            }
+        });
+
+        // Start the connection
+        connection.start().catch(function(err) {
+            return console.error(err.toString());
+        });
+    </script>
+}
+

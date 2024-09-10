@@ -7,7 +7,7 @@
     var bgColorClass = Model?.Message != "Task Complete" ? "bg-danger" : "bg-success"; // Using Bootstrap background color classes
 }
 
-<div class="container-fluid my-5">
+<section class="container-fluid my-5">
     <div class="row mb-4">
         <div class="col-md-12 text-center">
             <h1 class="display-4">
@@ -101,9 +101,9 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="container-fluid mt-5">
+<section class="container-fluid mt-5">
     <div class="row">
         <div class="col-md-12">
             <h2 class="display-5 text-center mb-4"><i class="bi bi-book-fill text-primary"></i> Understanding Polly: Features, Purpose, and Best Practices</h2>
@@ -211,9 +211,117 @@
             </a>
         </div>
     </div>
-</div>
+</section>
 
-<div class="container-fluid mt-5">
+<section class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-4">Understanding PollyController</h1>
+            <p class="lead text-center">Learn how to implement resilient HTTP requests in ASP.NET Core using Polly for retries and circuit breakers.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="bi bi-gear"></i> Introduction to PollyController</h2>
+            <p>The <strong>PollyController</strong> demonstrates the use of <a href="https://github.com/App-vNext/Polly" target="_blank">Polly</a> for handling retries and circuit breakers in HTTP requests within an ASP.NET Core application. This approach helps in managing transient faults and maintaining service resilience.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="bi bi-code-slash"></i> Code Samples</h2>
+            <p>Below are key code snippets from the PollyController that showcase how to set up and use retry and circuit breaker policies with Polly.</p>
+
+            <h3>1. Setting Up Retry Policy</h3>
+            <p>This method defines a retry policy with jitter to handle failed HTTP requests by retrying the operation with a delay.</p>
+            <pre class="language-csharp"><code class="language-csharp">
+private AsyncRetryPolicy&lt;HttpResponseMessage&gt; GetAsyncRetryPolicy(Random jitter, string retryCountKey)
+{
+    var retryPolicy = Policy
+        .HandleResult&lt;HttpResponseMessage&gt;(r => !r.IsSuccessStatusCode)
+        .WaitAndRetryAsync(
+            3,
+            retryAttempt => TimeSpan.FromMilliseconds(100) + TimeSpan.FromMilliseconds(jitter.Next(0, 100)),
+            onRetry: (response, timespan, retryCount, context) =>
+            {
+                context[retryCountKey] = retryCount;
+                var message = response.Result?.StatusCode.ToString() ?? "Request failed without response.";
+                if (response.Exception != null)
+                {
+                    message += $" Exception: {response.Exception.Message}";
+                }
+                logger.LogWarning("Request failed with {StatusCode}. Waiting {Timespan} before next retry. Retry attempt {RetryCount}.",
+                                  response.Result?.StatusCode, timespan, retryCount);
+            });
+    return retryPolicy;
+}
+            </code></pre>
+
+            <h3>2. Setting Up Circuit Breaker Policy</h3>
+            <p>The circuit breaker policy stops further requests when a specified number of consecutive failures occur, helping to avoid overwhelming a struggling service.</p>
+            <pre class="language-csharp"><code class="language-csharp">
+private AsyncCircuitBreakerPolicy&lt;HttpResponseMessage&gt; GetCircuitBreakPolicy()
+{
+    var circuitBreakerPolicy = Policy
+        .HandleResult&lt;HttpResponseMessage&gt;(r => !r.IsSuccessStatusCode)
+        .CircuitBreakerAsync(
+            3, 
+            TimeSpan.FromSeconds(10),
+            onBreak: (outcome, breakDelay) =>
+            {
+                logger.LogWarning("Circuit breaker opened due to {StatusCode}. Waiting {BreakDelay} before next attempt.",
+                                   outcome.Result?.StatusCode, breakDelay);
+            },
+            onReset: () => logger.LogInformation("Circuit breaker reset."),
+            onHalfOpen: () => logger.LogInformation("Circuit breaker half-open: Testing the service again."));
+    return circuitBreakerPolicy;
+}
+            </code></pre>
+
+            <h3>3. Executing HTTP Requests with Policies</h3>
+            <p>This example shows how the retry and circuit breaker policies are applied to HTTP requests executed in the controller.</p>
+            <pre class="language-csharp"><code class="language-csharp">
+public async Task&lt;IActionResult&gt; Index(int loopCount = 1, int maxTimeMs = 1000)
+{
+    var context = new Context { { "retrycount", 0 }, { "ResultsList", new List&lt;string&gt;() } };
+    var mockResults = new MockResults { LoopCount = loopCount, MaxTimeMS = maxTimeMs };
+    var request = new HttpRequestMessage(HttpMethod.Post, $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/asyncspark/remote/results")
+    {
+        Content = JsonContent.Create(mockResults)
+    };
+
+    using var cts = new CancellationTokenSource(maxTimeMs);
+    HttpResponseMessage response = await ExecuteRequestWithPoliciesAsync(request, context, cts.Token);
+
+    await HandleResponse(response, mockResults);
+
+    // Stop timing the operation and set the runtime
+    mockResults.RunTimeMS = GetElapsedMilliseconds();
+
+    // Return the results to the view
+    return View("Index", mockResults);
+}
+            </code></pre>
+
+            <h2><i class="bi bi-lightning-charge"></i> Key Takeaways</h2>
+            <ul class="list-group mb-4">
+                <li class="list-group-item">Polly provides a powerful and flexible way to handle transient faults in HTTP communications.</li>
+                <li class="list-group-item">Retry policies allow for controlled retries with customizable delays and error handling logic.</li>
+                <li class="list-group-item">Circuit breaker policies prevent cascading failures by breaking the circuit when too many errors occur, allowing time for recovery.</li>
+            </ul>
+
+            <h2><i class="bi bi-book"></i> Additional Resources</h2>
+            <p>For more information on Polly and its use in ASP.NET Core, visit the official Polly documentation and explore the various policies and patterns available:</p>
+            <ul>
+                <li><a href="https://github.com/App-vNext/Polly" target="_blank">Polly GitHub Repository</a></li>
+                <li><a href="https://docs.microsoft.com/en-us/dotnet/architecture/cloud-native/resilient-web-applications" target="_blank">Building Resilient Web Applications</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="container-fluid mt-5">
     <div class="row">
         <div class="col-md-12">
             <h2 class="display-5 text-center mb-4"><i class="bi bi-book-fill text-primary"></i> Understanding the AsyncMockService and Its Role in Polly Demos</h2>
@@ -258,9 +366,9 @@
     <div class="row mt-4">
         <div class="col-md-12 text-center">
             <p class="lead">
-                The <strong>AsyncMockService</strong> provides a versatile set of methods that simulate real-world async scenarios, 
-                making it an excellent tool for demonstrating how Polly's resilience strategies can be applied to manage transient 
-                faults, cancellations, and errors effectively. Whether you are testing retries, circuit breakers, or timeout strategies, 
+                The <strong>AsyncMockService</strong> provides a versatile set of methods that simulate real-world async scenarios,
+                making it an excellent tool for demonstrating how Polly's resilience strategies can be applied to manage transient
+                faults, cancellations, and errors effectively. Whether you are testing retries, circuit breakers, or timeout strategies,
                 the <strong>AsyncMockService</strong> offers practical examples to explore and refine your approach to building resilient .NET applications.
             </p>
             <a href="https://github.com/markhazleton/webspark" target="_blank" class="btn btn-outline-primary">
@@ -268,4 +376,4 @@
             </a>
         </div>
     </div>
-</div>
+</section>

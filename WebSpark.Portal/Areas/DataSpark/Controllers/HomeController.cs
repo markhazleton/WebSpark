@@ -1,31 +1,29 @@
-﻿
+﻿using HttpClientUtility.MemoryCache;
 using WebSpark.Portal.Areas.DataSpark.Models;
 using WebSpark.Portal.Areas.DataSpark.Services;
 
 namespace WebSpark.Portal.Areas.DataSpark.Controllers;
 
-public class HomeController(
-    IConfiguration configuration,
-    CsvProcessingService csvProcessingService,
-    ILogger<HomeController> logger) : DataSparkBaseController<HomeController>(logger)
+[Area("DataSpark")]
+public class HomeController : DataSparkBaseController<HomeController>
 {
+    private readonly CsvProcessingService _csvProcessingService;
+
+    public HomeController(
+        IMemoryCacheManager memoryCacheManager,
+        IConfiguration configuration,
+        CsvProcessingService csvProcessingService,
+        ILogger<HomeController> logger)
+        : base(memoryCacheManager, configuration, logger)
+    {
+        _csvProcessingService = csvProcessingService;
+    }
+
     [HttpGet]
     public IActionResult Index()
     {
-        var outputFolder = configuration["CsvOutputFolder"];
-        var csvFiles = new List<string>();
-
-        if (!string.IsNullOrEmpty(outputFolder) && Directory.Exists(outputFolder))
-        {
-            // Get all CSV files from the output folder
-            csvFiles = Directory.GetFiles(outputFolder, "*.csv")
-                                .Select(file => Path.GetFileName(file)!)
-                                .ToList();
-        }
-        var viewModel = new CsvViewModel
-        {
-            AvailableCsvFiles = csvFiles
-        };
+        // Prepare the initial view model with the list of available CSV files
+        var viewModel = new CsvViewModel { AvailableCsvFiles = GetCsvFiles() };
         return View(viewModel);
     }
 
@@ -34,43 +32,39 @@ public class HomeController(
     {
         if (file == null || file.Length == 0 || Path.GetExtension(file.FileName)?.ToLower() != ".csv")
         {
-            return View("Index", new CsvViewModel { Message = "Please upload a valid .csv file." });
+            var viewModel = new CsvViewModel
+            {
+                Message = "Please upload a valid .csv file.",
+                AvailableCsvFiles = GetCsvFiles()
+            };
+            return View("Index", viewModel);
         }
 
         try
         {
-            // Get output folder from configuration
-            var outputFolder = configuration["CsvOutputFolder"];
-
-            if (string.IsNullOrEmpty(outputFolder))
+            var filePath = await AddFileAsync(file); // Use AddFileAsync to add and refresh the file list
+            if (filePath == null)
             {
-                return View("Index", new CsvViewModel { Message = "CSV output folder is not configured." });
+                var viewModel = new CsvViewModel
+                {
+                    Message = "CSV output folder is not configured or file could not be saved.",
+                    AvailableCsvFiles = GetCsvFiles()
+                };
+                return View("Index", viewModel);
             }
-
-            // Ensure the directory exists
-            if (!Directory.Exists(outputFolder))
-            {
-                Directory.CreateDirectory(outputFolder);
-            }
-
-            // Set file name and path
-            var fileName = Path.GetFileName(file.FileName);
-            var filePath = Path.Combine(outputFolder, fileName);
-
-            // Save the file to the specified path
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
-
-            // Process the CSV file using the service
-            var model = csvProcessingService.ProcessCsvWithFallback(filePath);
-
-            return View("Results", model);
+            // Process the CSV file and update the corresponding ViewModel in the thread-safe collection
+            var processedViewModel = _csvProcessingService.ProcessCsvWithFallback(filePath);
+            TryUpdateCsvFile(Path.GetFileName(filePath), processedViewModel);
+            return View("Results", processedViewModel);
         }
         catch (Exception ex)
         {
-            return View("Index", new CsvViewModel { Message = $"Unexpected error: {ex.Message}" });
+            var viewModel = new CsvViewModel
+            {
+                Message = $"Unexpected error: {ex.Message}",
+                AvailableCsvFiles = GetCsvFiles()
+            };
+            return View("Index", viewModel);
         }
     }
 
@@ -79,46 +73,37 @@ public class HomeController(
     {
         try
         {
-            // Get output folder from configuration
-            var outputFolder = configuration["CsvOutputFolder"];
+            var filePath = GetFilePath(fileName);
 
-            if (string.IsNullOrEmpty(outputFolder) || string.IsNullOrEmpty(fileName))
+            if (filePath == null)
             {
-                return View("Index", new CsvViewModel { Message = "Invalid file name or CSV output folder is not configured." });
+                var viewModel = new CsvViewModel
+                {
+                    Message = "Invalid file name or CSV output folder is not configured.",
+                    AvailableCsvFiles = GetCsvFiles()
+                };
+                return View("Index", viewModel);
             }
 
-            // Ensure the output folder exists
-            if (!Directory.Exists(outputFolder))
+            // Retrieve the CSV ViewModel from the thread-safe collection or process if not present
+            var existingViewModel = GetViewModelForFile(fileName);
+            if (existingViewModel == null)
             {
-                return View("Index", new CsvViewModel { Message = "The specified output folder does not exist." });
+                existingViewModel = _csvProcessingService.ProcessCsvWithFallback(filePath);
+                TryUpdateCsvFile(fileName, existingViewModel); // Update the cache in a thread-safe manner
             }
 
-            // Get all files in the directory, ignoring case
-            var files = Directory.GetFiles(outputFolder, "*", SearchOption.TopDirectoryOnly)
-                .Select(f => new FileInfo(f))
-                .ToList();
-
-            // Find the file with case-insensitive comparison
-            var fileInfo = files.FirstOrDefault(f => string.Equals(f.Name, fileName, StringComparison.OrdinalIgnoreCase));
-
-            // Check if the file exists
-            if (fileInfo == null)
-            {
-                return View("Index", new CsvViewModel { Message = "The specified file does not exist." });
-            }
-
-            // Construct the full file path using the matched file
-            var filePath = fileInfo.FullName;
-
-            // Process the CSV file using the service
-            var model = csvProcessingService.ProcessCsvWithFallback(filePath);
-
-            // Return the results view
-            return View("Results", model);
+            // Return the results view with the processed ViewModel
+            return View("Results", existingViewModel);
         }
         catch (Exception ex)
         {
-            return View("Index", new CsvViewModel { Message = $"Unexpected error: {ex.Message}" });
+            var viewModel = new CsvViewModel
+            {
+                Message = $"Unexpected error: {ex.Message}",
+                AvailableCsvFiles = GetCsvFiles()
+            };
+            return View("Index", viewModel);
         }
     }
 }

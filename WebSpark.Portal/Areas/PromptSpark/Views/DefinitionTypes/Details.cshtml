@@ -1,4 +1,4 @@
-﻿@model                         DefinitionTypeDto
+﻿@model DefinitionTypeDto
 
 @{
     ViewData["Title"] = "Core Spark";
@@ -15,50 +15,69 @@
     </div>
 </div>
 
-<hr/>
-<select id="chatDropdown" class="form-control">
-    <option value="">Select a Prompt</option>
-    @foreach (var item in Model.Prompts)
-    {
-        if (!string.IsNullOrEmpty(item.UserPrompt))
-        {
-            <option value="@item.UserPrompt">@Html.DisplayFor(modelItem => item.UserPrompt)</option>
-        }
-    }
-</select>
+<div class="row">
+    <div class="col-8">
+        <h1>Spark Variants</h1>
+    </div>
+    <div class="col-4">
+        <a class="btn btn-primary me-2" asp-controller="Definitions" asp-action="Edit" asp-route-id="0">Create New</a>
+    </div>
+</div>
 
-<div id="chatDetails"></div>
+<table id="displayTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                Variant Name
+            </th>
+            <th>
+                Core Spark
+            </th>
+            <th>
+                Output
+            </th>
+            <th>
+                GPT Model
+            </th>
+            <th>
+                Temperature
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model?.Definitions??new List<DefinitionDto>())
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-controller="Definitions" asp-route-id="@item.DefinitionId">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DefinitionType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OutputType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Temperature)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, { html: true })
-            });
-            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                return new bootstrap.Popover(popoverTriggerEl);
-            });
-            var dropdown = document.getElementById('chatDropdown');
-            dropdown.addEventListener('change', function () {
-                var selectedPrompt = this.value;
-                if (selectedPrompt) {
-                    fetch('@Url.Action("GetChatDetails", "Chat")?id=' + encodeURIComponent(selectedPrompt))
-                        .then(response => response.text())
-                        .then(html => {
-                            // Set the innerHTML of the chatDetails container to the fetched HTML
-                            var container = document.getElementById('chatDetails');
-                            container.innerHTML = html;
-
-                            // Initialize all popovers within the newly added content
-                            var popoverTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="popover"]'));
-                            popoverTriggerList.forEach(function (popoverTriggerEl) {
-                                new bootstrap.Popover(popoverTriggerEl);
-                            });
-                        })
-                        .catch(error => console.error('Error loading the chat details:', error));
-                }
-            });
+        $(document).ready(function() {
+            var table = $('#displayTable').DataTable(
+                {
+                    paging: false,
+                    scrollY: '40vh',
+                    scrollCollapse: true,
+                    stateSave: false,
+                    colReorder: true
+                });
         });
     </script>
 }

@@ -116,13 +116,13 @@ public class GPTDefinitionTypeService(GPTDbContext context) : IGPTDefinitionType
             .FirstOrDefaultAsync() ?? new DefinitionTypeDto();
 
         definitionTypeReturn.Definitions = (await context.Definitions
-            .Where(w => w.DefinitionType.ToLower() == definitionType)
+            .Where(w => w.DefinitionType.ToLower() == definitionTypeReturn.DefinitionType)
             .Select(s => s.ToDto())
             .ToListAsync()) ?? [];
 
         definitionTypeReturn.Prompts =
             (await context.Chats.Include(i => i.GPTResponses)
-            .Where(w => w.DefinitionType.ToLower() == definitionType)
+            .Where(w => w.DefinitionType.ToLower() == definitionTypeReturn.DefinitionType)
             .Select(s => s.ToDto())
             .ToListAsync()) ?? [];
 

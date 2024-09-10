@@ -1,11 +1,13 @@
-﻿using System.Data;
+﻿using HttpClientUtility.MemoryCache;
+using System.Data;
 using WebSpark.Portal.Areas.DataSpark.Models;
 
 namespace WebSpark.Portal.Areas.DataSpark.Controllers
 {
     public class UnivariateController(
+        IMemoryCacheManager memoryCacheManager,
         IConfiguration configuration,
-        ILogger<UnivariateController> logger) : DataSparkBaseController<UnivariateController>(logger)
+        ILogger<UnivariateController> logger) : DataSparkBaseController<UnivariateController>(memoryCacheManager,configuration, logger)
     {
         [HttpGet]
         public IActionResult Index()
@@ -23,23 +25,20 @@ namespace WebSpark.Portal.Areas.DataSpark.Controllers
 
             try
             {
-                // Get output folder from configuration
-                var outputFolder = configuration["CsvOutputFolder"];
-
-                if (string.IsNullOrEmpty(outputFolder))
+                if (string.IsNullOrEmpty(OutputFolder))
                 {
                     return View("Index", new UnivariateViewModel { Message = "CSV output folder is not configured." });
                 }
 
                 // Ensure the directory exists
-                if (!Directory.Exists(outputFolder))
+                if (!Directory.Exists(OutputFolder))
                 {
-                    Directory.CreateDirectory(outputFolder);
+                    Directory.CreateDirectory(OutputFolder);
                 }
 
                 // Set file name and path
                 var fileName = Path.GetFileName(file.FileName);
-                var filePath = Path.Combine(outputFolder, fileName);
+                var filePath = Path.Combine(OutputFolder, fileName);
 
                 // Save the file to the specified path
                 using (var fileStream = new FileStream(filePath, FileMode.Create))

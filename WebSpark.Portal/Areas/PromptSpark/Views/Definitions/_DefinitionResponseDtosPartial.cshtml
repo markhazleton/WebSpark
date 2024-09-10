@@ -22,7 +22,9 @@
                     <td>@item.CompletionTokens</td>
                     <td>@item.TotalTokens</td>
                     <td>@item.TimeMS</td>
-                    <td>@item.UserPrompt</td>
+                    <td>
+                        <a asp-action="Details" asp-controller="UserPrompts" asp-route-id="@item.UserPromptId">@Html.DisplayFor(modelItem => item.UserPrompt)</a>
+                    </td>
                 </tr>
             }
         </tbody>

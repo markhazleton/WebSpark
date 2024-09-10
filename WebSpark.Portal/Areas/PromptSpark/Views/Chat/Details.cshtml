@@ -3,16 +3,42 @@
 @model DefinitionTypeDto
 
 @{
-    var definitionType = Model.DefinitionType;
-    var userPrompt = Model.Prompts.FirstOrDefault(w => w.UserPromptId == Model.CurrentUserPromptId);
+    // Use safe navigation with ?. and null-coalescing to ensure definitionType is valid.
+    var definitionType = Model?.DefinitionType ?? string.Empty;
+    var userPrompt = Model?.Prompts?.FirstOrDefault(w => w.UserPromptId == Model?.CurrentUserPromptId);
 
+    // Ensure CultureInfo is properly defined and text transformation is safe.
     TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
-    definitionType = textInfo.ToTitleCase(definitionType.ToLower());
+    definitionType = textInfo.ToTitleCase(definitionType.ToLowerInvariant());
 
-    ViewData["Title"] = $"Core Spark - {definitionType}";
-    ViewData["Description"] = $"{definitionType}:{Model.Description}";
+    // Safely handle the user prompt text, ensuring it ends on a full word.
+    var userPromptText = string.Empty;
+    if (userPrompt?.UserPrompt != null && userPrompt.UserPrompt.Length > 0)
+    {
+        // Truncate at 30 characters or less to the nearest space, ensuring we don't cut off in the middle of a word.
+        if (userPrompt.UserPrompt.Length > 30)
+        {
+            // Find the last space within the first 30 characters
+            var truncatedText = userPrompt.UserPrompt.Substring(0, 30);
+            var lastSpaceIndex = truncatedText.LastIndexOf(' ');
+
+            // Use the last space index if found; otherwise, use the full 30 characters.
+            userPromptText = lastSpaceIndex > 0 ? truncatedText.Substring(0, lastSpaceIndex) : truncatedText;
+        }
+        else
+        {
+            userPromptText = userPrompt.UserPrompt;
+        }
+    }
+    // HTML encode any user-provided text to prevent XSS vulnerabilities.
+    var encodedDefinitionType = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(definitionType);
+    var encodedUserPromptText = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(userPromptText);
+    var encodedDescription = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model?.Description ?? string.Empty);
+
+    // Set ViewData with encoded and safe values.
+    ViewData["Title"] = $"Core Spark - {encodedDefinitionType} - {encodedUserPromptText}";
+    ViewData["Description"] = $"{encodedDefinitionType}:{encodedDescription} - {encodedUserPromptText}";
     ViewData["Keywords"] = "Sparks, Prompt Spark, Large Language Models, Core Sparks";
-
 }
 
 <span class="badge rounded-pill bg-primary">Core Spark (@definitionType)</span>
@@ -41,8 +67,6 @@
             </li>
         }
     </ul>
-
-    
 }
 else
 {

@@ -7,7 +7,7 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
 /// </summary>
 [Produces("application/json")]
 [ApiController]
-[Area("AsyncSpark")]
+[Area("asyncspark")]
 public abstract class BaseAsyncSparkApiController : Controller
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
