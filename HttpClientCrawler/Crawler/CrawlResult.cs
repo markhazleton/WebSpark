@@ -14,7 +14,7 @@ public class CrawlResult : HttpClientSendRequest<string>
     public CrawlResult(HttpClientSendRequest<string> statusCall) : base(statusCall)
     {
     }
-    private List<string> _responseLinks = [];
+    private readonly List<string> _responseLinks = [];
 
     public CrawlResult(string requestPath, string foundUrl, int depth, int id)
     {

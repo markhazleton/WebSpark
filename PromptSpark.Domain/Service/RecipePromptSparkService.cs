@@ -2,6 +2,7 @@
 using PromptSpark.Domain.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
 
@@ -14,6 +15,14 @@ public class RecipePromptSparkService(
     IGPTDefinitionService _definitionService,
     IGPTService _promptService) : IRecipeGPTService
 {
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        AllowTrailingCommas = true,
+        UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
+    };
+
     public record RecipeData(
         string Name,
         string Description,
@@ -43,9 +52,9 @@ public class RecipePromptSparkService(
     /// <param name="category"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<WebSpark.Core.Models.RecipeModel> CreateMomGPTRecipe(string prompt, string category)
+    public async Task<RecipeModel> CreateMomGPTRecipe(RecipeModel recipeModel, string prompt, string category)
     {
-        WebSpark.Core.Models.RecipeModel recipeModel = new();
+
         var recipeDefinition = await _definitionService.GetDefinitionDtoAsync(8);
         GPTDefinitionResponse defResponse = new()
         {
@@ -63,30 +72,19 @@ public class RecipePromptSparkService(
         try
         {
             var response = await _promptService.UpdateGPTResponse(defResponse);
-
             try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    AllowTrailingCommas = true,
-                    UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
-                };
-                var recipe = JsonSerializer.Deserialize<RecipeData>(response.SystemResponse, options);
+                var recipe = JsonSerializer.Deserialize<RecipeData>(response.SystemResponse, _jsonSerializerOptions);
                 if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
                 {
-                    recipeModel = new WebSpark.Core.Models.RecipeModel
-                    {
-                        Name = recipe.Name,
-                        Description = recipe.Description,
-                        Ingredients = recipe.Ingredients != null ? string.Join("\n- ", recipe.Ingredients.Prepend(string.Empty)) : string.Empty,
-                        Instructions = recipe.Instructions != null ? string.Join("\n1. ", recipe.Instructions.Prepend(string.Empty)) : string.Empty,
-                        SEO_Keywords = recipe.SEO_Keywords != null ? string.Join("\n1. ", recipe.SEO_Keywords.Prepend(string.Empty)) : string.Empty,
-                        Servings = recipe.Servings,
-                        AuthorNM = "MOM Recipe",
-                        RecipeCategoryNM = recipe.Category,
-                    };
+                    recipeModel.Name = recipe.Name;
+                    recipeModel.Description = recipe.Description;
+                    recipeModel.Ingredients = recipe.Ingredients != null ? string.Join("\n- ", recipe.Ingredients.Prepend(string.Empty)) : string.Empty;
+                    recipeModel.Instructions = recipe.Instructions != null ? string.Join("\n1. ", recipe.Instructions.Prepend(string.Empty)) : string.Empty;
+                    recipeModel.SEO_Keywords = recipe.SEO_Keywords != null ? string.Join("\n1. ", recipe.SEO_Keywords.Prepend(string.Empty)) : string.Empty;
+                    recipeModel.Servings = recipe.Servings;
+                    recipeModel.AuthorNM = "MOM Recipe";
+                    recipeModel.RecipeCategoryNM = recipe.Category;
                 }
             }
             catch (JsonException)
@@ -104,7 +102,6 @@ public class RecipePromptSparkService(
         {
             throw new InvalidOperationException("No valid recipes were found.");
         }
-
         return recipeModel;
     }
 

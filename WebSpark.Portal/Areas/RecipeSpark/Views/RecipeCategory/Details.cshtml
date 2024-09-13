@@ -1,79 +1,86 @@
-﻿@model             WebSpark.Core.Models.RecipeCategoryModel
+﻿@model RecipeCategoryModel
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@Model.Name Details</h1>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="container mt-4">
+    <h1 class="display-6 mb-3">
+        <i class="bi bi-info-circle-fill"></i> @Model.Name Details
+    </h1>
+    <div class="mb-3">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-<div>
     <div class="row">
-        <div class="col-6">
+        <div class="col-md-6">
             <dl class="row">
-                <dt class="col-sm-3">
+                <dt class="col-sm-4 fw-bold">
                     @Html.DisplayNameFor(model => model.Description)
                 </dt>
-                <dd class="col-sm-9">
+                <dd class="col-sm-8">
                     @Html.DisplayFor(model => model.Description)
                 </dd>
             </dl>
         </div>
-        <div class="col-6">
-            <dl class="row">
-            </dl>
-        </div>
     </div>
-</div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Title
-            </th>
-            <th>
-                DisplayOrder
-            </th>
-            <th>
-                Icon
-            </th>
-            <th>
-                Parent Title
-            </th>
-            <th>
-                Url
-            </th>
-            <th>
-                Virtual Path
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Recipes.OrderBy(o => o.Name))
-        {
+
+    <h2 class="mt-4">Recipes</h2>
+    <table class="table table-hover table-striped" id="displayTable">
+        <thead class="table-dark">
             <tr>
-                <td>
-                    @Html.ActionLink(item.Name, "Details","Main", new {id=item.Id })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AuthorNM)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AverageRating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsApproved)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RecipeURL)
-                </td>
-                <td>
-                </td>
+                <th scope="col">
+                    <i class="bi bi-book"></i> Title
+                </th>
+                <th scope="col">
+                    <i class="bi bi-sort-numeric-down"></i> Author
+                </th>
+                <th scope="col">
+                    <i class="bi bi-star"></i> Average Rating
+                </th>
+                <th scope="col">
+                    <i class="bi bi-bookmark-star"></i> Is Approved
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Recipes.OrderBy(o => o.Name))
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.Name, "Details", "Home", new { id = item.Id }, new { @class = "text-decoration-none" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorNM)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AverageRating)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsApproved)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section PageScripts {
+    <script>
+        $(document).ready(function() {
+            var table = $('#displayTable').DataTable(
+                {
+                    paging: false,
+                    scrollY: '40vh',
+                    scrollCollapse: true,
+                    stateSave: false,
+                    colReorder: true
+                });
+        });
+    </script>
+}

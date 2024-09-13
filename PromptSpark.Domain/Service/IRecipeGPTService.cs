@@ -1,4 +1,6 @@
-﻿namespace PromptSpark.Domain.Service;
+﻿using WebSpark.Core.Models;
+
+namespace PromptSpark.Domain.Service;
 
 /// <summary>
 /// RecipeAzureAIOpenAIService Interface
@@ -11,5 +13,5 @@ public interface IRecipeGPTService
     /// <param name="prompt"></param>
     /// <param name="category"
     /// <returns></returns>
-    Task<WebSpark.Core.Models.RecipeModel> CreateMomGPTRecipe(string prompt, string category);
+    Task<RecipeModel> CreateMomGPTRecipe(RecipeModel model,string prompt, string category);
 }

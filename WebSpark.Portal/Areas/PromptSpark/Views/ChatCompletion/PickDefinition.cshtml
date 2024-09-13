@@ -1,0 +1,63 @@
+﻿@model IEnumerable<DefinitionDto>
+
+@{
+    ViewData["Title"] = "Pick Spark Variant - Enhance Your AI Interaction";
+    ViewData["Description"] = "Discover and choose from a range of Spark Variants designed to optimize AI interactions, boost productivity, and explore creative solutions. Each variant is tailored to meet your specific needs, ensuring a seamless and powerful AI experience.";
+    ViewData["Keywords"] = "Spark Variants, AI Interaction, Optimize AI, Productivity, Creative AI Solutions, AI Experience, Chat with AI, AI Models";
+
+    var definitionTypes = Model.Select(d => d.DefinitionType).Distinct();
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Pick Spark Variant</h2>
+
+    <!-- Filter Dropdown -->
+    <div class="mb-3">
+        <label for="definitionTypeFilter" class="form-label">Filter by Core Spark</label>
+        <select id="definitionTypeFilter" class="form-select">
+            <option value="All">All</option>
+            @foreach (var type in definitionTypes)
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+    </div>
+
+    <!-- Grid Layout for Definitions -->
+    <div class="row" id="definitionGrid">
+        @foreach (var definition in Model)
+        {
+            <div class="col-md-4 mb-4 definition-item" data-type="@definition.DefinitionType">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@definition.Name</h5>
+                        <p class="card-text text-muted">@definition.Description</p>
+                        <small class="text-muted mb-2">Created: @definition.Created.ToShortDateString()</small>
+                        <a href="/promptspark/chatcompletion/index?id=@definition.DefinitionId" class="btn btn-primary mt-auto">
+                            Start Chat
+                            <i class="bi bi-arrow-right-circle-fill ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        document.getElementById('definitionTypeFilter').addEventListener('change', function() {
+            var selectedType = this.value;
+            var items = document.querySelectorAll('.definition-item');
+
+            items.forEach(function(item) {
+                if (selectedType === 'All' || item.getAttribute('data-type') === selectedType) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

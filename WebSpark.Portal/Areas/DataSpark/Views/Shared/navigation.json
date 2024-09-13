@@ -2,9 +2,12 @@
   "menuItems": [
     {
       "text": "Univariate",
-      "url": "/DataSpark/univariate"
+      "url": "/dataspark/univariate"
+    },
+    {
+      "text": "Pivot Table",
+      "url": "/dataspark/pivottable"
     }
 
   ]
 }
-

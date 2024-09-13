@@ -5,6 +5,7 @@ using HttpClientUtility.MemoryCache;
 using HttpClientUtility.SendService;
 using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.SemanticKernel;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.WeatherService;
@@ -251,10 +252,6 @@ app.MapControllerRoute(
 );
 app.MapHub<ChatHub>("/chatHub");
 app.MapHub<CrawlHub>("/crawlHub");
-
-
-// Ensure to flush and close the log when the application shuts down
-Log.CloseAndFlush();
 
 app.Run();
 

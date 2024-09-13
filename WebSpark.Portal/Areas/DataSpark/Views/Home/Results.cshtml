@@ -52,17 +52,30 @@
 
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading-@columnId">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@columnId" aria-expanded="false" aria-controls="collapse-@columnId">
+                            <button class="accordion-button collapsed bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@columnId" aria-expanded="false" aria-controls="collapse-@columnId">
                                 <div>
                                     <strong>@column.Column</strong>
-                                    <div class="small text-muted">@analysisSummary</div> <!-- Display summary as small text under column name -->
                                 </div>
                             </button>
                         </h2>
                         <div id="collapse-@columnId" class="accordion-collapse collapse" aria-labelledby="heading-@columnId" data-bs-parent="#columnAnalysisAccordion">
                             <div class="accordion-body">
-                                <div id="svg-container-@columnId" class="chart-container">
-                                    <p>Click to load analysis for @columnId...</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div id="svg-container-@columnId" class="chart-container">
+                                            <p>Click to load analysis for @columnId...</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Analysis Summary</h6>
+                                        <ul>
+                                            @foreach (var observation in column.Observations)
+                                            {
+                                                <li>@observation</li>
+                                            }
+                                        </ul>
+
+                                    </div>
                                 </div>
                                 <table class="table table-bordered">
                                     <tbody>
@@ -108,8 +121,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h6>Analysis Summary</h6>
-                                <p>@analysisSummary</p>
                             </div>
                         </div>
                     </div>
@@ -225,7 +236,7 @@
         </div>
     </div>
     <div class="card-footer text-end">
-        <a href="@Url.Action("Index", "Csv")" class="btn btn-secondary">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Back
         </a>
     </div>

@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
+﻿using HttpClientUtility.MemoryCache;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using WebSpark.Portal.Areas.DataSpark.Models;
-using HttpClientUtility.MemoryCache;
-using OpenWeatherMapClient.Models;
 
 namespace WebSpark.Portal.Areas.DataSpark.Controllers;
 
@@ -48,7 +47,7 @@ public abstract class DataSparkBaseController<T> : Controller where T : DataSpar
 
     public List<string> GetCsvFiles()
     {
-        return GetDataSpark().Keys.ToList(); // Return the keys of the dictionary
+        return [.. GetDataSpark().Keys]; // Return the keys of the dictionary
     }
 
     public CsvViewModel? GetViewModelForFile(string fileName)

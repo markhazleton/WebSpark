@@ -1,0 +1,55 @@
+﻿@model string
+
+@{
+
+}
+
+@section Styles
+{
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.13.0/pivot.min.css">
+    <style id="compiled-css" type="text/css">
+        body {
+            font-family: Verdana;
+        }
+    </style>
+}
+
+@section PageScripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Fetch data from the /categorization/pivot/data endpoint using the model variable as the filename
+            var filename = '@Model'; // Use the model string as the filename
+
+            $.ajax({
+                url: '/dataspark/pivottable/getexistingfile/' + filename,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // Create a dictionary of all renderers including Plotly renderers
+                    var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers);
+
+                    $("#output").pivotUI(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data: ", textStatus, errorThrown);
+                }
+            });
+        });
+    </script>
+}
+
+@section Scripts
+{
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.13.0/pivot.min.js"></script>
+    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/plotly_renderers.min.js"></script>
+    <script id="insert"></script>
+}
+
+<h1>Full Page Sample</h1>
+<div id="output"></div>

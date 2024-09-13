@@ -1,32 +1,52 @@
 @model RecipeModel
 @{
     ViewData["Title"] = "Mom Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Mom AI Recipe</h1>
-<hr />
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="MomCreate">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label class="control-label">Describe Your Recipe</label>
-                <textarea asp-for="Name" class="form-control" rows="5"></textarea>
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RecipeCategoryID" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "RecipeCategoryID"})
-                <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
-            </div>
-            <div class="form-group row mt-3">
-                <div class="col-6 m-4">
-                    <input type="submit" value="Save" class="btn btn-success" />
+
+<div class="container mt-4">
+    <h1 class="display-6 mb-4">
+        <i class="bi bi-magic"></i> Mom AI Recipe Generator
+    </h1>
+    <p class="text-muted mb-4">Describe your desired recipe below, and let AI create the perfect recipe for you!</p>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="MomCreate">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-4">
+                    <label for="RecipeDescription" class="form-label fw-bold">
+                        <i class="bi bi-pencil"></i> Describe Your Recipe
+                    </label>
+                    <textarea asp-for="Name" class="form-control" id="RecipeDescription" rows="5" placeholder="E.g., 'A quick pasta dish with garlic and herbs'"></textarea>
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <div class="col-6 m-4">
-                    <a class="btn-info btn" asp-action="Index" asp-controller="Home">Back to List</a>
+
+                <div class="mb-4">
+                    <label asp-for="RecipeCategoryID" class="form-label fw-bold">
+                        <i class="bi bi-tags"></i> Recipe Category
+                    </label>
+                    @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-select", id = "RecipeCategoryID" })
+                    <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
                 </div>
-            </div>
-        </form>
+
+                <div class="d-flex justify-content-start">
+                    <button type="submit" class="btn btn-success me-3">
+                        <i class="bi bi-save"></i> Generate Recipe
+                    </button>
+                    <a class="btn btn-secondary" asp-action="Index" asp-controller="Home">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

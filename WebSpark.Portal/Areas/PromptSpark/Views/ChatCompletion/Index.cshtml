@@ -1,6 +1,10 @@
 ﻿@model DefinitionDto
 @{
-
+    var encodedName = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model.Name);
+    var encodedDescription = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model.Description);
+    ViewData["Title"] = $"Interactive Chat with AI - {encodedName}";
+    ViewData["Description"] = $"Experience an interactive chat interface with {encodedName} powered by AI. Discover how PromptSpark enhances communication with advanced SignalR integration and seamless user interactions.";
+    ViewData["Keywords"] = $"PromptSpark, AI Chat, SignalR, Interactive Chat, MVC, .NET 8, Bootstrap 5, AI Communication,{encodedName}";
 }
 
 @section Styles
@@ -35,16 +39,17 @@
 
 <div class="card">
     <div class="card-header bg-primary-subtle">
-        <h2>@Model.Name</h2>
+        <h2>@Model.Name - AI-Powered Chat Interface</h2>
+        <p class="text-muted">Engage with our advanced AI chat system, utilizing the latest in .NET MVC and SignalR technology for real-time communication.</p>
     </div>
     <div class="card-body">
         <div class="messagesContainer" id="messagesContainer"></div>
     </div>
-    <div class="card-footer">
-        <div class="card-footer bg-info-subtle">
-            <input type="text" id="messageInput" style="width:90%;" placeholder="Message" />
-            <button class="btn btn-success" id="sendButton">Send</button>
-        </div>
+    <div class="card-footer bg-info-subtle">
+        <input type="text" id="messageInput" class="form-control mb-2" placeholder="Type your message here..." />
+        <button class="btn btn-success" id="sendButton">
+            <i class="bi bi-send"></i> Send
+        </button>
     </div>
 </div>
 
@@ -69,41 +74,34 @@
         function sendMessage() {
             const message = document.getElementById('messageInput').value;
             if (message) {
-                // Create a new div with class "userInput" and add the message to it
                 const userMessageDiv = document.createElement('div');
                 userMessageDiv.className = 'userInput';
                 userMessageDiv.textContent = message;
 
-                // Append the new div to the messagesList
                 const messagesList = document.getElementById('messagesContainer');
                 messagesList.appendChild(userMessageDiv);
 
-                // Collect all the messages in the message container
                 const allMessages = [];
                 const messageDivs = messagesList.getElementsByTagName('div');
                 for (let i = 0; i < messageDivs.length; i++) {
                     allMessages.push(messageDivs[i].textContent);
                 }
 
-                // Clear the messageInput text box
                 document.getElementById('messageInput').value = '';
 
-                // Remove the ID receiveMessage from the existing div
                 const existingReceiveMessage = document.getElementById('receiveMessage');
                 if (existingReceiveMessage) {
                     existingReceiveMessage.removeAttribute('id');
                 }
-                // Create a new receiveMessage div and append it to messagesContainer
                 const newReceiveMessageDiv = document.createElement('div');
                 newReceiveMessageDiv.id = 'receiveMessage';
                 newReceiveMessageDiv.className = 'systemResponse';
                 messagesList.appendChild(newReceiveMessageDiv);
 
-                // Send the message and the conversation history to the server
                 const formData = new FormData();
                 formData.append('message', message);
                 formData.append('conversationHistory', JSON.stringify(allMessages));
-                fetch('/OpenAI/ChatCompletion/SendMessage', {
+                fetch('/PromptSpark/ChatCompletion/SendMessage', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.json())

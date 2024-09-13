@@ -153,7 +153,7 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
         return crawlResult;
     }
 
-    public async Task<ICollection<CrawlResult>> CrawlAsync(int maxCrawlDepth, string link, CancellationToken ct = default)
+    public async Task<CrawlDomainViewModel> CrawlAsync(int maxCrawlDepth, string link, CancellationToken ct = default)
     {
         await InitializeDomainAsync(link, ct);
 
@@ -173,7 +173,11 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
             Console.WriteLine(url);
         }
 
-        return resultsDict.Values;
+        var result = new CrawlDomainViewModel
+        {
+            CrawlResults = resultsDict.Values.ToList()
+        };
+        return result;
     }
 
     private async Task<CrawlResult?> StartInitialCrawlAsync(string link, CancellationToken ct)

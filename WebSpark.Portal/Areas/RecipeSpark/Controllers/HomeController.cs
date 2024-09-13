@@ -1,4 +1,5 @@
 using PromptSpark.Domain.Service;
+using WebSpark.Core.Models;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
@@ -38,13 +39,14 @@ public class HomeController(
     /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> MomCreate(Core.Models.RecipeModel recipeModel)
+    public async Task<ActionResult> MomCreate(RecipeModel recipeModel)
     {
         try
         {
+            var model = _RecipeService.Get(0);
             var categoryList = _RecipeService.GetRecipeCategoryList();
             var category = categoryList.Where(w => w.Id == recipeModel.RecipeCategoryID).FirstOrDefault();
-            var genRecipe = await recipeGPTService.CreateMomGPTRecipe(recipeModel.Name, category?.Name ?? "Main Course");
+            var genRecipe = await recipeGPTService.CreateMomGPTRecipe(model, recipeModel.Name, category?.Name ?? "Main Course");
             genRecipe.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
             category = categoryList.Where(w => w.Name == genRecipe.RecipeCategoryNM).FirstOrDefault();
             if (category != null)
@@ -59,8 +61,9 @@ public class HomeController(
                 genRecipe.RecipeCategory = category;
             }
             var saveResult = _RecipeService.Save(genRecipe);
-            // return to edit the new recipe
-            return RedirectToAction("Edit", new { id = genRecipe.Id });
+            // Redirect to Edit with the new Recipe
+            return RedirectToAction("Edit", new { id = saveResult.Id });
+
         }
         catch (Exception ex)
         {
@@ -81,7 +84,7 @@ public class HomeController(
     /// <returns></returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Create(Core.Models.RecipeModel recipeModel)
+    public async Task<ActionResult> Create(RecipeModel recipeModel)
     {
         recipeModel.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
         try
@@ -107,7 +110,7 @@ public class HomeController(
     // POST: RecipeListController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, Core.Models.RecipeModel item)
+    public ActionResult Edit(int id, RecipeModel item)
     {
         try
         {

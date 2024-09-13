@@ -1,11 +1,13 @@
 ﻿using HttpClientCrawler.Crawler;
 using HttpClientUtility.SendService;
 using Microsoft.AspNetCore.SignalR;
-using WebSpark.Portal.Areas.AsyncSpark.Models.CrawlDomain;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 
-public class CrawlDomainController(IHubContext<CrawlHub> hubContext, IHttpClientSendService service, ILogger<SiteCrawler> logger) : AsyncSparkBaseController
+public class CrawlDomainController(
+    IHubContext<CrawlHub> hubContext,
+    IHttpClientSendService service,
+    ILogger<SiteCrawler> logger) : AsyncSparkBaseController
 {
     private readonly SiteCrawler _siteCrawler = new(hubContext, service, logger);
 
@@ -32,16 +34,16 @@ public class CrawlDomainController(IHubContext<CrawlHub> hubContext, IHttpClient
         try
         {
             // Start the crawling process
-            model.CrawlResults = await _siteCrawler.CrawlAsync(model.MaxPagesCrawled, model.StartPath).ConfigureAwait(true);
+            model = await _siteCrawler.CrawlAsync(model.MaxPagesCrawled, model.StartPath).ConfigureAwait(true);
+
+            model.Sitemap = System.Net.WebUtility.HtmlEncode(model.Sitemap);
         }
         finally
         {
             // Notify clients that crawling has finished
+
             model.IsCrawling = false;
             await hubContext.Clients.All.SendAsync("UrlFound", $"CrawlAsync Is Complete");
-
-            // Pause for 3 seconds to allow clients to see the final results
-            await Task.Delay(3000);
         }
         return View(model);
     }

@@ -1,0 +1,46 @@
+﻿@model string
+
+
+@section Styles
+{
+    <!-- PivotTable.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.css" rel="stylesheet" />
+
+    <style>
+        .pivot-container {
+            margin: 20px;
+        }
+    </style>
+}
+
+<div class="pivot-container">
+    <h2>Pivot Table</h2>
+    <div id="output"></div>
+</div>
+
+
+@section PageScripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- PivotTable.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.js"></script>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- PivotTable.js renderers (for charting, etc.) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/plotly_renderers.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Parse the JSON data passed from the controller
+            var jsonData = @Html.Raw(Model);
+
+            // PivotTable.js options
+            $("#output").pivotUI(jsonData, {
+                renderers: $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers)
+                                    rendererName: "Table"
+            });
+        });
+    </script>
+
+}

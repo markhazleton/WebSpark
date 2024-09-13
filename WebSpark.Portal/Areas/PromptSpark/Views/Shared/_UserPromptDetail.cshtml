@@ -2,8 +2,8 @@
 @{
     int ResponseCount = Model.DefinitionResponses.Count();
     int ResponseIndex = 0;
-    var link = $"/promptspark/chat/details/{Model.DefinitionType}?UserPromptId={Model.UserPromptId}";
-    var download_link = $"/promptspark/chat/Download/{Model.UserPromptId}";
+    var link = $"/promptspark/explorer/details/{Model.DefinitionType}?UserPromptId={Model.UserPromptId}";
+    var download_link = $"/promptspark/explorer/Download/{Model.UserPromptId}";
 }
 @functions {
     public string FormatTimeMS(long timeMs)
@@ -22,7 +22,7 @@
         </blockquote>
     </div>
     <div class="col-4">
-        <a class="btn btn-secondary" href="/promptspark/chat/details/@Model.DefinitionType">Back to Prompts</a>
+        <a class="btn btn-secondary" href="/promptspark/explorer/details/@Model.DefinitionType">Back to Prompts</a>
     </div>
 </div>
 <hr />

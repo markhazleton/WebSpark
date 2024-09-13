@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Recipes";
+    var categories = Model.Select(m => m.RecipeCategory.Name).Distinct().OrderBy(c => c).ToList(); // Get unique categories
 }
 
 <h1>Recipes</h1>
@@ -12,50 +13,87 @@
 <p>
     <a asp-action="Create">Create Recipe</a>
 </p>
-<table class="table table-dark" id="displayTable">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipeCategory.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+
+<!-- Category Filter Dropdown -->
+<div class="mb-3">
+    <label for="categoryFilter" class="form-label">Filter by Category:</label>
+    <select id="categoryFilter" class="form-select">
+        <option value="All">All Categories</option>
+        @foreach (var category in categories)
         {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Name, "Edit", new {id=item.Id })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-            </tr>
+            <option value="@category">@category</option>
         }
-    </tbody>
-</table>
+    </select>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-dark" id="displayTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RecipeCategory.Name)
+                </th>
+                <th class="d-none d-md-table-cell" style="max-width: 300px; white-space: normal; overflow-wrap: break-word;">
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th style="white-space: nowrap;">
+                    @Html.DisplayNameFor(model => model.ModifiedDT)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="recipe-row" data-category="@item.RecipeCategory.Name">
+                    <td>
+                        @Html.ActionLink(item.Name, "Edit", new { id = item.Id })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
+                    </td>
+                    <td class="d-none d-md-table-cell" style="max-width: 300px; white-space: normal; overflow-wrap: break-word;">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td style="white-space: nowrap;">
+                        @item.ModifiedDT.ToString("yyyy-MM-dd :HH.mm")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @section PageScripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            $('#displayTable').DataTable({
-                paging: false,        // Disable pagination
-                scrollY: '50vh',      // Enable vertical scrolling and set the height
-                scrollCollapse: true,  // Optional: Reduce the height of the table when there are fewer rows
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DataTable
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '50vh',
+                scrollCollapse: true,
                 stateSave: true,
                 colReorder: {
-                    realtime: true, // update the table as you drag the columns (default: true)
-                    fixedColumnsLeft: 1, // number of columns on the left that cannot be reordered
-                    fixedColumnsRight: 1 // number of columns on the right that cannot be reordered
+                    realtime: true,
+                    fixedColumnsLeft: 1,
+                    fixedColumnsRight: 1
+                },
+                autoWidth: false,
+                scrollX: false
+            });
+
+            // Filter table rows based on category selection
+            $('#categoryFilter').on('change', function() {
+                var selectedCategory = $(this).val();
+
+                if (selectedCategory === "All") {
+                    // Clear any search filter to show all rows
+                    table.search('').columns().search('').draw();
+                } else {
+                    // Apply the filter to the category column (assumed to be the second column, index 1)
+                    table.columns(1).search('^' + selectedCategory + '$', true, false).draw();
                 }
             });
         });

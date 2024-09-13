@@ -66,6 +66,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : Interfaces.IMe
             RatingCount = Recipe.RatingCount,
             ViewCount = Recipe.ViewCount,
             LastViewDT = Recipe.LastViewDt,
+            ModifiedDT = Recipe.UpdatedDate,
         };
     }
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.Analysis;
+using System.Data;
 using System.Globalization;
+using System.Text.Json;
 using WebSpark.Portal.Areas.DataSpark.Models;
 
 namespace WebSpark.Portal.Areas.DataSpark.Services;
@@ -83,6 +85,106 @@ public class CsvProcessingService
         return model;
     }
 
+    public string GetScottPlotSvg(string columnName, DataFrame dataFrame)
+    {
+        // Check if the column exists in the DataFrame
+        if (!dataFrame.Columns.Any(column => column.Name == columnName))
+            throw new ArgumentException($"Column '{columnName}' does not exist in the DataFrame.");
+
+        // Extract the column data as strings
+        var column = dataFrame.Columns[columnName];
+        var columnData = column.Cast<string>().ToList();
+
+        // Determine if the data is numeric
+        var isNumeric = columnData.All(value => double.TryParse(value, out _));
+
+        var plt = new ScottPlot.Plot();
+        if (isNumeric)
+        {
+            // Convert the column data to doubles
+            var data = columnData
+                .Where(value => double.TryParse(value, out _))
+                .Select(value => Convert.ToDouble(value))
+                .ToArray();
+
+            plt.Add.Bars(data);
+            plt.Title($"Univariate Analysis of {columnName}");
+            plt.XLabel(columnName);
+            plt.YLabel("Frequency");
+        }
+        else
+        {
+            // Handle categorical data
+            var valueCounts = columnData.GroupBy(x => x)
+                                        .ToDictionary(g => g.Key, g => g.Count());
+
+            // Sort the dictionary by counts in descending order
+            var sortedValueCounts = valueCounts.OrderByDescending(kvp => kvp.Value).ToList();
+            var categories = sortedValueCounts.Select(kvp => kvp.Key).ToArray();
+            var counts = sortedValueCounts.Select(kvp => (double)kvp.Value).ToArray();
+
+            var bars = categories.Select((category, index) => new ScottPlot.Bar
+            {
+                Position = index,
+                Value = counts[index],
+                Label = category
+            }).ToArray();
+
+            plt.Add.Bars(bars);
+            plt.Title($"Frequency Count of {columnName}");
+            plt.XLabel("Category");
+            plt.YLabel("Count");
+        }
+
+        // Return the plot as an SVG
+        return plt.GetSvgXml(600, 400);
+    }
+
+
+
+    public string GetScottPlotSvg(string columnName, DataTable dataTable)
+    {
+        var columnData = dataTable.AsEnumerable().Select(row => row[columnName].ToString()).ToList();
+        var isNumeric = columnData.All(value => double.TryParse(value, out _));
+
+        var plt = new ScottPlot.Plot();
+        if (isNumeric)
+        {
+            var data = dataTable.AsEnumerable()
+                                .Select(row => Convert.ToDouble(row[columnName]))
+                                .ToArray();
+
+            plt.Add.Bars(data);
+            plt.Title($"Univariate Analysis of {columnName}");
+            plt.XLabel(columnName);
+            plt.YLabel("Frequency");
+        }
+        else
+        {
+            // Handle categorical data
+            var valueCounts = columnData.GroupBy(x => x)
+                                        .ToDictionary(g => g.Key, g => g.Count());
+
+            // Sort the dictionary by counts in descending order
+            var sortedValueCounts = valueCounts.OrderByDescending(kvp => kvp.Value).ToList();
+            var categories = sortedValueCounts.Select(kvp => kvp.Key).ToArray();
+            var counts = sortedValueCounts.Select(kvp => (double)kvp.Value).ToArray();
+
+            var bars = categories.Select((category, index) => new ScottPlot.Bar
+            {
+                Position = index,
+                Value = counts[index],
+                Label = category
+            }).ToArray();
+
+            plt.Add.Bars(bars);
+            plt.Title($"Frequency Count of {columnName}");
+            plt.XLabel("Category");
+            plt.YLabel("Count");
+        }
+        return plt.GetSvgXml(600, 400);
+    }
+
     /// <summary>
     /// Populates the CsvViewModel with details from the DataFrame.
     /// </summary>
@@ -98,4 +200,80 @@ public class CsvProcessingService
         model.Description = dataFrame.Description();
         model.Head = dataFrame.Head(5);
     }
+
+    /// <summary>
+    /// Processes the CSV file and returns the contents as a JSON string.
+    /// </summary>
+    /// <param name="filePath">The path to the CSV file.</param>
+    /// <param name="useSafeMethod">If true, loads all columns as strings to avoid parsing issues; otherwise, type detection is used.</param>
+    /// <returns>A JSON string representing the contents of the CSV file.</returns>
+    public string ProcessCsvToJson(string filePath, bool useSafeMethod)
+    {
+        try
+        {
+            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            DataFrame dataFrame;
+
+            if (useSafeMethod)
+            {
+                // Load all columns as strings
+                dataFrame = DataFrame.LoadCsv(
+                    stream,
+                    separator: ',',
+                    header: true,
+                    dataTypes: Enumerable.Repeat(typeof(string), CsvProcessingUtils.GetColumnCount(filePath)).ToArray(),
+                    encoding: Encoding.UTF8,
+                    cultureInfo: CultureInfo.InvariantCulture
+                );
+            }
+            else
+            {
+                // Load the DataFrame with automatic type detection
+                dataFrame = DataFrame.LoadCsv(
+                    stream,
+                    separator: ',',
+                    header: true,
+                    encoding: Encoding.UTF8,
+                    cultureInfo: CultureInfo.InvariantCulture
+                );
+            }
+
+            // Convert the DataFrame to a JSON string
+            return DataFrameToJson(dataFrame);
+        }
+        catch (Exception ex)
+        {
+            // Handle errors and return the error message as JSON
+            return JsonSerializer.Serialize(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Converts a DataFrame into a JSON string.
+    /// </summary>
+    /// <param name="dataFrame">The DataFrame to convert to JSON.</param>
+    /// <returns>A JSON string representing the DataFrame contents.</returns>
+    private static string DataFrameToJson(DataFrame dataFrame)
+    {
+        var rows = new List<Dictionary<string, object>>();
+
+        // Iterate through each row in the DataFrame
+        foreach (var row in dataFrame.Rows)
+        {
+            var rowDict = new Dictionary<string, object>();
+
+            for (int i = 0; i < dataFrame.Columns.Count; i++)
+            {
+                var columnName = dataFrame.Columns[i].Name;
+                rowDict[columnName] = row[i]; // Add each column value to the dictionary
+            }
+
+            rows.Add(rowDict);
+        }
+
+        // Serialize the list of rows to a JSON string
+        return JsonSerializer.Serialize(rows, new JsonSerializerOptions { WriteIndented = true });
+    }
+
 }

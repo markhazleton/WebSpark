@@ -24,7 +24,7 @@ public class RecipeCategoryModel
     /// </summary>
     /// <value>The recipe category nm.</value>
     [JsonPropertyName("name")]
-    [DisplayName("Name")]
+    [DisplayName("Category")]
     [StringLength(50, ErrorMessage = "Max length is 50.")]
     [DataType(DataType.Text)]
     [Required]

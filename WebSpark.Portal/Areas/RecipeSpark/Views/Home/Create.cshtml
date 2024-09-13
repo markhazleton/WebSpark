@@ -1,67 +1,89 @@
 @model RecipeModel
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Recipe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Create Recipe</h1>
-<hr />
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RecipeCategoryID" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "RecipeCategoryID"})
-                <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Servings" class="control-label"></label>
-                <input asp-for="Servings" class="form-control" />
-                <span asp-validation-for="Servings" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AuthorNM" class="control-label"></label>
-                <textarea asp-for="AuthorNM" class="form-control"></textarea>
-                <span asp-validation-for="AuthorNM" class="text-danger"></span>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Ingredients" class="control-label"></label>
-                        <textarea asp-for="Ingredients" class="form-control" rows="20" cols="150"></textarea>
+<div class="container mt-4">
+    <h1 class="display-6 mb-4">
+        <i class="bi bi-plus-circle"></i> Create New Recipe
+    </h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold">
+                        <i class="bi bi-card-text"></i> Recipe Name
+                    </label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter the recipe name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="RecipeCategoryID" class="form-label fw-bold">
+                        <i class="bi bi-tags"></i> Recipe Category
+                    </label>
+                    @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-select", id = "RecipeCategoryID" })
+                    <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Servings" class="form-label fw-bold">
+                        <i class="bi bi-people-fill"></i> Servings
+                    </label>
+                    <input asp-for="Servings" class="form-control" placeholder="Number of servings" />
+                    <span asp-validation-for="Servings" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">
+                        <i class="bi bi-info-circle"></i> Description
+                    </label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the recipe..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AuthorNM" class="form-label fw-bold">
+                        <i class="bi bi-person-circle"></i> Author Name
+                    </label>
+                    <textarea asp-for="AuthorNM" class="form-control" rows="2" placeholder="Enter the author's name"></textarea>
+                    <span asp-validation-for="AuthorNM" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Ingredients" class="form-label fw-bold">
+                            <i class="bi bi-list-ul"></i> Ingredients
+                        </label>
+                        <textarea asp-for="Ingredients" class="form-control" rows="10" placeholder="List the ingredients..."></textarea>
                         <span asp-validation-for="Ingredients" class="text-danger"></span>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Instructions" class="control-label"></label>
-                        <textarea asp-for="Instructions" class="form-control" rows="20" cols="150"></textarea>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Instructions" class="form-label fw-bold">
+                            <i class="bi bi-list-ol"></i> Instructions
+                        </label>
+                        <textarea asp-for="Instructions" class="form-control" rows="10" placeholder="Step-by-step instructions..."></textarea>
                         <span asp-validation-for="Instructions" class="text-danger"></span>
                     </div>
                 </div>
-            </div>
-            <div class="form-group row mt-3">
-                <div class="col-1">
-                    <input type="submit" value="Save" class="btn btn-primary" style="width: 100px;" />
+
+                <div class="d-flex justify-content-start mt-4">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                    <a class="btn btn-secondary" asp-action="Details" asp-controller="RecipeCategory" asp-route-Id="@Model.RecipeCategoryID">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
                 </div>
-                <div class="col-1">
-                    <a class="btn-primary btn" asp-action="Details" asp-controller="RecipeCategory" asp-route-Id="@Model.RecipeCategoryID" style="width: 120px; text-align: center;">Back to List</a>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
-
 
 @section PageScripts {
     @{
