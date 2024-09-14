@@ -47,9 +47,7 @@ public class CsvProcessingService
         try
         {
             using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-
             DataFrame dataFrame;
-
             if (useSafeMethod)
             {
                 // Load all columns as strings to avoid automatic parsing issues
@@ -73,7 +71,6 @@ public class CsvProcessingService
                     cultureInfo: CultureInfo.InvariantCulture
                 );
             }
-
             PopulateCsvViewModel(model, dataFrame);
         }
         catch (Exception ex)
@@ -81,7 +78,6 @@ public class CsvProcessingService
             model.Message = $"Error processing file: {ex.Message}";
             if (!useSafeMethod) throw; // Rethrow the exception only if not using the safe method
         }
-
         return model;
     }
 
@@ -116,7 +112,7 @@ public class CsvProcessingService
         {
             // Handle categorical data
             var valueCounts = columnData.GroupBy(x => x)
-                                        .ToDictionary(g => g.Key, g => g.Count());
+                            .ToDictionary(g => g.Key ?? string.Empty, g => g.Count());
 
             // Sort the dictionary by counts in descending order
             var sortedValueCounts = valueCounts.OrderByDescending(kvp => kvp.Value).ToList();
@@ -135,12 +131,9 @@ public class CsvProcessingService
             plt.XLabel("Category");
             plt.YLabel("Count");
         }
-
         // Return the plot as an SVG
         return plt.GetSvgXml(600, 400);
     }
-
-
 
     public string GetScottPlotSvg(string columnName, DataTable dataTable)
     {
@@ -163,7 +156,7 @@ public class CsvProcessingService
         {
             // Handle categorical data
             var valueCounts = columnData.GroupBy(x => x)
-                                        .ToDictionary(g => g.Key, g => g.Count());
+                .ToDictionary(g => g.Key ?? string.Empty, g => g.Count());
 
             // Sort the dictionary by counts in descending order
             var sortedValueCounts = valueCounts.OrderByDescending(kvp => kvp.Value).ToList();

@@ -21,44 +21,7 @@ public static class UnivariateAnalysisExtensions
         {
             try
             {
-                var values = column.Cast<object>().ToArray();
-                var nonNullValues = values.Where(value => value != null).ToArray();
-                var uniqueValues = nonNullValues.Distinct().ToArray();
-                var mostCommonValue = nonNullValues
-                    .GroupBy(x => x)
-                    .OrderByDescending(g => g.Count())
-                    .FirstOrDefault()?.Key;
-
-                // Extract numeric values with optimized type checking
-                var numericValues = nonNullValues
-                    .Where(v => v is byte or short or int or long or float or double or decimal)
-                    .Select(Convert.ToDouble)
-                    .ToArray();
-
-                // Calculate mean, standard deviation, and skewness for numeric columns
-                var mean = numericValues.Length > 0 ? numericValues.Average() : double.NaN;
-                var standardDeviation = numericValues.Length > 0 ? AnalysisUtilities.CalculateStandardDeviation(numericValues) : double.NaN;
-                var skewness = numericValues.Length > 0 ? AnalysisUtilities.CalculateSkewness(numericValues) : double.NaN;
-
-                var columnInfo = new ColumnInfo
-                {
-                    Column = column.Name,
-                    Type = column.DataType.ToString(),
-                    NonNullCount = nonNullValues.Length,
-                    NullCount = values.Length - nonNullValues.Length,
-                    UniqueCount = uniqueValues.Length,
-                    MostCommonValue = mostCommonValue,
-                    Skewness = skewness,
-                    Min = numericValues.Length > 0 ? numericValues.Min() : null,
-                    Max = numericValues.Length > 0 ? numericValues.Max() : null,
-                    Mean = mean,
-                    StandardDeviation = standardDeviation
-                };
-
-                AnalyzeColumn(columnInfo, nonNullValues, numericValues, config);
-
-                // Add the column info to the concurrent collection
-                columnInformationList.Add(columnInfo);
+                columnInformationList.Add(GetColumnAnalysis(config, column));
             }
             catch (Exception ex)
             {
@@ -67,7 +30,47 @@ public static class UnivariateAnalysisExtensions
             }
         });
 
-        return columnInformationList.ToList();
+        return [.. columnInformationList];
+    }
+
+    private static ColumnInfo GetColumnAnalysis(AnalysisConfig config, DataFrameColumn column)
+    {
+        var values = column.Cast<object>().ToArray();
+        var nonNullValues = values.Where(value => value != null).ToArray();
+        var uniqueValues = nonNullValues.Distinct().ToArray();
+        var mostCommonValue = nonNullValues
+            .GroupBy(x => x)
+            .OrderByDescending(g => g.Count())
+            .FirstOrDefault()?.Key;
+
+        // Extract numeric values with optimized type checking
+        var numericValues = nonNullValues
+            .Where(v => v is byte or short or int or long or float or double or decimal)
+            .Select(Convert.ToDouble)
+            .ToArray();
+
+        // Calculate mean, standard deviation, and skewness for numeric columns
+        var mean = numericValues.Length > 0 ? numericValues.Average() : double.NaN;
+        var standardDeviation = numericValues.Length > 0 ? AnalysisUtilities.CalculateStandardDeviation(numericValues) : double.NaN;
+        var skewness = numericValues.Length > 0 ? AnalysisUtilities.CalculateSkewness(numericValues) : double.NaN;
+
+        var columnInfo = new ColumnInfo
+        {
+            Column = column.Name,
+            Type = column.DataType.ToString(),
+            NonNullCount = nonNullValues.Length,
+            NullCount = values.Length - nonNullValues.Length,
+            UniqueCount = uniqueValues.Length,
+            MostCommonValue = mostCommonValue,
+            Skewness = skewness,
+            Min = numericValues.Length > 0 ? numericValues.Min() : null,
+            Max = numericValues.Length > 0 ? numericValues.Max() : null,
+            Mean = mean,
+            StandardDeviation = standardDeviation
+        };
+
+        AnalyzeColumn(columnInfo, nonNullValues, numericValues, config);
+        return columnInfo;
     }
 
     /// <summary>
@@ -77,7 +80,11 @@ public static class UnivariateAnalysisExtensions
     /// <param name="nonNullValues">The array of non-null values in the column.</param>
     /// <param name="numericValues">The array of numeric values in the column.</param>
     /// <param name="config">Configuration object with analysis settings.</param>
-    private static void AnalyzeColumn(ColumnInfo column, object[] nonNullValues, double[] numericValues, AnalysisConfig config)
+    private static void AnalyzeColumn(
+        ColumnInfo column, 
+        object[] nonNullValues, 
+        double[] numericValues, 
+        AnalysisConfig config)
     {
         bool isNumeric = numericValues.Length > 0;
         bool isCategorical = column.Type == typeof(string).FullName;
@@ -229,18 +236,4 @@ public static class UnivariateAnalysisExtensions
             column.Observations.Add("The column contains no non-null values, making it unsuitable for analysis.");
         }
     }
-}
-
-/// <summary>
-/// Configuration class for customizing univariate analysis behavior.
-/// </summary>
-public class AnalysisConfig
-{
-    internal readonly long NonUniqueThresholdForHistograms;
-    internal readonly long NonUniqueThresholdForBoxPlots;
-
-    public double HighSkewnessThreshold { get; set; } = 1.0;
-    public double ModerateSkewnessThreshold { get; set; } = 0.5;
-    public int UniqueCountThreshold { get; set; } = 20;
-    public double OutlierStdDevMultiplier { get; set; } = 3.0;
 }
