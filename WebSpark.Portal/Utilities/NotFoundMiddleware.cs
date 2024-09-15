@@ -16,17 +16,35 @@ public class NotFoundMiddleware
         if (context.Response.StatusCode == 404)
         {
             var requestPath = context.Request.Path.ToString().ToLower();
-            if (requestPath.Contains("promptspark"))
+            if (requestPath.StartsWith("/openai/"))
             {
-                context.Response.Redirect("/promptspark", permanent: true);
+                var newPath = requestPath.Replace("/openai/", "/promptspark/");
+                context.Response.Redirect(newPath, permanent: true);
+                return;
             }
-            if (requestPath.Contains("asyncspark"))
+            if (requestPath.StartsWith("/async/"))
             {
-                context.Response.Redirect("/asyncspark", permanent: true);
+                var newPath = requestPath.Replace("/async/", "/asyncspark/");
+                context.Response.Redirect(newPath, permanent: true);
+                return;
             }
-            if (requestPath.Contains("dataspark"))
+            var redirects = new List<KeyValuePair<string, string>>
             {
-                context.Response.Redirect("/dataspark", permanent: true);
+                new("promptspark", "/promptspark"),
+                new("asyncspark", "/asyncspark"),
+                new("dataspark", "/dataspark"),
+                new("prompt", "/promptspark"),
+                new("async", "/asyncspark")
+            };
+
+            // Iterate through the list to find the first match and redirect
+            foreach (var redirect in redirects)
+            {
+                if (requestPath.Contains(redirect.Key))
+                {
+                    context.Response.Redirect(redirect.Value, permanent: true);
+                    break; // Exit after the first match
+                }
             }
         }
     }

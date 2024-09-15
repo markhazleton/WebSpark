@@ -4,7 +4,7 @@
     var encodedDescription = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model.Description);
     ViewData["Title"] = $"Interactive Chat with AI - {encodedName}";
     ViewData["Description"] = $"Experience an interactive chat interface with {encodedName} powered by AI. Discover how PromptSpark enhances communication with advanced SignalR integration and seamless user interactions.";
-    ViewData["Keywords"] = $"PromptSpark, AI Chat, SignalR, Interactive Chat, MVC, .NET 8, Bootstrap 5, AI Communication,{encodedName}";
+    ViewData["Keywords"] = $"PromptSpark, AI Chat, SignalR, Interactive Chat,Chat Completions, .NET 8, Bootstrap 5, AI Communication,{encodedName}";
 }
 
 @section Styles
@@ -52,6 +52,236 @@
         </button>
     </div>
 </div>
+<div class="container my-5">
+    <h1 class="display-4 text-center mb-4">@ViewData["Title"]</h1>
+    <p class="lead text-center mb-5">@ViewData["Description"]</p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Features of PromptSpark</h2>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="bi bi-lightning-fill me-2 text-primary"></i><strong>Core Sparks:</strong> Define standard AI behaviors for consistent performance.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-box-seam me-2 text-success"></i><strong>Spark Variants:</strong> Explore and test different prompt implementations.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-gear-fill me-2 text-warning"></i><strong>Spark Inputs:</strong> Evaluate and refine responses with various input configurations.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-graph-up me-2 text-danger"></i><strong>Performance Tracking:</strong> Monitor accuracy, relevance, and efficiency of prompts.
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h2>ChatCompletions Functionality</h2>
+            <p>
+                The ChatCompletions feature enables interactive conversations with specific PromptSpark Variants. Users can tailor AI responses by selecting the appropriate variant, which influences the behavior and tone of the interaction.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Why Choose PromptSpark?</h3>
+            <p>
+                PromptSpark provides a streamlined approach to managing and optimizing AI prompts, making it an essential tool for developers and businesses seeking to enhance their AI-driven applications. By leveraging Core Sparks, Variants, and Inputs, users can refine their interactions with large language models, ensuring more accurate and contextually appropriate responses.
+            </p>
+            <div class="text-center">
+                <a href="/promptspark/learn-more" class="btn btn-outline-secondary">
+                    <i class="bi bi-info-circle me-1"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="mt-5">
+    <h2>What is Microsoft SignalR?</h2>
+    <p>
+        Microsoft SignalR is an open-source library that simplifies the process of adding real-time web functionality to applications. Real-time web functionality is the ability of a server to push content updates to clients instantly, as they happen. SignalR supports WebSockets, server-sent events, and long polling, enabling seamless client-server communication.
+    </p>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <i class="bi bi-lightning-charge-fill text-primary me-2"></i>
+            <strong>Real-Time Communication:</strong> SignalR allows bi-directional communication between server and client.
+        </li>
+        <li class="list-group-item">
+            <i class="bi bi-plug-fill text-success me-2"></i>
+            <strong>Transport Protocols:</strong> Automatically selects the best transport available, falling back through WebSockets, server-sent events, and long polling.
+        </li>
+        <li class="list-group-item">
+            <i class="bi bi-box-arrow-in-right text-warning me-2"></i>
+            <strong>Hub API:</strong> Provides a simple API to call methods on clients from the server and vice versa.
+        </li>
+        <li class="list-group-item">
+            <i class="bi bi-shield-lock-fill text-danger me-2"></i>
+            <strong>Security:</strong> Integrates with ASP.NET Core authentication and authorization, securing communication channels.
+        </li>
+    </ul>
+</section>
+
+<section class="mt-5">
+    <h2>Pros and Cons of Using SignalR</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Pros</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> <strong>Real-Time Capability:</strong> Enables instant updates without client polling.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> <strong>Scalability:</strong> Can be scaled easily with Azure SignalR Service.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> <strong>Flexibility:</strong> Supports various transport protocols, providing robust fallback mechanisms.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> <strong>Easy Integration:</strong> Integrates well with ASP.NET Core, simplifying real-time features in web applications.
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h3>Cons</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="bi bi-x-circle-fill text-danger me-2"></i> <strong>Resource Intensive:</strong> High frequency of real-time updates can be resource-intensive for servers.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-x-circle-fill text-danger me-2"></i> <strong>Complex Scaling:</strong> Self-hosted SignalR scaling requires careful planning and infrastructure.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-x-circle-fill text-danger me-2"></i> <strong>Browser Compatibility:</strong> Not all transport protocols are supported across all browsers.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-x-circle-fill text-danger me-2"></i> <strong>Latency:</strong> Potential latency issues when using fallback transports like long polling.
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="mt-5">
+    <h2>Scaling SignalR with Azure SignalR Service</h2>
+    <p>
+        Azure SignalR Service is a fully managed Azure service that simplifies the process of adding real-time web functionality to applications using SignalR. It offloads the responsibility of scaling SignalR connections, managing performance, and maintaining the service infrastructure.
+    </p>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <i class="bi bi-cloud-fill text-primary me-2"></i>
+            <strong>Automatic Scaling:</strong> Azure SignalR Service automatically scales to handle a large number of connections, making it suitable for large-scale applications.
+        </li>
+        <li class="list-group-item">
+            <i class="bi bi-speedometer2 text-success me-2"></i>
+            <strong>Performance Optimization:</strong> Offloads connection handling from your server, improving overall application performance.
+        </li>
+        <li class="list-group-item">
+            <i class="bi bi-shield-lock-fill text-warning me-2"></i>
+            <strong>Security and Compliance:</strong> Built-in support for security and compliance, integrating seamlessly with other Azure services.
+        </li>
+        <li class="list-group-item">
+            <i class="bi bi-tools text-danger me-2"></i>
+            <strong>Easy Integration:</strong> Minimal configuration needed; simply switch the connection from your local SignalR setup to Azure SignalR Service.
+        </li>
+    </ul>
+    <p class="mt-3">
+        To use Azure SignalR Service, you just need to configure your ASP.NET Core application to connect to Azure SignalR Service instead of self-hosting SignalR.
+    </p>
+    <p>
+        <strong>Example Configuration for self-hosting:</strong>
+    </p>
+
+
+    <pre class="language-csharp">
+    <code class="language-csharp">
+// ========================
+// SignalR Configuration
+// ========================
+// Add CORS configuration if needed for SignalR
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyHeader()
+               .AllowAnyMethod()
+               .SetIsOriginAllowed(_ => true)  // Allows all origins
+               .AllowCredentials();            // Necessary for SignalR
+    });
+});
+
+// SignalR Configuration
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    // Configuring JSON serializer options if needed
+    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+});
+
+// ========================
+// Endpoint Configuration
+// ========================
+app.MapHub<ChatHub>("/chatHub");
+app.MapHub<CrawlHub>("/crawlHub");
+
+
+
+
+</code></pre>
+</section>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2>Real-Time Chat with SignalR</h2>
+            <p>
+                SignalR enables real-time communication between the browser and server, facilitating interactive conversations with OpenAI through ChatCompletions. Below is a basic setup for SignalR and its integration with OpenAI API calls:
+            </p>
+            <pre class="language-csharp">
+            <code class="language-csharp">
+// ChatHub.cs
+public class ChatHub : Hub
+{
+    public async Task SendMessage(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessage", user, message);
+    }
+}
+
+// Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSignalR();
+}
+
+public void Configure(IApplicationBuilder app)
+{
+    app.UseRouting();
+    app.UseEndpoints(endpoints => { endpoints.MapHub&lt;ChatHub&gt;("/chatHub"); });
+}
+</code></pre>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Client-Side Integration</h3>
+            <p>
+                On the client side, JavaScript connects to the SignalR hub and listens for messages from the server:
+            </p>
+            <pre class="language-csharp">
+            <code class="language-javascript">
+// Client-side JavaScript
+const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+connection.start().catch(err => console.error(err.toString()));
+connection.on("ReceiveMessage", function (user, message) {
+    const msg = `${user}: ${message}`;
+    document.getElementById("messagesList").appendChild(document.createElement("li")).textContent = msg;
+});
+</code></pre>
+        </div>
+    </div>
+</div>
+
 
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
