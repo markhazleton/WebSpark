@@ -2,7 +2,7 @@
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 
-[Area("asyncspark")]
+[Area("AsyncSpark")]
 public class AsyncSparkBaseController() : Controller
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

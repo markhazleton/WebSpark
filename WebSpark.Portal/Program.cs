@@ -182,27 +182,7 @@ var app = builder.Build();
 // ========================
 // Middleware Configuration
 // ========================
-// Middleware to enforce lowercase routes
-//app.Use(async (context, next) =>
-//{
-//    var request = context.Request;
-//    var path = request.Path.Value;
-
-//    // Check if the path contains any uppercase characters
-//    if (path != null && path.Any(char.IsUpper))
-//    {
-//        // Convert the path to lowercase
-//        var lowercasePath = path.ToLowerInvariant();
-
-//        // Construct the new URL with the lowercase path
-//        var newUrl = $"{request.Scheme}://{request.Host}{lowercasePath}{request.QueryString}";
-
-//        // Redirect to the lowercase URL with a 301 (Permanent Redirect) status code
-//        context.Response.Redirect(newUrl, true);
-//        return;
-//    }
-//    await next();
-//});
+app.UseMiddleware<NotFoundMiddleware>();
 
 
 

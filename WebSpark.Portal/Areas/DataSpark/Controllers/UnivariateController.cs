@@ -18,54 +18,6 @@ public class UnivariateController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Upload(IFormFile file)
-    {
-        if (file == null || file.Length == 0 || Path.GetExtension(file.FileName)?.ToLower() != ".csv")
-        {
-            return View("Index", new UnivariateViewModel { Message = "Please upload a valid .csv file." });
-        }
-
-        try
-        {
-            if (string.IsNullOrEmpty(OutputFolder))
-            {
-                return View("Index", new UnivariateViewModel { Message = "CSV output folder is not configured." });
-            }
-
-            // Ensure the directory exists
-            if (!Directory.Exists(OutputFolder))
-            {
-                Directory.CreateDirectory(OutputFolder);
-            }
-
-            // Set file name and path
-            var fileName = Path.GetFileName(file.FileName);
-            var filePath = Path.Combine(OutputFolder, fileName);
-
-            // Save the file to the specified path
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
-
-            // Load CSV and extract column names
-            var dataTable = LoadCsv(filePath);
-            var columns = dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
-
-            var model = new UnivariateViewModel
-            {
-                FileName = fileName,
-                AvailableColumns = columns
-            };
-
-            return View("SelectColumn", model);
-        }
-        catch (Exception ex)
-        {
-            return View("Index", new UnivariateViewModel { Message = $"Unexpected error: {ex.Message}" });
-        }
-    }
-    [HttpPost]
     public IActionResult Analyze(string fileName, string columnName)
     {
         string html = $"<div class='bg-error'>Analysis failed</div>";
@@ -74,8 +26,6 @@ public class UnivariateController(
             // htmldecode the filename and column name
             fileName = System.Net.WebUtility.HtmlDecode(fileName);
             columnName = System.Net.WebUtility.HtmlDecode(columnName);
-
-
 
             var outputFolder = configuration["CsvOutputFolder"];
             var filePath = Path.Combine(outputFolder, fileName);
