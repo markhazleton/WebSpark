@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWeatherMapClient", "Ope
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClientCrawler", "HttpClientCrawler\HttpClientCrawler.csproj", "{6308CBE4-3388-4FA1-95CC-0AC1F1216204}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriviaSpark.Domain", "TriviaSpark.Domain\TriviaSpark.Domain.csproj", "{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InquirySpark.Domain", "InquirySpark.Domain\InquirySpark.Domain.csproj", "{A3ACA568-5823-4AD5-8F32-35DCA46B5322}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +81,14 @@ Global
 		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6308CBE4-3388-4FA1-95CC-0AC1F1216204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3ACA568-5823-4AD5-8F32-35DCA46B5322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3ACA568-5823-4AD5-8F32-35DCA46B5322}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3ACA568-5823-4AD5-8F32-35DCA46B5322}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3ACA568-5823-4AD5-8F32-35DCA46B5322}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +103,8 @@ Global
 		{7A6C8941-FBF9-487C-88EB-3D4965881B7A} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{32C4C6A4-1846-47DD-890D-96953AE283E0} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{6308CBE4-3388-4FA1-95CC-0AC1F1216204} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{A3ACA568-5823-4AD5-8F32-35DCA46B5322} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}
