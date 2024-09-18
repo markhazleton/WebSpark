@@ -5,10 +5,8 @@ using PromptSpark.Domain.Models;
 namespace PromptSpark.Domain.Service;
 
 public class UserPromptService(GPTDbContext context, IGPTService gPTService)
-: IUserPromptService, IDisposable
+    : IUserPromptService
 {
-    private bool disposedValue;
-
     public async Task<UserPromptDto> RefreshDefinitionResponses(int UserPromptId)
     {
         var userPromptDto = await context.Chats
@@ -25,12 +23,12 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
         return new UserPromptDto();
     }
 
-
     public async Task<UserPromptDto> CreateAsync(UserPromptDto dto)
     {
         dto.Created = DateTime.Now;
         dto.Updated = DateTime.Now;
         var entity = dto.ToEntity();
+
         // Check for duplicate user prompt and definition type
         var existing = await context.Chats
             .Where(c => c.UserPrompt == entity.UserPrompt && c.DefinitionType == entity.DefinitionType)
@@ -66,32 +64,34 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
             .Where(c => c.Id == id)
             .FirstOrDefaultAsync();
 
-
         if (entity != null)
         {
-            var respoonses = await context.DefinitionResponses
-                .Where(w => w.UserPrompt == entity.UserPrompt && w.DefinitionType == entity.DefinitionType).ToListAsync(); ;
-            entity.GPTResponses = respoonses;
+            var responses = await context.DefinitionResponses
+                .Where(w => w.UserPrompt == entity.UserPrompt && w.DefinitionType == entity.DefinitionType)
+                .ToListAsync();
+
+            entity.GPTResponses = responses;
         }
 
         return entity.ToDto(definitionTypes);
     }
+
     private async Task<List<string>> GetDefinitionTypes()
     {
         return await context.DefinitionTypes.Select(dt => dt.DefinitionType).ToListAsync();
     }
+
     public async Task<IEnumerable<UserPromptDto>> GetAllAsync()
     {
         var entities = await context.Chats.Include(c => c.GPTResponses).ToListAsync();
         return entities.Select(e => e.ToDto());
     }
 
-    public async Task CreateOrUpdateAsync(UserPromptDto dto)
+    public async Task<UserPromptDto> CreateOrUpdateAsync(UserPromptDto dto)
     {
         if (dto.UserPromptId == 0)
         {
-            await CreateAsync(dto);
-            return;
+            return await CreateAsync(dto);
         }
 
         var entity = await context.Chats.FindAsync(dto.UserPromptId);
@@ -99,9 +99,11 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
         {
             entity.UserPrompt = dto.UserPrompt;
             entity.DefinitionType = dto.DefinitionType;
-            entity.Updated = DateTime.Now;  // Or dto.Updated
+            entity.Updated = DateTime.Now;
             await context.SaveChangesAsync();
         }
+        return entity?.ToDto() ?? dto;
+
     }
 
     public async Task DeleteAsync(int id)
@@ -112,63 +114,5 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
             context.Chats.Remove(entity);
             await context.SaveChangesAsync();
         }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                if (IsDbContextAvailable(context))
-                {
-                    context.ChangeTracker.Clear();
-                    context.Database.CloseConnection();
-                    context.Dispose();
-                }
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
-            }
-
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
-            disposedValue = true;
-        }
-    }
-    bool IsDbContextAvailable(DbContext context)
-    {
-        try
-        {
-            // Attempt to access the database connection
-            var connectionState = context.Database.GetDbConnection().State;
-            // If no exception is thrown, the context is not disposed
-            return true;
-        }
-        catch (ObjectDisposedException)
-        {
-            // An ObjectDisposedException was thrown, indicating the context is disposed
-            return false;
-        }
-        catch
-        {
-            // Other exceptions might indicate different issues (e.g., connection problems)
-            return false; // Or handle differently
-        }
-    }
-
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    ~UserPromptService()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: false);
-    }
-
-    void IDisposable.Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

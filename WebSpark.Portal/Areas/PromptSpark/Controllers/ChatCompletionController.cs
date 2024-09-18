@@ -1,9 +1,12 @@
-﻿using Markdig;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Markdig;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Newtonsoft.Json;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Service;
+using System.Globalization;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 
@@ -12,8 +15,66 @@ public class ChatCompletionController(
     IHubContext<ChatHub> hubContext,
     IChatCompletionService _chatCompletionService,
     IGPTDefinitionService definitionService,
-    ILogger<ChatCompletionController> logger) : PromptSparkBaseController
+    ILogger<ChatCompletionController> logger,
+    IConfiguration configuration) : PromptSparkBaseController
 {
+
+    private async Task AppendToCsvLog(string conversationId, string sender, string message, string definitionName)
+    {
+        try
+        {
+            // Get the CSV output folder from configuration
+            string csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
+            if (string.IsNullOrEmpty(csvOutputFolder))
+            {
+                logger.LogError("CsvOutputFolder is not configured.");
+                return;
+            }
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(csvOutputFolder);
+            string csvFilePath = Path.Combine(csvOutputFolder, "ConversationLogs.csv");
+
+            // Check if the file exists to determine if the header should be written
+            bool fileExists = System.IO.File.Exists(csvFilePath);
+
+            // Prepare the log entry as an object
+            var logEntry = new LogEntry
+            {
+                ConversationId = conversationId,
+                Timestamp = DateTime.UtcNow.ToString("O"),
+                Sender = sender,
+                Message = message,
+                DefinitionName = definitionName
+            };
+
+            // Configure CsvHelper with UTF-8 encoding and to handle quoting on all fields
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Quote = '"',
+                Escape = '"',
+                Encoding = new UTF8Encoding(true), // UTF-8 with BOM
+                HasHeaderRecord = !fileExists, // Write header only if the file is new
+                ShouldQuote = args => true // Force quotes on all fields
+            };
+
+            // Append the log entry to the CSV file
+            using var stream = new StreamWriter(csvFilePath, append: true, encoding: csvConfig.Encoding);
+            using var csvWriter = new CsvWriter(stream, csvConfig);
+            if (!fileExists) // Write the header only if the file did not exist
+            {
+                csvWriter.WriteHeader<LogEntry>();
+                await csvWriter.NextRecordAsync();
+            }
+            csvWriter.WriteRecord(logEntry);
+            await csvWriter.NextRecordAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error occurred while writing to CSV log.");
+        }
+    }
+
     public async Task<IActionResult> Index(int id = 0)
     {
         logger.LogInformation("Entering Index method with id: {Id}", id);
@@ -78,6 +139,15 @@ public class ChatCompletionController(
 
         logger.LogInformation("Processing message for definition: {Name}", definitionDto.Name);
 
+        // Generate or retrieve a unique conversation identifier
+        string conversationId = session.GetString("ConversationId");
+        if (string.IsNullOrEmpty(conversationId) || conversationHistory.Length == 1)
+        {
+            conversationId = Guid.NewGuid().ToString(); // Generate a new unique identifier for new conversations
+            session.SetString("ConversationId", conversationId);
+            logger.LogInformation("Generated new conversation ID: {ConversationId}", conversationId);
+        }
+
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage(definitionDto.Prompt);
         chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
@@ -101,10 +171,12 @@ public class ChatCompletionController(
             if (i % 2 == 0)
             {
                 chatHistory.AddUserMessage(messages[i]); // Even index - User
+                await AppendToCsvLog(conversationId, "User", messages[i], definitionDto.Name); // Log user message
             }
             else
             {
                 chatHistory.AddSystemMessage(messages[i]); // Odd index - System
+                await AppendToCsvLog(conversationId, "System", messages[i], definitionDto.Name); // Log system message
             }
         }
 
@@ -123,6 +195,10 @@ public class ChatCompletionController(
                         var htmlContent = Markdown.ToHtml(contentToSend);
                         await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent);
                         logger.LogInformation("Sent message to client: {Message}", contentToSend);
+
+                        // Append system message to CSV
+                        await AppendToCsvLog(conversationId, "System", contentToSend, definitionDto.Name);
+
                         buffer.Clear();
                     }
                 }
@@ -135,6 +211,9 @@ public class ChatCompletionController(
                 var htmlContent = Markdown.ToHtml(remainingContent);
                 await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent);
                 logger.LogInformation("Sent remaining content to client: {RemainingContent}", remainingContent);
+
+                // Append remaining content to CSV
+                await AppendToCsvLog(conversationId, "System", remainingContent, definitionDto.Name);
             }
         }
         catch (Exception ex)
@@ -145,5 +224,15 @@ public class ChatCompletionController(
 
         logger.LogInformation("SendMessage completed successfully.");
         return Ok();
+    }
+
+    // Define the class to represent a log entry
+    public class LogEntry
+    {
+        public string ConversationId { get; set; }
+        public string DefinitionName { get; set; }
+        public string Message { get; set; }
+        public string Sender { get; set; }
+        public string Timestamp { get; set; }
     }
 }

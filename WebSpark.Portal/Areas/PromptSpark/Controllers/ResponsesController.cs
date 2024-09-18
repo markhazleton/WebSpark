@@ -7,11 +7,6 @@ namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 public class ResponsesController(IResponseService responseService) : PromptSparkBaseController
 {
 
-    private bool GPTResponseExists(int id)
-    {
-        return responseService.ResponseExists(id);
-    }
-
     // GET: Responses/Create
     public IActionResult Create()
     {

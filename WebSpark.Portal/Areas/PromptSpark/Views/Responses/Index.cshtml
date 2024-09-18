@@ -1,50 +1,100 @@
 ﻿@model IEnumerable<DefinitionResponseDto>
-
 @{
     ViewData["Title"] = "Index";
+
+    // Extract unique GPTName values for the dropdown
+    var gptNames = Model.Select(m => m.GPTName).Distinct().OrderBy(name => name).ToList();
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-table"></i> Responses Overview</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table id="displayTable" class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserPrompt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <!-- Filter Form -->
+    <form class="row g-3 mb-4" id="filterForm">
+        <div class="col-md-4">
+            <label for="filterGPTName" class="form-label"><i class="bi bi-search"></i> Filter by GPT Name</label>
+            <select class="form-select" id="filterGPTName">
+                <option value="">All GPT Names</option>
+                @foreach (var name in gptNames)
+                {
+                    <option value="@name">@name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="button" class="btn btn-primary" id="filterButton"><i class="bi bi-funnel"></i> Apply Filter</button>
+        </div>
+    </form>
+
+    <table id="displayTable" class="table table-hover table-striped align-middle">
+        <thead class="table-dark">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserPrompt)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ResponseId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ResponseId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ResponseId">Delete</a>
-                </td>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.UserPromptId)
+                </th>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.ResponseId)
+                </th>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.GPTName)
+                </th>
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.UserPrompt)
+                </th>
+                <th scope="col">
+                    <i class="bi bi-clock-history"></i> Updated
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <span class="badge bg-primary">@Html.DisplayFor(modelItem => item.UserPromptId)</span>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.ResponseId" class="link-primary text-decoration-none">
+                            <i class="bi bi-info-circle"></i> @item.ResponseId
+                        </a>
+                    </td>
+                    <td class="gpt-name">
+                        <span class="badge bg-success">@Html.DisplayFor(modelItem => item.GPTName)</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserPrompt)
+                    </td>
+                    <td>
+                        <span class="text-muted">@Html.DisplayFor(modelItem => item.Updated)</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            var table = $('#displayTable').DataTable(
-                {
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
-                });
+        $(document).ready(function() {
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '40vh',
+                scrollCollapse: true,
+                stateSave: false,
+                colReorder: true
+            });
+
+            // Filter function for dropdown
+            $('#filterButton').click(function() {
+                var filterValue = $('#filterGPTName').val();
+                table.column(2).search(filterValue).draw();
+            });
+
+            // Optional: Trigger filter on dropdown change
+            $('#filterGPTName').change(function() {
+                var filterValue = $(this).val();
+                table.column(2).search(filterValue).draw();
+            });
         });
     </script>
 }

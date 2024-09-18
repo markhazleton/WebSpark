@@ -1,0 +1,83 @@
+﻿@model DefinitionTypeDto
+
+@{
+    ViewData["Title"] = "Core Spark";
+}
+<div class="row">
+    <div class="col-8">
+        <h1>@Model.DefinitionType</h1>
+        <p>@Model.Description</p>
+    </div>
+    <div class="col-4">
+        <a class="btn btn-primary me-2" asp-action="Edit" asp-route-id="@Model?.DefinitionType">Edit</a>
+        <a class="btn btn-danger me-2" asp-action="Refresh" asp-route-id="@Model?.DefinitionType">Refresh</a>
+        <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-8">
+        <h1>Spark Variants</h1>
+    </div>
+    <div class="col-4">
+        <a class="btn btn-primary me-2" asp-controller="Definitions" asp-action="Edit" asp-route-id="0">Create New</a>
+    </div>
+</div>
+
+<table id="displayTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                Variant Name
+            </th>
+            <th>
+                Core Spark
+            </th>
+            <th>
+                Output
+            </th>
+            <th>
+                GPT Model
+            </th>
+            <th>
+                Temperature
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model?.Definitions??new List<DefinitionDto>())
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-controller="Definitions" asp-route-id="@item.DefinitionId">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DefinitionType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OutputType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Temperature)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var table = $('#displayTable').DataTable(
+                {
+                    paging: false,
+                    scrollY: '40vh',
+                    scrollCollapse: true,
+                    stateSave: false,
+                    colReorder: true
+                });
+        });
+    </script>
+}

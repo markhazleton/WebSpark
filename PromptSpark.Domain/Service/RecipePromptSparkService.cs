@@ -15,7 +15,7 @@ public class RecipePromptSparkService(
     IGPTDefinitionService _definitionService,
     IGPTService _promptService) : IRecipeGPTService
 {
-    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

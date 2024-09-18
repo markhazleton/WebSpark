@@ -25,7 +25,6 @@ public class UserPromptsController(IUserPromptService userPromptService) : Promp
         }
     }
 
-
     // GET: TestPrompts
     public async Task<IActionResult> Index()
     {
@@ -70,7 +69,7 @@ public class UserPromptsController(IUserPromptService userPromptService) : Promp
         {
             try
             {
-                await userPromptService.CreateOrUpdateAsync(promptDto);
+                promptDto = await userPromptService.CreateOrUpdateAsync(promptDto);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -83,7 +82,7 @@ public class UserPromptsController(IUserPromptService userPromptService) : Promp
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Refresh),new {id=promptDto.UserPromptId});
         }
         return View(promptDto);
     }

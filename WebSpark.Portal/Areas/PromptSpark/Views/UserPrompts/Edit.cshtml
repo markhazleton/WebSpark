@@ -1,7 +1,11 @@
-﻿@model             UserPromptDto
+﻿@model UserPromptDto
 
 @{
     ViewData["Title"] = "Prompt Edit";
+    if(Model.UserExpectedResponse == null)
+    {
+        Model.UserExpectedResponse = "AI Response";
+    }
 }
 <form asp-action="Edit">
     <div class="row">

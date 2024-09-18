@@ -3,7 +3,10 @@ using PromptSpark.Domain.Service;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 [Authorize]
-public class DefinitionTypesController(IGPTDefinitionTypeService service) : PromptSparkBaseController
+public class DefinitionTypesController(
+    IGPTDefinitionTypeService service,
+    IUserPromptService userPromptService
+    ) : PromptSparkBaseController
 {
 
     private bool GPTDefinitionTypeExists(string id)
@@ -45,6 +48,21 @@ public class DefinitionTypesController(IGPTDefinitionTypeService service) : Prom
         if (definitionType == null)
         {
             return NotFound();
+        }
+        return View(definitionType);
+    }
+    [HttpGet]
+    [Route("DefinitionTypes/Refresh/{id}")]
+    public async Task<IActionResult> Refresh(string id)
+    {
+        var definitionType = await service.GetGPTDefinitionTypeByKey(id);
+        if (definitionType == null)
+        {
+            return NotFound();
+        }
+        foreach(var prompt in definitionType.Prompts)
+        {
+            await userPromptService.RefreshDefinitionResponses(prompt.UserPromptId);
         }
         return View(definitionType);
     }

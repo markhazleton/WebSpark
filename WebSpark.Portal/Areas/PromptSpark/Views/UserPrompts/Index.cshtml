@@ -2,68 +2,111 @@
 
 @{
     ViewData["Title"] = "Prompts";
-    var text = "";
-    var displayText = "";
+    var definitionTypes = Model.Select(m => m.DefinitionType).Distinct().OrderBy(dt => dt).ToList();
 }
 
 <div class="row mb-3">
-    <div class="col-8">
-        <h1>Prompts</h1>
+    <div class="col-md-8">
+        <h1 class="h3 mb-3">Prompts</h1>
     </div>
-    <div class="col-4 text-end">
-        <a class="btn btn-primary me-2" asp-action="Edit" asp-route-id="0">Create New</a>
+    <div class="col-md-4 text-end">
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="0">
+            <i class="bi bi-plus-lg"></i> Create New
+        </a>
     </div>
 </div>
 
-<table id="displayTable" class="table">
-    <thead>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label for="definitionTypeFilter" class="form-label">Filter by Definition Type</label>
+        <select id="definitionTypeFilter" class="form-select">
+            <option value="">All</option>
+            @foreach (var type in definitionTypes)
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+    </div>
+</div>
+
+<table id="displayTable" class="table table-striped table-hover">
+    <thead class="table-dark">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserPrompt)
+                @Html.DisplayNameFor(model => model.First().UserPrompt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DefinitionType)
+                @Html.DisplayNameFor(model => model.First().DefinitionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Updated)
+            </th>
+            <th>
+                Responses
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (!Model.Any())
         {
-            if (item.UserPrompt.Length > 60)
-            {
-                text = item.UserPrompt;
-                displayText = text.Substring(0, 60) + "...";
-            }
-            else
-            {
-                text = item.UserPrompt;
-                displayText = item.UserPrompt;
-            }
             <tr>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.UserPromptId" title="@text">@displayText</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DefinitionType)
-                </td>
+                <td colspan="4" class="text-center">No prompts available.</td>
             </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                var displayText = item.UserPrompt.Length > 60 ? item.UserPrompt.Substring(0, 60) + "..." : item.UserPrompt;
+
+                <tr>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.UserPromptId" title="@item.UserPrompt">@displayText</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DefinitionType)
+                    </td>
+                    <td>
+                        @item.Updated.ToString("yyyy-MM-dd HH:mm") <!-- Format the date as needed -->
+                    </td>
+                    <td>
+                        @item.DefinitionResponses.Count
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            var table = $('#displayTable').DataTable(
-                {
-                    topStart: 'info',
-                    topEnd: 'search',
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
-                });
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '40vh',
+                scrollCollapse: true,
+                stateSave: false,
+                colReorder: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                language: {
+                    search: '<i class="bi bi-search"></i>',
+                    searchPlaceholder: 'Search prompts...'
+                }
+            });
+
+            // Filter by Definition Type
+            $('#definitionTypeFilter').on('change', function() {
+                var selectedValue = $(this).val();
+                if (selectedValue) {
+                    table.column(1).search('^' + selectedValue + '$', true, false).draw();
+                } else {
+                    table.column(1).search('').draw();
+                }
+            });
         });
     </script>
 }

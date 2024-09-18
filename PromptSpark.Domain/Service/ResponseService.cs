@@ -15,7 +15,7 @@ namespace PromptSpark.Domain.Service
         public async Task<DefinitionResponseDto> GetResponseByIdAsync(int? id)
         {
             var item = await context.DefinitionResponses
-                .FirstOrDefaultAsync(m => m.ResponseId == id) ?? new GPTDefinitionResponse();
+                .FirstOrDefaultAsync(m => m.Id == id) ?? new GPTDefinitionResponse();
             return item.ToDto();
         }
 

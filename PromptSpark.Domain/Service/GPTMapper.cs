@@ -107,7 +107,7 @@ public static class GPTMapper
     {
         return new DefinitionResponseDto
         {
-            ResponseId = r.ResponseId,
+            ResponseId = r.Id,
             GPTName = r.GPTName,
             Model = r.Model,
             SystemResponse = r.SystemResponse,

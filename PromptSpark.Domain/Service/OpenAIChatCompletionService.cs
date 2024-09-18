@@ -19,12 +19,11 @@ namespace PromptSpark.Domain.Service;
 public class OpenAIChatCompletionService(
     IHttpClientFullService httpClientService,
     IConfiguration configuration,
-    GPTDbContext context) : IGPTService, IDisposable
+    GPTDbContext context) : IGPTService
 {
     private readonly Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
     private readonly Uri openAiUrl = new(configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions");
-    private bool disposedValue;
-
+    
     private static OpenAiApiRequest GetOpenAiApiRequest(GPTDefinitionResponse definitionResponse)
     {
         if (Double.TryParse(definitionResponse.Temperature, out double temperature) == false)
@@ -319,25 +318,12 @@ public class OpenAIChatCompletionService(
             }
         }
     }
-    public async Task<DefinitionResponseDto> UpdateGPTResponse(DefinitionResponseDto gptResponse)
-    {
-        var openAIRequest = GetOpenAiApiRequest(gptResponse);
-        var serviceResponse = await httpClientService.PostAsync<OpenAiApiRequest, OpenAiApiResponse>(openAiUrl, openAIRequest, headers);
-        gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
-        gptResponse.SystemResponse = serviceResponse?.Content?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
-        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
-        gptResponse.TimeMS = serviceResponse?.ElapsedMilliseconds ?? 0;
-        gptResponse.TotalTokens = serviceResponse?.Content?.usage?.total_tokens ?? 0;
-        gptResponse.CompletionTokens = serviceResponse?.Content?.usage?.completion_tokens ?? 0;
-        gptResponse.PromptTokens = serviceResponse?.Content?.usage?.prompt_tokens ?? 0;
-        gptResponse.Model = serviceResponse?.Content?.Model ?? "Unknown";
-        return gptResponse;
-    }
 
     public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse)
     {
         var openAIRequest = GetOpenAiApiRequest(gptResponse);
         var serviceResponse = await httpClientService.PostAsync<OpenAiApiRequest, OpenAiApiResponse>(openAiUrl, openAIRequest, headers);
+        gptResponse.DefinitionType = gptResponse.DefinitionType;
         gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
         gptResponse.SystemResponse = serviceResponse?.Content?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
         gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
@@ -347,63 +333,5 @@ public class OpenAIChatCompletionService(
         gptResponse.PromptTokens = serviceResponse?.Content?.usage?.prompt_tokens ?? 0;
         gptResponse.Model = serviceResponse?.Content?.Model ?? "Unknown";
         return gptResponse;
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                if (IsDbContextAvailable(context))
-                {
-                    context.ChangeTracker.Clear();
-                    context.Database.CloseConnection();
-                    context.Dispose();
-                }
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
-            }
-
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
-            disposedValue = true;
-        }
-    }
-    bool IsDbContextAvailable(DbContext context)
-    {
-        try
-        {
-            // Attempt to access the database connection
-            var connectionState = context.Database.GetDbConnection().State;
-            // If no exception is thrown, the context is not disposed
-            return true;
-        }
-        catch (ObjectDisposedException)
-        {
-            // An ObjectDisposedException was thrown, indicating the context is disposed
-            return false;
-        }
-        catch
-        {
-            // Other exceptions might indicate different issues (e.g., connection problems)
-            return false; // Or handle differently
-        }
-    }
-
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    ~OpenAIChatCompletionService()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: false);
-    }
-
-    void IDisposable.Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

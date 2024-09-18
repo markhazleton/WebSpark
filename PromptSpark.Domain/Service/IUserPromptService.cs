@@ -9,5 +9,5 @@ public interface IUserPromptService
     Task<IEnumerable<UserPromptDto>> GetAllAsync();
     Task<UserPromptDto> ReadAsync(int id);
     Task<UserPromptDto> RefreshDefinitionResponses(int id);
-    Task CreateOrUpdateAsync(UserPromptDto dto);
+    Task<UserPromptDto> CreateOrUpdateAsync(UserPromptDto dto);
 }
