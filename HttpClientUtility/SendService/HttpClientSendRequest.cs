@@ -85,6 +85,10 @@ public class HttpClientSendRequest<T>
     [NotMapped]
     public StringContent? RequestBody { get; set; }
 
+    [NotMapped]
+    public Dictionary<string, string>? RequestHeaders { get; set; } = new Dictionary<string, string>();
+
+
     /// <summary>
     /// Request Method
     /// </summary>

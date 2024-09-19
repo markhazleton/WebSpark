@@ -93,10 +93,20 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
     public HttpRequestMessage CreateHttpRequest<T>(HttpClientSendRequest<T> httpSendResults)
     {
         var request = new HttpRequestMessage(httpSendResults.RequestMethod, httpSendResults.RequestPath);
-        request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
+        if(httpSendResults.RequestHeaders != null)
+        {
+            foreach (var header in httpSendResults.RequestHeaders)
+            {
+                request.Headers.Add(header.Key, header.Value);
+            }
+        }
+        if (request.Headers.UserAgent.Count == 0)
+        {
+            request.Headers.TryAddWithoutValidation("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
+        }
         request.Headers.Add("Accept", "application/json");
         request.Headers.Add("Accept-Language", "en-US,en;q=0.9");
-
         if (httpSendResults.RequestBody != null)
         {
             request.Content = httpSendResults.RequestBody;
@@ -122,6 +132,17 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
         {
             try
             {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
+                    IgnoreReadOnlyFields = true,
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    MaxDepth = 32,
+                };
+
+
                 httpSendResults.ResponseResults = JsonSerializer.Deserialize<T>(callResult);
             }
             catch (JsonException ex)

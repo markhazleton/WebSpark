@@ -27,6 +27,10 @@
     {
       "text": "Crawl Domain",
       "url": "/asyncspark/crawldomain"
+    },
+    {
+      "text": "GitHub",
+      "url":  "/asyncspark/github"
     }
   ]
 }

@@ -1,17 +1,10 @@
 ﻿namespace WebSpark.Portal.Utilities;
 
-public class NotFoundMiddleware
+public class NotFoundMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public NotFoundMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
-        await _next(context);
+        await next(context);
 
         if (context.Response.StatusCode == 404)
         {
