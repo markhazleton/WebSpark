@@ -32,7 +32,10 @@ public sealed class HttpClientSendServiceCache(
                 {
                     if (cachedResult != null)
                     {
-                        return cachedResult;
+                        if(cachedResult.ResponseResults != null)
+                        {
+                            return cachedResult;
+                        }
                     }
                 }
             }

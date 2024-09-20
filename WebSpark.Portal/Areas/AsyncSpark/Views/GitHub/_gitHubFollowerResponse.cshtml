@@ -1,0 +1,23 @@
+﻿@using WebSpark.Portal.Areas.AsyncSpark.Models.GitHub
+@model HttpClientSendRequest<List<GitHubFollower>>?
+
+@if (Model == null || !Model.ResponseResults.Any())
+{
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> No users to display.
+    </div>
+}
+else
+{
+    <div class="row row-cols-2 row-cols-md-4 g-4">
+        @foreach (var user in Model.ResponseResults.OrderBy(o => o.Login))
+        {
+            <div class="col text-center">
+                <a href="/asyncspark/github/user/@user.Login" class="d-block text-decoration-none" title="@user.Login">
+                    <img src="@user.AvatarUrl" alt="@user.Login Avatar" class="img-fluid rounded-circle mb-2" style="width: 75px; height: 75px;">
+                    <div class="fw-bold text-truncate" style="max-width: 80px;">@user.Login</div>
+                </a>
+            </div>
+        }
+    </div>
+}

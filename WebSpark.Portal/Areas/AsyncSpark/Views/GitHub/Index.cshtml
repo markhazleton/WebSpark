@@ -11,15 +11,20 @@
     <div class="row">
         <!-- User Info Section -->
         <div class="col-md-4">
-            @await Html.PartialAsync("_gitHubUserResponse",Model.User)
+            @await Html.PartialAsync("_gitHubUserResponse", Model.User)
+            <h2 class="text-center mt-4">Following</h2>
+            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Following)
+            <h2 class="text-center mt-4">Followers</h2>
+            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Followers)
         </div>
-
         <!-- Repo Info Section -->
         <div class="col-md-8">
             @await Html.PartialAsync("_gitHubRepoResponse", Model.RepoInfo)
         </div>
-        </div>
     </div>
+    <div class="row">
+    </div>
+</div>
 </div>
 <section class="py-5">
     <div class="container">
