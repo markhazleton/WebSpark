@@ -1,33 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Net;
 using System.Text.Json;
 
 namespace HttpClientUtility.SendService;
 
 /// <summary>
 /// The HttpClientSendService class serves as the core service for sending HTTP requests.
-/// It implements the IHttpClientSendService interface and provides methods for sending HTTP requests,
-/// validating input parameters, and processing HTTP responses.
 /// </summary>
-/// <remarks>
-/// This class is designed to be robust and extensible, with features like:
-/// - Asynchronous HTTP request sending using HttpClient.
-/// - Exception handling for various types of exceptions like HttpRequestException.
-/// - Logging capabilities for capturing both informational messages and errors.
-/// - JSON serialization and deserialization for handling response data.
-/// </remarks>
-/// <example>
-/// Here is a simple example of using HttpClientSendService:
-/// <code>
-/// var httpClientSendService = new HttpClientSendService(logger, httpClient);
-/// var response = await httpClientSendService.HttpClientSendAsync(httpSendResults, CancellationToken.None);
-/// </code>
-/// </example>
 public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpClient httpClient) : IHttpClientSendService
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     private readonly ILogger<HttpClientSendService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly Version _httpVersion = new(2, 0);
-    private const bool ConnectionClose = false;
 
     /// <summary>
     /// Makes a request to the specified URL and returns the response.
@@ -45,21 +28,23 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
         try
         {
             response = await _httpClient.SendAsync(request, ct).ConfigureAwait(true);
+
             // Check for redirects
-            if (response?.StatusCode == System.Net.HttpStatusCode.MovedPermanently)
+            if (response?.StatusCode == HttpStatusCode.MovedPermanently)
             {
                 httpSendResults.ErrorList.Add($"New: {response?.RequestMessage?.RequestUri} Old:{request?.RequestUri}");
                 _logger.LogInformation("Redirected to {NewUrl}", response?.RequestMessage?.RequestUri);
             }
+
             return await ProcessHttpResponseAsync(response, httpSendResults, ct).ConfigureAwait(true);
         }
         catch (HttpRequestException ex)
         {
             httpSendResults.ErrorList.Add($"HttpRequestException: {ex.Message}");
             _logger.LogError(ex, "HttpClientSendAsync:HttpRequestException {Message}", ex.Message);
-            return httpSendResults; // Early return if the request failed
+            return httpSendResults;
         }
-        catch (Exception ex) // Catch other types of exceptions here
+        catch (Exception ex)
         {
             httpSendResults.ErrorList.Add($"GeneralException: {ex.Message}");
             _logger.LogError(ex, "HttpClientSendAsync:GeneralException {Message}", ex.Message);
@@ -67,7 +52,7 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
         }
     }
 
-    private void ValidateHttpSendResults<T>(HttpClientSendRequest<T> httpSendResults)
+    private void ValidateHttpSendResults(HttpClientSendRequestBase httpSendResults)
     {
         if (httpSendResults == null)
         {
@@ -84,33 +69,33 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
             throw new ArgumentException("The RequestMethod must be set.", nameof(httpSendResults));
         }
     }
-    /// <summary>
-    /// Create HttpRequestMessage
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="httpSendResults"></param>
-    /// <returns></returns>
-    public HttpRequestMessage CreateHttpRequest<T>(HttpClientSendRequest<T> httpSendResults)
+
+    public HttpRequestMessage CreateHttpRequest(HttpClientSendRequestBase httpSendResults)
     {
         var request = new HttpRequestMessage(httpSendResults.RequestMethod, httpSendResults.RequestPath);
-        if(httpSendResults.RequestHeaders != null)
+
+        if (httpSendResults.RequestHeaders != null)
         {
             foreach (var header in httpSendResults.RequestHeaders)
             {
                 request.Headers.Add(header.Key, header.Value);
             }
         }
+
         if (request.Headers.UserAgent.Count == 0)
         {
             request.Headers.TryAddWithoutValidation("User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
         }
+
         request.Headers.Add("Accept", "application/json");
         request.Headers.Add("Accept-Language", "en-US,en;q=0.9");
+
         if (httpSendResults.RequestBody != null)
         {
             request.Content = httpSendResults.RequestBody;
         }
+
         return request;
     }
 
@@ -118,9 +103,10 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
     {
         if (response is null)
         {
-            httpSendResults.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+            httpSendResults.StatusCode = HttpStatusCode.InternalServerError;
             return httpSendResults;
         }
+
         httpSendResults.StatusCode = response.StatusCode;
         string callResult = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
@@ -141,7 +127,6 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
                     ReadCommentHandling = JsonCommentHandling.Skip,
                     MaxDepth = 32,
                 };
-
 
                 httpSendResults.ResponseResults = JsonSerializer.Deserialize<T>(callResult);
             }

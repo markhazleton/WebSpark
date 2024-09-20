@@ -11,100 +11,13 @@
     <div class="row">
         <!-- User Info Section -->
         <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-person-circle"></i> GitHub User
-                    </h5>
-                </div>
-                <div class="card-body text-center">
-                    <img src="@Model.User.AvatarUrl" alt="Avatar" class="rounded-circle img-thumbnail mb-3" style="width: 150px; height: 150px;">
-                    <h5 class="card-title">@Model.User.Login</h5>
-                    <p class="text-muted mb-1">@Model.User.Bio</p>
-                    <p class="text-muted">
-                        <i class="bi bi-geo-alt-fill"></i> @Model.User.Location
-                    </p>
-                    <a href="@Model.User.HtmlUrl" class="btn btn-primary" target="_blank">
-                        <i class="bi bi-github"></i> View Profile
-                    </a>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <i class="bi bi-building"></i> Company: @Model.User.Company
-                    </li>
-                    <li class="list-group-item">
-                        <i class="bi bi-pencil"></i> Public Repos: @Model.User.PublicRepos
-                    </li>
-                    <li class="list-group-item">
-                        <i class="bi bi-stars"></i> Followers: @Model.User.Followers | Following: @Model.User.Following
-                    </li>
-                </ul>
-            </div>
+            @await Html.PartialAsync("_gitHubUserResponse",Model.User)
         </div>
 
         <!-- Repo Info Section -->
         <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-box-seam"></i> Repository Information
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-folder-fill"></i> @Model.RepoInfo.Name
-                    </h5>
-                    <p class="text-muted">@Model.RepoInfo.Description</p>
-                    <p class="text-muted">
-                        <i class="bi bi-code-slash"></i> Main Language: @Model.RepoInfo.Language
-                    </p>
-
-                    <div class="mb-3">
-                        <a href="@Model.RepoInfo.HtmlUrl" class="btn btn-success" target="_blank">
-                            <i class="bi bi-link-45deg"></i> View Repository
-                        </a>
-                        <a href="@Model.RepoInfo.CloneUrl" class="btn btn-secondary">
-                            <i class="bi bi-git"></i> Clone Repository
-                        </a>
-                    </div>
-
-                    <div class="d-flex justify-content-between">
-                        <span>
-                            <i class="bi bi-star-fill"></i> Stars: @Model.RepoInfo.StargazersCount
-                        </span>
-                        <span>
-                            <i class="bi bi-eye-fill"></i> Watchers: @Model.RepoInfo.WatchersCount
-                        </span>
-                        <span>
-                            <i class="bi bi-arrow-repeat"></i> Forks: @Model.RepoInfo.ForksCount
-                        </span>
-                        <span>
-                            <i class="bi bi-issue-opened"></i> Open Issues: @Model.RepoInfo.OpenIssuesCount
-                        </span>
-                    </div>
-
-                    <hr>
-
-                    <h6>Additional Links</h6>
-                    <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <a href="@Model.RepoInfo.IssuesUrl" target="_blank" class="text-muted">
-                                <i class="bi bi-bug-fill"></i> Issues
-                            </a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="@Model.RepoInfo.PullsUrl" target="_blank" class="text-muted">
-                                <i class="bi bi-git-pull-request"></i> Pull Requests
-                            </a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="@Model.RepoInfo.StargazersUrl" target="_blank" class="text-muted">
-                                <i class="bi bi-people-fill"></i> Stargazers
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            @await Html.PartialAsync("_gitHubRepoResponse", Model.RepoInfo)
+        </div>
         </div>
     </div>
 </div>
@@ -205,10 +118,10 @@
             &lt;/h5&gt;
         &lt;/div&gt;
         &lt;div class="card-body text-center"&gt;
-            &lt;img src="@Model.User.AvatarUrl" alt="Avatar" class="rounded-circle img-thumbnail mb-3"&gt;
-            &lt;h5 class="card-title"&gt;@Model.User.Login&lt;/h5&gt;
-            &lt;p class="text-muted"&gt;@Model.User.Bio&lt;/p&gt;
-            &lt;a href="@Model.User.HtmlUrl" class="btn btn-primary" target="_blank"&gt;
+            &lt;img src="@Model.User.ResponseResults.AvatarUrl" alt="Avatar" class="rounded-circle img-thumbnail mb-3"&gt;
+            &lt;h5 class="card-title"&gt;@Model.User.ResponseResults.Login&lt;/h5&gt;
+            &lt;p class="text-muted"&gt;@Model.User.ResponseResults.Bio&lt;/p&gt;
+            &lt;a href="@Model.User.ResponseResults.HtmlUrl" class="btn btn-primary" target="_blank"&gt;
                 &lt;i class="bi bi-github"&gt;&lt;/i&gt; View Profile
             &lt;/a&gt;
         &lt;/div&gt;

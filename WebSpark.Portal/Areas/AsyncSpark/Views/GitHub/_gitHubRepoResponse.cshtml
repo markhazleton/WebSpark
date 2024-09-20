@@ -1,0 +1,68 @@
+﻿@using System.Text.Json
+@using WebSpark.Portal.Areas.AsyncSpark.Models.GitHub
+@model HttpClientSendRequest<GitHubRepo>?
+
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-box-seam"></i> Repository Information
+        </h5>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">
+            <i class="bi bi-folder-fill"></i> @Model.ResponseResults.Name
+        </h5>
+        <p class="text-muted">@Model.ResponseResults.Description</p>
+        <p class="text-muted">
+            <i class="bi bi-code-slash"></i> Main Language: @Model.ResponseResults.Language
+        </p>
+
+        <div class="mb-3">
+            <a href="@Model.ResponseResults.HtmlUrl" class="btn btn-success" target="_blank">
+                <i class="bi bi-link-45deg"></i> View Repository
+            </a>
+            <a href="@Model.ResponseResults.CloneUrl" class="btn btn-secondary">
+                <i class="bi bi-git"></i> Clone Repository
+            </a>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span>
+                <i class="bi bi-star-fill"></i> Stars: @Model.ResponseResults.StargazersCount
+            </span>
+            <span>
+                <i class="bi bi-eye-fill"></i> Watchers: @Model.ResponseResults.WatchersCount
+            </span>
+            <span>
+                <i class="bi bi-arrow-repeat"></i> Forks: @Model.ResponseResults.ForksCount
+            </span>
+            <span>
+                <i class="bi bi-issue-opened"></i> Open Issues: @Model.ResponseResults.OpenIssuesCount
+            </span>
+        </div>
+
+        <hr>
+
+        <h6>Additional Links</h6>
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a href="@Model.ResponseResults.IssuesUrl" target="_blank" class="text-muted">
+                    <i class="bi bi-bug-fill"></i> Issues
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a href="@Model.ResponseResults.PullsUrl" target="_blank" class="text-muted">
+                    <i class="bi bi-git-pull-request"></i> Pull Requests
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a href="@Model.ResponseResults.StargazersUrl" target="_blank" class="text-muted">
+                    <i class="bi bi-people-fill"></i> Stargazers
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-footer text-muted p-1">
+        @await Html.PartialAsync("_clientSendRequestFooter", Model)
+    </div>
+

@@ -12,7 +12,7 @@ public class WeatherServiceClient : RestClientBase, IOpenWeatherMapClient
         _logger = logger;
     }
 
-    private CurrentWeather MapCurrentConditionsResponse(CurrentConditionsResponse apiResponse)
+    private static CurrentWeather MapCurrentConditionsResponse(CurrentConditionsResponse apiResponse)
     {
         if (apiResponse == null) return new CurrentWeather()
         {

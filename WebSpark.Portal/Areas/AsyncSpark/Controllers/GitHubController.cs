@@ -12,8 +12,8 @@ public class GitHubController(
 
     public async Task<IActionResult> Index(CancellationToken ct = default)
     {
-        GitHubUser user = await GetGitHubUserAsync("markhazleton",ct);
-        GitHubRepo repo = await GetGitHubRepoAsync("markhazleton", "SampleMvcCRUD", ct);
+        var user = await GetGitHubUserAsync("markhazleton", ct);
+        var repo = await GetGitHubRepoAsync("markhazleton", "SampleMvcCRUD", ct);
         GitHubCacheViewModel? cachedData = new()
         {
             RepoInfo = repo,
@@ -21,7 +21,7 @@ public class GitHubController(
         };
         return View(cachedData);
     }
-    private async Task<GitHubRepo> GetGitHubRepoAsync(string user, string repoName, CancellationToken ct)
+    private async Task<HttpClientSendRequest<GitHubRepo>> GetGitHubRepoAsync(string user, string repoName, CancellationToken ct)
     {
         var gitHubRequest = new HttpClientSendRequest<GitHubRepo>
         {
@@ -31,10 +31,10 @@ public class GitHubController(
         gitHubRequest.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
         gitHubRequest.RequestHeaders.Add("Authorization", $"token {_token}");
         var repo = await httpClientSendService.HttpClientSendAsync<GitHubRepo>(gitHubRequest, ct);
-        return repo.ResponseResults;
+        return repo;
     }
 
-    private async Task<GitHubUser> GetGitHubUserAsync(string user,CancellationToken ct)
+    private async Task<HttpClientSendRequest<GitHubUser>> GetGitHubUserAsync(string user, CancellationToken ct)
     {
         var gitHubUserRequest = new HttpClientSendRequest<GitHubUser>
         {
@@ -44,6 +44,6 @@ public class GitHubController(
         gitHubUserRequest.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
         gitHubUserRequest.RequestHeaders.Add("Authorization", $"token {_token}");
         var userResponse = await httpClientSendService.HttpClientSendAsync<GitHubUser>(gitHubUserRequest, ct);
-        return userResponse.ResponseResults;
+        return userResponse;
     }
 }

@@ -11,8 +11,21 @@ public class CrawlResult : HttpClientSendRequest<string>
     {
     }
 
-    public CrawlResult(HttpClientSendRequest<string> statusCall) : base(statusCall)
+    public CrawlResult(HttpClientSendRequest<string> crawlResponse) : base(crawlResponse)
     {
+        ResponseResults = crawlResponse.ResponseResults;
+        StatusCode = crawlResponse.StatusCode;
+        Errors.AddRange(crawlResponse.ErrorList);
+        RequestBody = crawlResponse.RequestBody;
+        RequestHeaders = crawlResponse.RequestHeaders;
+        RequestPath = crawlResponse.RequestPath;
+        RequestMethod = crawlResponse.RequestMethod;
+        Iteration = crawlResponse.Iteration;
+        CacheDurationMinutes = crawlResponse.CacheDurationMinutes;
+        Retries = crawlResponse.Retries;
+        CompletionDate = crawlResponse.CompletionDate;
+        ElapsedMilliseconds = crawlResponse.ElapsedMilliseconds;
+        Id = crawlResponse.Id;
     }
     private readonly List<string> _responseLinks = [];
 
