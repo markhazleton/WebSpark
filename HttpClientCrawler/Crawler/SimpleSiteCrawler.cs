@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace HttpClientCrawler.Crawler;
@@ -10,10 +11,9 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
 {
     private static readonly HashSet<string> crawledURLs = [];
     private static readonly ConcurrentQueue<CrawlResult> crawlQueue = new();
-    private static readonly object lockObj = new();
+    private static readonly Lock lockObj = new();
     private static readonly ConcurrentDictionary<string, CrawlResult> resultsDict = new();
     private static readonly ConcurrentBag<string> notInSitemapLinks = [];
-    private static readonly int maxCrawlDepth = 3; // Configurable maximum depth
 
     public async Task InitializeDomainAsync(string domainUrl, CancellationToken ct = default)
     {
@@ -48,22 +48,53 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
 
     private static List<string> ParseSitemap(string sitemapContent)
     {
+        // Return an empty list if the input is null or whitespace
+        if (string.IsNullOrWhiteSpace(sitemapContent))
+        {
+            return [];
+        }
+
         var links = new List<string>();
+
         try
         {
             var xdoc = XDocument.Parse(sitemapContent);
-            XNamespace ns = "http://www.sitemaps.org/schemas/sitemap/0.9";
+
+            // Ensure xdoc.Root is not null before proceeding
+            if (xdoc.Root == null)
+            {
+                Console.WriteLine("The XML document root is null.");
+                return links;
+            }
+
+            // Define namespace (nullable)
+            XNamespace ns = xdoc.Root.GetDefaultNamespace();
+
+            // Safely parse URLs with null checks
             links = xdoc.Root.Elements(ns + "url")
-                            .Elements(ns + "loc")
-                            .Select(e => e.Value)
-                            .ToList();
+                             .Select(urlElement => urlElement.Element(ns + "loc")?.Value)
+                             .Where(loc => !string.IsNullOrWhiteSpace(loc)) // Filter out null or empty values
+                             .ToList();
+        }
+        catch (XmlException ex)
+        {
+            // Handle specific XML parsing errors
+            Console.WriteLine($"XML error parsing sitemap: {ex.Message}");
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Handle other potential errors related to invalid operations
+            Console.WriteLine($"Invalid operation: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error parsing sitemap: {ex.Message}");
+            // Generic exception handler for other unexpected errors
+            Console.WriteLine($"Unexpected error parsing sitemap: {ex.Message}");
         }
+
         return links;
     }
+
 
     private static bool AddCrawlResult(CrawlResult? result)
     {

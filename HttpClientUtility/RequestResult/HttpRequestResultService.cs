@@ -2,15 +2,15 @@
 using System.Net;
 using System.Text.Json;
 
-namespace HttpClientUtility.SendService;
+namespace HttpClientUtility.RequestResult;
 
 /// <summary>
-/// The HttpClientSendService class serves as the core service for sending HTTP requests.
+/// The HttpRequestResultService class serves as the core service for sending HTTP requests.
 /// </summary>
-public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpClient httpClient) : IHttpClientSendService
+public class HttpRequestResultService(ILogger<HttpRequestResultService> logger, HttpClient httpClient) : IHttpRequestResultService
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    private readonly ILogger<HttpClientSendService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly ILogger<HttpRequestResultService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     /// Makes a request to the specified URL and returns the response.
@@ -19,7 +19,7 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
     /// <param name="httpSendResults">A container for the URL to make the GET request to, and the expected response data.</param>
     /// <param name="ct">The cancellation token to cancel the operation.</param>
     /// <returns>A container for the response data and any relevant error information.</returns>
-    public async Task<HttpClientSendRequest<T>> HttpClientSendAsync<T>(HttpClientSendRequest<T> httpSendResults, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> httpSendResults, CancellationToken ct)
     {
         ValidateHttpSendResults(httpSendResults);
 
@@ -41,18 +41,18 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
         catch (HttpRequestException ex)
         {
             httpSendResults.ErrorList.Add($"HttpRequestException: {ex.Message}");
-            _logger.LogError(ex, "HttpClientSendAsync:HttpRequestException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestAsync:HttpRequestException {Message}", ex.Message);
             return httpSendResults;
         }
         catch (Exception ex)
         {
             httpSendResults.ErrorList.Add($"GeneralException: {ex.Message}");
-            _logger.LogError(ex, "HttpClientSendAsync:GeneralException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestAsync:GeneralException {Message}", ex.Message);
             return httpSendResults;
         }
     }
 
-    private void ValidateHttpSendResults(HttpClientSendRequestBase httpSendResults)
+    private void ValidateHttpSendResults(HttpRequestResultBase httpSendResults)
     {
         if (httpSendResults == null)
         {
@@ -70,7 +70,7 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
         }
     }
 
-    public HttpRequestMessage CreateHttpRequest(HttpClientSendRequestBase httpSendResults)
+    public HttpRequestMessage CreateHttpRequest(HttpRequestResultBase httpSendResults)
     {
         var request = new HttpRequestMessage(httpSendResults.RequestMethod, httpSendResults.RequestPath);
 
@@ -99,7 +99,7 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
         return request;
     }
 
-    private async Task<HttpClientSendRequest<T>> ProcessHttpResponseAsync<T>(HttpResponseMessage? response, HttpClientSendRequest<T> httpSendResults, CancellationToken ct)
+    private async Task<HttpRequestResult<T>> ProcessHttpResponseAsync<T>(HttpResponseMessage? response, HttpRequestResult<T> httpSendResults, CancellationToken ct)
     {
         if (response is null)
         {
@@ -132,8 +132,8 @@ public class HttpClientSendService(ILogger<HttpClientSendService> logger, HttpCl
             }
             catch (JsonException ex)
             {
-                httpSendResults.ErrorList.Add($"HttpClientSendRequest:GetAsync:DeserializeException:{ex.Message}");
-                _logger.LogCritical(ex, "HttpClientSendRequest:GetAsync:DeserializeException {Message}", ex.Message);
+                httpSendResults.ErrorList.Add($"HttpRequestResult:GetAsync:DeserializeException:{ex.Message}");
+                _logger.LogCritical(ex, "HttpRequestResult:GetAsync:DeserializeException {Message}", ex.Message);
             }
         }
 

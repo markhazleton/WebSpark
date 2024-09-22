@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace HttpClientUtility.SendService;
+namespace HttpClientUtility.RequestResult;
 
 public interface IRequestInfo
 {

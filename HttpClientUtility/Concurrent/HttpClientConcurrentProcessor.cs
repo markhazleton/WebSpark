@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using HttpClientUtility.RequestResult;
+using System.Diagnostics;
 
 namespace HttpClientUtility.Concurrent;
 
@@ -13,7 +14,7 @@ namespace HttpClientUtility.Concurrent;
 /// </remarks>
 /// <param name="taskDataFactory">The factory function to create task data.</param>
 /// <param name="service">The HttpClientService instance.</param>
-public class HttpClientConcurrentProcessor(Func<int, HttpClientConcurrentModel> taskDataFactory, SendService.IHttpClientSendService service) : ConcurrentProcessor<HttpClientConcurrentModel>(taskDataFactory)
+public class HttpClientConcurrentProcessor(Func<int, HttpClientConcurrentModel> taskDataFactory, IHttpRequestResultService service) : ConcurrentProcessor<HttpClientConcurrentModel>(taskDataFactory)
 {
 
     /// <summary>
@@ -39,7 +40,7 @@ public class HttpClientConcurrentProcessor(Func<int, HttpClientConcurrentModel> 
     protected override async Task<HttpClientConcurrentModel> ProcessAsync(HttpClientConcurrentModel taskData, CancellationToken ct = default)
     {
         Stopwatch sw = Stopwatch.StartNew();
-        var result = await service.HttpClientSendAsync(taskData.StatusCall, ct).ConfigureAwait(false);
+        var result = await service.HttpSendRequestAsync(taskData.StatusCall, ct).ConfigureAwait(false);
         taskData.StatusCall = result;
         sw.Stop();
         taskData.DurationMS = sw.ElapsedMilliseconds;

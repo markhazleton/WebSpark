@@ -1,5 +1,5 @@
 ﻿@using WebSpark.Portal.Areas.AsyncSpark.Models.Nasa
-@model HttpClientSendRequest<NasaPictureListDto>
+@model HttpRequestResult<NasaPictureListDto>
 
 @{
     ViewData["Title"] = "NASA Picture of the Day";
@@ -52,7 +52,7 @@
             <code class="language-csharp">
 public async Task<IActionResult> Index(CancellationToken ct = default)
 {
-    var apiRequest = new HttpClientSendRequest<NasaPictureListDto>
+    var apiRequest = new HttpRequestResult<NasaPictureListDto>
     {
         CacheDurationMinutes = 500,
         RequestPath = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&count=5"

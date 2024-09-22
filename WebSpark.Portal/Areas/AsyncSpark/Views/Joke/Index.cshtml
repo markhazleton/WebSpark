@@ -1,4 +1,4 @@
-﻿@model HttpClientSendRequest<JokeModel>
+﻿@model HttpRequestResult<JokeModel>
 @{
     ViewData["Title"] = "Joke API - Random Jokes";
 }
@@ -133,7 +133,7 @@
         In modern web applications, responsiveness and performance are paramount. The JokeController leverages asynchronous calls through the <code>HttpClient</code> in combination with <code>IHttpClientSendService</code> to fetch data without blocking the main thread. This approach ensures that the application remains responsive, even when waiting for external resources, such as third-party APIs, to return data.
     </p>
     <p>
-        The integration of <strong>HttpClientSendRequest&lt;T&gt;</strong> provides a robust model for handling API requests and responses, encapsulating details such as the request path, response status, error handling, retries, and elapsed time for each request. This abstraction not only makes the code more readable and maintainable but also simplifies error handling and response management by centralizing these concerns within a reusable model.
+        The integration of <strong>HttpRequestResult&lt;T&gt;</strong> provides a robust model for handling API requests and responses, encapsulating details such as the request path, response status, error handling, retries, and elapsed time for each request. This abstraction not only makes the code more readable and maintainable but also simplifies error handling and response management by centralizing these concerns within a reusable model.
     </p>
     <h3><i class="bi bi-puzzle-fill text-warning"></i> Key Features of the JokeController:</h3>
     <ul class="list-group mb-4">
@@ -150,7 +150,7 @@
     <ul class="list-group mb-4">
         <li class="list-group-item"><i class="bi bi-bar-chart-line-fill text-primary"></i> <strong>Optimizing Application Responsiveness:</strong> By using async calls, the controller ensures that fetching jokes from an external API does not block the main application thread, thereby optimizing the user experience.</li>
         <li class="list-group-item"><i class="bi bi-shield-lock-fill text-warning"></i> <strong>Improving Application Resilience:</strong> The use of retry policies and robust error handling improves the overall resilience of the application, making it better suited to handle the unreliable nature of external services.</li>
-        <li class="list-group-item"><i class="bi bi-layers-fill text-success"></i> <strong>Encapsulation of Request Logic:</strong> By encapsulating request and response handling within the HttpClientSendRequest model, the controller simplifies the management of API interactions, making the codebase more maintainable and easier to extend.</li>
+        <li class="list-group-item"><i class="bi bi-layers-fill text-success"></i> <strong>Encapsulation of Request Logic:</strong> By encapsulating request and response handling within the HttpRequestResult model, the controller simplifies the management of API interactions, making the codebase more maintainable and easier to extend.</li>
     </ul>
 
     <h3><i class="bi bi-lightbulb-fill text-warning"></i> Best Practices Demonstrated:</h3>

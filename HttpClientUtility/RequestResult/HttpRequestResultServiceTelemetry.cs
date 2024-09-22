@@ -1,34 +1,34 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace HttpClientUtility.SendService;
+namespace HttpClientUtility.RequestResult;
 
 
 /// <summary>
-/// Class HttpClientSendServiceTelemetry adds telemetry to the IHttpClientSendService implementation
+/// Class HttpRequestResultServiceTelemetry adds telemetry to the IHttpRequestResultService implementation
 /// </summary>
 /// <remarks>
-/// Initializes a new instance of the <see cref="HttpClientSendServiceTelemetry"/> class
+/// Initializes a new instance of the <see cref="HttpRequestResultServiceTelemetry"/> class
 /// </remarks>
 /// <param name="logger">ILogger instance</param>
-/// <param name="service">IHttpClientSendService instance</param>
-public class HttpClientSendServiceTelemetry(ILogger<HttpClientSendServiceTelemetry> logger, IHttpClientSendService service) : IHttpClientSendService
+/// <param name="service">IHttpRequestResultService instance</param>
+public class HttpRequestResultServiceTelemetry(ILogger<HttpRequestResultServiceTelemetry> logger, IHttpRequestResultService service) : IHttpRequestResultService
 {
 
     /// <summary>
     /// GetAsync performs a GET request and adds telemetry information to the response.
     /// </summary>
     /// <typeparam name="T">Result type of the GET request</typeparam>
-    /// <param name="statusCall">HttpClientSendRequest instance</param>
+    /// <param name="statusCall">HttpRequestResult instance</param>
     /// <param name="ct">Cancellation Token</param>
-    /// <returns>HttpClientSendRequest instance including telemetry information</returns>
-    public async Task<HttpClientSendRequest<T>> HttpClientSendAsync<T>(HttpClientSendRequest<T> statusCall, CancellationToken ct)
+    /// <returns>HttpRequestResult instance including telemetry information</returns>
+    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
     {
         Stopwatch sw = new();
         sw.Start();
         try
         {
-            statusCall = await service.HttpClientSendAsync(statusCall, ct).ConfigureAwait(false);
+            statusCall = await service.HttpSendRequestAsync(statusCall, ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

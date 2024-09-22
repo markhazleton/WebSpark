@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.RequestResult;
 using WebSpark.Portal.Areas.AsyncSpark.Models.Art;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers
@@ -6,10 +6,10 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers
     public class ArtInstituteController : AsyncSparkBaseController
     {
         private readonly ILogger<ArtInstituteController> _logger;
-        private readonly IHttpClientSendService _getCallService;
+        private readonly IHttpRequestResultService _getCallService;
         private const string BaseUrl = "https://api.artic.edu/api/v1/artworks";
 
-        public ArtInstituteController(ILogger<ArtInstituteController> logger, IHttpClientSendService getCallService)
+        public ArtInstituteController(ILogger<ArtInstituteController> logger, IHttpRequestResultService getCallService)
         {
             _logger = logger;
             _getCallService = getCallService;
@@ -34,10 +34,10 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers
             var searchUrl = $"https://api.artic.edu/api/v1/artworks/search?query[term][is_public_domain]=true&[term][material_titles]=oil paint&limit=20&fields=id,title,image_id,artist_title,material_titles&q={style}";
 
             //            var searchUrl = $"{BaseUrl}/search?query[term][style_title]={style}&limit=20&fields=id,title,image_id,artist_title,material_titles,style_title&q={style}";
-            var artListRequest = new HttpClientSendRequest<ArtWorksResponse> { RequestPath = searchUrl };
+            var artListRequest = new HttpRequestResult<ArtWorksResponse> { RequestPath = searchUrl };
             artListRequest.CacheDurationMinutes = 60;
             artListRequest.Retries = 1;
-            var artResult = await _getCallService.HttpClientSendAsync(artListRequest, ct).ConfigureAwait(false);
+            var artResult = await _getCallService.HttpSendRequestAsync(artListRequest, ct).ConfigureAwait(false);
             var artResponse = artResult.ResponseResults;
             if (artResponse?.data is null)
             {
@@ -64,11 +64,11 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers
         public async Task<IActionResult> ListArtworks(CancellationToken ct = default)
         {
             var listUrl = $"{BaseUrl}?limit=20&fields=id,title,image_id,artist_title,material_titles";
-            var artListRequest = new HttpClientSendRequest<ArtWorksResponse> { RequestPath = listUrl };
+            var artListRequest = new HttpRequestResult<ArtWorksResponse> { RequestPath = listUrl };
             artListRequest.CacheDurationMinutes = 60;
             artListRequest.Retries = 1;
 
-            var artResult = await _getCallService.HttpClientSendAsync(artListRequest, ct).ConfigureAwait(false);
+            var artResult = await _getCallService.HttpSendRequestAsync(artListRequest, ct).ConfigureAwait(false);
             var artResponse = artResult.ResponseResults;
             if (artResponse?.data is null)
             {
@@ -93,10 +93,10 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers
         public async Task<IActionResult> ArtDetails(int id, CancellationToken ct = default)
         {
             var detailsUrl = $"{BaseUrl}/{id}?fields=id,title,image_id,artist_title,material_titles,style_title,artist_display,date_display,dimensions,medium_display";
-            var artDetailsRequest = new HttpClientSendRequest<ArtDetailsResponse> { RequestPath = detailsUrl };
+            var artDetailsRequest = new HttpRequestResult<ArtDetailsResponse> { RequestPath = detailsUrl };
             artDetailsRequest.CacheDurationMinutes = 60;
             artDetailsRequest.Retries = 1;
-            var artResult = await _getCallService.HttpClientSendAsync(artDetailsRequest, ct).ConfigureAwait(false);
+            var artResult = await _getCallService.HttpSendRequestAsync(artDetailsRequest, ct).ConfigureAwait(false);
             var artResponse = artResult.ResponseResults;
             if (artResponse is null)
             {

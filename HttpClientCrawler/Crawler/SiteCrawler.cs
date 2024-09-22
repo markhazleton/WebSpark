@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.RequestResult;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -16,7 +16,7 @@ public class CrawlDomainViewModel
 }
 public class SiteCrawler(
     IHubContext<CrawlHub> hubContext,
-    IHttpClientSendService httpClientService,
+    IHttpRequestResultService httpClientService,
     ILogger<SiteCrawler> logger) : ISiteCrawler
 {
 
@@ -34,7 +34,7 @@ public class SiteCrawler(
 
         try
         {
-            var response = await httpClientService.HttpClientSendAsync((HttpClientSendRequest<string>)crawlRequest, ct).ConfigureAwait(false);
+            var response = await httpClientService.HttpSendRequestAsync((HttpRequestResult<string>)crawlRequest, ct).ConfigureAwait(false);
             crawlRequest = new CrawlResult(response);
         }
         catch (HttpRequestException ex)

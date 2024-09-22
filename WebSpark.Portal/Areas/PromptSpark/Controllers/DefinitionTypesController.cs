@@ -60,7 +60,7 @@ public class DefinitionTypesController(
         {
             return NotFound();
         }
-        foreach(var prompt in definitionType.Prompts)
+        foreach (var prompt in definitionType.Prompts)
         {
             await userPromptService.RefreshDefinitionResponses(prompt.UserPromptId);
         }

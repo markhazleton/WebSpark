@@ -1,9 +1,9 @@
-﻿namespace HttpClientUtility.SendService;
+﻿namespace HttpClientUtility.RequestResult;
 
 /// <summary>
 /// Represents the options for HttpClientSendPolly.
 /// </summary>
-public class HttpClientSendPollyOptions
+public class HttpRequestResultPollyOptions
 {
     /// <summary>
     /// Gets or sets the maximum number of retry attempts.

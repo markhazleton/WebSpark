@@ -3,31 +3,31 @@ using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
 
-namespace HttpClientUtility.SendService;
+namespace HttpClientUtility.RequestResult;
 
 
 /// <summary>
-/// Represents a HttpClientSendService implementation that uses Polly for retry and circuit breaker policies.
+/// Represents a HttpRequestResultService implementation that uses Polly for retry and circuit breaker policies.
 /// </summary>
-public class HttpClientSendServicePolly : IHttpClientSendService
+public class HttpRequestResultServicePolly : IHttpRequestResultService
 {
-    private readonly ILogger<HttpClientSendServicePolly> _logger;
+    private readonly ILogger<HttpRequestResultServicePolly> _logger;
     private readonly List<string> _errorList = [];
-    private readonly IHttpClientSendService _service;
+    private readonly IHttpRequestResultService _service;
     private readonly AsyncRetryPolicy _retryPolicy;
     private readonly AsyncCircuitBreakerPolicy _circuitBreakerPolicy;
-    private readonly HttpClientSendPollyOptions _options;
+    private readonly HttpRequestResultPollyOptions _options;
 
     /// <summary>
-    /// Initializes a new instance of the HttpClientSendServicePolly class.
+    /// Initializes a new instance of the HttpRequestResultServicePolly class.
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="service">The underlying HttpClientService.</param>
-    /// <param name="options">The HttpClientSendPollyOptions.</param>
-    public HttpClientSendServicePolly(
-        ILogger<HttpClientSendServicePolly>? logger,
-        IHttpClientSendService? service,
-        HttpClientSendPollyOptions? options)
+    /// <param name="options">The HttpRequestResultPollyOptions.</param>
+    public HttpRequestResultServicePolly(
+        ILogger<HttpRequestResultServicePolly>? logger,
+        IHttpRequestResultService? service,
+        HttpRequestResultPollyOptions? options)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -60,18 +60,18 @@ public class HttpClientSendServicePolly : IHttpClientSendService
     }
 
     /// <summary>
-    /// Sends an HTTP request asynchronously using the HttpClientSendServicePolly implementation.
+    /// Sends an HTTP request asynchronously using the HttpRequestResultServicePolly implementation.
     /// </summary>
     /// <typeparam name="T">The type of the response content.</typeparam>
-    /// <param name="statusCall">The HttpClientSendRequest object representing the request.</param>
+    /// <param name="statusCall">The HttpRequestResult object representing the request.</param>
     /// <param name="ct">The cancellation token.</param>
-    /// <returns>The HttpClientSendRequest object with the response content.</returns>
-    public async Task<HttpClientSendRequest<T>> HttpClientSendAsync<T>(HttpClientSendRequest<T> statusCall, CancellationToken ct)
+    /// <returns>The HttpRequestResult object with the response content.</returns>
+    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
     {
         // Wrap the GetAsync call with the circuit breaker policies
         try
         {
-            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpClientSendAsync(statusCall, ct));
+            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpSendRequestAsync(statusCall, ct));
         }
         catch (Exception ex)
         {

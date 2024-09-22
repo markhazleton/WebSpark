@@ -1,9 +1,9 @@
 ﻿using HtmlAgilityPack;
-using HttpClientUtility.SendService;
+using HttpClientUtility.RequestResult;
 
 namespace HttpClientCrawler.Crawler;
 
-public class CrawlResult : HttpClientSendRequest<string>
+public class CrawlResult : HttpRequestResult<string>
 {
     public List<string> Errors { get; } = [];
 
@@ -11,7 +11,7 @@ public class CrawlResult : HttpClientSendRequest<string>
     {
     }
 
-    public CrawlResult(HttpClientSendRequest<string> crawlResponse) : base(crawlResponse)
+    public CrawlResult(HttpRequestResult<string> crawlResponse) : base(crawlResponse)
     {
         ResponseResults = crawlResponse.ResponseResults;
         StatusCode = crawlResponse.StatusCode;

@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.RequestResult;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -6,10 +6,12 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Models.GitHub;
 
 public class GitHubCacheViewModel
 {
-    public HttpClientSendRequest<List<GitHubRepo>> ? RepoInfo { get; set; }
-    public HttpClientSendRequest<GitHubUser>? User { get; set; }
-    public HttpClientSendRequest<List<GitHubFollower>>? Followers { get; set; }
-    public HttpClientSendRequest<List<GitHubFollower>>? Following { get; set; }
+    public string UserName { get; set; }
+    public HttpRequestResult<List<GitHubRepo>>? RepoInfo { get; set; }
+    public HttpRequestResult<GitHubUser>? User { get; set; }
+    public HttpRequestResult<List<GitHubFollower>>? Followers { get; set; }
+    public HttpRequestResult<List<GitHubFollower>>? Following { get; set; }
+    public List<string> ErrorList { get; set; } = [];
 }
 
 

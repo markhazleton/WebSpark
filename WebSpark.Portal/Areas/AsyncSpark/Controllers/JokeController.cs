@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.RequestResult;
 using System.Net;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
@@ -9,7 +9,7 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 /// </summary>
 public class JokeController(
     ILogger<JokeController> logger,
-    IHttpClientSendService getCallService) : AsyncSparkBaseController
+    IHttpRequestResultService getCallService) : AsyncSparkBaseController
 {
     /// <summary>
     /// Retrieves a random joke from the Joke API.
@@ -18,14 +18,14 @@ public class JokeController(
     /// <returns>A view with the joke results.</returns>
     public async Task<IActionResult> Index(CancellationToken ct = default)
     {
-        var jokeResult = new HttpClientSendRequest<JokeModel>
+        var jokeResult = new HttpRequestResult<JokeModel>
         {
             CacheDurationMinutes = 0,
             RequestPath = "https://v2.jokeapi.dev/joke/Any?safe-mode"
         };
         try
         {
-            jokeResult = await getCallService.HttpClientSendAsync<JokeModel>(jokeResult, ct).ConfigureAwait(false);
+            jokeResult = await getCallService.HttpSendRequestAsync<JokeModel>(jokeResult, ct).ConfigureAwait(false);
             return View(jokeResult);
         }
         catch (Exception ex)

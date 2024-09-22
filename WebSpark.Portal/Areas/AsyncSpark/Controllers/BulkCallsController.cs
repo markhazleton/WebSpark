@@ -12,7 +12,7 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 /// <param name="logger">The logger.</param>
 /// <param name="getCallService">The HTTP GET call service.</param>
 public class BulkCallsController(
-    ILogger<BulkCallsController> logger, 
+    ILogger<BulkCallsController> logger,
     IHttpGetCallService getCallService) : AsyncSparkBaseController
 {
     private static readonly object WriteLock = new();
@@ -25,8 +25,8 @@ public class BulkCallsController(
     /// <param name="endpoint">The endpoint URL.</param>
     /// <returns>A list of HTTP GET call results.</returns>
     private async Task<List<HttpGetCallResults>> CallEndpointMultipleTimes(
-        int maxThreads = 1, 
-        int iterationCount = 10, 
+        int maxThreads = 1,
+        int iterationCount = 10,
         string endpoint = "/api/asyncspark/status")
     {
         // check if endpoint is partially specified add current request path

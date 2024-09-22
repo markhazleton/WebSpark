@@ -1,8 +1,8 @@
 ﻿using System.Net;
 
-namespace HttpClientUtility.SendService;
+namespace HttpClientUtility.RequestResult;
 
-public interface IResponseInfo
+public interface IResultInfo
 {
     DateTime? CompletionDate { get; set; }
     long ElapsedMilliseconds { get; set; }

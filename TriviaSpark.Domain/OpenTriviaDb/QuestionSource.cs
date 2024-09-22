@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.RequestResult;
 using Microsoft.Extensions.Logging;
 using TriviaSpark.Domain.Extensions;
 using TriviaSpark.Domain.Models;
@@ -8,7 +8,7 @@ namespace TriviaSpark.Domain.OpenTriviaDb;
 
 public class OpenTriviaDbQuestionSource(
     ILogger<OpenTriviaDbQuestionSource> logger,
-    IHttpClientSendService httpGetCallService) : IQuestionSourceAdapter
+    IHttpRequestResultService httpGetCallService) : IQuestionSourceAdapter
 {
 
     /// <summary>
@@ -60,11 +60,11 @@ public class OpenTriviaDbQuestionSource(
     {
         var questionList = new List<QuestionModel>();
         ;
-        var results = new HttpClientSendRequest<OpenTBbResponse>
+        var results = new HttpRequestResult<OpenTBbResponse>
         {
             RequestPath = $"https://opentdb.com/api.php?amount={questionCount}&difficulty={difficulty.ToString().ToLower()}&type=multiple"
         };
-        results = await httpGetCallService.HttpClientSendAsync<OpenTBbResponse>(results, ct).ConfigureAwait(false);
+        results = await httpGetCallService.HttpSendRequestAsync<OpenTBbResponse>(results, ct).ConfigureAwait(false);
         if (results?.ResponseResults?.results is null)
         {
             logger.LogError("No results returned from OpenTriviaDb");

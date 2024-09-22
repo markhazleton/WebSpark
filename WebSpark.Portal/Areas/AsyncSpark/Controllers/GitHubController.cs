@@ -1,110 +1,115 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.MemoryCache;
+using HttpClientUtility.RequestResult;
 using WebSpark.Portal.Areas.AsyncSpark.Models.GitHub;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 
-public class GitHubController(
-    IHttpClientSendService httpClientSendService,
-    IConfiguration configuration) : AsyncSparkBaseController
+public class GitHubController : AsyncSparkBaseController
 {
-    private readonly string _token = configuration["GitHubPAT"] ?? "MarkHazletonWebSpark";
+    private readonly GitHubUserService _gitHubUserService;
 
-
-
-    public async Task<IActionResult> User(string id, CancellationToken ct = default)
+    public GitHubController(
+    IHttpRequestResultService httpClientSendService,
+    IMemoryCacheManager _memoryCacheManager,
+    IConfiguration configuration)
     {
-        // Initiate all async calls in parallel
-        var repoInfoTask = GetGitHubRepoAsync(id, ct);
-        var userTask = GetGitHubUserAsync(id, ct);
-        var followersTask = GetGitHubFollowersAsync(id, ct);
-        var followingTask = GetGitHubFollowingAsync(id, ct);
-
-        // Wait for all tasks to complete
-        await Task.WhenAll(repoInfoTask,userTask, followersTask, followingTask);
-
-        // Assign results to the view model
-        GitHubCacheViewModel? cachedData = new()
-        {
-            RepoInfo = await repoInfoTask,
-            User = await userTask,
-            Followers = await followersTask,
-            Following = await followingTask
-        };
-
-        return View("Index",cachedData);
+        var _token = configuration["GitHubPAT"] ?? "MISSING";
+        _gitHubUserService = new GitHubUserService(httpClientSendService, _memoryCacheManager, _token);
     }
+
     public async Task<IActionResult> Index(CancellationToken ct = default)
     {
-        // Initiate all async calls in parallel
-        var repoInfoTask = GetGitHubRepoAsync("markhazleton", ct);
-        var userTask = GetGitHubUserAsync("markhazleton", ct);
-        var followersTask = GetGitHubFollowersAsync("markhazleton", ct);
-        var followingTask = GetGitHubFollowingAsync("markhazleton", ct);
+        return View("Index", await _gitHubUserService.GetGitHubUserDataAsync("markhazleton", ct));
+    }
 
-        // Wait for all tasks to complete
+    public new async Task<IActionResult> User(string id, CancellationToken ct = default)
+    {
+        return View("Index", await _gitHubUserService.GetGitHubUserDataAsync(id, ct));
+    }
+}
+
+public class GitHubUserService
+{
+    private const int MaxLookupsPerHour = 10;
+    private readonly IHttpRequestResultService _httpRequestResultService;
+    private readonly IMemoryCacheManager _memoryCacheManager;
+    private readonly string _token;
+    private readonly string _userLookupListCacheKey = "user-lookup-list";
+
+    public GitHubUserService(IHttpRequestResultService httpClientSendService, IMemoryCacheManager memoryCacheManager, string token)
+    {
+        _httpRequestResultService = httpClientSendService;
+        _memoryCacheManager = memoryCacheManager;
+        _token = token;
+    }
+
+    private void AddLookupLimitError(GitHubCacheViewModel cachedData)
+    {
+        cachedData.Followers.ErrorList.Add("You have reached the maximum number of lookups for this hour. Please try again later.");
+        cachedData.Following.ErrorList.Add("You have reached the maximum number of lookups for this hour. Please try again later.");
+    }
+
+
+    private HttpRequestResult<T> CreateGitHubRequest<T>(string requestPath)
+    {
+        var request = new HttpRequestResult<T>
+        {
+            CacheDurationMinutes = 60,
+            RequestPath = requestPath
+        };
+        request.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
+        request.RequestHeaders.Add("Authorization", $"token {_token}");
+        return request;
+    }
+
+    private async Task<HttpRequestResult<T>> GetGitHubDataAsync<T>(string user, string endpoint, CancellationToken ct)
+    {
+        var requestPath = string.IsNullOrEmpty(endpoint)
+            ? $"https://api.github.com/users/{user}"
+            : $"https://api.github.com/users/{user}/{endpoint}";
+
+        var request = CreateGitHubRequest<T>(requestPath);
+        return await _httpRequestResultService.HttpSendRequestAsync<T>(request, ct);
+    }
+    public async Task<GitHubCacheViewModel> FetchGitHubDataAsync(string userName, CancellationToken ct)
+    {
+        var userTask = GetGitHubDataAsync<GitHubUser>(userName, string.Empty, ct);
+        var repoInfoTask = GetGitHubDataAsync<List<GitHubRepo>>(userName, "repos", ct);
+        var followersTask = GetGitHubDataAsync<List<GitHubFollower>>(userName, "followers", ct);
+        var followingTask = GetGitHubDataAsync<List<GitHubFollower>>(userName, "following", ct);
+
         await Task.WhenAll(repoInfoTask, userTask, followersTask, followingTask);
 
-        // Assign results to the view model
-        GitHubCacheViewModel? cachedData = new()
+        return new GitHubCacheViewModel
         {
             RepoInfo = await repoInfoTask,
             User = await userTask,
             Followers = await followersTask,
-            Following = await followingTask
+            Following = await followingTask,
+            UserName = userName
         };
-
-        return View(cachedData);
     }
 
-    private async Task<HttpClientSendRequest<List<GitHubRepo>>> GetGitHubRepoAsync(string user, CancellationToken ct)
+    public async Task<GitHubCacheViewModel> GetGitHubUserDataAsync(string id, CancellationToken ct)
     {
-        var gitHubRequest = new HttpClientSendRequest<List<GitHubRepo>>
-        {
-            CacheDurationMinutes = 60,
-            RequestPath = $"https://api.github.com/users/{user}/repos"
-        };
-        gitHubRequest.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
-        gitHubRequest.RequestHeaders.Add("Authorization", $"token {_token}");
-        var repo = await httpClientSendService.HttpClientSendAsync<List<GitHubRepo>>(gitHubRequest, ct);
-        return repo;
-    }
+        var userList = _memoryCacheManager.Get<Dictionary<string, GitHubCacheViewModel>>(_userLookupListCacheKey, () => []);
 
-    private async Task<HttpClientSendRequest<GitHubUser>> GetGitHubUserAsync(string user, CancellationToken ct)
-    {
-        var gitHubUserRequest = new HttpClientSendRequest<GitHubUser>
-        {
-            CacheDurationMinutes = 60,
-            RequestPath = $"https://api.github.com/users/{user}"
-        };
-        gitHubUserRequest.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
-        gitHubUserRequest.RequestHeaders.Add("Authorization", $"token {_token}");
-        var userResponse = await httpClientSendService.HttpClientSendAsync<GitHubUser>(gitHubUserRequest, ct);
-        return userResponse;
-    }
-    private async Task<HttpClientSendRequest<List<GitHubFollower>>> GetGitHubFollowersAsync(string user, CancellationToken ct)
-    {
-        var gitHubRequest = new HttpClientSendRequest<List<GitHubFollower>>
-        {
-            CacheDurationMinutes = 60,
-            RequestPath = $"https://api.github.com/users/{user}/followers"
-        };
-        gitHubRequest.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
-        gitHubRequest.RequestHeaders.Add("Authorization", $"token {_token}");
-        var repo = await httpClientSendService.HttpClientSendAsync<List<GitHubFollower>>(gitHubRequest, ct);
-        return repo;
-    }
-    private async Task<HttpClientSendRequest<List<GitHubFollower>>> GetGitHubFollowingAsync(string user, CancellationToken ct)
-    {
-        var gitHubRequest = new HttpClientSendRequest<List<GitHubFollower>>
-        {
-            CacheDurationMinutes = 60,
-            RequestPath = $"https://api.github.com/users/{user}/following"
-        };
-        gitHubRequest.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
-        gitHubRequest.RequestHeaders.Add("Authorization", $"token {_token}");
-        var repo = await httpClientSendService.HttpClientSendAsync<List<GitHubFollower>>(gitHubRequest, ct);
-        return repo;
-    }
+        if (userList.TryGetValue(id, out var user)) return user;
 
+        if (userList.Count >= MaxLookupsPerHour && !userList.ContainsKey(id))
+        {
+            id = userList.Keys.FirstOrDefault();
+            if (userList.TryGetValue(id, out var firstuser)) return firstuser;
+        }
+        var fetchedData = await FetchGitHubDataAsync(id, ct);
 
+        userList.Add(id, fetchedData);
+
+        if (userList.Count >= MaxLookupsPerHour)
+        {
+            AddLookupLimitError(fetchedData);
+        }
+        _memoryCacheManager.Set(_userLookupListCacheKey, userList, 60);
+        return fetchedData;
+    }
 }

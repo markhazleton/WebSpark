@@ -1,12 +1,12 @@
 ﻿using System.Net;
 
-namespace HttpClientUtility.SendService;
+namespace HttpClientUtility.RequestResult;
 
 
 /// <summary>
 /// Abstract base class implementing template method pattern for HTTP requests.
 /// </summary>
-public abstract class HttpClientSendRequestBase : IRequestInfo, IResponseInfo, IErrorInfo
+public abstract class HttpRequestResultBase : IRequestInfo, IResultInfo, IErrorInfo
 {
     /// <summary>
     /// Gets or sets the cache duration in minutes.

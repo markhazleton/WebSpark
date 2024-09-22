@@ -1,6 +1,5 @@
 ﻿using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Service;
-using Microsoft.Extensions.Logging;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 

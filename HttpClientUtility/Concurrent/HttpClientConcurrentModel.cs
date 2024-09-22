@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.SendService;
+﻿using HttpClientUtility.RequestResult;
 
 namespace HttpClientUtility.Concurrent;
 
@@ -14,7 +14,7 @@ public class HttpClientConcurrentModel : ConcurrentProcessorModel
     /// <param name="requestUrl">The request URL.</param>
     public HttpClientConcurrentModel(int taskId, string requestUrl) : base(taskId)
     {
-        StatusCall = new HttpClientSendRequest<SiteStatus>(taskId, requestUrl);
+        StatusCall = new HttpRequestResult<SiteStatus>(taskId, requestUrl);
         TaskId = taskId;
     }
 
@@ -36,5 +36,5 @@ public class HttpClientConcurrentModel : ConcurrentProcessorModel
     /// <summary>
     /// Gets or sets the status call for sending HTTP requests.
     /// </summary>
-    public HttpClientSendRequest<SiteStatus> StatusCall { get; set; } = default!;
+    public HttpRequestResult<SiteStatus> StatusCall { get; set; } = default!;
 }

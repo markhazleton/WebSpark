@@ -1,4 +1,4 @@
-﻿namespace HttpClientUtility.SendService;
+﻿namespace HttpClientUtility.RequestResult;
 
 public interface IErrorInfo
 {

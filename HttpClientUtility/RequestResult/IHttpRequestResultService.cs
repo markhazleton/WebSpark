@@ -1,15 +1,15 @@
-﻿namespace HttpClientUtility.SendService;
+﻿namespace HttpClientUtility.RequestResult;
 /// <summary>
 /// HttpClientService interface to send HTTP requests.
 /// </summary>
-public interface IHttpClientSendService
+public interface IHttpRequestResultService
 {
     /// <summary>
-    /// HttpClientSendAsync
+    /// HttpSendRequestAsync
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="statusCall"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task<HttpClientSendRequest<T>> HttpClientSendAsync<T>(HttpClientSendRequest<T> statusCall, CancellationToken ct);
+    Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct);
 }
