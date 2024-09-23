@@ -1,5 +1,4 @@
 using HttpClientCrawler.Crawler;
-using HttpClientUtility.FullService;
 using HttpClientUtility.MemoryCache;
 using HttpClientUtility.RequestResult;
 using HttpClientUtility.StringConverter;

@@ -16,21 +16,15 @@ public class GitHubController : AsyncSparkBaseController
         var _token = configuration["GitHubPAT"] ?? "MISSING";
         _gitHubUserService = new GitHubUserService(httpClientSendService, _memoryCacheManager, _token);
     }
-
     public async Task<IActionResult> Index(CancellationToken ct = default)
     {
         return View("Index", await _gitHubUserService.GetGitHubUserDataAsync("markhazleton", ct));
-    }
-
-    public new async Task<IActionResult> User(string id, CancellationToken ct = default)
-    {
-        return View("Index", await _gitHubUserService.GetGitHubUserDataAsync(id, ct));
     }
 }
 
 public class GitHubUserService
 {
-    private const int MaxLookupsPerHour = 10;
+    private const int MaxLookupsPerHour = 20;
     private readonly IHttpRequestResultService _httpRequestResultService;
     private readonly IMemoryCacheManager _memoryCacheManager;
     private readonly string _token;
@@ -98,7 +92,7 @@ public class GitHubUserService
 
         if (userList.Count >= MaxLookupsPerHour && !userList.ContainsKey(id))
         {
-            id = userList.Keys.FirstOrDefault();
+            id = "markhazleton";
             if (userList.TryGetValue(id, out var firstuser)) return firstuser;
         }
         var fetchedData = await FetchGitHubDataAsync(id, ct);
