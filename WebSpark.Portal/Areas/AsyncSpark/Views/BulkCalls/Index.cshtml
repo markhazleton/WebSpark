@@ -1,6 +1,5 @@
-﻿@using HttpClientUtility.GetService
-@using WebSpark.Core.Models
-@model IEnumerable<HttpGetCallResults>
+﻿@using WebSpark.Core.Models
+@model IEnumerable<HttpRequestResult<ApplicationStatus>>
 
 @{
     ViewData["Title"] = "Bulk Calls - Asynchronous HTTP Requests with .NET 8";
@@ -35,11 +34,7 @@
                         ApplicationStatus statusMessage = null;
                         try
                         {
-                            // Safely attempt to cast or convert StatusResults to ApplicationStatus
-                            statusMessage = item.StatusResults as ApplicationStatus;
-
-                            // Alternatively, use JsonSerializer if StatusResults is a serialized JSON string:
-                            // statusMessage = JsonSerializer.Deserialize<ApplicationStatus>(item.StatusResults.ToString());
+                            statusMessage = item.ResponseResults;
                         }
                         catch (Exception ex)
                         {
@@ -51,7 +46,6 @@
                                 </td>
                             </tr>
                         }
-
                         <tr>
                             <td>@item.Iteration</td>
                             <td>@item.ElapsedMilliseconds</td>

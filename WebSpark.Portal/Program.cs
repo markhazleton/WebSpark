@@ -1,6 +1,5 @@
 using HttpClientCrawler.Crawler;
 using HttpClientUtility.FullService;
-using HttpClientUtility.GetService;
 using HttpClientUtility.MemoryCache;
 using HttpClientUtility.RequestResult;
 using HttpClientUtility.StringConverter;
@@ -244,30 +243,6 @@ static void RegisterHttpClientUtilities(WebApplicationBuilder builder)
         client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
     });
 
-    // Full Service HTTP Client with Telemetry
-    builder.Services.AddScoped(serviceProvider =>
-    {
-        IHttpClientFullService baseService = new HttpClientFullService(
-            serviceProvider.GetRequiredService<IHttpClientFactory>(),
-            serviceProvider.GetRequiredService<IStringConverter>());
-
-        IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(baseService);
-
-        return telemetryService;
-    });
-
-    // HTTP Get Call Service with Decorator Pattern
-    builder.Services.AddScoped(serviceProvider =>
-    {
-        var logger = serviceProvider.GetRequiredService<ILogger<HttpGetCallService>>();
-        var telemetryLogger = serviceProvider.GetRequiredService<ILogger<HttpGetCallServiceTelemetry>>();
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
-        IHttpGetCallService baseService = new HttpGetCallService(logger, httpClientFactory);
-        IHttpGetCallService telemetryService = new HttpGetCallServiceTelemetry(telemetryLogger, baseService);
-
-        return telemetryService;
-    });
 
     // HTTP Send Service with Decorator Pattern
     builder.Services.AddSingleton(serviceProvider =>

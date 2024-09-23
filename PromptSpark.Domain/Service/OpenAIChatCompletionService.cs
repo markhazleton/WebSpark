@@ -1,9 +1,11 @@
-﻿using HttpClientUtility.FullService;
+﻿using HttpClientUtility.RequestResult;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Models.OpenAI;
+using System.Text;
+using System.Text.Json;
 
 namespace PromptSpark.Domain.Service;
 
@@ -17,13 +19,13 @@ namespace PromptSpark.Domain.Service;
 /// <param name="configuration">The configuration.</param>
 /// <param name="context">The GPT database context.</param>
 public class OpenAIChatCompletionService(
-    IHttpClientFullService httpClientService,
+    IHttpRequestResultService httpClientService,
     IConfiguration configuration,
     GPTDbContext context) : IGPTService
 {
     private readonly Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
     private readonly Uri openAiUrl = new(configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions");
-    
+
     private static OpenAiApiRequest GetOpenAiApiRequest(GPTDefinitionResponse definitionResponse)
     {
         if (Double.TryParse(definitionResponse.Temperature, out double temperature) == false)
@@ -321,17 +323,34 @@ public class OpenAIChatCompletionService(
 
     public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse)
     {
+        Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
+        string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
+        Uri openAiUri = new(openAiUrl);
+
+
+
+
         var openAIRequest = GetOpenAiApiRequest(gptResponse);
-        var serviceResponse = await httpClientService.PostAsync<OpenAiApiRequest, OpenAiApiResponse>(openAiUrl, openAIRequest, headers);
+        CancellationToken ct = new();
+        HttpRequestResult<OpenAiApiResponse> serviceResponse = new();
+        StringContent content = new(JsonSerializer.Serialize(openAIRequest), Encoding.UTF8, "application/json");
+        serviceResponse.RequestBody = content;
+        serviceResponse.Retries = 0;
+        serviceResponse.CacheDurationMinutes = 0;
+        serviceResponse.RequestMethod = HttpMethod.Post;
+        serviceResponse.RequestHeaders = headers;
+        serviceResponse.RequestPath = openAiUrl.ToString();
+        var response = await httpClientService.HttpSendRequestAsync<OpenAiApiResponse>(serviceResponse, ct);
+
         gptResponse.DefinitionType = gptResponse.DefinitionType;
         gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
-        gptResponse.SystemResponse = serviceResponse?.Content?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
+        gptResponse.SystemResponse = serviceResponse?.ResponseResults?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
         gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
         gptResponse.ElapsedMilliseconds = serviceResponse?.ElapsedMilliseconds ?? 0;
-        gptResponse.TotalTokens = serviceResponse?.Content?.usage?.total_tokens ?? 0;
-        gptResponse.CompletionTokens = serviceResponse?.Content?.usage?.completion_tokens ?? 0;
-        gptResponse.PromptTokens = serviceResponse?.Content?.usage?.prompt_tokens ?? 0;
-        gptResponse.Model = serviceResponse?.Content?.Model ?? "Unknown";
+        gptResponse.TotalTokens = serviceResponse?.ResponseResults?.Usage?.TotalTokens?? 0;
+        gptResponse.CompletionTokens = serviceResponse?.ResponseResults?.Usage?.CompletionTokens?? 0;
+        gptResponse.PromptTokens = serviceResponse?.ResponseResults?.Usage?.PromptTokens ?? 0;
+        gptResponse.Model = serviceResponse?.ResponseResults?.Model ?? "Unknown";
         return gptResponse;
     }
 }

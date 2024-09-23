@@ -75,7 +75,7 @@ public class HttpRequestResultServicePolly : IHttpRequestResultService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Polly:CircuitBreaker:Exception:{ex.Message}");
+            _logger.LogCritical(ex, "Polly:CircuitBreaker:Exception");
             _errorList.Add($"Polly:GetAsync:Exception:{ex.Message}");
         }
 
