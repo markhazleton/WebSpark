@@ -1,0 +1,30 @@
+﻿@using TriviaSpark.Domain.Models
+@model MatchModel
+
+@{
+    ViewData["Title"] = "Create New Match";
+}
+
+<div class="container my-5">
+    <h1 class="display-4">Create New Match</h1>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="MatchName" class="form-label"></label>
+            <input asp-for="MatchName" class="form-control" />
+            <span asp-validation-for="MatchName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MatchMode" class="form-label"></label>
+            <input asp-for="MatchMode" class="form-control" />
+            <span asp-validation-for="MatchMode" class="text-danger"></span>
+        </div>
+        <!-- Add more fields as necessary -->
+        <button type="submit" class="btn btn-primary mt-3">
+            <i class="bi bi-save"></i> Save
+        </button>
+        <a asp-action="Index" class="btn btn-secondary mt-3">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </form>
+</div>

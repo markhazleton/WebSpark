@@ -39,5 +39,5 @@ public partial class LuUnitOfMeasure
     /// Gets or sets the collection of questions associated with the unit of measure.
     /// </summary>
     [DisplayName("Questions")]
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+    public virtual ICollection<Question> Questions { get; set; } = [];
 }

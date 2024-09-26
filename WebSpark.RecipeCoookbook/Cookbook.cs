@@ -113,14 +113,14 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
     {
         try
         {
-            PdfWriter writer = new PdfWriter(outputPath);
-            PdfDocument pdfDoc = new PdfDocument(writer);
+            PdfWriter writer = new(outputPath);
+            PdfDocument pdfDoc = new(writer);
 
             // Add header and footer event handler
             pdfDoc.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterEventHandler());
 
-            Document doc = new Document(pdfDoc);
-            List<TocEntry> tocEntries = new List<TocEntry>();
+            Document doc = new(pdfDoc);
+            List<TocEntry> tocEntries = [];
 
             // Define styles
             Style titleStyle = new Style()

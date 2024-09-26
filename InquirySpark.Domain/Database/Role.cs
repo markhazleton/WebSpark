@@ -63,11 +63,11 @@ public partial class Role
     /// Gets or sets the application surveys associated with the role.
     /// </summary>
     [DisplayName("Application Surveys")]
-    public virtual ICollection<ApplicationSurvey> ApplicationSurveys { get; set; } = new List<ApplicationSurvey>();
+    public virtual ICollection<ApplicationSurvey> ApplicationSurveys { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the application user roles associated with the role.
     /// </summary>
     [DisplayName("Application User Roles")]
-    public virtual ICollection<ApplicationUserRole> ApplicationUserRoles { get; set; } = new List<ApplicationUserRole>();
+    public virtual ICollection<ApplicationUserRole> ApplicationUserRoles { get; set; } = [];
 }

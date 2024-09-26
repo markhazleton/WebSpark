@@ -4,7 +4,7 @@ namespace WebSpark.Portal.Areas.DataSpark.Models;
 
 public class CsvViewModel
 {
-    public List<string> AvailableCsvFiles { get; set; } = new List<string>();
+    public List<string> AvailableCsvFiles { get; set; } = [];
     public List<BivariateAnalysis> BivariateAnalyses { get; set; } = [];
     public int ColumnCount { get; set; }
     public List<ColumnInfo> ColumnDetails { get; set; } = [];

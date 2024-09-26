@@ -2,7 +2,7 @@
 
 namespace TriviaSpark.Domain.Services;
 
-public abstract class BaseMatchService(Models.MatchModel _match) : IMatchService
+public abstract class BaseMatchService(Models.MatchModel _match) : ITriviaMatchService
 {
     protected virtual Models.MatchModel Match => _match ?? throw new InvalidOperationException("Match not set yet");
 

@@ -12,10 +12,10 @@ public class ApplicationStatus
     public BuildVersion BuildVersion { get; set; } = new BuildVersion();
 
     [JsonPropertyName("features")]
-    public Dictionary<string, string> Features { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> Features { get; set; } = [];
 
     [JsonPropertyName("messages")]
-    public List<string> Messages { get; set; } = new List<string>();
+    public List<string> Messages { get; set; } = [];
 
     [JsonPropertyName("region")]
     public string Region { get; set; } = Environment.GetEnvironmentVariable("Region") ?? Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME");
@@ -24,7 +24,7 @@ public class ApplicationStatus
     public ServiceStatus Status { get; set; } = ServiceStatus.Online;
 
     [JsonPropertyName("tests")]
-    public Dictionary<string, string> Tests { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> Tests { get; set; } = [];
 
     public ApplicationStatus() { }
 

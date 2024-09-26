@@ -15,7 +15,7 @@ public class ColumnInfo
     public object? Max { get; set; }
     public double Mean { get; set; }
     public double StandardDeviation { get; set; }
-    public List<string> Errors { get; set; } = new List<string>(); // New property for capturing errors
-    public List<string> Observations { get; set; } = new List<string>(); // New property for storing detailed observations
+    public List<string> Errors { get; set; } = []; // New property for capturing errors
+    public List<string> Observations { get; set; } = []; // New property for storing detailed observations
 }
 

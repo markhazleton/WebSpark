@@ -3,18 +3,26 @@ using HttpClientUtility.MemoryCache;
 using HttpClientUtility.RequestResult;
 using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
+using ScottPlot.Statistics;
+using System.Configuration;
 using System.Reflection;
+using TriviaSpark.Domain.Entities;
+using TriviaSpark.Domain.OpenTriviaDb;
+using TriviaSpark.Domain.Services;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
 using WebSpark.Portal.Areas.DataSpark.Services;
+using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
 
@@ -69,6 +77,11 @@ builder.Services.AddDbContext<WebSparkDbContext>(options =>
 var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
     options.UseSqlite(GPTDbConnectionString));
+
+// Trivia Spark Context
+var TriviaDbConnectionString = builder.Configuration.GetValue("TriviaDbContext", "Data Source=c:\\websites\\WebSpark\\TriviaSpark.db");
+builder.Services.AddDbContext<TriviaSparkDbContext>(options =>
+    options.UseSqlite(TriviaDbConnectionString));
 
 // ========================
 // Identity Configuration
@@ -125,6 +138,19 @@ builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddScoped<ICookbook, Cookbook>();
+
+builder.Services.AddScoped<IQuestionSourceAdapter, OpenTriviaDbQuestionSource>();
+builder.Services.AddScoped<ITriviaMatchService, TriviaMatchService>();
+
+builder.Services.AddScoped<IJShowService>(serviceProvider =>
+{
+    string apiKey = builder.Configuration["JShow:JsonOutputFolder"] ?? "KEYMISSING";
+    JShowConfig config = new() { JsonOutputFolder = apiKey };
+    JShowService service = new(config);
+    return service;
+});
+
+
 
 // Transient Services
 builder.Services.AddTransient<CsvProcessingService>();

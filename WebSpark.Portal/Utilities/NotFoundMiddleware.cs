@@ -8,7 +8,14 @@ public class NotFoundMiddleware(RequestDelegate next)
 
         if (context.Response.StatusCode == 404)
         {
-            context.Response.StatusCode = 200; // Reset status code to avoid loop
+            if (!context.Response.HasStarted)
+            {
+                context.Response.StatusCode = 200; // Reset status code to avoid loop
+            }
+            else
+            {
+                return;
+            }
 
             var requestPath = context.Request.Path.ToString().ToLower();
 

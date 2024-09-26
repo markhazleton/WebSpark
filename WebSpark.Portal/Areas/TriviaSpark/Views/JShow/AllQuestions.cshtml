@@ -1,0 +1,238 @@
+﻿@model IEnumerable<QuestionViewModel>
+@{
+    ViewData["Title"] = "Full List of Questions - JShow Application";
+    ViewData["Description"] = "Explore the full list of questions created for the JShow game using the J-Show Builder GPT on ChatGPT.com. Easily manage and update your questions.";
+    ViewData["Keywords"] = "JShow, Question List, J-Show Builder, ChatGPT, Quiz Game, Manage Questions";
+}
+
+<!-- Filter Section -->
+<div class="d-flex mb-3">
+
+    <!-- Theme Filter -->
+    <div>
+        <label for="themeFilter" class="form-label">Filter by Theme</label>
+        <select id="themeFilter" class="form-select">
+            <option value="">All Themes</option>
+            @foreach (var theme in Model.Select(q => q.Theme).Distinct())
+            {
+                <option value="@theme">@theme</option>
+            }
+        </select>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="me-3">
+        <label for="categoryFilter" class="form-label">Filter by Category</label>
+        <select id="categoryFilter" class="form-select">
+            <option value="">All Categories</option>
+            @foreach (var category in Model.Select(q => q.CategoryName).Distinct())
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+    </div>
+
+    <!-- Round Filter -->
+    <div class="me-3">
+        <label for="roundFilter" class="form-label">Filter by Round</label>
+        <select id="roundFilter" class="form-select">
+            <option value="">All Rounds</option>
+            @foreach (var round in Model.Select(q => q.RoundName).Distinct())
+            {
+                <option value="@round">@round</option>
+            }
+        </select>
+    </div>
+
+
+</div>
+
+<div class="table-responsive">
+    <table id="displayTable" class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+                <th>Value</th>
+                <th>Round</th>
+                <th>Category</th>
+                <th>Theme</th> <!-- New Theme Column -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var question in Model)
+            {
+                <tr data-round="@question.RoundName" data-category="@question.CategoryName" data-theme="@question.Theme">
+                    <td>@question.QuestionText</td>
+                    <td>@question.Answer</td>
+                    <td>@question.Value</td>
+                    <td>
+                        <span class="badge bg-secondary">@question.RoundName</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-info">@question.CategoryName</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-warning">@question.Theme</span> <!-- Display Theme -->
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-around">
+                            <button class="btn btn-sm btn-outline-primary edit-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editQuestionModal"
+                                    data-id="@question.Id"
+                                    data-question="@question.QuestionText"
+                                    data-answer="@question.Answer"
+                                    data-value="@question.Value">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteQuestionModal"
+                                    data-id="@question.Id">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a href="@Url.Action("Index")" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Back to Show List
+</a>
+
+<!-- SEO Section: How Questions Were Created -->
+<section class="mt-5">
+    <h2>How JShow Questions Were Created with the J-Show Builder GPT</h2>
+    <p>
+        The questions featured in this list were generated using the innovative J-Show Builder GPT available on ChatGPT.com. This tool enables users to effortlessly create quiz questions with well-structured answers, values, and categories, streamlining the quiz creation process for the JShow application.
+    </p>
+    <dl>
+        <dt>Advanced Question Generation</dt>
+        <dd>
+            | The J-Show Builder GPT leverages natural language processing to understand and generate a wide variety of questions and answers tailored to your quiz needs. By simply providing topics and categories, the tool generates high-quality content with contextual relevance.
+        </dd>
+        <dt>Customizable Options</dt>
+        <dd>
+            | Users can customize the value, difficulty, and category of each question, ensuring that each round of the quiz has a balanced distribution of topics and difficulty levels.
+        </dd>
+        <dt>Efficiency and Accuracy</dt>
+        <dd>
+            | The tool reduces manual effort and errors in question creation, allowing quiz masters to focus on crafting the perfect game experience. Each question is carefully generated to meet the required standards for gameplay.
+        </dd>
+    </dl>
+</section>
+
+<!-- Edit Question Modal -->
+<div class="modal fade" id="editQuestionModal" tabindex="-1" aria-labelledby="editQuestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editQuestionModalLabel">Edit Question</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editQuestionForm" method="post" action="/JShow/EditQuestion">
+                <div class="modal-body">
+                    <input type="hidden" id="editQuestionId" name="Id" />
+                    <div class="mb-3">
+                        <label for="editQuestionText" class="form-label">Question</label>
+                        <textarea class="form-control" id="editQuestionText" name="QuestionText" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAnswerText" class="form-label">Answer</label>
+                        <input type="text" class="form-control" id="editAnswerText" name="Answer" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editValue" class="form-label">Value</label>
+                        <input type="number" class="form-control" id="editValue" name="Value" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Question Modal -->
+<div class="modal fade" id="deleteQuestionModal" tabindex="-1" aria-labelledby="deleteQuestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteQuestionModalLabel">Delete Question</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="deleteQuestionForm" method="post" action="/JShow/DeleteQuestion">
+                <div class="modal-body">
+                    <input type="hidden" id="deleteQuestionId" name="Id" />
+                    <p>Are you sure you want to delete this question?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section PageScripts {
+    <script>
+        $(document).ready(function() {
+            // DataTables Initialization
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '40vh',
+                scrollCollapse: true,
+                stateSave: false,
+                colReorder: true
+            });
+
+            // Filter Logic
+            $('#roundFilter').on('change', function() {
+                var selectedRound = $(this).val();
+                table.columns(3).search(selectedRound).draw();
+            });
+
+            $('#categoryFilter').on('change', function() {
+                var selectedCategory = $(this).val();
+                table.columns(4).search(selectedCategory).draw();
+            });
+
+            $('#themeFilter').on('change', function() {
+                var selectedTheme = $(this).val();
+                table.columns(5).search(selectedTheme).draw();
+            });
+
+            // Edit Modal Initialization
+            $('#editQuestionModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var id = button.data('id');
+                var question = button.data('question');
+                var answer = button.data('answer');
+                var value = button.data('value');
+
+                var modal = $(this);
+                modal.find('#editQuestionId').val(id);
+                modal.find('#editQuestionText').val(question);
+                modal.find('#editAnswerText').val(answer);
+                modal.find('#editValue').val(value);
+            });
+
+            // Delete Modal Initialization
+            $('#deleteQuestionModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var id = button.data('id');
+
+                var modal = $(this);
+                modal.find('#deleteQuestionId').val(id);
+            });
+        });
+    </script>
+}

@@ -91,7 +91,7 @@ public static class LogExtensions
     private static Dictionary<string, object> GetDictionaryWithPropertiesForOneRecord(object record)
     {
         if (record == null)
-            return new Dictionary<string, object>();
+            return [];
 
         Type type = record.GetType();
         PropertyInfo[] properties = type.GetProperties();

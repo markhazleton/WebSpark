@@ -24,10 +24,10 @@ public class ChatCompletionController(
         try
         {
             // Get the CSV output folder from configuration
-            string csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
+            string csvOutputFolder = configuration.GetValue<string>("JsonOutputFolder");
             if (string.IsNullOrEmpty(csvOutputFolder))
             {
-                logger.LogError("CsvOutputFolder is not configured.");
+                logger.LogError("JsonOutputFolder is not configured.");
                 return;
             }
 

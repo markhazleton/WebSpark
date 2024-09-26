@@ -1,0 +1,67 @@
+﻿@model             Round
+
+@if (Model != null && Model.Categories.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-primary">
+                <tr>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <th>@category.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    // Determine the maximum number of questions in any category for row count
+                    int maxQuestions = Model.Categories.Max(c => c.Questions.Count);
+                }
+                @for (int i = 0; i < maxQuestions; i++)
+                {
+                    <tr>
+                        @foreach (var category in Model.Categories)
+                        {
+                            var question = category.Questions.OrderBy(q => q.Value).ElementAtOrDefault(i);
+                            if (question != null)
+                            {
+                                <td>
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#questionModal" onclick="loadQuestion('@question.Id')">
+                                        @question.Value
+                                    </button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-center text-muted">No categories available for this round.</p>
+}
+
+<!-- Modal for showing question details -->
+<div class="modal fade" id="questionModal" tabindex="-1" aria-labelledby="questionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="questionModalLabel">Jeopardy Answer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="questionContent">
+                <!-- Question content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

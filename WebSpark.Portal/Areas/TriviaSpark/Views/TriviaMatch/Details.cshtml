@@ -1,0 +1,29 @@
+﻿@using TriviaSpark.Domain.Models
+@model MatchModel
+
+@{
+    ViewData["Title"] = "Match Details";
+}
+
+<div class="container my-5">
+    <h1 class="display-4">Match Details</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@Model.MatchName</h5>
+            <p class="card-text">
+                <strong>Mode:</strong> @Model.MatchMode<br />
+                <strong>Difficulty:</strong> @Model.Difficulty<br />
+                <strong>User:</strong> @Model.User.UserName<br />
+                <strong>Questions:</strong> @Model.ScoreCard.QuestionCount<br />
+                <strong>Correct Answers:</strong> @Model.ScoreCard.CorrectAnswers
+            </p>
+            <a asp-action="Edit" asp-route-id="@Model.MatchId" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>

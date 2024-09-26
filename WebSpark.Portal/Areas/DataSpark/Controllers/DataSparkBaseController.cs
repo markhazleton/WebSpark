@@ -22,7 +22,7 @@ public abstract class DataSparkBaseController<T> : Controller where T : DataSpar
         Configuration = configuration;
         Logger = logger;
         _cacheManager = memoryCacheManager;
-        OutputFolder = configuration["CsvOutputFolder"];
+        OutputFolder = configuration["JsonOutputFolder"];
     }
     public ConcurrentDictionary<string, CsvViewModel?> GetDataSpark()
     {

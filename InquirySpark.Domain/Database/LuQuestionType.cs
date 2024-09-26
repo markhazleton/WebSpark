@@ -51,5 +51,5 @@ public partial class LuQuestionType
     /// Gets or sets the collection of questions associated with this question type.
     /// </summary>
     [DisplayName("Questions")]
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+    public virtual ICollection<Question> Questions { get; set; } = [];
 }

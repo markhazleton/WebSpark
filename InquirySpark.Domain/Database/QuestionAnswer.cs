@@ -79,5 +79,5 @@ public partial class QuestionAnswer
     /// The collection of survey response answers associated with the question answer.
     /// </summary>
     [ForeignKey("QuestionAnswerId")]
-    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswers { get; set; } = new List<SurveyResponseAnswer>();
+    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswers { get; set; } = [];
 }

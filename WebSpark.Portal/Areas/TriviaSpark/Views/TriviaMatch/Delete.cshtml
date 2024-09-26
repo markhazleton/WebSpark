@@ -1,0 +1,29 @@
+﻿@using TriviaSpark.Domain.Models
+@model MatchModel
+
+@{
+    ViewData["Title"] = "Delete Match";
+}
+
+<div class="container my-5">
+    <h1 class="display-4">Delete Match</h1>
+
+    <div class="alert alert-warning">
+        <h4>Are you sure you want to delete this match?</h4>
+        <p>
+            <strong>Match:</strong> @Model.MatchName<br />
+            <strong>Mode:</strong> @Model.MatchMode<br />
+            <strong>Difficulty:</strong> @Model.Difficulty
+        </p>
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="MatchId" />
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Delete
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </form>
+</div>

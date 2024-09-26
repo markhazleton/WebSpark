@@ -99,13 +99,13 @@ public partial class Question
     /// Gets or sets the collection of question answers.
     /// </summary>
     [DisplayName("Question Answers")]
-    public virtual ICollection<QuestionAnswer> QuestionAnswers { get; set; } = new List<QuestionAnswer>();
+    public virtual ICollection<QuestionAnswer> QuestionAnswers { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of question group members.
     /// </summary>
     [DisplayName("Question Group Members")]
-    public virtual ICollection<QuestionGroupMember> QuestionGroupMembers { get; set; } = new List<QuestionGroupMember>();
+    public virtual ICollection<QuestionGroupMember> QuestionGroupMembers { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the question type.
@@ -117,7 +117,7 @@ public partial class Question
     /// Gets or sets the collection of survey response answers.
     /// </summary>
     [DisplayName("Survey Response Answers")]
-    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswers { get; set; } = new List<SurveyResponseAnswer>();
+    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswers { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey type.

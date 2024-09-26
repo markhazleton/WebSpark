@@ -1,16 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace TriviaSpark.Domain.Entities;
 
-public class TriviaSparkDbContext(
-    DbContextOptions<TriviaSparkWebContext> options) : DbContext(options)
+
+public class TriviaSparkDbContextFactory : IDesignTimeDbContextFactory<TriviaSparkDbContext>
+{
+    public TriviaSparkDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<TriviaSparkDbContext>();
+        optionsBuilder.UseSqlite("Data Source=c:\\websites\\WebSpark\\TriviaSpark.db");
+
+        return new TriviaSparkDbContext(optionsBuilder.Options);
+    }
+}
+
+public class TriviaSparkDbContext : DbContext
 {
     public DbSet<Match> Matches { get; set; }
     public DbSet<Question> Questions { get; set; }
     public DbSet<QuestionAnswer> QuestionAnswers { get; set; }
     public DbSet<MatchQuestionAnswer> MatchAnswers { get; set; }
     public DbSet<MatchQuestion> MatchQuestions { get; set; }
-    public DbSet<TriviaSparkWebUser> Users { get; set; }
+    public DbSet<TriviaSparkWebUser> AspNetUsers { get; set; }
+
+    public TriviaSparkDbContext(DbContextOptions<TriviaSparkDbContext> options) : base(options)
+    { }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
