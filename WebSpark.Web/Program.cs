@@ -38,7 +38,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddCookie();
 
-builder.Services.AddCors(o => o.AddPolicy("ControlSparkPolicy", builder =>
+builder.Services.AddCors(o => o.AddPolicy("WebSparkPolicy", builder =>
 {
     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 }));
@@ -62,7 +62,7 @@ app.UseSessionInitialization();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors("ControlSparkPolicy");
+app.UseCors("WebSparkPolicy");
 app.MapRazorPages();
 app.MapControllerRoute(
         name: "default",

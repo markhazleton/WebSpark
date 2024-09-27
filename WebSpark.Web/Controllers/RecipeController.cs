@@ -44,6 +44,11 @@ public class RecipeController(
     [HttpGet]
     public ActionResult Category(string? id = null)
     {
+        if (!RecipeViewModel.IsRecipeSite)
+        {
+            return Redirect($"/");
+        }
+
         if (!string.IsNullOrEmpty(id))
         {
             RecipeViewModel.Category = RecipeViewModel.CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
@@ -69,6 +74,11 @@ public class RecipeController(
     [HttpGet]
     public ActionResult Index(string? id = null)
     {
+        if(!RecipeViewModel.IsRecipeSite)
+        {
+            return Redirect($"/");
+        }
+
         if (string.IsNullOrEmpty(id))
         {
             return View($"~/Views/Templates/{BaseVM.Template}/Recipe/Category.cshtml", RecipeViewModel);

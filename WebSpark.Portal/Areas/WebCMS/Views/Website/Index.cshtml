@@ -27,6 +27,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.UseBreadCrumbURL)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsRecipeSite)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -34,7 +37,7 @@
         {
             <tr>
                 <td>
-                    @Html.ActionLink(item.Name, "Details","Website", new {id=item.Id })
+                    @Html.ActionLink(item.Name, "Details", "Website", new { id = item.Id })
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SiteStyle)
@@ -51,14 +54,16 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.UseBreadCrumbURL)
                 </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsRecipeSite)
+                </td>
             </tr>
         }
     </tbody>
 </table>
 @section PageScripts {
     <script>
-        $(document).ready(function ()
-        {
+        $(document).ready(function() {
             var table = $('#displayTable').DataTable(
                 {
                     paging: false,

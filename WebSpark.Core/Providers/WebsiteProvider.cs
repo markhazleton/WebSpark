@@ -46,6 +46,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
             SiteName = website.GalleryFolder,
             UseBreadCrumbURL = website.UseBreadCrumbUrl,
             VersionNo = website.VersionNo,
+            IsRecipeSite = website.IsRecipeSite,
             Menu = Create(website.Menus, false),
             ModifiedDT = website.UpdatedDate,
             ModifiedID = website.UpdatedID ?? 99,
@@ -221,6 +222,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
             WebsiteStyle = domain.Style,
             CurrentStyle = domain.Style,
             SiteName = domain.GalleryFolder,
+            IsRecipeSite = domain.IsRecipeSite,
             Template = domain.Template,
             MetaDescription = domain.Description,
             MetaKeywords = "TODO",
@@ -428,6 +430,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
                     dbWebsite.DomainUrl = saveItem.WebsiteUrl;
                     dbWebsite.GalleryFolder = saveItem.SiteName;
                     dbWebsite.UseBreadCrumbUrl = saveItem.UseBreadCrumbURL;
+                    dbWebsite.IsRecipeSite = saveItem.IsRecipeSite;
                     dbWebsite.UpdatedID = saveItem.ModifiedID;
                     dbWebsite.VersionNo = dbWebsite.VersionNo++;
                     dbWebsite.UpdatedDate = DateTime.UtcNow;

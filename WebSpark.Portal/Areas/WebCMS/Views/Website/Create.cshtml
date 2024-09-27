@@ -1,4 +1,4 @@
-@model             WebsiteEditModel
+@model WebsiteEditModel
 @{
     ViewData["Title"] = "Create";
 }
@@ -23,6 +23,11 @@
                 <label asp-for="SiteName" class="control-label"></label>
                 <input asp-for="SiteName" class="form-control" />
                 <span asp-validation-for="SiteName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsRecipeSite" class="control-label"></label>
+                <input asp-for="IsRecipeSite" class="form-control" />
+                <span asp-validation-for="IsRecipeSite" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-8 col-sm-12">

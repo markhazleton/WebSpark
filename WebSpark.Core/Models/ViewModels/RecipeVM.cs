@@ -28,6 +28,7 @@ public class RecipeVM : WebsiteVM
         WebsiteName = website.WebsiteName;
         WebsiteStyle = website.WebsiteStyle;
         CurrentStyle = website.CurrentStyle;
+        IsRecipeSite = website.IsRecipeSite;
         Template = website.Template;
         SiteUrl = website.SiteUrl;
         MetaDescription = website.MetaDescription;

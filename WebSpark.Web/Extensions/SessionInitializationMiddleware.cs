@@ -24,7 +24,7 @@ public class SessionInitializationMiddleware(
     {
         if (context.Session.GetString("Initialized") == null)
         {
-            var _DefaultSiteId = _config.GetSection("ControlSpark").GetValue<string>("DefaultSiteId");
+            var _DefaultSiteId = _config.GetSection("WebSpark").GetValue<string>("DefaultSiteId");
 
             using (var scope = context.RequestServices.CreateScope())
             {

@@ -32,6 +32,12 @@
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.SiteTemplate)
                 </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.IsRecipeSite)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.IsRecipeSite)
+                </dd>
             </dl>
         </div>
         <div class="col-6">
@@ -82,11 +88,11 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Menu.OrderBy(o=>o.DisplayOrder).ThenBy(t=>t.Title))
+        @foreach (var item in Model.Menu.OrderBy(o => o.DisplayOrder).ThenBy(t => t.Title))
         {
             <tr>
                 <td>
-                    @Html.ActionLink(item.Title, "Edit","NavigationMenu", new {id=item.Id })
+                    @Html.ActionLink(item.Title, "Edit", "NavigationMenu", new { id = item.Id })
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DisplayOrder)
@@ -109,8 +115,7 @@
 </table>
 @section PageScripts {
     <script>
-        $(document).ready(function ()
-        {
+        $(document).ready(function() {
             var table = $('#displayTable').DataTable(
                 {
                     paging: false,

@@ -27,7 +27,7 @@ public class BaseController(ILogger logger, IConfiguration configuration, Core.I
     /// <returns></returns>
     protected bool IsCacheEnabled()
     {
-        return _config.GetSection("ControlSpark").GetValue<bool>("CacheEnabled");
+        return _config.GetSection("WebSpark").GetValue<bool>("CacheEnabled");
     }
     /// <summary>
     /// Base View for Page Rendering
@@ -66,7 +66,7 @@ public class BaseController(ILogger logger, IConfiguration configuration, Core.I
 
             if (_baseView == null)
             {
-                var _DefaultSiteId = _config.GetSection("ControlSpark").GetValue<string>("DefaultSiteId");
+                var _DefaultSiteId = _config.GetSection("WebSpark").GetValue<string>("DefaultSiteId");
 
                 _baseView = _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId).GetAwaiter().GetResult();
 

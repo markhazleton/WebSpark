@@ -2,7 +2,7 @@
 
 public class MatchServiceFactory(
     Dictionary<Models.MatchMode,
-        Func<ITriviaMatchService>> serviceFactories) : IMatchServiceFactory
+        Func<ITriviaMatchService>> serviceFactories) : ITriviaMatchServiceFactory
 {
     public ITriviaMatchService CreateMatchService(Models.MatchMode mode)
     {

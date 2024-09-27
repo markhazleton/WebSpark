@@ -101,6 +101,7 @@ public class WebsiteController(
                 itemToUpdate.WebsiteUrl = website.WebsiteUrl ?? itemToUpdate.WebsiteUrl;
                 itemToUpdate.WebsiteTitle = website.WebsiteTitle ?? itemToUpdate.WebsiteTitle;
                 itemToUpdate.UseBreadCrumbURL = website.UseBreadCrumbURL;
+                itemToUpdate.IsRecipeSite = website.IsRecipeSite;
                 itemToUpdate.ModifiedID = 99;
                 var saveResult = service.Save(itemToUpdate);
             }

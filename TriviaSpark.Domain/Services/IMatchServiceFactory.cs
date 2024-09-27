@@ -1,7 +1,6 @@
-﻿namespace TriviaSpark.Domain.Services
+﻿namespace TriviaSpark.Domain.Services;
+
+public interface ITriviaMatchServiceFactory
 {
-    public interface IMatchServiceFactory
-    {
-        ITriviaMatchService CreateMatchService(Models.MatchMode mode);
-    }
+    ITriviaMatchService CreateMatchService(Models.MatchMode mode);
 }

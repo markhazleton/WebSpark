@@ -110,4 +110,11 @@ public class WebsiteModel
     [Required]
     [StringLength(250)]
     public string WebsiteUrl { get; set; }
+
+    /// <summary>
+    /// Is this a recipe site?
+    /// </summary>
+    [Required]
+    public bool IsRecipeSite { get; set; } = false;
+
 }

@@ -28,6 +28,7 @@ public class WebsiteEditModel : WebsiteModel
         ModifiedID = website.ModifiedID;
         ModifiedDT = website.ModifiedDT;
         VersionNo = website.VersionNo;
+        IsRecipeSite = website.IsRecipeSite;
         Url = website.Url;
         Menu = website.Menu.ToList();
     }

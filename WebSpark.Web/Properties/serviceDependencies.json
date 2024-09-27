@@ -3,22 +3,7 @@
     "mssql1": {
       "ignored": "true",
       "type": "mssql",
-      "connectionId": "ControlSpark:ConnString"
-    },
-    "mssql2": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "DefaultConnection"
-    },
-    "mssql3": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "ControlSparkUserContextConnection"
-    },
-    "mssql4": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "PromptSparkConnection"
+      "connectionId": "WebSpark:ConnString"
     }
   }
 }

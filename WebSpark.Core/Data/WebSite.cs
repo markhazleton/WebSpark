@@ -12,5 +12,6 @@ public partial class WebSite : BaseEntity
     public bool UseBreadCrumbUrl { get; set; }
     public int VersionNo { get; set; }
     public string Style { get; set; }
+    public bool IsRecipeSite { get; set; }
     public virtual ICollection<Menu> Menus { get; set; } = [];
 }
