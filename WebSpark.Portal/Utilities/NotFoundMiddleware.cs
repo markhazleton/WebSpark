@@ -26,25 +26,25 @@ public class NotFoundMiddleware(RequestDelegate next)
 
             if (requestPath.StartsWith("/openai/"))
             {
-                var newPath = requestPath.Replace("/openai/", "/promptspark/");
+                var newPath = requestPath.Replace("/openai/", "/PrompSpark/");
                 RedirectWithProtection(context, newPath);
                 return;
             }
             if (requestPath.StartsWith("/async/"))
             {
-                var newPath = requestPath.Replace("/async/", "/asyncspark/");
+                var newPath = requestPath.Replace("/async/", "/AsyncSpark/");
                 RedirectWithProtection(context, newPath);
                 return;
             }
 
             var redirects = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                { "github", "/asyncspark/github" },
-                { "promptspark", "/promptspark" },
-                { "asyncspark", "/asyncspark" },
-                { "dataspark", "/dataspark" },
-                { "prompt", "/promptspark" },
-                { "async", "/asyncspark" },
+                { "github", "/AsyncSpark/github" },
+                { "PrompSpark", "/PrompSpark" },
+                { "AsyncSpark", "/AsyncSpark" },
+                { "DataSpark", "/DataSpark" },
+                { "prompt", "/PrompSpark" },
+                { "async", "/AsyncSpark" },
             };
 
             foreach (var redirect in redirects)

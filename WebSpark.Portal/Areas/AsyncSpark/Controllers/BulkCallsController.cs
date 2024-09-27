@@ -27,7 +27,7 @@ public class BulkCallsController(
     private async Task<List<HttpRequestResult<ApplicationStatus>>> CallEndpointMultipleTimes(
         int maxThreads = 1,
         int iterationCount = 10,
-        string endpoint = "/api/asyncspark/status")
+        string endpoint = "/api/AsyncSpark/status")
     {
         // check if endpoint is partially specified add current request path
         if (!endpoint.StartsWith("http"))

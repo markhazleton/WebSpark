@@ -52,6 +52,30 @@ public class JShowService(JShowConfig config) : IJShowService
             // Deserialize the JSON content into an instance of JShow
             JShow jShow = JsonSerializer.Deserialize<JShow>(jsonContent, _jsonOptions);
 
+            jShow ??= new JShow();
+
+            // Loop over the categories and questions to set the Question Category and Round properties
+            jShow.Rounds.DoubleJeopardy.Theme = jShow.Theme;
+            jShow.Rounds.Jeopardy.Theme = jShow.Theme;
+
+            foreach (var category in jShow.Rounds.Jeopardy.Categories)
+            {
+                foreach (var question in category.Questions)
+                {
+                    question.Theme = jShow.Theme;
+                    question.JShowId = jShow.Id;
+                    question.Category = category.Name;
+                }
+            }
+            foreach (var category in jShow.Rounds.DoubleJeopardy.Categories)
+            {
+                foreach (var question in category.Questions)
+                {
+                    question.Theme = jShow.Theme;
+                    question.JShowId = jShow.Id;
+                    question.Category = category.Name;
+                }
+            }
             return jShow;
         }
         catch (FileNotFoundException)

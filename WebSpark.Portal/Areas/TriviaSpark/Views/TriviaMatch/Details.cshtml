@@ -6,17 +6,16 @@
 }
 
 <div class="container my-5">
-    <h1 class="display-4">Match Details</h1>
+    <h1 class="display-4 text-center mb-4">Match Details</h1>
 
-    <div class="card">
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title">@Model.MatchName</h5>
             <p class="card-text">
                 <strong>Mode:</strong> @Model.MatchMode<br />
                 <strong>Difficulty:</strong> @Model.Difficulty<br />
                 <strong>User:</strong> @Model.User.UserName<br />
-                <strong>Questions:</strong> @Model.ScoreCard.QuestionCount<br />
-                <strong>Correct Answers:</strong> @Model.ScoreCard.CorrectAnswers
+                <strong>Date:</strong> @Model.MatchDate.ToString("MM/dd/yyyy")<br />
             </p>
             <a asp-action="Edit" asp-route-id="@Model.MatchId" class="btn btn-warning">
                 <i class="bi bi-pencil-square"></i> Edit
@@ -24,6 +23,64 @@
             <a asp-action="Index" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Back to List
             </a>
+        </div>
+    </div>
+
+    <!-- Scorecard Section -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Scorecard</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Total Questions:</strong> @Model.ScoreCard.QuestionCount
+                </div>
+                <div class="col-md-6">
+                    <strong>Questions Attempted:</strong> @Model.ScoreCard.QuestionsAttempted
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Correct Answers:</strong>
+                    <span class="text-success"><i class="bi bi-check-circle"></i> @Model.ScoreCard.CorrectAnswers</span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Incorrect Answers:</strong>
+                    <span class="text-danger"><i class="bi bi-x-circle"></i> @Model.ScoreCard.IncorrectAnswers</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <strong>Adjusted Score:</strong> @Model.ScoreCard.AdjustedScore
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <strong>Percent Correct:</strong>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: @(Model.ScoreCard.PercentCorrect * 100)%;"
+                             aria-valuenow="@(Model.ScoreCard.PercentCorrect * 100)"
+                             aria-valuemin="0" aria-valuemax="100">
+                            @((Model.ScoreCard.PercentCorrect * 100).ToString("F2"))%
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <strong>Percent Complete:</strong>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" role="progressbar"
+                             style="width: @(Model.ScoreCard.PercentComplete * 100)%;"
+                             aria-valuenow="@(Model.ScoreCard.PercentComplete * 100)"
+                             aria-valuemin="0" aria-valuemax="100">
+                            @((Model.ScoreCard.PercentComplete * 100).ToString("F2"))%
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

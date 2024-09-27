@@ -33,6 +33,13 @@ public class QuestionViewModel
 }
 public class JShow
 {
+    public JShow()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
+
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
     [JsonPropertyName("show_number")]
     public int ShowNumber { get; set; }
 
@@ -87,6 +94,8 @@ public class Rounds
 
 public class Round
 {
+    [JsonPropertyName("theme")]
+    public string Theme { get; set; }
     [JsonPropertyName("categories")]
     public List<Category> Categories { get; set; }
 }
@@ -102,10 +111,13 @@ public class Category
 
 public class Question
 {
+
     public Question()
     {
          Id = Guid.NewGuid().ToString();
     }
+    [JsonPropertyName("jshowid")]
+    public string JShowId { get; set; }
 
     [JsonPropertyName("id")]
     public string Id { get; set; }
@@ -117,6 +129,11 @@ public class Question
 
     [JsonPropertyName("answer")]
     public string Answer { get; set; }
+
+    [JsonPropertyName("category")]
+    public string? Category { get; set; }
+    [JsonPropertyName("theme")]
+    public string Theme { get; set; }
 }
 
 public class FinalJeopardy

@@ -32,7 +32,7 @@ public class TriviaMatchController : TriviaSparkBaseController
     // GET: /TriviaMatch/Create
     public IActionResult Create()
     {
-        return View();
+        return View(new MatchModel());
     }
 
     // POST: /TriviaMatch/Create

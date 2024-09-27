@@ -10,7 +10,7 @@
         "clean": "node scripts/clean.js",
         "start": "npm run build && node scripts/start.js",
         "start:debug": "npm run build && node scripts/start-debug.js",
-        "promptspark": "node src/promptspark/npm_build.js"
+        "PrompSpark": "node src/PrompSpark/npm_build.js"
     },
     "description": "The admin portal for all things WebSpark.",
     "keywords": [
@@ -56,7 +56,7 @@
         "jszip": "^3.10.1",
         "pdfmake": "^0.2.13",
         "prismjs": "^1.29.0",
-        "terser": "^5.33.0"
+        "terser": "^5.34.0"
     },
     "devDependencies": {
         "@fullhuman/postcss-purgecss": "^6.0.0",

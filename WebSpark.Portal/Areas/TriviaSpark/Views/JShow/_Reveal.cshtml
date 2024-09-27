@@ -3,7 +3,7 @@
 <div class="card shadow-sm">
     <div class="card-header bg-primary text-white d-flex align-items-center">
         <i class="bi bi-tags-fill me-2"></i> <!-- Bootstrap icon for category -->
-        <strong>TBD</strong>
+        <strong>@Model.Category</strong>
     </div>
     <div class="card-body">
         <strong>Question:</strong>
@@ -17,9 +17,39 @@
         </p>
     </div>
     <div class="card-footer bg-light d-flex justify-content-between align-items-center">
-        <div>
+        <div id="answerContainer" class="d-none">
             <i class="bi bi-question-circle-fill me-2 text-warning"></i> <!-- Bootstrap icon for question -->
             <strong>Answer:</strong> @Model.Answer
         </div>
+        <button id="showAnswerButton" class="btn btn-success">
+            <i class="bi bi-eye-fill me-1"></i> Show Answer
+        </button>
     </div>
 </div>
+
+<!-- Add simple JavaScript to show the answer when the button is clicked -->
+<script>
+    document.getElementById("showAnswerButton").addEventListener("click", function() {
+        var answerContainer = document.getElementById("answerContainer");
+        var showAnswerButton = document.getElementById("showAnswerButton");
+
+        // Show the answer container
+        answerContainer.classList.remove("d-none");
+
+        // Hide the "Show Answer" button
+        showAnswerButton.classList.add("d-none");
+    });
+</script>
+
+<!-- Optional: Custom CSS for better visibility (you can include this in your CSS file) -->
+<style>
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-footer #answerContainer {
+        font-size: 1.2rem;
+    }
+</style>

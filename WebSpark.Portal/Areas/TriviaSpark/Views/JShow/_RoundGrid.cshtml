@@ -1,4 +1,4 @@
-﻿@model             Round
+﻿@model Round
 
 @if (Model != null && Model.Categories.Any())
 {
@@ -14,7 +14,6 @@
             </thead>
             <tbody>
                 @{
-                    // Determine the maximum number of questions in any category for row count
                     int maxQuestions = Model.Categories.Max(c => c.Questions.Count);
                 }
                 @for (int i = 0; i < maxQuestions; i++)
@@ -26,7 +25,9 @@
                             if (question != null)
                             {
                                 <td>
-                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#questionModal" onclick="loadQuestion('@question.Id')">
+                                    <button type="button" class="btn btn-outline-primary" 
+                                    data-bs-toggle="modal" data-bs-target="#questionModal" 
+                                    onclick="loadQuestion('@question.Id','@question.JShowId')">
                                         @question.Value
                                     </button>
                                 </td>
@@ -52,7 +53,7 @@ else
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="questionModalLabel">Jeopardy Answer</h5>
+                <h5 class="modal-title" id="questionModalLabel">@Model.Theme</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="questionContent">

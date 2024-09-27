@@ -27,7 +27,7 @@ public class UnivariateController(
             fileName = System.Net.WebUtility.HtmlDecode(fileName);
             columnName = System.Net.WebUtility.HtmlDecode(columnName);
 
-            var outputFolder = configuration["JsonOutputFolder"];
+            var outputFolder = configuration["CsvOutputFolder"];
             var filePath = Path.Combine(outputFolder, fileName);
 
             if (!System.IO.File.Exists(filePath) || string.IsNullOrEmpty(columnName))

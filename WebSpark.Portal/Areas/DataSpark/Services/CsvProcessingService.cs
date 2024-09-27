@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Analysis;
+using ScottPlot;
 using System.Data;
 using System.Globalization;
 using System.Text.Json;
@@ -80,39 +81,75 @@ public class CsvProcessingService
         }
         return model;
     }
-
-    public string GetScottPlotSvg(string columnName, DataFrame dataFrame)
+    private double CalculateMedian(double[] data)
     {
-        // Check if the column exists in the DataFrame
-        if (!dataFrame.Columns.Any(column => column.Name == columnName))
-            throw new ArgumentException($"Column '{columnName}' does not exist in the DataFrame.");
+        Array.Sort(data);
+        int count = data.Length;
+        if (count % 2 == 0)
+        {
+            return (data[count / 2 - 1] + data[count / 2]) / 2.0; // Average of middle two
+        }
+        else
+        {
+            return data[count / 2]; // Middle value
+        }
+    }
 
-        // Extract the column data as strings
-        var column = dataFrame.Columns[columnName];
-        var columnData = column.Cast<string>().ToList();
+    private double CalculateQuantile(double[] data, double quantile)
+    {
+        Array.Sort(data);
+        if (quantile < 0.0 || quantile > 1.0) throw new ArgumentOutOfRangeException(nameof(quantile));
 
-        // Determine if the data is numeric
+        double position = (data.Length - 1) * quantile;
+        int lowerIndex = (int)position;
+        double fraction = position - lowerIndex;
+
+        if (lowerIndex + 1 < data.Length)
+        {
+            return data[lowerIndex] + fraction * (data[lowerIndex + 1] - data[lowerIndex]);
+        }
+        return data[lowerIndex]; // If position is exactly an index
+    }
+    public string GetScottPlotSvg(string columnName, DataTable dataTable)
+    {
+        var columnData = dataTable.AsEnumerable().Select(row => row[columnName].ToString()).ToList();
         var isNumeric = columnData.All(value => double.TryParse(value, out _));
 
         var plt = new ScottPlot.Plot();
         if (isNumeric)
         {
-            // Convert the column data to doubles
-            var data = columnData
-                .Where(value => double.TryParse(value, out _))
-                .Select(value => Convert.ToDouble(value))
-                .ToArray();
+            var data = dataTable.AsEnumerable()
+                                     .Select(row => Convert.ToDouble(row[columnName]))
+                                     .ToArray();
 
-            plt.Add.Bars(data);
-            plt.Title($"Univariate Analysis of {columnName}");
+            // Calculate statistics for the box plot
+            double min = data.Min();
+            double max = data.Max();
+            double median = CalculateMedian(data);
+            double q1 = CalculateQuantile(data,0.25);
+            double q3 = CalculateQuantile(data, 0.75);
+
+            // Create a box plot using the calculated statistics
+            ScottPlot.Box box = new()
+            {
+                Position = 1,  // Set the position for the box plot
+                BoxMin = q1,
+                BoxMax = q3,
+                WhiskerMin = min,
+                WhiskerMax = max,
+                BoxMiddle = median,
+            };
+
+            plt.Add.Box(box);
+            plt.Title($"Box Plot of {columnName}");
             plt.XLabel(columnName);
-            plt.YLabel("Frequency");
+            plt.YLabel("Values");
         }
         else
         {
-            // Handle categorical data
+            // Handle categorical data with a frequency count plot
             var valueCounts = columnData.GroupBy(x => x)
-                            .ToDictionary(g => g.Key ?? string.Empty, g => g.Count());
+                .ToDictionary(g => g.Key ?? string.Empty, g => g.Count());
 
             // Sort the dictionary by counts in descending order
             var sortedValueCounts = valueCounts.OrderByDescending(kvp => kvp.Value).ToList();
@@ -131,11 +168,10 @@ public class CsvProcessingService
             plt.XLabel("Category");
             plt.YLabel("Count");
         }
-        // Return the plot as an SVG
         return plt.GetSvgXml(600, 400);
     }
 
-    public string GetScottPlotSvg(string columnName, DataTable dataTable)
+    public string GetScottBarPlotSvg(string columnName, DataTable dataTable)
     {
         var columnData = dataTable.AsEnumerable().Select(row => row[columnName].ToString()).ToList();
         var isNumeric = columnData.All(value => double.TryParse(value, out _));

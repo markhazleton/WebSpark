@@ -8,7 +8,6 @@ public class JShowController(
     IJShowService jShowService) : TriviaSparkBaseController
 {
     private readonly IJShowService _jShowService = jShowService;
-    private static List<JShow> _shows = [];
 
     public IActionResult Index()
     {
@@ -49,13 +48,17 @@ public class JShowController(
         return View("JShow", selectedShow);
     }
 
-    public IActionResult Reveal(string id)
+    public IActionResult Reveal(string id, string showid)
     {
-        var show = memoryCacheManager.Get<JShow>("JShow", () =>
+        var shows = memoryCacheManager.Get<List<JShow>>("JShowList", () =>
         {
-            return new();
+            return [];
         });
-
+        var show = shows.FirstOrDefault(s => s.Id == showid);
+        if (show == null)
+        {
+            return NotFound("Show not found.");
+        }
         var question = show.GetQuestionByID(id);
         if (question == null)
         {
@@ -107,8 +110,8 @@ public class JShowController(
                     }
                 }
             }
-            AddQuestionsFromRound("Jeopardy", show.Rounds.Jeopardy);
-            AddQuestionsFromRound("Double Jeopardy", show.Rounds.DoubleJeopardy);
+            AddQuestionsFromRound("Round One", show.Rounds.Jeopardy);
+            AddQuestionsFromRound("Round Two", show.Rounds.DoubleJeopardy);
             if (show.Rounds.FinalJeopardy != null)
             {
                 questionViewModels.Add(new QuestionViewModel
@@ -120,7 +123,7 @@ public class JShowController(
                     ShowNumber = show.ShowNumber,
                     Theme = show.Theme,
                     AirDate = show.AirDate,
-                    RoundName = "Final Jeopardy",
+                    RoundName = "Final Round",
                     CategoryName = show.Rounds.FinalJeopardy.Category
                 });
             }

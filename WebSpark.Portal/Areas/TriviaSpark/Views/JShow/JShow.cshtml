@@ -55,8 +55,8 @@
 
 @section Scripts {
     <script>
-        function loadQuestion(id) {
-            $.get('@Url.Action("Reveal", "JShow")', { id: id }, function(data) {
+        function loadQuestion(id,showid) {
+            $.get('@Url.Action("Reveal", "JShow")', { id: id,showid:showid }, function(data) {
                 $('#questionContent').html(data);
             });
         }
