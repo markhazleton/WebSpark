@@ -1,22 +1,28 @@
 using HttpClientCrawler.Crawler;
-using HttpClientUtility.FullService;
-using HttpClientUtility.GetService;
 using HttpClientUtility.MemoryCache;
-using HttpClientUtility.SendService;
+using HttpClientUtility.RequestResult;
 using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Service;
+using ScottPlot.Statistics;
+using System.Configuration;
 using System.Reflection;
+using TriviaSpark.Domain.Entities;
+using TriviaSpark.Domain.OpenTriviaDb;
+using TriviaSpark.Domain.Services;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
 using WebSpark.Portal.Areas.DataSpark.Services;
+using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
 
@@ -71,6 +77,11 @@ builder.Services.AddDbContext<WebSparkDbContext>(options =>
 var GPTDbConnectionString = builder.Configuration.GetValue("GPTDbContext", "Data Source=c:\\websites\\WebSpark\\PromptSpark.db");
 builder.Services.AddDbContext<GPTDbContext>(options =>
     options.UseSqlite(GPTDbConnectionString));
+
+// Trivia Spark Context
+var TriviaDbConnectionString = builder.Configuration.GetValue("TriviaDbContext", "Data Source=c:\\websites\\WebSpark\\TriviaSpark.db");
+builder.Services.AddDbContext<TriviaSparkDbContext>(options =>
+    options.UseSqlite(TriviaDbConnectionString));
 
 // ========================
 // Identity Configuration
@@ -127,6 +138,19 @@ builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddScoped<ICookbook, Cookbook>();
+
+builder.Services.AddScoped<IQuestionSourceAdapter, OpenTriviaDbQuestionSource>();
+builder.Services.AddScoped<ITriviaMatchService, TriviaMatchService>();
+
+builder.Services.AddScoped<IJShowService>(serviceProvider =>
+{
+    string apiKey = builder.Configuration["JShow:JsonOutputFolder"] ?? "KEYMISSING";
+    JShowConfig config = new() { JsonOutputFolder = apiKey };
+    JShowService service = new(config);
+    return service;
+});
+
+
 
 // Transient Services
 builder.Services.AddTransient<CsvProcessingService>();
@@ -244,53 +268,29 @@ static void RegisterHttpClientUtilities(WebApplicationBuilder builder)
         client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
     });
 
-    // Full Service HTTP Client with Telemetry
-    builder.Services.AddScoped(serviceProvider =>
-    {
-        IHttpClientFullService baseService = new HttpClientFullService(
-            serviceProvider.GetRequiredService<IHttpClientFactory>(),
-            serviceProvider.GetRequiredService<IStringConverter>());
-
-        IHttpClientFullService telemetryService = new HttpClientFullServiceTelemetry(baseService);
-
-        return telemetryService;
-    });
-
-    // HTTP Get Call Service with Decorator Pattern
-    builder.Services.AddScoped(serviceProvider =>
-    {
-        var logger = serviceProvider.GetRequiredService<ILogger<HttpGetCallService>>();
-        var telemetryLogger = serviceProvider.GetRequiredService<ILogger<HttpGetCallServiceTelemetry>>();
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
-        IHttpGetCallService baseService = new HttpGetCallService(logger, httpClientFactory);
-        IHttpGetCallService telemetryService = new HttpGetCallServiceTelemetry(telemetryLogger, baseService);
-
-        return telemetryService;
-    });
 
     // HTTP Send Service with Decorator Pattern
     builder.Services.AddSingleton(serviceProvider =>
     {
-        IHttpClientSendService baseService = new HttpClientSendService(
-            serviceProvider.GetRequiredService<ILogger<HttpClientSendService>>(),
+        IHttpRequestResultService baseService = new HttpRequestResultService(
+            serviceProvider.GetRequiredService<ILogger<HttpRequestResultService>>(),
             serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
 
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        var retryOptions = configuration.GetSection("HttpClientSendPollyOptions").Get<HttpClientSendPollyOptions>();
+        var retryOptions = configuration.GetSection("HttpRequestResultPollyOptions").Get<HttpRequestResultPollyOptions>();
 
-        IHttpClientSendService pollyService = new HttpClientSendServicePolly(
-            serviceProvider.GetRequiredService<ILogger<HttpClientSendServicePolly>>(),
+        IHttpRequestResultService pollyService = new HttpRequestResultServicePolly(
+            serviceProvider.GetRequiredService<ILogger<HttpRequestResultServicePolly>>(),
             baseService,
             retryOptions);
 
-        IHttpClientSendService telemetryService = new HttpClientSendServiceTelemetry(
-            serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceTelemetry>>(),
+        IHttpRequestResultService telemetryService = new HttpRequestResultServiceTelemetry(
+            serviceProvider.GetRequiredService<ILogger<HttpRequestResultServiceTelemetry>>(),
             pollyService);
 
-        IHttpClientSendService cacheService = new HttpClientSendServiceCache(
+        IHttpRequestResultService cacheService = new HttpRequestResultServiceCache(
             telemetryService,
-            serviceProvider.GetRequiredService<ILogger<HttpClientSendServiceCache>>(),
+            serviceProvider.GetRequiredService<ILogger<HttpRequestResultServiceCache>>(),
             serviceProvider.GetRequiredService<IMemoryCache>());
 
         return cacheService;

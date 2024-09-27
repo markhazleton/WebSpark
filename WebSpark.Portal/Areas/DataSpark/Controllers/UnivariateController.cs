@@ -9,7 +9,7 @@ public class UnivariateController(
     CsvProcessingService csvProcessingService,
     IMemoryCacheManager memoryCacheManager,
     IConfiguration configuration,
-    ILogger<UnivariateController> logger) : DataSparkBaseController<UnivariateController>(memoryCacheManager,configuration, logger)
+    ILogger<UnivariateController> logger) : DataSparkBaseController<UnivariateController>(memoryCacheManager, configuration, logger)
 {
     [HttpGet]
     public IActionResult Index()

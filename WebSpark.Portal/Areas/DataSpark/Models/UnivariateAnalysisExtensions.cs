@@ -81,9 +81,9 @@ public static class UnivariateAnalysisExtensions
     /// <param name="numericValues">The array of numeric values in the column.</param>
     /// <param name="config">Configuration object with analysis settings.</param>
     private static void AnalyzeColumn(
-        ColumnInfo column, 
-        object[] nonNullValues, 
-        double[] numericValues, 
+        ColumnInfo column,
+        object[] nonNullValues,
+        double[] numericValues,
         AnalysisConfig config)
     {
         bool isNumeric = numericValues.Length > 0;

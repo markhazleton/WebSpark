@@ -56,7 +56,7 @@ public class UserPromptService(GPTDbContext context, IGPTService gPTService)
                 DefinitionTypes = definitionTypes,
                 Created = DateTime.Now,
                 Updated = DateTime.Now,
-                DefinitionResponses = new List<DefinitionResponseDto>()
+                DefinitionResponses = []
             };
         }
 

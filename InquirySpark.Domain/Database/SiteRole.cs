@@ -28,5 +28,5 @@ public partial class SiteRole
     /// Gets or sets the collection of application users associated with the site role.
     /// </summary>
     [DisplayName("Application Users")]
-    public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = [];
 }

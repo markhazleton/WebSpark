@@ -160,10 +160,10 @@ public partial class Company
     /// <summary>
     /// Gets or sets the collection of application users.
     /// </summary>
-    public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
+    public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of applications.
     /// </summary>
-    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
+    public virtual ICollection<Application> Applications { get; set; } = [];
 }

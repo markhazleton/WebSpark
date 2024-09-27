@@ -62,22 +62,22 @@ public partial class Application
 
     public DateTime ModifiedDt { get; set; }
 
-    public virtual ICollection<AppProperty> AppProperties { get; set; } = new List<AppProperty>();
+    public virtual ICollection<AppProperty> AppProperties { get; set; } = [];
 
-    public virtual ICollection<ApplicationSurvey> ApplicationSurveys { get; set; } = new List<ApplicationSurvey>();
+    public virtual ICollection<ApplicationSurvey> ApplicationSurveys { get; set; } = [];
 
     public virtual LuApplicationType ApplicationType { get; set; } = null!;
 
-    public virtual ICollection<ApplicationUserRole> ApplicationUserRoles { get; set; } = new List<ApplicationUserRole>();
+    public virtual ICollection<ApplicationUserRole> ApplicationUserRoles { get; set; } = [];
     /// <summary>
     /// Company Lookup
     /// </summary>
     [Display(Name = "Company Lookup")]
     public virtual Company? Company { get; set; }
 
-    public virtual ICollection<SiteAppMenu> SiteAppMenus { get; set; } = new List<SiteAppMenu>();
+    public virtual ICollection<SiteAppMenu> SiteAppMenus { get; set; } = [];
 
-    public virtual ICollection<SurveyResponse> SurveyResponses { get; set; } = new List<SurveyResponse>();
+    public virtual ICollection<SurveyResponse> SurveyResponses { get; set; } = [];
 
-    public virtual ICollection<UserAppProperty> UserAppProperties { get; set; } = new List<UserAppProperty>();
+    public virtual ICollection<UserAppProperty> UserAppProperties { get; set; } = [];
 }

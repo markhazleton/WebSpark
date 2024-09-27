@@ -13,7 +13,7 @@ public class UnivariateViewModel
     /// <summary>
     /// Gets or sets the list of available columns.
     /// </summary>
-    public List<string> AvailableColumns { get; set; } = new List<string>();
+    public List<string> AvailableColumns { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the selected column.

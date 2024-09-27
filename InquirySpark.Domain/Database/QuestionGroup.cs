@@ -95,7 +95,7 @@ public partial class QuestionGroup
     /// Gets or sets the question group members.
     /// </summary>
     [DisplayName("Members")]
-    public virtual ICollection<QuestionGroupMember> QuestionGroupMembers { get; set; } = new List<QuestionGroupMember>();
+    public virtual ICollection<QuestionGroupMember> QuestionGroupMembers { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey associated with the question group.

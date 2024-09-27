@@ -3,7 +3,7 @@
     {
       "role": "anonymous",
       "text": "Explore Sparks",
-      "url": "/promptspark/explorer",
+      "url": "/PromptSpark/explorer",
       "icon": "fa fa-search",
       "description": "A Spark in Prompt Spark defines the core behavior and output expectations for Large Language Models, detailing requirements and guidelines for evaluating different implementations or variants.",
       "keywords": "explore, search, library"
@@ -11,27 +11,27 @@
     {
       "role": "anonymous",
       "text": "Variant Chat",
-      "url": "/promptspark/chatcompletion"
+      "url": "/PromptSpark/chatcompletion"
     },
     {
       "role": "admin",
       "text": "Core Sparks",
-      "url": "/promptspark/definitiontypes"
+      "url": "/PromptSpark/definitiontypes"
     },
     {
       "role": "admin",
       "text": "Spark Variants",
-      "url": "/promptspark/definitions"
+      "url": "/PromptSpark/definitions"
     },
     {
       "role": "admin",
       "text": "UserPrompts",
-      "url": "/promptspark/userprompts"
+      "url": "/PromptSpark/userprompts"
     },
     {
       "role": "admin",
       "text": "Responses",
-      "url": "/promptspark/responses"
+      "url": "/PromptSpark/responses"
     }
   ]
 }

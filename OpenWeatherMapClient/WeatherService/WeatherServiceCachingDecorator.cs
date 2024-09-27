@@ -1,8 +1,8 @@
 ﻿namespace OpenWeatherMapClient.WeatherService;
 
 public class WeatherServiceCachingDecorator(
-    IOpenWeatherMapClient _weatherService, 
-    IMemoryCache _cache, 
+    IOpenWeatherMapClient _weatherService,
+    IMemoryCache _cache,
     ILogger<WeatherServiceCachingDecorator> _logger) : IOpenWeatherMapClient
 {
     public async Task<CurrentWeather> GetCurrentWeatherAsync(string location)

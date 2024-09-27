@@ -58,5 +58,5 @@ public partial class LuSurveyResponseStatus
     /// Gets or sets the survey response states associated with this status.
     /// </summary>
     [DisplayName("Survey Response States")]
-    public virtual ICollection<SurveyResponseState> SurveyResponseStates { get; set; } = new List<SurveyResponseState>();
+    public virtual ICollection<SurveyResponseState> SurveyResponseStates { get; set; } = [];
 }

@@ -12,10 +12,8 @@
         <!-- User Info Section -->
         <div class="col-md-4">
             @await Html.PartialAsync("_gitHubUserResponse", Model.User)
-            <h2 class="text-center mt-4">Following</h2>
-            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Following)
-            <h2 class="text-center mt-4">Followers</h2>
-            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Followers)
+            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Following, new ViewDataDictionary(ViewData) { { "SubTitle", "Following" } })
+            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Followers, new ViewDataDictionary(ViewData) { { "SubTitle", "Followers" } })
         </div>
         <!-- Repo Info Section -->
         <div class="col-md-8">
@@ -48,12 +46,7 @@
 
 <div class="container my-5">
     <div class="row">
-
-
-
-
         <h1>Integrating GitHub User and Repo Data into WebSpark's AsyncSpark Section</h1>
-
         <p>
             In this tutorial, we’ll walk through how to use GitHub’s API and asynchronous programming in .NET to create a responsive and interactive interface for displaying GitHub user and repository data in the <strong>AsyncSpark</strong> section of WebSpark. We will also make use of Bootstrap 5 to design a polished and user-friendly interface.
         </p>

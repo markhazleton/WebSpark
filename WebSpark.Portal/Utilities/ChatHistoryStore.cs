@@ -22,6 +22,6 @@ public class ChatHistoryStore
 
     public List<ChatMessage> GetMessages(string sessionId)
     {
-        return _chatHistories.ContainsKey(sessionId) ? _chatHistories[sessionId] : new List<ChatMessage>();
+        return _chatHistories.ContainsKey(sessionId) ? _chatHistories[sessionId] : [];
     }
 }

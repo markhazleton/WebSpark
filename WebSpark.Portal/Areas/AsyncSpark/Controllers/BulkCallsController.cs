@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.GetService;
+﻿using HttpClientUtility.RequestResult;
 using WebSpark.Core.Models;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
@@ -10,10 +10,10 @@ namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 /// Initializes a new instance of the <see cref="BulkCallsController"/> class.
 /// </remarks>
 /// <param name="logger">The logger.</param>
-/// <param name="getCallService">The HTTP GET call service.</param>
+/// <param name="getRequestResult">The HTTP GET call service.</param>
 public class BulkCallsController(
-    ILogger<BulkCallsController> logger, 
-    IHttpGetCallService getCallService) : AsyncSparkBaseController
+    ILogger<BulkCallsController> logger,
+    IHttpRequestResultService getRequestResult) : AsyncSparkBaseController
 {
     private static readonly object WriteLock = new();
 
@@ -24,10 +24,10 @@ public class BulkCallsController(
     /// <param name="iterationCount">The number of iterations.</param>
     /// <param name="endpoint">The endpoint URL.</param>
     /// <returns>A list of HTTP GET call results.</returns>
-    private async Task<List<HttpGetCallResults>> CallEndpointMultipleTimes(
-        int maxThreads = 1, 
-        int iterationCount = 10, 
-        string endpoint = "/api/asyncspark/status")
+    private async Task<List<HttpRequestResult<ApplicationStatus>>> CallEndpointMultipleTimes(
+        int maxThreads = 1,
+        int iterationCount = 10,
+        string endpoint = "/api/AsyncSpark/status")
     {
         // check if endpoint is partially specified add current request path
         if (!endpoint.StartsWith("http"))
@@ -37,7 +37,7 @@ public class BulkCallsController(
         int curIndex = 0;
         // Create a SemaphoreSlim with a maximum of maxThreads concurrent requests
         SemaphoreSlim semaphore = new(maxThreads);
-        List<HttpGetCallResults> results = [];
+        List<HttpRequestResult<ApplicationStatus>> results = [];
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
 
         // Create a list of tasks to make the GetAsync calls
@@ -47,14 +47,18 @@ public class BulkCallsController(
             // Acquire the semaphore before making the request
             await semaphore.WaitAsync();
             curIndex++;
-            var statusCall = new HttpGetCallResults(curIndex, endpoint);
+            var statusCall = new HttpRequestResult<ApplicationStatus>(curIndex, endpoint)
+            {
+                Retries = 0,
+                CacheDurationMinutes = 0
+            };
             // Create a task to make the request
             tasks.Add(Task.Run(async () =>
             {
                 try
                 {
                     // Get the async results
-                    var result = await getCallService.GetAsync<ApplicationStatus>(statusCall, cts.Token);
+                    var result = await getRequestResult.HttpSendRequestAsync(statusCall, cts.Token);
                     lock (WriteLock)
                     {
                         results.Add(result);

@@ -2,6 +2,6 @@
 {
     public interface IMatchServiceFactory
     {
-        IMatchService CreateMatchService(Models.MatchMode mode);
+        ITriviaMatchService CreateMatchService(Models.MatchMode mode);
     }
 }

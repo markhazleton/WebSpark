@@ -314,7 +314,7 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
 
             return contentParts;
         }
-        return new List<ContentPart>();
+        return [];
     }
 
     public async Task<Keyword> AddKeywordAsync(string name, string description)

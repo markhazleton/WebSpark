@@ -1,11 +1,24 @@
-﻿namespace PromptSpark.Domain.Models.OpenAI;
+﻿using System.Text.Json.Serialization;
+
+namespace PromptSpark.Domain.Models.OpenAI;
 
 public class Usage
 {
-    public int prompt_tokens { get; set; }
-    public int completion_tokens { get; set; }
-    /// <summary>
-    /// The total number of tokens that were used in processing the completion request.
-    /// </summary>
-    public int total_tokens { get; set; }
+    [JsonPropertyName("prompt_tokens")]
+    public int PromptTokens { get; set; }
+
+    [JsonPropertyName("completion_tokens")]
+    public int CompletionTokens { get; set; }
+
+    [JsonPropertyName("total_tokens")]
+    public int TotalTokens { get; set; }
+
+    [JsonPropertyName("completion_tokens_details")]
+    public CompletionTokensDetails CompletionTokensDetails { get; set; }
+}
+
+public class CompletionTokensDetails
+{
+    [JsonPropertyName("reasoning_tokens")]
+    public int ReasoningTokens { get; set; }
 }

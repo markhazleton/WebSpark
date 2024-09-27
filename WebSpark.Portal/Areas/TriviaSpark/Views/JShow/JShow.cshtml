@@ -1,0 +1,64 @@
+﻿@model JShow
+@{
+    ViewData["Title"] = $"{Model.Theme} JShow Game";
+    ViewData["Description"] = $"Play JShow {Model.Theme}. {Model.Description}";
+    ViewData["Keywords"] = "ASP.NET MVC, Bootstrap 5, JSON, C# tutorial, web development, MVC controller, Bootstrap icons";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">JShow</h1>
+    <h3 class="text-center">Theme: @Model.Theme</h3>
+    <h4 class="text-center mb-5">@Model.Description</h4>
+
+    @if (Model.Rounds != null)
+    {
+        <h2 class="text-center text-primary">Round One</h2>
+        @Html.Partial("_RoundGrid", Model.Rounds.Jeopardy)
+
+        <h2 class="text-center text-primary mt-5">Round Two</h2>
+        @Html.Partial("_RoundGrid", Model.Rounds.DoubleJeopardy)
+
+        <h2 class="text-center text-primary mt-5">Final Round</h2>
+        var finalRound = Model.Rounds.FinalJeopardy;
+
+        if (finalRound != null)
+        {
+            <div class="card text-center mt-4">
+                <div class="card-header">
+                    <strong>Final Question</strong>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@finalRound.QuestionText</h5>
+                    <p class="card-text"><strong>Answer:</strong> @finalRound.Answer</p>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center text-muted">No rounds available for this show.</p>
+    }
+</div>
+<div class="container mt-5">
+    <h2 class="text-center">Creating the JShow JSON</h2>
+    <p>The JShow JSON was developed using the J-Show Builder GPT, an innovative tool built with ChatGPT's assistance. The process started by defining the structure required for the trivia game, which includes rounds, questions, and answers. By leveraging the J-Show Builder GPT, I was able to generate a comprehensive JSON file tailored for the WebSpark Trivia Spark application.</p>
+
+    <p>Interacting with ChatGPT allowed me to refine and finalize the J-Show Builder GPT to meet the specific needs of the trivia game. This interactive process enabled the creation of a JSON structure that is both robust and flexible, covering various topics for a captivating user experience.</p>
+
+    <p>The JSON file was then integrated into the ASP.NET MVC framework, with Bootstrap 5 styles enhancing the user interface. This ensured that the game is not only functional but also visually appealing and responsive across different devices.</p>
+
+    <p>The synergy between ChatGPT and the custom J-Show Builder GPT simplified the creation process, turning a complex idea into an engaging trivia experience. This showcases how AI can accelerate development and contribute to creative web applications.</p>
+
+    <p>Ultimately, this project demonstrates the potential of AI-powered tools in automating content creation and integration, providing a seamless experience for both developers and users. The JShow game now serves as a prime example of how technology and creativity can come together to deliver interactive and educational content.</p>
+</div>
+
+
+@section Scripts {
+    <script>
+        function loadQuestion(id,showid) {
+            $.get('@Url.Action("Reveal", "JShow")', { id: id,showid:showid }, function(data) {
+                $('#questionContent').html(data);
+            });
+        }
+    </script>
+}

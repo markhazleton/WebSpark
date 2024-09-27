@@ -172,7 +172,7 @@ public static class BivariateAnalysisExtensions
             }
             bivariateAnalyses.Add(analysis);
         }
-      
+
 
         return [.. bivariateAnalyses];
     }

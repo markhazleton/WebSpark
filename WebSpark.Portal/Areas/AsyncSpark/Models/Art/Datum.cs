@@ -6,7 +6,7 @@
         public string title { get; set; }
         public string image_id { get; set; }
         public string artist_title { get; set; }
-        public List<string> material_titles { get; set; } = new List<string>();
+        public List<string> material_titles { get; set; } = [];
         public string style_title { get; set; }
         public string artist_display { get; set; } // Additional details for artwork
         public string date_display { get; set; }

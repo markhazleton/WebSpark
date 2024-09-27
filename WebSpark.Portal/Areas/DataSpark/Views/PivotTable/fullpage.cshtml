@@ -161,7 +161,7 @@ public class PivotController : Controller
             var filename = '@Model'; // Use the model string as the filename
 
             $.ajax({
-                url: '/dataspark/pivottable/getexistingfile/' + filename,
+                url: '/DataSpark/pivottable/getexistingfile/' + filename,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {

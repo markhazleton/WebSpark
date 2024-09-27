@@ -81,17 +81,17 @@ public partial class SurveyResponse
     /// Gets or sets the collection of survey response histories.
     /// </summary>
     [DisplayName("Survey Response Histories")]
-    public virtual ICollection<SurveyResponseHistory> SurveyResponseHistories { get; set; } = new List<SurveyResponseHistory>();
+    public virtual ICollection<SurveyResponseHistory> SurveyResponseHistories { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of survey response sequences.
     /// </summary>
     [DisplayName("Survey Response Sequences")]
-    public virtual ICollection<SurveyResponseSequence> SurveyResponseSequences { get; set; } = new List<SurveyResponseSequence>();
+    public virtual ICollection<SurveyResponseSequence> SurveyResponseSequences { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of survey response states.
     /// </summary>
     [DisplayName("Survey Response States")]
-    public virtual ICollection<SurveyResponseState> SurveyResponseStates { get; set; } = new List<SurveyResponseState>();
+    public virtual ICollection<SurveyResponseState> SurveyResponseStates { get; set; } = [];
 }

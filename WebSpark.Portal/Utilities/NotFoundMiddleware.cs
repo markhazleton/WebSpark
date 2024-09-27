@@ -8,58 +8,81 @@ public class NotFoundMiddleware(RequestDelegate next)
 
         if (context.Response.StatusCode == 404)
         {
+            if (!context.Response.HasStarted)
+            {
+                context.Response.StatusCode = 200; // Reset status code to avoid loop
+            }
+            else
+            {
+                return;
+            }
+
             var requestPath = context.Request.Path.ToString().ToLower();
+
+            if (IsRedirectLoop(context))
+            {
+                return; // Stop if redirect loop detected
+            }
+
             if (requestPath.StartsWith("/openai/"))
             {
-                var newPath = requestPath.Replace("/openai/", "/promptspark/");
-                context.Response.Redirect(newPath, permanent: true);
+                var newPath = requestPath.Replace("/openai/", "/PromptSpark/");
+                RedirectWithProtection(context, newPath);
                 return;
             }
             if (requestPath.StartsWith("/async/"))
             {
-                var newPath = requestPath.Replace("/async/", "/asyncspark/");
-                context.Response.Redirect(newPath, permanent: true);
+                var newPath = requestPath.Replace("/async/", "/AsyncSpark/");
+                RedirectWithProtection(context, newPath);
                 return;
             }
-            var redirects = new List<KeyValuePair<string, string>>
+
+            var redirects = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                new("promptspark", "/promptspark"),
-                new("asyncspark", "/asyncspark"),
-                new("dataspark", "/dataspark"),
-                new("prompt", "/promptspark"),
-                new("async", "/asyncspark")
+                { "github", "/AsyncSpark/github" },
+                { "PromptSpark", "/PromptSpark" },
+                { "AsyncSpark", "/AsyncSpark" },
+                { "DataSpark", "/DataSpark" },
+                { "prompt", "/PromptSpark" },
+                { "async", "/AsyncSpark" },
             };
 
-            // Iterate through the list to find the first match and redirect
             foreach (var redirect in redirects)
             {
                 if (requestPath.Contains(redirect.Key))
                 {
-                    context.Response.Redirect(redirect.Value, permanent: true);
-                    break; // Exit after the first match
+                    RedirectWithProtection(context, redirect.Value);
+                    return;
                 }
             }
         }
     }
+
+    private void RedirectWithProtection(HttpContext context, string newPath)
+    {
+        if (!context.Request.Path.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.Headers.Add("X-Redirected", "true");
+            context.Response.Redirect(newPath, permanent: true);
+        }
+    }
+
+    private bool IsRedirectLoop(HttpContext context)
+    {
+        if (context.Request.Headers.ContainsKey("Referer"))
+        {
+            var referer = context.Request.Headers["Referer"].ToString();
+            if (referer.Contains(context.Request.Path, StringComparison.OrdinalIgnoreCase))
+            {
+                return true; // Redirect loop detected
+            }
+        }
+
+        if (context.Response.Headers.ContainsKey("X-Redirected"))
+        {
+            return true; // Redirect loop detected
+        }
+
+        return false;
+    }
 }
-// Middleware to enforce lowercase routes
-//app.Use(async (context, next) =>
-//{
-//    var request = context.Request;
-//    var path = request.Path.Value;
-
-//    // Check if the path contains any uppercase characters
-//    if (path != null && path.Any(char.IsUpper))
-//    {
-//        // Convert the path to lowercase
-//        var lowercasePath = path.ToLowerInvariant();
-
-//        // Construct the new URL with the lowercase path
-//        var newUrl = $"{request.Scheme}://{request.Host}{lowercasePath}{request.QueryString}";
-
-//        // Redirect to the lowercase URL with a 301 (Permanent Redirect) status code
-//        context.Response.Redirect(newUrl, true);
-//        return;
-//    }
-//    await next();
-//});

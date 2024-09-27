@@ -97,37 +97,37 @@ public partial class Survey
     /// Gets or sets the application surveys.
     /// </summary>
     [DisplayName("Application Surveys")]
-    public virtual ICollection<ApplicationSurvey> ApplicationSurveys { get; set; } = new List<ApplicationSurvey>();
+    public virtual ICollection<ApplicationSurvey> ApplicationSurveys { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the question groups.
     /// </summary>
     [DisplayName("Question Groups")]
-    public virtual ICollection<QuestionGroup> QuestionGroups { get; set; } = new List<QuestionGroup>();
+    public virtual ICollection<QuestionGroup> QuestionGroups { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey email templates.
     /// </summary>
     [DisplayName("Survey Email Templates")]
-    public virtual ICollection<SurveyEmailTemplate> SurveyEmailTemplates { get; set; } = new List<SurveyEmailTemplate>();
+    public virtual ICollection<SurveyEmailTemplate> SurveyEmailTemplates { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey responses.
     /// </summary>
     [DisplayName("Survey Responses")]
-    public virtual ICollection<SurveyResponse> SurveyResponses { get; set; } = new List<SurveyResponse>();
+    public virtual ICollection<SurveyResponse> SurveyResponses { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey review statuses.
     /// </summary>
     [DisplayName("Survey Review Statuses")]
-    public virtual ICollection<SurveyReviewStatus> SurveyReviewStatuses { get; set; } = new List<SurveyReviewStatus>();
+    public virtual ICollection<SurveyReviewStatus> SurveyReviewStatuses { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey statuses.
     /// </summary>
     [DisplayName("Survey Statuses")]
-    public virtual ICollection<SurveyStatus> SurveyStatuses { get; set; } = new List<SurveyStatus>();
+    public virtual ICollection<SurveyStatus> SurveyStatuses { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey type.

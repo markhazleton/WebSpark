@@ -1,0 +1,70 @@
+﻿@using TriviaSpark.Domain.Models
+@model IList<MatchModel>
+@{
+    ViewData["Title"] = "Trivia Matches - All Matches";
+    ViewData["Description"] = "Browse through all the trivia matches. Play, review, and improve your trivia skills.";
+    ViewData["Keywords"] = "trivia, matches, quiz, questions, games, scores";
+}
+
+<div class="container my-5">
+    <h1 class="display-4 mb-4">All Trivia Matches</h1>
+    <p>
+        <a href="/TriviaSpark/triviamatch/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Match
+        </a>
+    </p>
+
+    <table class="table table-striped table-hover" id="displayTable">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model[0].MatchName)</th>
+                <th>@Html.DisplayNameFor(model => model[0].MatchMode)</th>
+                <th>@Html.DisplayNameFor(model => model[0].Difficulty)</th>
+                <th>@Html.DisplayNameFor(model => model[0].User.UserName)</th>
+                <th>@Html.DisplayNameFor(model => model[0].ScoreCard.QuestionCount)</th>
+                <th>@Html.DisplayNameFor(model => model[0].ScoreCard.CorrectAnswers)</th>
+                <th>@Html.DisplayNameFor(Model => Model[0].ScoreCard.PercentCorrect)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var match in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => match.MatchName)</td>
+                    <td>@Html.DisplayFor(modelItem => match.MatchMode)</td>
+                    <td>@Html.DisplayFor(modelItem => match.Difficulty)</td>
+                    <td>@Html.DisplayFor(modelItem => match.User.UserName)</td>
+                    <td>@Html.DisplayFor(modelItem => match.ScoreCard.QuestionCount)</td>
+                    <td>@Html.DisplayFor(modelItem => match.ScoreCard.CorrectAnswers)</td>
+                    <td>@Html.DisplayFor(modelItem => match.ScoreCard.PercentCorrect)</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "TriviaMatch", new { id = match.MatchId })" class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil-square"></i> 
+                        </a>
+                        <a href="@Url.Action("Details", "TriviaMatch", new { id = match.MatchId })" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i> 
+                        </a>
+                        <a href="@Url.Action("Delete", "TriviaMatch", new { id = match.MatchId })" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> 
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var table = $('#displayTable').DataTable(
+                {
+                    paging: false,
+                    scrollY: '40vh',
+                    scrollCollapse: true,
+                    stateSave: false,
+                    colReorder: true
+                });
+        });
+    </script>
+}

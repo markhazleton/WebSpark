@@ -20,7 +20,6 @@ public class PollyController(
 {
     private AsyncRetryPolicy<HttpResponseMessage> GetAsyncRetryPolicy(Random Jitter, string RetryCountKey)
     {
-
         // Initialize Polly retry policy with quick retries for demo purposes and jitter
         var _httpIndexPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
             .WaitAndRetryAsync(
@@ -92,7 +91,7 @@ public class PollyController(
             var _httpClient = clientFactory.CreateClient("PollyController");
 
             // Create the HTTP request message
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseAddress}api/asyncspark/remote/results")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseAddress}api/AsyncSpark/remote/results")
             {
                 Content = JsonContent.Create(mockResults)
             };

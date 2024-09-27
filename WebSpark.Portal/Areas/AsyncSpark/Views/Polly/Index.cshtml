@@ -37,16 +37,16 @@
                 <div class="test-list">
                     <h2 class="h5 mb-3"><i class="bi bi-play-circle"></i> Test the API with Polly Timeouts</h2>
                     <nav class="nav flex-column nav-pills p-2 border rounded">
-                        <a class="nav-link border-bottom py-2" href="/asyncspark/polly?loopCount=40&maxTimeMs=1500">40 Loops, max 1.5 seconds</a>
-                        <a class="nav-link border-bottom py-2" href="/asyncspark/polly?loopCount=40&maxTimeMs=1000">40 Loops, max 1 second</a>
-                        <a class="nav-link py-2" href="/asyncspark/polly?loopCount=40&maxTimeMs=500">40 Loops, max 1/2 second</a>
+                        <a class="nav-link border-bottom py-2" href="/AsyncSpark/polly?loopCount=40&maxTimeMs=1500">40 Loops, max 1.5 seconds</a>
+                        <a class="nav-link border-bottom py-2" href="/AsyncSpark/polly?loopCount=40&maxTimeMs=1000">40 Loops, max 1 second</a>
+                        <a class="nav-link py-2" href="/AsyncSpark/polly?loopCount=40&maxTimeMs=500">40 Loops, max 1/2 second</a>
                     </nav>
                 </div>
             </div>
         </div>
         <div class="col-md-8">
             <div>
-                <form class="form-horizontal" action="/asyncspark/polly" method="get">
+                <form class="form-horizontal" action="/AsyncSpark/polly" method="get">
                     <fieldset>
                         <legend><i class="bi bi-gear"></i> Submit Timeout Test</legend>
                         <p>
@@ -286,7 +286,7 @@ public async Task&lt;IActionResult&gt; Index(int loopCount = 1, int maxTimeMs = 
 {
     var context = new Context { { "retrycount", 0 }, { "ResultsList", new List&lt;string&gt;() } };
     var mockResults = new MockResults { LoopCount = loopCount, MaxTimeMS = maxTimeMs };
-    var request = new HttpRequestMessage(HttpMethod.Post, $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/asyncspark/remote/results")
+    var request = new HttpRequestMessage(HttpMethod.Post, $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/AsyncSpark/remote/results")
     {
         Content = JsonContent.Create(mockResults)
     };

@@ -1,12 +1,27 @@
-﻿namespace PromptSpark.Domain.Models.OpenAI;
+﻿using System.Text.Json.Serialization;
+
+namespace PromptSpark.Domain.Models.OpenAI;
 
 public class OpenAiApiResponse
 {
+    [JsonPropertyName("id")]
     public string Id { get; set; }
+
+    [JsonPropertyName("object")]
     public string Object { get; set; }
-    public int Created { get; set; }
+
+    [JsonPropertyName("created")]
+    public long Created { get; set; }
+
+    [JsonPropertyName("model")]
     public string Model { get; set; }
-    public List<Choice> Choices { get; set; }
-    public Usage usage { get; set; }
+
+    [JsonPropertyName("choices")]
+    public Choice[] Choices { get; set; }
+
+    [JsonPropertyName("usage")]
+    public Usage Usage { get; set; }
+
+    [JsonPropertyName("system_fingerprint")]
     public string SystemFingerprint { get; set; }
 }

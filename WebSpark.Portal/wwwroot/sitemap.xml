@@ -9,1042 +9,1087 @@
 
 <url>
   <loc>https://webspark.markhazleton.com/</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/Identity/Account/Login?ReturnUrl=%2Frecipespark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/Identity/Account/Login?ReturnUrl=%2FRecipeSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/Identity/Account/Login?ReturnUrl=%2Fwebcms</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/promptspark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/asyncspark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/dataspark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/home/privacy</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/home/terms</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/home/kitchensink</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/Identity/Account/Login?ReturnUrl=%2FWebCMS</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/AsyncSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/DataSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/TriviaSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/PromptSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/AsyncSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/DataSpark</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/home/privacy</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/home/terms</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/home/kitchensink</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
-<url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/home/learnmore</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/AsyncSpark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/polly</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/polly</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/bulkcalls</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/bulkcalls</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/openweather</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/openweather</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/joke</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/joke</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/artinstitute</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/artinstitute</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/nasapicture</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/nasapicture</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/crawldomain</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/crawldomain</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/github</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/DataSpark</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/DataSpark/pivottable</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/dataspark/pivottable</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/TriviaSpark/jshow</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/TriviaSpark/jshow/allquestions</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/Identity/Account/Login?ReturnUrl=%2FTriviaSpark%2Ftriviamatch</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/wichita</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/fashion%20advisor</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/recipe%20generation</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/c%23%20crud%20generation</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/vb%20to%20c%23%20converter</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/c%23%20challenge</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/ivr%20categorization</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/markhazleton.com</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/wichita%203.5</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/alex%20english%20tutor</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/realtor%20listing%20assistant</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/wine%20dinner%20planner</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/succession%20planner</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/keller%20texas</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/azuredevopswiki</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/joke%20explainer</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer/Details/art%20historian</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=1</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=1</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=2</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=2</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=3</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=3</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=4</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=4</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=5</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=5</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=6</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=6</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=7</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=7</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=8</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=8</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=9</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=9</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=10</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=10</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=11</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=11</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=12</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=12</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=13</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=13</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=14</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=14</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=15</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=15</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=16</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=16</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=17</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=17</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=18</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=18</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=19</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=19</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=20</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=20</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=21</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=21</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=22</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=22</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=23</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=23</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=24</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=24</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=25</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=25</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=26</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=26</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/chatcompletion/index?id=27</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/chatcompletion/index?id=27</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/PromptSpark/Explorer</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=1</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=1</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=2</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=2</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=3</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=3</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=4</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=4</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=5</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=5</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=8</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=8</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=9</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=9</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=10</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=10</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=11</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=11</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=12</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=12</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=13</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=13</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=14</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=14</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=15</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=15</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=16</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=16</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=17</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=17</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=18</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=18</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=19</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=19</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=20</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=20</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=22</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=22</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=53</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=53</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=54</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=54</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=55</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=55</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=82</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=82</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=83</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=83</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=84</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=84</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=85</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=85</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita?UserPromptId=92</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita?UserPromptId=92</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/polly?loopCount=40&amp;maxTimeMs=1500</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/polly?loopCount=40&amp;maxTimeMs=1500</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/polly?loopCount=40&amp;maxTimeMs=1000</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/polly?loopCount=40&amp;maxTimeMs=1000</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/asyncspark/polly?loopCount=40&amp;maxTimeMs=500</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/AsyncSpark/polly?loopCount=40&amp;maxTimeMs=500</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
   <loc>https://webspark.markhazleton.com/AsyncSpark/joke</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/dataspark/pivottable/fullpage?filename=INNHotelsGroup_newdata.csv</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/JShow/Machine%20Learning%20Introduction</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/dataspark/pivottable/fullpage?filename=Uber_Data.csv</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/JShow/Microsoft%20.NET</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/dataspark/pivottable/fullpage?filename=US_Airways.csv</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/JShow/Monty%20Python</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/dataspark/pivottable/fullpage?filename=foodhub_order.csv</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/JShow/Mythology%20Around%20the%20World</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/dataspark/pivottable/fullpage?filename=movie.csv</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/JShow/OpenAI%20and%20the%20Future%20of%20ChatGPT</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.51</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor?UserPromptId=23</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/JShow/Space%20Exploration</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/JShow/1980s</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/JShow/Valley%20Girl%20(1983)%20Movie</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/TriviaSpark/JShow</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor?UserPromptId=23</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor?UserPromptId=24</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor?UserPromptId=24</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor?UserPromptId=25</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor?UserPromptId=25</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor?UserPromptId=57</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor?UserPromptId=57</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor?UserPromptId=81</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor?UserPromptId=81</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor?UserPromptId=86</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor?UserPromptId=86</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=26</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=26</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=27</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=27</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=45</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=45</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=46</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=46</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=52</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=52</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=87</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=87</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation?UserPromptId=99</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation?UserPromptId=99</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/C</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/C</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Vb%20To%20C</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Vb%20To%20C</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=28</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=28</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=29</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=29</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=30</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=30</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=31</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=31</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=32</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=32</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=33</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=33</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=34</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=34</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=35</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=35</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=36</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=36</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=37</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=37</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=38</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=38</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=39</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=39</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=40</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=40</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=41</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=41</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=42</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=42</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=43</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=43</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=44</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=44</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Ivr%20Categorization?UserPromptId=101</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Ivr%20Categorization?UserPromptId=101</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Markhazleton.Com?UserPromptId=56</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Markhazleton.Com?UserPromptId=56</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Markhazleton.Com?UserPromptId=58</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Markhazleton.Com?UserPromptId=58</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Markhazleton.Com?UserPromptId=112</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Markhazleton.Com?UserPromptId=112</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=59</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=59</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=60</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=60</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=61</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=61</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=62</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=62</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=63</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=63</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=64</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=64</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=65</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=65</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=66</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=66</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=67</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=67</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=68</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=68</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=69</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=69</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=70</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=70</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=71</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=71</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=72</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=72</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=73</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=73</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=74</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=74</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=75</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=75</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=76</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=76</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=77</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=77</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=78</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=78</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=79</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=79</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5?UserPromptId=80</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5?UserPromptId=80</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Alex%20English%20Tutor?UserPromptId=93</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Alex%20English%20Tutor?UserPromptId=93</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Alex%20English%20Tutor?UserPromptId=94</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Alex%20English%20Tutor?UserPromptId=94</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Alex%20English%20Tutor?UserPromptId=95</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Alex%20English%20Tutor?UserPromptId=95</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Alex%20English%20Tutor?UserPromptId=96</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Alex%20English%20Tutor?UserPromptId=96</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Realtor%20Listing%20Assistant?UserPromptId=97</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Realtor%20Listing%20Assistant?UserPromptId=97</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Realtor%20Listing%20Assistant?UserPromptId=98</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Realtor%20Listing%20Assistant?UserPromptId=98</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=100</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=100</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=106</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=106</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=107</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=107</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=108</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=108</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=127</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wine%20Dinner%20Planner?UserPromptId=127</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Succession%20Planner?UserPromptId=109</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Succession%20Planner?UserPromptId=109</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Keller%20Texas?UserPromptId=103</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Keller%20Texas?UserPromptId=103</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Keller%20Texas?UserPromptId=104</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Keller%20Texas?UserPromptId=104</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Keller%20Texas?UserPromptId=105</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Keller%20Texas?UserPromptId=105</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=110</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=110</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=111</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=111</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=113</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=113</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=114</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=114</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=115</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=115</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=116</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=116</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=117</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=117</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Azuredevopswiki?UserPromptId=118</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Azuredevopswiki?UserPromptId=118</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Joke%20Explainer?UserPromptId=119</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Joke%20Explainer?UserPromptId=119</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Joke%20Explainer?UserPromptId=120</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Joke%20Explainer?UserPromptId=120</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Joke%20Explainer?UserPromptId=121</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Joke%20Explainer?UserPromptId=121</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Joke%20Explainer?UserPromptId=122</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Joke%20Explainer?UserPromptId=122</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Art%20Historian?UserPromptId=123</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Art%20Historian?UserPromptId=123</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Art%20Historian?UserPromptId=124</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Art%20Historian?UserPromptId=124</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Art%20Historian?UserPromptId=125</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Art%20Historian?UserPromptId=125</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Art%20Historian?UserPromptId=126</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Art%20Historian?UserPromptId=126</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.41</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Fashion%20Advisor</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Fashion%20Advisor</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Recipe%20Generation</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Recipe%20Generation</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/IVR%20Categorization</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/IVR%20Categorization</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/MarkHazleton.com</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/MarkHazleton.com</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wichita%203.5</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wichita%203.5</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Alex%20English%20Tutor</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Alex%20English%20Tutor</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Realtor%20Listing%20Assistant</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Realtor%20Listing%20Assistant</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Wine%20Dinner%20Planner</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Wine%20Dinner%20Planner</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Succession%20Planner</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Succession%20Planner</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Keller%20Texas</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Keller%20Texas</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/AzureDevOpsWiki</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/AzureDevOpsWiki</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Joke%20Explainer</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Joke%20Explainer</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 <url>
-  <loc>https://webspark.markhazleton.com/promptspark/explorer/details/Art%20Historian</loc>
-  <lastmod>2024-09-15T17:10:06+00:00</lastmod>
+  <loc>https://webspark.markhazleton.com/PromptSpark/explorer/details/Art%20Historian</loc>
+  <lastmod>2024-09-26T04:43:11+00:00</lastmod>
   <priority>0.33</priority>
 </url>
 

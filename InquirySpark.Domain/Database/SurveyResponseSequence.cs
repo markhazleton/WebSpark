@@ -47,11 +47,11 @@ public partial class SurveyResponseSequence
     [DisplayName("Survey Response")]
     public virtual SurveyResponse SurveyResponse { get; set; } = null!;
 
-    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswerSequenceNumberNavigations { get; set; } = new List<SurveyResponseAnswer>();
+    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswerSequenceNumberNavigations { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the survey response answers.
     /// </summary>
     [DisplayName("Survey Response Answers")]
-    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswerSurveyResponses { get; set; } = new List<SurveyResponseAnswer>();
+    public virtual ICollection<SurveyResponseAnswer> SurveyResponseAnswerSurveyResponses { get; set; } = [];
 }

@@ -1,12 +1,12 @@
 ﻿using HttpClientCrawler.Crawler;
-using HttpClientUtility.SendService;
+using HttpClientUtility.RequestResult;
 using Microsoft.AspNetCore.SignalR;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 
 public class CrawlDomainController(
     IHubContext<CrawlHub> hubContext,
-    IHttpClientSendService service,
+    IHttpRequestResultService service,
     ILogger<SiteCrawler> logger) : AsyncSparkBaseController
 {
     private readonly SiteCrawler _siteCrawler = new(hubContext, service, logger);

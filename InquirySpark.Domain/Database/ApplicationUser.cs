@@ -121,7 +121,7 @@ public partial class ApplicationUser
     /// <summary>
     /// Gets or sets the collection of application user roles.
     /// </summary>
-    public virtual ICollection<ApplicationUserRole> ApplicationUserRoles { get; set; } = new List<ApplicationUserRole>();
+    public virtual ICollection<ApplicationUserRole> ApplicationUserRoles { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the company.
@@ -136,25 +136,25 @@ public partial class ApplicationUser
     /// <summary>
     /// Gets or sets the collection of survey response states.
     /// </summary>
-    public virtual ICollection<SurveyResponseState> SurveyResponseStates { get; set; } = new List<SurveyResponseState>();
+    public virtual ICollection<SurveyResponseState> SurveyResponseStates { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of survey responses.
     /// </summary>
-    public virtual ICollection<SurveyResponse> SurveyResponses { get; set; } = new List<SurveyResponse>();
+    public virtual ICollection<SurveyResponse> SurveyResponses { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of user application properties.
     /// </summary>
-    public virtual ICollection<UserAppProperty> UserAppProperties { get; set; } = new List<UserAppProperty>();
+    public virtual ICollection<UserAppProperty> UserAppProperties { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of user messages from users.
     /// </summary>
-    public virtual ICollection<UserMessage> UserMessageFromUsers { get; set; } = new List<UserMessage>();
+    public virtual ICollection<UserMessage> UserMessageFromUsers { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of user messages to users.
     /// </summary>
-    public virtual ICollection<UserMessage> UserMessageToUsers { get; set; } = new List<UserMessage>();
+    public virtual ICollection<UserMessage> UserMessageToUsers { get; set; } = [];
 }

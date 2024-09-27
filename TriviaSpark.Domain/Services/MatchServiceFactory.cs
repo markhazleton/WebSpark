@@ -2,11 +2,11 @@
 
 public class MatchServiceFactory(
     Dictionary<Models.MatchMode,
-        Func<IMatchService>> serviceFactories) : IMatchServiceFactory
+        Func<ITriviaMatchService>> serviceFactories) : IMatchServiceFactory
 {
-    public IMatchService CreateMatchService(Models.MatchMode mode)
+    public ITriviaMatchService CreateMatchService(Models.MatchMode mode)
     {
-        if (serviceFactories.TryGetValue(mode, out Func<IMatchService> serviceFactory))
+        if (serviceFactories.TryGetValue(mode, out Func<ITriviaMatchService> serviceFactory))
         {
             return serviceFactory();
         }

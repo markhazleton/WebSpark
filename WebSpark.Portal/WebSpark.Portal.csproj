@@ -1,79 +1,86 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
-	<PropertyGroup>
-		<Deterministic>false</Deterministic>
-		<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
-		<AssemblyVersion>8.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
-		<UserSecretsId>fb7677ee-eb88-4c1d-9234-70bcfcfbba67</UserSecretsId>
-	</PropertyGroup>
-	<Target Name="EnsureNodeModules" BeforeTargets="BeforeBuild">
-		<Message Importance="high" Text="Update npm packages..." />
-		<Exec Command="ncu -u" />
-		<Message Importance="high" Text="Restoring npm packages..." />
-		<Exec Command="npm install" />
-		<Message Importance="high" Text="Build Assets..." />
-		<Exec Command="npm run build" />
-	</Target>
-	<ItemGroup>
-	  <None Remove="src\images\GPT-Entity-Diagram.png" />
-	  <None Remove="src\images\PromptSpark-icon-transparent.webp" />
-	  <None Remove="src\images\PromptSpark-icon.png" />
-	  <None Remove="src\images\PromptSpark-icon.webp" />
-	  <None Remove="src\images\PromptSpark.webp" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Content Include="src\images\GPT-Entity-Diagram.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark-icon-transparent.webp">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark-icon.png">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\PromptSpark-icon.webp">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="src\images\promptspark.webp">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="CsvHelper" Version="33.0.1" />
-		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-		<PackageReference Include="Markdig" Version="0.37.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="8.0.8" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.19.0" />
-		<PackageReference Include="Microsoft.Data.Analysis" Version="0.21.1" />
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
-		<PackageReference Include="ScottPlot" Version="5.0.39" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.7.3" />
-		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
-		<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.21.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\HttpClientCrawler\HttpClientCrawler.csproj" />
-	  <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
-	  <ProjectReference Include="..\OpenWeatherMapClient\OpenWeatherMapClient.csproj" />
-	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
-	  <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
-	  <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
-	  <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
-	  <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
-	  <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
-	</ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Deterministic>false</Deterministic>
+    <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
+    <AssemblyVersion>9.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
+    <UserSecretsId>fb7677ee-eb88-4c1d-9234-70bcfcfbba67</UserSecretsId>
+  </PropertyGroup>
+  <Target Name="EnsureNodeModules" BeforeTargets="BeforeBuild">
+    <Message Importance="high" Text="Update npm packages..." />
+    <Exec Command="ncu -u" />
+    <Message Importance="high" Text="Restoring npm packages..." />
+    <Exec Command="npm install" />
+    <Message Importance="high" Text="Build Assets..." />
+    <Exec Command="npm run build" />
+  </Target>
+  <ItemGroup>
+    <None Remove="src\images\GPT-Entity-Diagram.png" />
+    <None Remove="src\images\PromptSpark-icon-transparent.webp" />
+    <None Remove="src\images\PromptSpark-icon.png" />
+    <None Remove="src\images\PromptSpark-icon.webp" />
+    <None Remove="src\images\PromptSpark.webp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\images\GPT-Entity-Diagram.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="src\images\PromptSpark-icon-transparent.webp">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="src\images\PromptSpark-icon.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="src\images\PromptSpark-icon.webp">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="src\images\PromptSpark.webp">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Markdig" Version="0.37.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.0-rc.1.24452.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="9.0.0-rc.1.24452.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.20.0" />
+    <PackageReference Include="Microsoft.Data.Analysis" Version="0.22.0-preview.24378.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0-rc.1.24457.2" />
+    <PackageReference Include="ScottPlot" Version="5.0.39" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.7.3" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.0-rc.1.24431.7" />
+    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
+    <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.21.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HttpClientCrawler\HttpClientCrawler.csproj" />
+    <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
+    <ProjectReference Include="..\OpenWeatherMapClient\OpenWeatherMapClient.csproj" />
+    <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
+    <ProjectReference Include="..\TriviaSpark.Domain\TriviaSpark.Domain.csproj" />
+    <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
+    <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
+    <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
+    <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
+    <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\AsyncSpark\Services\" />
+    <Folder Include="Areas\TriviaSpark\Models\TriviaMatch\" />
+    <Folder Include="Areas\TriviaSpark\Pages\" />
+    <Folder Include="Areas\TriviaSpark\Services\" />
+  </ItemGroup>
 </Project>

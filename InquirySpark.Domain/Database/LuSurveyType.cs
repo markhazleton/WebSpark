@@ -71,11 +71,11 @@ public partial class LuSurveyType
     /// Gets or sets the collection of questions associated with the survey type.
     /// </summary>
     [DisplayName("Questions")]
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+    public virtual ICollection<Question> Questions { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the collection of surveys associated with the survey type.
     /// </summary>
     [DisplayName("Surveys")]
-    public virtual ICollection<Survey> Surveys { get; set; } = new List<Survey>();
+    public virtual ICollection<Survey> Surveys { get; set; } = [];
 }

@@ -1,0 +1,16 @@
+{
+  "menuItems": [
+    {
+      "text": "JShow",
+      "url": "/TriviaSpark/JShow"
+    },
+    {
+      "text": "All Questions",
+      "url": "/TriviaSpark/JShow/AllQuestions"
+    },
+    {
+      "text": "Trivia Match",
+      "url": "/TriviaSpark/TriviaMatch"
+    }
+  ]
+}

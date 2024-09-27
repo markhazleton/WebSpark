@@ -82,7 +82,7 @@ public class UserPromptsController(IUserPromptService userPromptService) : Promp
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Refresh),new {id=promptDto.UserPromptId});
+            return RedirectToAction(nameof(Refresh), new { id = promptDto.UserPromptId });
         }
         return View(promptDto);
     }

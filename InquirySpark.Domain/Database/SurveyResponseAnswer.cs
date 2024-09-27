@@ -101,5 +101,5 @@ public partial class SurveyResponseAnswer
     /// Gets or sets the collection of survey response answer reviews.
     /// </summary>
     [DisplayName("Survey Response Answer Reviews")]
-    public virtual ICollection<SurveyResponseAnswerReview> SurveyResponseAnswerReviews { get; set; } = new List<SurveyResponseAnswerReview>();
+    public virtual ICollection<SurveyResponseAnswerReview> SurveyResponseAnswerReviews { get; set; } = [];
 }
