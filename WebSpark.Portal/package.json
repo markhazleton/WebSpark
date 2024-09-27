@@ -10,7 +10,7 @@
         "clean": "node scripts/clean.js",
         "start": "npm run build && node scripts/start.js",
         "start:debug": "npm run build && node scripts/start-debug.js",
-        "PrompSpark": "node src/PrompSpark/npm_build.js"
+        "PromptSpark": "node src/PromptSpark/npm_build.js"
     },
     "description": "The admin portal for all things WebSpark.",
     "keywords": [

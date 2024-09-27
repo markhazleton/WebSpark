@@ -26,7 +26,7 @@ public class NotFoundMiddleware(RequestDelegate next)
 
             if (requestPath.StartsWith("/openai/"))
             {
-                var newPath = requestPath.Replace("/openai/", "/PrompSpark/");
+                var newPath = requestPath.Replace("/openai/", "/PromptSpark/");
                 RedirectWithProtection(context, newPath);
                 return;
             }
@@ -40,10 +40,10 @@ public class NotFoundMiddleware(RequestDelegate next)
             var redirects = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "github", "/AsyncSpark/github" },
-                { "PrompSpark", "/PrompSpark" },
+                { "PromptSpark", "/PromptSpark" },
                 { "AsyncSpark", "/AsyncSpark" },
                 { "DataSpark", "/DataSpark" },
-                { "prompt", "/PrompSpark" },
+                { "prompt", "/PromptSpark" },
                 { "async", "/AsyncSpark" },
             };
 

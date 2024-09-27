@@ -1,5 +1,88 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model HttpRequestResult<ArtWorksResponse>
+
 @{
+    var artList = Model?.ResponseResults?.data?.Select(item => new ArtWork(item)).ToList() ?? new List<ArtWork>();
 }
+
+<div class="container my-4">
+    <div class="card shadow-sm">
+        <!-- Card Header -->
+        <div class="card-header bg-primary text-white d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <h2 class="mb-3 mb-md-0"><i class="bi bi-images"></i> @ViewBag.Title</h2>
+            <form asp-action="Index" method="post" class="d-flex align-items-center">
+                <div class="input-group">
+                    <label class="input-group-text" for="style" aria-label="Select an art style">
+                        <i class="bi bi-palette2"></i>
+                    </label>
+                    <select class="form-select" name="style" id="style">
+                        <option value="Impressionism" selected>Impressionism</option>
+                        <option value="Cubism">Cubism</option>
+                        <option value="Renaissance">Renaissance</option>
+                        <option value="Abstract">Abstract</option>
+                        <option value="Surrealism">Surrealism</option>
+                    </select>
+                    <button type="submit" class="btn btn-light">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            @if (artList == null || !artList.Any())
+            {
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> No artworks found. Explore other styles or use the search to find artworks of your interest.
+                </div>
+            }
+            else
+            {
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    @foreach (var art in artList)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm">
+                                <img src="@art.ImageUrl" class="card-img-top" alt="@art.title" />
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">@art.title</h5>
+                                    <p class="card-text mb-1"><strong>Artist:</strong> @art.artist_title</p>
+                                    <p class="card-text mb-1"><strong>Style:</strong> @art.style_title</p>
+                                    <p class="card-text"><strong>Materials:</strong> @string.Join(", ", art.material_titles)</p>
+                                    <a asp-action="ArtDetails" asp-area="AsyncSpark" asp-controller="ArtInstitute" asp-route-id="@art.id" class="btn btn-outline-primary mt-auto">
+                                        <i class="bi bi-info-circle"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer text-muted text-center">
+            @await Html.PartialAsync("_clientSendRequestFooter", Model)
+        </div>
+    </div>
+</div>
+<div class="alert alert-info mt-4" role="alert">
+    <h4 class="alert-heading"><i class="bi bi-info-circle-fill text-info"></i> About This Demo</h4>
+    <p>
+        This demo leverages asynchronous programming techniques in .NET 8 to fetch and display data from the Art Institute of Chicago's API. By using async methods, we ensure that the application remains responsive and performs efficiently, even when working with large datasets from external sources.
+    </p>
+    <p>
+        The Art Institute API provides access to a wide array of artworks, including those in the public domain. Our application showcases how to filter these artworks by style, demonstrating how asynchronous API calls and caching can optimize performance and enhance the user experience.
+    </p>
+    <hr>
+    <h5>About the Art Institute of Chicago</h5>
+    <p>
+        Founded in 1879 as the Chicago Academy of Fine Arts, the Art Institute of Chicago (AIC) is one of the oldest and most prestigious art museums in the United States. It relocated to its current location in Grant Park in 1893, coinciding with the World’s Columbian Exposition. The museum has expanded multiple times, including the addition of the Modern Wing in 2009, designed by Renzo Piano. The AIC is associated with the School of the Art Institute of Chicago, fostering a unique blend of museum and art education.
+    </p>
+    <p>
+        The AIC's collection includes nearly 300,000 works spanning 5,000 years of history. Notable works include Georges Seurat’s *A Sunday on La Grande Jatte*, Grant Wood’s *American Gothic*, and Edward Hopper’s *Nighthawks*. Its mission is to inspire and educate the public through the collection, preservation, and interpretation of artworks across cultures and time periods.
+    </p>
+    <p class="mb-0">
+        <i class="bi bi-lightbulb-fill text-warning"></i> Try selecting different art styles to explore how async programming enhances the browsing experience, with fast, reliable data fetching that keeps the application responsive and engaging.
+    </p>
+</div>

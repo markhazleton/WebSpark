@@ -34,9 +34,7 @@
             </div>
         </div>
         <div class="card-footer text-muted">
-            <p><strong>API Request Duration:</strong> @Model.ElapsedMilliseconds milliseconds</p>
-            <p><strong>Data Source:</strong> @Model.RequestPath</p>
-            <p><strong>Data Age:</strong> @Model.ResultAge</p>
+            @await Html.PartialAsync("_clientSendRequestFooter", Model)
         </div>
     </div>
 
@@ -49,7 +47,7 @@
         <h3>How This Controller Demonstrates Efficient API Usage</h3>
         <p>Our custom controller leverages the <code>IHttpClientSendService</code> to handle API requests efficiently. By caching responses on the server, it reduces redundant calls to NASA's API, thus optimizing performance and reducing load times. This approach not only saves bandwidth but also improves the user experience by delivering cached content instantly when available, demonstrating the power of smart API request management.</p>
         <pre class="language-csharp">
-            <code class="language-csharp">
+        <code class="language-csharp">
 public async Task<IActionResult> Index(CancellationToken ct = default)
 {
     var apiRequest = new HttpRequestResult<NasaPictureListDto>

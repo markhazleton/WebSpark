@@ -20,7 +20,6 @@ public class PollyController(
 {
     private AsyncRetryPolicy<HttpResponseMessage> GetAsyncRetryPolicy(Random Jitter, string RetryCountKey)
     {
-
         // Initialize Polly retry policy with quick retries for demo purposes and jitter
         var _httpIndexPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
             .WaitAndRetryAsync(

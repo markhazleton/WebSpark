@@ -29,39 +29,14 @@
                     </dl>
                 }
             }
-        </div>
-        <div class="card-footer">
-            <div class="row">
-                <div class="col-md-6">
-                    <strong><i class="bi bi-stopwatch"></i> API Response Time:</strong> @Model.ElapsedMilliseconds ms
-                </div>
-                <div class="col-md-6">
-                    <strong><i class="bi bi-calendar-event"></i> Completion Date:</strong> @Model.CompletionDate?.ToString("yyyy.MM.dd hh:mm:ss.ffff") 
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <strong><i class="bi bi-link-45deg"></i> Source:</strong> <a href="@Model.RequestPath" target="_blank">@Model.RequestPath</a>
-                </div>
-                <div class="col-md-6">
-                    <strong><i class="bi bi-clock-history"></i> Cache Age:</strong> @Model.ResultAge
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <strong><i class="bi bi-arrow-repeat"></i> Number of Retries:</strong> @Model.Retries
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <strong><i class="bi bi-shield-check"></i> Status Code:</strong> @Model.StatusCode
-                </div>
-            </div>
             <div class="text-center mt-4">
                 <a href="@Url.Action("Index", "joke")" class="btn btn-primary">
                     <i class="bi bi-arrow-clockwise"></i> Get a New Joke
                 </a>
             </div>
+        </div>
+        <div class="card-footer">
+            @await Html.PartialAsync("_clientSendRequestFooter", Model)
         </div>
     </div>
 </div>

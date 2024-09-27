@@ -7,7 +7,9 @@ namespace HttpClientUtility.RequestResult;
 /// <summary>
 /// The HttpRequestResultService class serves as the core service for sending HTTP requests.
 /// </summary>
-public class HttpRequestResultService(ILogger<HttpRequestResultService> logger, HttpClient httpClient) : IHttpRequestResultService
+public class HttpRequestResultService(
+    ILogger<HttpRequestResultService> logger,
+    HttpClient httpClient) : IHttpRequestResultService
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     private readonly ILogger<HttpRequestResultService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -21,52 +23,63 @@ public class HttpRequestResultService(ILogger<HttpRequestResultService> logger, 
     /// <returns>A container for the response data and any relevant error information.</returns>
     public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> httpSendResults, CancellationToken ct)
     {
-        ValidateHttpSendResults(httpSendResults);
-
-        using var request = CreateHttpRequest(httpSendResults);
-        HttpResponseMessage? response = null;
         try
         {
+            ValidateHttpSendResults(httpSendResults);
+            using var request = CreateHttpRequest(httpSendResults);
+            HttpResponseMessage? response = null;
             response = await _httpClient.SendAsync(request, ct).ConfigureAwait(true);
 
             // Check for redirects
             if (response?.StatusCode == HttpStatusCode.MovedPermanently)
             {
+                httpSendResults.StatusCode = HttpStatusCode.MovedPermanently;
                 httpSendResults.ErrorList.Add($"New: {response?.RequestMessage?.RequestUri} Old:{request?.RequestUri}");
                 _logger.LogInformation("Redirected to {NewUrl}", response?.RequestMessage?.RequestUri);
             }
 
             return await ProcessHttpResponseAsync(response, httpSendResults, ct).ConfigureAwait(true);
         }
+        catch (ArgumentNullException ex)
+        {
+            httpSendResults.ErrorList.Add($"ArgumentNullException: {ex.Message}");
+            httpSendResults.StatusCode = HttpStatusCode.BadRequest;
+            _logger.LogError(ex, "HttpSendRequestAsync:ArgumentNullException {Message}", ex.Message);
+            return httpSendResults;
+        }
+        catch (ArgumentException ex)
+        {
+            httpSendResults.ErrorList.Add($"ArgumentException: {ex.Message}");
+            httpSendResults.StatusCode = HttpStatusCode.BadRequest;
+            _logger.LogError(ex, "HttpSendRequestAsync:ArgumentException {Message}", ex.Message);
+            return httpSendResults;
+        }
         catch (HttpRequestException ex)
         {
             httpSendResults.ErrorList.Add($"HttpRequestException: {ex.Message}");
+            httpSendResults.StatusCode = (HttpStatusCode)(ex.StatusCode ?? HttpStatusCode.InternalServerError);
             _logger.LogError(ex, "HttpSendRequestAsync:HttpRequestException {Message}", ex.Message);
             return httpSendResults;
         }
         catch (Exception ex)
         {
             httpSendResults.ErrorList.Add($"GeneralException: {ex.Message}");
+            httpSendResults.StatusCode = HttpStatusCode.InternalServerError;
             _logger.LogError(ex, "HttpSendRequestAsync:GeneralException {Message}", ex.Message);
             return httpSendResults;
         }
     }
 
-    private void ValidateHttpSendResults(HttpRequestResultBase httpSendResults)
+    private static void ValidateHttpSendResults(HttpRequestResultBase httpSendResults)
     {
         if (httpSendResults == null)
         {
-            throw new ArgumentNullException(nameof(httpSendResults), "The parameter 'httpSendResults' cannot be null.");
+            throw new ArgumentNullException(nameof(httpSendResults), "The 'httpSendResults' parameter cannot be null.");
         }
 
         if (string.IsNullOrWhiteSpace(httpSendResults.RequestPath))
         {
-            throw new ArgumentException("The URL path specified in 'httpSendResults' cannot be null or empty.", nameof(httpSendResults));
-        }
-
-        if (httpSendResults.RequestMethod == null)
-        {
-            throw new ArgumentException("The RequestMethod must be set.", nameof(httpSendResults));
+            throw new ArgumentException("The 'RequestPath' property in 'httpSendResults' cannot be null, empty, or whitespace.", nameof(httpSendResults.RequestPath));
         }
     }
 
@@ -136,7 +149,6 @@ public class HttpRequestResultService(ILogger<HttpRequestResultService> logger, 
                 _logger.LogCritical(ex, "HttpRequestResult:GetAsync:DeserializeException {Message}", ex.Message);
             }
         }
-
         return httpSendResults;
     }
 }

@@ -1,31 +1,48 @@
 ﻿@using WebSpark.Portal.Areas.AsyncSpark.Models.GitHub
 @model HttpRequestResult<List<GitHubFollower>>?
 @{
+    var title = ViewData["SubTitle"] as string;
     var errorMessage = Model?.ErrorList.FirstOrDefault();
 }
-@if (Model?.ResponseResults == null || !Model.ResponseResults.Any())
-{
-    <div class="alert alert-info text-center">
-        <i class="bi bi-info-circle"></i> No users to display.
+<div class="container my-4">
+    <div class="card shadow-sm">
+        <!-- Card Header -->
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-white"><i class="bi bi-people-fill"></i> @title</h4>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            @if (Model?.ResponseResults == null || !Model.ResponseResults.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> No users to display.
+                </div>
+            }
+            else if (string.IsNullOrEmpty(errorMessage) == false)
+            {
+                <div class="alert alert-danger text-center">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    @errorMessage
+                </div>
+            }
+            else
+            {
+                <div class="row row-cols-2 row-cols-md-4 g-4 text-center">
+                    @foreach (var user in Model.ResponseResults.OrderBy(o => o.Login))
+                    {
+                        <div class="col">
+                            <img src="@user.AvatarUrl" alt="@user.Login Avatar" class="img-fluid rounded-circle mb-2" style="width: 75px; height: 75px;">
+                            <div class="fw-bold text-truncate" style="max-width: 80px;">@user.Login</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer text-muted p-1 text-center">
+            @await Html.PartialAsync("_clientSendRequestFooter", Model)
+        </div>
     </div>
-}
-else if (string.IsNullOrEmpty(errorMessage) == false)
-{
-    <div class="alert alert-danger text-center">
-        <i class="bi bi-exclamation-triangle"></i>
-        @errorMessage
-        <br />
-    </div>
-}
-else
-{
-    <div class="row row-cols-2 row-cols-md-4 g-4">
-        @foreach (var user in Model.ResponseResults.OrderBy(o => o.Login))
-        {
-            <div class="col text-center">
-                <img src="@user.AvatarUrl" alt="@user.Login Avatar" class="img-fluid rounded-circle mb-2" style="width: 75px; height: 75px;">
-                <div class="fw-bold text-truncate" style="max-width: 80px;">@user.Login</div>
-            </div>
-        }
-    </div>
-}
+</div>

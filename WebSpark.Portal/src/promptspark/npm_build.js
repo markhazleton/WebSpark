@@ -10,7 +10,7 @@ function minifyAndCopyCSS() {
     const cssOutputPath = path.join(__dirname, 'scss/');  // Updated: relative to new location
     const distOutputPath = path.join(__dirname, '../../wwwroot/dist/css/');  // Updated: adjusted for new __dirname
     const scssOutputFile = 'compiled_style.css';  // Temporary output file for compiled SCSS
-    const minifiedOutputFile = 'PrompSpark.min.css';
+    const minifiedOutputFile = 'PromptSpark.min.css';
 
     // Compile SCSS to CSS
     const result = sass.compile(scssInputPath + 'main.scss', {
@@ -46,7 +46,7 @@ function minifyAndCopyJS() {
     const jqueryJSPath = path.join(__dirname, '../../node_modules/jquery/dist/jquery.js');  // jQuery
     const featherJSPath = path.join(__dirname, '../../node_modules/feather-icons/dist/feather.min.js');  // Feather JS
     const outputPath = path.join(__dirname, '../../wwwroot/dist/js/');  // Adjusted for new __dirname
-    const outputFile = 'PrompSpark.min.js';
+    const outputFile = 'PromptSpark.min.js';
 
     const files = {
         'jquery.js': fs.readFileSync(jqueryJSPath, 'utf8'),              // 1. jQuery

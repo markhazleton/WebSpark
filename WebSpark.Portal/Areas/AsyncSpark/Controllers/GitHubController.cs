@@ -48,7 +48,7 @@ public class GitHubUserService
     {
         var request = new HttpRequestResult<T>
         {
-            CacheDurationMinutes = 60,
+            CacheDurationMinutes = 300,
             RequestPath = requestPath
         };
         request.RequestHeaders.Add("User-Agent", "MarkHazletonWebSpark");
