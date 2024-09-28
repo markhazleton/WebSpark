@@ -1,0 +1,42 @@
+﻿@model JShowVM
+
+@{
+    ViewData["Title"] = "Edit JShow";
+}
+
+<h1 class="my-4">Edit Show</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label for="ShowNumber" class="form-label">Show Number</label>
+        <input type="number" class="form-control" asp-for="ShowNumber" />
+        <span asp-validation-for="ShowNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="Theme" class="form-label">Theme</label>
+        <input type="text" class="form-control" asp-for="Theme" />
+        <span asp-validation-for="Theme" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="AirDate" class="form-label">Air Date</label>
+        <input type="text" class="form-control" asp-for="AirDate" />
+        <span asp-validation-for="AirDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <textarea class="form-control" asp-for="Description"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">
+        <i class="bi bi-save"></i> Update
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to List
+    </a>
+</form>

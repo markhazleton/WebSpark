@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 namespace WebSpark.Core.Data;
 
 
@@ -129,41 +131,39 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
 
         modelBuilder.Entity<Recipe>(entity =>
        {
-
            entity.Property(e => e.AuthorName)
                .IsRequired()
                .HasMaxLength(50);
-
            entity.Property(e => e.Ingredients)
                .IsRequired();
-
            entity.Property(e => e.Instructions)
                .IsRequired();
-
            entity.Property(e => e.Description)
                .HasMaxLength(500);
            entity.Property(e => e.Keywords)
                .HasMaxLength(100);
-
            entity.Property(e => e.Name)
                .IsRequired()
                .HasMaxLength(150);
-
            entity.HasOne(d => d.RecipeCategory)
                   .WithMany(p => p.Recipe)
                   .OnDelete(DeleteBehavior.Restrict)
                   .HasConstraintName("FK_Recipe_RecipeCategory")
                   .IsRequired();
+           entity.HasOne(d => d.Domain);
        });
 
         modelBuilder.Entity<RecipeCategory>(entity =>
         {
             entity.Property(e => e.Comment)
                 .HasMaxLength(1500);
-
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(70);
+            entity.HasOne(d => d.Domain);
+            entity.HasMany(entity => entity.Recipe)
+                .WithOne(entity => entity.RecipeCategory)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<RecipeComment>(entity =>
@@ -233,6 +233,12 @@ public partial class WebSparkDbContext(DbContextOptions<WebSparkDbContext> optio
         modelBuilder.Entity<MailSetting>().Property(n => n.UpdatedDate).HasDefaultValueSql(sql);
 
         OnModelCreatingPartial(modelBuilder);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(warnings =>
+            warnings.Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning));
     }
 
 

@@ -53,6 +53,10 @@
     <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.0-rc.1.24452.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="9.0.0-rc.1.24452.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0-rc.1.24451.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.20.0" />
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.22.0-preview.24378.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0-rc.1.24457.2" />
@@ -71,6 +75,7 @@
     <ProjectReference Include="..\OpenWeatherMapClient\OpenWeatherMapClient.csproj" />
     <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
     <ProjectReference Include="..\TriviaSpark.Domain\TriviaSpark.Domain.csproj" />
+    <ProjectReference Include="..\TriviaSpark.JShow\TriviaSpark.JShow.csproj" />
     <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
     <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
     <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
@@ -79,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\AsyncSpark\Services\" />
+    <Folder Include="Areas\TriviaSpark\Models\JShow\" />
     <Folder Include="Areas\TriviaSpark\Models\TriviaMatch\" />
     <Folder Include="Areas\TriviaSpark\Pages\" />
     <Folder Include="Areas\TriviaSpark\Services\" />

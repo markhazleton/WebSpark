@@ -63,4 +63,6 @@ public class RecipeCategoryModel
     /// Link to API
     /// </summary>
     public string Url { get; set; }
+    public int DomainID { get; set; } = RecipeConstants.INT_MOM_DomainId;
+
 }

@@ -1,19 +1,52 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
-
-public class QuestionViewModel
+namespace TriviaSpark.JShow.Models;
+public class RoundVM
 {
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
+    [JsonPropertyName("showid")]
+    public string JShowId { get; set; }
+    public string Name { get; set; }
+    [JsonPropertyName("theme")]
+    public string Theme { get; set; }
+    [JsonPropertyName("categories")]
+    public List<CategoryVM> Categories { get; set; }
+}
+public class CategoryVM
+{
+
+    public string Id { get; set; }
+    [JsonPropertyName("roundid")]
+    public string RoundId { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("questions")] 
+    public List<QuestionVM> Questions { get; set; }
+}
+public class QuestionVM
+{
+    public QuestionVM()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
+    [JsonPropertyName("jshowid")]
+    public string JShowId { get; set; }
+
     [Display(Name = "Question")]
+    [JsonPropertyName("question")]
     public string QuestionText { get; set; }
 
     [Display(Name = "Answer")]
+    [JsonPropertyName("answer")]
     public string Answer { get; set; }
 
     [Display(Name = "Value")]
+    [JsonPropertyName("value")]
     public int Value { get; set; }
 
     // Additional properties for context
@@ -21,19 +54,23 @@ public class QuestionViewModel
     public int ShowNumber { get; set; }
 
     [Display(Name = "Theme")]
+    [JsonPropertyName("theme")]
     public string Theme { get; set; }
     [Display(Name = "Air Date")]
     public string AirDate { get; set; }
 
     [Display(Name = "Round")]
+    [JsonPropertyName("round")]
     public string RoundName { get; set; }
 
     [Display(Name = "Category")]
+    [JsonPropertyName("category")]
     public string CategoryName { get; set; }
+    public string CategoryId { get; set; }
 }
-public class JShow
+public class JShowVM
 {
-    public JShow()
+    public JShowVM()
     {
         Id = Guid.NewGuid().ToString();
     }
@@ -55,7 +92,7 @@ public class JShow
     [JsonPropertyName("rounds")]
     public Rounds Rounds { get; set; }
 
-    public Question GetQuestionByID(string id)
+    public QuestionVM GetQuestionByID(string id)
     {
         // Search through Jeopardy round
         foreach (var category in Rounds.Jeopardy.Categories)
@@ -74,66 +111,20 @@ public class JShow
         }
 
         // Return null if no question found with the specified ID
-        return null;
+        return new QuestionVM();
     }
-
-
 }
 
 public class Rounds
 {
     [JsonPropertyName("jeopardy")]
-    public Round Jeopardy { get; set; }
+    public RoundVM Jeopardy { get; set; }
 
     [JsonPropertyName("double_jeopardy")]
-    public Round DoubleJeopardy { get; set; }
+    public RoundVM DoubleJeopardy { get; set; }
 
     [JsonPropertyName("final_jeopardy")]
     public FinalJeopardy FinalJeopardy { get; set; }
-}
-
-public class Round
-{
-    [JsonPropertyName("theme")]
-    public string Theme { get; set; }
-    [JsonPropertyName("categories")]
-    public List<Category> Categories { get; set; }
-}
-
-public class Category
-{
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
-    [JsonPropertyName("questions")]
-    public List<Question> Questions { get; set; }
-}
-
-public class Question
-{
-
-    public Question()
-    {
-         Id = Guid.NewGuid().ToString();
-    }
-    [JsonPropertyName("jshowid")]
-    public string JShowId { get; set; }
-
-    [JsonPropertyName("id")]
-    public string Id { get; set; }
-    [JsonPropertyName("value")]
-    public int Value { get; set; }
-
-    [JsonPropertyName("question")]
-    public string QuestionText { get; set; }
-
-    [JsonPropertyName("answer")]
-    public string Answer { get; set; }
-
-    [JsonPropertyName("category")]
-    public string? Category { get; set; }
-    [JsonPropertyName("theme")]
-    public string Theme { get; set; }
 }
 
 public class FinalJeopardy

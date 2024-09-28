@@ -1,0 +1,9 @@
+﻿@model RoundVM
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Round Name: @Model.Name</h5>
+        <p class="card-text"><strong>Theme:</strong> @Model.Theme</p>
+        <p class="card-text"><strong>Categories:</strong> @Model.Categories?.Count ?? 0</p>
+    </div>
+</div>

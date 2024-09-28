@@ -12,13 +12,15 @@ using System.Reflection;
 using TriviaSpark.Domain.Entities;
 using TriviaSpark.Domain.OpenTriviaDb;
 using TriviaSpark.Domain.Services;
+using TriviaSpark.JShow.Data;
+using TriviaSpark.JShow.Models;
+using TriviaSpark.JShow.Service;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
 using WebSpark.Portal.Areas.DataSpark.Services;
-using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
 
@@ -78,6 +80,13 @@ builder.Services.AddDbContext<GPTDbContext>(options =>
 var TriviaDbConnectionString = builder.Configuration.GetValue("TriviaDbContext", "Data Source=c:\\websites\\WebSpark\\TriviaSpark.db");
 builder.Services.AddDbContext<TriviaSparkDbContext>(options =>
     options.UseSqlite(TriviaDbConnectionString));
+
+// JShow Context
+var JShowDbConnectionString = builder.Configuration.GetValue("JShowDbContext", "Data Source=c:\\websites\\WebSpark\\JShow.db");
+builder.Services.AddDbContext<JShowDbContext>(options =>
+    options.UseSqlite(JShowDbConnectionString));
+
+
 
 // ========================
 // Identity Configuration
@@ -140,9 +149,11 @@ builder.Services.AddScoped<ITriviaMatchService, TriviaMatchService>();
 
 builder.Services.AddScoped<IJShowService>(serviceProvider =>
 {
-    string apiKey = builder.Configuration["JShow:JsonOutputFolder"] ?? "KEYMISSING";
-    JShowConfig config = new() { JsonOutputFolder = apiKey };
-    JShowService service = new(config);
+    string jsonFolder = builder.Configuration["JShow:JsonOutputFolder"] ?? "KEYMISSING";
+    JShowConfig config = new() { JsonOutputFolder = jsonFolder };
+    // get JShowDbContext from the service provider
+    var dbContext = serviceProvider.GetRequiredService<JShowDbContext>();
+    JShowService service = new(dbContext,config);
     return service;
 });
 

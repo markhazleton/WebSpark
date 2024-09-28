@@ -1,4 +1,4 @@
-﻿@model JShow
+﻿@model JShowVM
 @{
     ViewData["Title"] = $"{Model.Theme} JShow Game";
     ViewData["Description"] = $"Play JShow {Model.Theme}. {Model.Description}";
@@ -29,7 +29,14 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">@finalRound.QuestionText</h5>
-                    <p class="card-text"><strong>Answer:</strong> @finalRound.Answer</p>
+
+                    <!-- Button to reveal the answer -->
+                    <button class="btn btn-primary mb-3" onclick="revealAnswer()">Reveal Answer</button>
+
+                    <!-- Final answer, hidden by default -->
+                    <div id="finalAnswer" class="card-text" style="display: none;">
+                        <strong>Answer:</strong> @finalRound.Answer
+                    </div>
                 </div>
             </div>
         }
@@ -52,11 +59,15 @@
     <p>Ultimately, this project demonstrates the potential of AI-powered tools in automating content creation and integration, providing a seamless experience for both developers and users. The JShow game now serves as a prime example of how technology and creativity can come together to deliver interactive and educational content.</p>
 </div>
 
-
 @section Scripts {
     <script>
-        function loadQuestion(id,showid) {
-            $.get('@Url.Action("Reveal", "JShow")', { id: id,showid:showid }, function(data) {
+        function revealAnswer() {
+            var answerDiv = document.getElementById('finalAnswer');
+            answerDiv.style.display = 'block';
+        }
+
+        function loadQuestion(id, showid) {
+            $.get('@Url.Action("Reveal", "JShow")', { id: id, showid: showid }, function(data) {
                 $('#questionContent').html(data);
             });
         }

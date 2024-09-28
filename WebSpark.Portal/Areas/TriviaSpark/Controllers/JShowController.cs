@@ -1,38 +1,27 @@
 ﻿using HttpClientUtility.MemoryCache;
-using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
+using TriviaSpark.JShow.Models;
+using TriviaSpark.JShow.Service;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 
 public class JShowController(
     IMemoryCacheManager memoryCacheManager,
-    IJShowService jShowService) : TriviaSparkBaseController
+    IJShowService jShowService) : TriviaSparkBaseController(memoryCacheManager, jShowService)
 {
-    private readonly IJShowService _jShowService = jShowService;
-
-    public IActionResult Index()
+  
+    public async Task<IActionResult> Index()
     {
-        // Fetch the list of available shows
-        var shows = _jShowService.GetJShows();
-
-        // If no shows are available, return an empty view
-        if (shows == null || !shows.Any())
+        var shows = await GetJShowList();
+        if (shows == null || shows.Count == 0)
         {
-            return View("Index", new List<JShow>());
+            return View("Index", new List<JShowVM>());
         }
-
-        // Store the shows list in cache for quick access
-        memoryCacheManager.Set("JShowList", shows, 30);
-
         return View("Index", shows);
     }
     [Route("JShow/{id}")]
-    public IActionResult JShow(string id)
+    public async Task<IActionResult> JShow(string id)
     {
-        // Retrieve the list of shows from cache
-        var shows = memoryCacheManager.Get("JShowList", () =>
-        {
-            return _jShowService.GetJShows() ?? [];
-        });
+        var shows = await GetJShowList();
 
         // Find the selected show by show number
         var selectedShow = shows.FirstOrDefault(s => s.Theme.Equals(id, StringComparison.CurrentCultureIgnoreCase));
@@ -41,19 +30,13 @@ public class JShowController(
         {
             return NotFound("Show not found.");
         }
-
-        // Store the selected show in cache for reuse
-        memoryCacheManager.Set("JShow", selectedShow, 30);
-
         return View("JShow", selectedShow);
     }
 
-    public IActionResult Reveal(string id, string showid)
+    public async Task<IActionResult> Reveal(string id, string showid)
     {
-        var shows = memoryCacheManager.Get<List<JShow>>("JShowList", () =>
-        {
-            return [];
-        });
+        var shows = await GetJShowList();
+
         var show = shows.FirstOrDefault(s => s.Id == showid);
         if (show == null)
         {
@@ -69,33 +52,27 @@ public class JShowController(
 
 
     // Action to get a flattened list of questions
-    public IActionResult AllQuestions(int showNumber)
+    public async Task<IActionResult> AllQuestions(int showNumber)
     {
-
-        var shows = memoryCacheManager.Get("JShowList", () =>
-        {
-            return _jShowService.GetJShows() ?? [];
-        });
-
+        var shows = await GetJShowList();
         var questionViewModels = GetFlattenedQuestions(shows);
-
         return View(questionViewModels);
     }
 
-    private List<QuestionViewModel> GetFlattenedQuestions(List<JShow> shows)
+    private List<QuestionVM> GetFlattenedQuestions(List<JShowVM> shows)
     {
-        var questionViewModels = new List<QuestionViewModel>();
+        var questionViewModels = new List<QuestionVM>();
 
         foreach (var show in shows)
         {
 
-            void AddQuestionsFromRound(string roundName, Round round)
+            void AddQuestionsFromRound(string roundName, RoundVM round)
             {
                 foreach (var category in round.Categories)
                 {
                     foreach (var question in category.Questions)
                     {
-                        questionViewModels.Add(new QuestionViewModel
+                        questionViewModels.Add(new QuestionVM
                         {
                             Id = question.Id,
                             QuestionText = question.QuestionText,
@@ -114,7 +91,7 @@ public class JShowController(
             AddQuestionsFromRound("Round Two", show.Rounds.DoubleJeopardy);
             if (show.Rounds.FinalJeopardy != null)
             {
-                questionViewModels.Add(new QuestionViewModel
+                questionViewModels.Add(new QuestionVM
                 {
                     Id = Guid.NewGuid().ToString(),
                     QuestionText = show.Rounds.FinalJeopardy.QuestionText,

@@ -1,12 +1,17 @@
-﻿using TriviaSpark.Domain.Models;
+﻿using HttpClientUtility.MemoryCache;
+using TriviaSpark.Domain.Models;
 using TriviaSpark.Domain.Services;
+using TriviaSpark.JShow.Service;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 [Authorize]
 public class TriviaMatchController : TriviaSparkBaseController
 {
     private readonly ITriviaMatchService _matchService;
-    public TriviaMatchController(ITriviaMatchService matchService)
+    public TriviaMatchController(
+        ITriviaMatchService matchService, 
+        IMemoryCacheManager memoryCacheManager, 
+        IJShowService jShowService) : base(memoryCacheManager, jShowService)
     {
         _matchService = matchService;
     }

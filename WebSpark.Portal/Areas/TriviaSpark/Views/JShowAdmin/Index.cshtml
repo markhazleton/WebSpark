@@ -1,0 +1,57 @@
+﻿@model IEnumerable<JShowVM>
+
+@{
+    ViewData["Title"] = "JShow List";
+}
+
+<h1 class="my-4">JShow List</h1>
+<a href="@Url.Action("Create")" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle"></i> Add New Show
+</a>
+
+<table class="table table-striped" id="displayTable">
+    <thead>
+        <tr>
+            <th>Show Number</th>
+            <th>Theme</th>
+            <th>Air Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ShowNumber</td>
+                <td>@item.Theme</td>
+                <td>@item.AirDate</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i> Details
+                    </a>
+                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section PageScripts {
+    <script>
+        $(document).ready(function() {
+            // DataTables Initialization
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '40vh',
+                scrollCollapse: true,
+                stateSave: false,
+                colReorder: true
+            });
+        });
+    </script>
+}

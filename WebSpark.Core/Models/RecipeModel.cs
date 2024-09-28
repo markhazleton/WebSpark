@@ -1,5 +1,10 @@
 namespace WebSpark.Core.Models;
 
+public static class RecipeConstants
+{
+    public const int INT_MOM_DomainId = 2;
+}
+
 /// <summary>
 /// Class RecipeModel.
 /// </summary>
@@ -160,6 +165,6 @@ public class RecipeModel
     /// Lookup List of Recipe Categories
     /// </summary>
     public IEnumerable<LookupModel> RecipeCategories { get; set; }
-    public int DomainID { get; set; } = 1;
+    public int DomainID { get; set; } = RecipeConstants.INT_MOM_DomainId;
     public string SEO_Keywords { get; set; }
 }

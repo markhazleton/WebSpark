@@ -1,0 +1,33 @@
+﻿@model JShowVM
+
+@{
+    ViewData["Title"] = "JShow Details";
+    List<RoundVM> rounds = [];
+    rounds.Add(Model.Rounds.Jeopardy);
+    rounds.Add(Model.Rounds.DoubleJeopardy);
+
+
+}
+
+<h1 class="my-4">Show Details</h1>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Show Number: @Model.ShowNumber</h5>
+        <p class="card-text"><strong>Theme:</strong> @Model.Theme</p>
+        <p class="card-text"><strong>Air Date:</strong> @Model.AirDate</p>
+        <p class="card-text"><strong>Description:</strong> @Model.Description</p>
+    </div>
+</div>
+
+<h3>Rounds</h3>
+@await Html.PartialAsync("_RoundList", rounds)
+
+
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning mt-3">
+    <i class="bi bi-pencil"></i> Edit
+</a>
+<a asp-action="Index" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left-circle"></i> Back to List
+</a>

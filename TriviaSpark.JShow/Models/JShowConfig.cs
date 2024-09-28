@@ -1,4 +1,4 @@
-﻿namespace WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
+﻿namespace TriviaSpark.JShow.Models;
 
 public class JShowConfig
 {
