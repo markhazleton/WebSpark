@@ -1,28 +1,57 @@
 ﻿@model List<DefinitionResponseDto>
 
-<div class="container">
-    <h2>Prompt Responses</h2>
-    <table id="displayTable" class="table">
-        <thead>
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-chat-right-dots"></i> Prompt Responses</h2>
+
+    <table id="displayTable" class="table table-hover table-striped align-middle">
+        <thead class="table-dark">
             <tr>
-                <th>Updated</th>
-                <th>Prompt Tokens</th>
-                <th>Completion Tokens</th>
-                <th>Total Tokens</th>
-                <th>Time MS</th>
-                <th>User Prompt</th>
+                <th><i class="bi bi-clock-history"></i> Updated</th>
+                <th><i class="bi bi-diagram-2"></i> Prompt Tokens</th>
+                <th><i class="bi bi-diagram-3"></i> Completion Tokens</th>
+                <th><i class="bi bi-cpu"></i> Total Tokens</th>
+                <th><i class="bi bi-speedometer"></i> Time (ms)</th>
+                <th><i class="bi bi-chat-left-text"></i> User Prompt</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Updated.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <!-- Updated -->
+                    <td>
+                        <span class="text-muted">@item.Updated.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                    </td>
+
+                    <!-- Prompt Tokens -->
                     <td>@item.PromptTokens</td>
+
+                    <!-- Completion Tokens -->
                     <td>@item.CompletionTokens</td>
+
+                    <!-- Total Tokens -->
                     <td>@item.TotalTokens</td>
-                    <td>@item.TimeMS</td>
-                    <td>@item.UserPrompt</td>
+
+                    <!-- Time MS with link to Response Details -->
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.ResponseId" class="link-primary text-decoration-none">
+                            <i class="bi bi-info-circle"></i> @item.TimeMS
+                        </a>
+                    </td>
+
+                    <!-- User Prompt -->
+                    <td>
+                        <!-- Limit User Prompt to first 60 characters with ellipsis -->
+                        @if (item.UserPrompt != null && item.UserPrompt.Length > 60)
+                        {
+                            @item.UserPrompt.Substring(0, 60)
+                            @Html.Raw("...")
+                            }
+                        else
+                        {
+                            @item.UserPrompt
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

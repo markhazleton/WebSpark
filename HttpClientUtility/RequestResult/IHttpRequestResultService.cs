@@ -5,11 +5,11 @@
 public interface IHttpRequestResultService
 {
     /// <summary>
-    /// HttpSendRequestAsync
+    /// HttpSendRequestResultAsync
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="statusCall"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct);
+    Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct);
 }

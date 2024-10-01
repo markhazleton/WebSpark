@@ -1,0 +1,22 @@
+﻿@using WebSpark.Portal.Areas.TriviaSpark.Models.JShow
+@model JsonInputModel
+
+<h2>Import JShow</h2>
+
+<form asp-action="ValidateJson" asp-area="TriviaSpark" asp-controller="JShowAdmin" method="post">
+    <div class="form-group">
+        <label for="JsonData">JSON Data</label>
+        <textarea asp-for="JsonData" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="JsonData" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

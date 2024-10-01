@@ -5,7 +5,11 @@ namespace TriviaSpark.JShow.Service;
 
 public interface IJShowService
 {
+    // JShowVM JSON operations
     Task<List<JShowVM>> GetJShowsAsync();
+    JShowVM? LoadByJsonString(string jsonContent);
+    JShowVM? LoadByJsonFile(string filePath);
+
     // JShowVM CRUD operations
     Task<JShowVM> CreateJShowAsync(JShowVM jshow);
     Task<JShowVM> GetJShowByIdAsync(string id);

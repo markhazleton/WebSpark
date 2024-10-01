@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TriviaSpark.JShow.Data;
 
@@ -10,9 +11,11 @@ using TriviaSpark.JShow.Data;
 namespace TriviaSpark.JShow.Migrations
 {
     [DbContext(typeof(JShowDbContext))]
-    partial class JShowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241001032329_AddShowType")]
+    partial class AddShowType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0-rc.1.24451.1");

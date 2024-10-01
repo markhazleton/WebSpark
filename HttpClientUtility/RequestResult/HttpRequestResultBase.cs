@@ -8,6 +8,10 @@ namespace HttpClientUtility.RequestResult;
 /// </summary>
 public abstract class HttpRequestResultBase : IRequestInfo, IResultInfo, IErrorInfo
 {
+    protected HttpRequestResultBase()
+    {
+        Id = 1;
+    }
     /// <summary>
     /// Gets or sets the cache duration in minutes.
     /// </summary>

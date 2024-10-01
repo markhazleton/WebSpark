@@ -22,13 +22,13 @@ public class HttpRequestResultServiceTelemetry(ILogger<HttpRequestResultServiceT
     /// <param name="statusCall">HttpRequestResult instance</param>
     /// <param name="ct">Cancellation Token</param>
     /// <returns>HttpRequestResult instance including telemetry information</returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
     {
         Stopwatch sw = new();
         sw.Start();
         try
         {
-            statusCall = await service.HttpSendRequestAsync(statusCall, ct).ConfigureAwait(false);
+            statusCall = await service.HttpSendRequestResultAsync(statusCall, ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

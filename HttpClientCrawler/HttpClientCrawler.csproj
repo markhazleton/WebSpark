@@ -16,7 +16,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.66" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />

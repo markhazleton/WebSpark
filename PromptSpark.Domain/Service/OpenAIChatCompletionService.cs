@@ -340,7 +340,7 @@ public class OpenAIChatCompletionService(
         serviceResponse.RequestMethod = HttpMethod.Post;
         serviceResponse.RequestHeaders = headers;
         serviceResponse.RequestPath = openAiUrl.ToString();
-        var response = await httpClientService.HttpSendRequestAsync<OpenAiApiResponse>(serviceResponse, ct);
+        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct);
 
         gptResponse.DefinitionType = gptResponse.DefinitionType;
         gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;

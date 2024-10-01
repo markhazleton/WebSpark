@@ -7,6 +7,7 @@ public class DefinitionDto
     public DateTime Created { get; set; } = DateTime.Now;
     public DateTime Updated { get; set; } = DateTime.Now;
     public string Name { get; set; } = "Name";
+    public string UrlEncodedName { get; set; } = "Name";    
     public OutputType OutputType { get; set; }
     public string Prompt { get; set; } = "System Prompt";
     public string PromptHash { get; set; } = string.Empty;

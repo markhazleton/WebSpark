@@ -1,14 +1,27 @@
 {
   "menuItems": [
     {
+      "role": "anonymous",
       "text": "JShow",
       "url": "/TriviaSpark/JShow"
     },
     {
+      "role": "admin",
       "text": "All Questions",
-      "url": "/TriviaSpark/JShow/AllQuestions"
+      "url": "/TriviaSpark/JShowAdmin/AllQuestions"
     },
     {
+      "role": "admin",
+      "text": "JShow Admin",
+      "url": "/TriviaSpark/JShowAdmin"
+    },
+    {
+      "role": "admin",
+      "text": "Validate Json",
+      "url": "/TriviaSpark/JShowAdmin/ValidateJson"
+    },
+    {
+      "role": "anonymous",
       "text": "Trivia Match",
       "url": "/TriviaSpark/TriviaMatch"
     }

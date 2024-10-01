@@ -30,16 +30,13 @@
         <thead class="table-dark">
             <tr>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.UserPromptId)
+                    <i class="bi bi-card-list"></i> @Html.DisplayNameFor(model => model.TimeMS)
                 </th>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.ResponseId)
+                    <i class="bi bi-cpu"></i> @Html.DisplayNameFor(model => model.GPTName)
                 </th>
                 <th scope="col">
-                    @Html.DisplayNameFor(model => model.GPTName)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.UserPrompt)
+                    <i class="bi bi-chat-dots"></i> @Html.DisplayNameFor(model => model.UserPrompt)
                 </th>
                 <th scope="col">
                     <i class="bi bi-clock-history"></i> Updated
@@ -51,18 +48,29 @@
             {
                 <tr>
                     <td>
-                        <span class="badge bg-primary">@Html.DisplayFor(modelItem => item.UserPromptId)</span>
-                    </td>
-                    <td>
                         <a asp-action="Details" asp-route-id="@item.ResponseId" class="link-primary text-decoration-none">
-                            <i class="bi bi-info-circle"></i> @item.ResponseId
+                            <i class="bi bi-info-circle"></i> @item.TimeMS ms
                         </a>
                     </td>
                     <td class="gpt-name">
-                        <span class="badge bg-success">@Html.DisplayFor(modelItem => item.GPTName)</span>
+                        <a asp-area="PromptSpark" asp-controller="Definitions" asp-action="Details" asp-route-id="@item.DefinitionId" class="link-primary text-decoration-none">
+                            <i class="bi bi-info-circle"></i> @item.GPTName
+                        </a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserPrompt)
+                        <a asp-area="PromptSpark" asp-controller="UserPrompts" asp-action="Details" asp-route-id="@item.UserPromptId" class="link-primary text-decoration-none">
+                            <!-- Limit UserPrompt to first 60 characters -->
+                            @if (item.UserPrompt != null && item.UserPrompt.Length > 60)
+                            {
+                                @item.UserPrompt.Substring(0, 60)
+                                @Html.Raw("...")
+                            }
+                            else
+                            {
+                                @item.UserPrompt
+                            }
+                        </a>
+
                     </td>
                     <td>
                         <span class="text-muted">@Html.DisplayFor(modelItem => item.Updated)</span>
@@ -87,13 +95,13 @@
             // Filter function for dropdown
             $('#filterButton').click(function() {
                 var filterValue = $('#filterGPTName').val();
-                table.column(2).search(filterValue).draw();
+                table.column(0).search(filterValue).draw(); // Filter by GPTName (first column)
             });
 
             // Optional: Trigger filter on dropdown change
             $('#filterGPTName').change(function() {
                 var filterValue = $(this).val();
-                table.column(2).search(filterValue).draw();
+                table.column(0).search(filterValue).draw(); // Filter by GPTName (first column)
             });
         });
     </script>

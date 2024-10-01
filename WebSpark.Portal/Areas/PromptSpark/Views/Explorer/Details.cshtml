@@ -5,6 +5,8 @@
 @{
     // Use safe navigation with ?. and null-coalescing to ensure definitionType is valid.
     var definitionType = Model?.DefinitionType ?? string.Empty;
+    var definitionTypeEncoded = System.Text.Encodings.Web.UrlEncoder.Default.Encode(definitionType);
+
     var userPrompt = Model?.Prompts?.FirstOrDefault(w => w.UserPromptId == Model?.CurrentUserPromptId);
 
     // Ensure CultureInfo is properly defined and text transformation is safe.
@@ -61,7 +63,7 @@
             var displayText = item.UserPrompt.Length > 120 ? item.UserPrompt.Substring(0, 120) + "..." : item.UserPrompt;
 
             <li class="list-group-item">
-                <a href="/PromptSpark/explorer/details/@definitionType?UserPromptId=@item.UserPromptId" class="text-decoration-none">
+                <a href="/PromptSpark/explorer/details/@definitionTypeEncoded?UserPromptId=@item.UserPromptId" class="text-decoration-none">
                     @displayText
                 </a>
             </li>

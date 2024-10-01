@@ -20,7 +20,7 @@ public class DefinitionResponseDto
     public string GPTDescription { get; set; }
     public string UserExpectedResponse { get; set; }
     public int UserPromptId { get; set; }
-
+    public int DefinitionId { get; set; }
     public override string ToString()
     {
         return $"<dl><dt>Model</dt><dd>{Model}</dd><dt>Temperature</dt><dd>{Temperature}</dd><dt>System Prompt</dt><dd>{SystemPrompt}</dd></dl>";

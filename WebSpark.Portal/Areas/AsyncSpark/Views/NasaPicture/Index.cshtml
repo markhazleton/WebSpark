@@ -2,7 +2,10 @@
 @model HttpRequestResult<NasaPictureListDto>
 
 @{
-    ViewData["Title"] = "NASA Picture of the Day";
+    ViewData["Title"] = "NASA Picture of the Day - Daily Space Exploration Images";
+    ViewData["Description"] = "Explore stunning space images with detailed explanations from NASA's Astronomy Picture of the Day (APOD). Learn about space exploration, astrophysics, and cosmic wonders with daily updated photos.";
+    ViewData["Keywords"] = "NASA, astronomy picture of the day, APOD, space images, cosmic photos, space exploration, NASA API, astrophysics, daily space photos";
+    Layout = "_Layout"; // Assuming you have a layout file to include the following meta tags in the head
 }
 
 <div class="container my-5">
@@ -11,58 +14,140 @@
             <h1 class="display-4"><i class="bi bi-star-fill"></i> NASA Picture of the Day</h1>
         </div>
         <div class="card-body">
-            <div class="row">
-                @if (Model.ResponseResults != null)
-                {
-                    foreach (var item in Model.ResponseResults)
-                    {
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-header bg-light">
-                                    <h5 class="card-title">@item.Title</h5>
-                                </div>
-                                <a href="@item.HdUrl" target="_blank" class="text-decoration-none">
-                                    <img src="@item.Url" class="card-img-top" alt="@item.Title" style="max-height: 300px; object-fit: cover;">
-                                </a>
-                                <div class="card-body">
-                                    <p class="card-text">@item.Explanation</p>
+            @if (Model.ResponseResults != null && Model.ResponseResults.Count > 0)
+            {
+                <div id="nasaCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @for (int i = 0; i < Model.ResponseResults.Count; i++)
+                        {
+                            <button type="button" data-bs-target="#nasaCarousel" data-bs-slide-to="@i" class="@((i == 0) ? "active" : "")" aria-current="@((i == 0) ? "true" : "")" aria-label="Slide @i"></button>
+                        }
+                    </div>
+
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < Model.ResponseResults.Count; i++)
+                        {
+                            var item = Model.ResponseResults[i];
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@item.Url" class="d-block w-100" alt="@item.Title" style="max-height: 500px; object-fit: cover;">
+                                <!-- Move content block below the image -->
+                                <div class="mt-3">
+                                    <h5>@item.Title</h5>
+                                    <p>@item.Explanation</p>
+                                    <small class="text-muted">© @item.Copyright | Date: @item.Date</small>
                                 </div>
                             </div>
-                        </div>
-                    }
-                }
-            </div>
+                        }
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#nasaCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#nasaCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            }
+            else
+            {
+                <p>No pictures available at the moment.</p>
+            }
         </div>
+
         <div class="card-footer text-muted">
             @await Html.PartialAsync("_clientSendRequestFooter", Model)
         </div>
     </div>
 
     <div class="mt-5 p-4 bg-light rounded">
-        <h2>Understanding the NASA API</h2>
-        <p>The NASA API offers developers access to a vast collection of space-related data, including images, videos, and scientific information. The <strong>NASA Picture of the Day</strong> feature, for instance, provides daily images captured by NASA along with detailed explanations, making space exploration accessible to everyone.</p>
-        <p>The <strong>Astronomy Picture of the Day (APOD)</strong> is one of NASA's most popular websites, featuring daily images of space with detailed explanations. This API allows developers to access these images and metadata, making it ideal for applications that repurpose NASA's content. Use parameters like <code>date</code>, <code>start_date</code>, and <code>count</code> to fetch images for specific dates or ranges.</p>
-        <p>Learn more in the <a href="https://github.com/nasa/apod-api" target="_blank">APOD API GitHub repository</a>.</p>
+        <h2>Discover NASA's Astronomy Picture of the Day (APOD)</h2>
+        <p>NASA's Astronomy Picture of the Day (APOD) provides a new, stunning space image each day, accompanied by detailed explanations written by professional astronomers. The APOD service is one of NASA’s most popular resources for space enthusiasts and researchers alike. With daily updates, you can explore the universe from the comfort of your own screen.</p>
 
-        <h3>How This Controller Demonstrates Efficient API Usage</h3>
-        <p>Our custom controller leverages the <code>IHttpClientSendService</code> to handle API requests efficiently. By caching responses on the server, it reduces redundant calls to NASA's API, thus optimizing performance and reducing load times. This approach not only saves bandwidth but also improves the user experience by delivering cached content instantly when available, demonstrating the power of smart API request management.</p>
-        <pre class="language-csharp">
-        <code class="language-csharp">
-public async Task<IActionResult> Index(CancellationToken ct = default)
-{
-    var apiRequest = new HttpRequestResult<NasaPictureListDto>
-    {
-        CacheDurationMinutes = 500,
-        RequestPath = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&count=5"
-    };
+        <h3>Why NASA’s Picture of the Day Matters</h3>
+        <p>The <strong>NASA Picture of the Day</strong> gives everyone access to high-resolution images of the cosmos, allowing for greater public understanding and appreciation of space exploration. Each image offers unique insight into NASA’s missions, cosmic phenomena, or distant galaxies, making it a valuable educational tool. Whether you're an astronomy hobbyist or a space science researcher, the APOD provides critical information and awe-inspiring visuals.</p>
 
-    apiRequest = await _service.HttpClientSendAsync(apiRequest, ct).ConfigureAwait(false);
-    ViewBag.ApiResponse = apiRequest.ResponseResults ?? new List<NasaPictureDto>();
-    return View(apiRequest);
-}
-        </code></pre>
+        <h3>Leverage NASA's APIs for Data and Imagery</h3>
+        <p>NASA offers several APIs for accessing space-related data. The <strong>NASA API</strong> allows developers to pull high-quality images, videos, and scientific data directly into their applications. Beyond the Picture of the Day, NASA APIs offer endpoints like Mars Rover imagery, Near Earth Object data, and planetary datasets. These APIs empower developers and educators to integrate NASA’s vast archive of data into websites, apps, and educational tools.</p>
 
-        <p>This approach ensures a smooth and responsive user experience by delivering cached content quickly when available, showcasing the efficiency and reliability of <code>IHttpClientSendService</code>.</p>
+        <h3>Explore the Universe with NASA's Open Data</h3>
+        <p>NASA’s commitment to open data means you can access information from various space missions. This includes datasets from the Hubble Space Telescope, the Solar Dynamics Observatory, and other missions exploring distant planets, stars, and galaxies. NASA’s <strong>open data policy</strong> ensures that anyone can study space phenomena and contribute to scientific discovery.</p>
+
+        <h3>NASA’s Earth Science Data for Climate and Research</h3>
+        <p>NASA’s APIs also offer access to <strong>Earth observation data</strong>, which includes high-resolution images and scientific information about our planet. From monitoring climate change to tracking wildfires, NASA provides invaluable resources for environmental research and global sustainability efforts. By using NASA’s APIs, developers can help disseminate critical climate data and create innovative solutions for the future.</p>
+
+        <h3>Build Applications with NASA’s Mars Rover API</h3>
+        <p>The <strong>Mars Rover API</strong> is another powerful tool for developers. With this API, you can access images taken by the rovers currently exploring the surface of Mars. It allows you to see images from Curiosity, Perseverance, and Opportunity rovers, bringing Mars exploration to the fingertips of your users. Developers can use this data to create educational tools, apps, and visualizations that bring space exploration closer to the public.</p>
     </div>
-</div>
+    <div class="accordion mt-5" id="nasaTimelineAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading1958">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1958" aria-expanded="true" aria-controls="collapse1958">
+                    1958 - NASA is Founded
+                </button>
+            </h2>
+            <div id="collapse1958" class="accordion-collapse collapse show" aria-labelledby="heading1958" data-bs-parent="#nasaTimelineAccordion">
+                <div class="accordion-body">
+                    NASA was officially established on July 29, 1958, as a response to the Soviet Union's successful launch of Sputnik 1. The new agency took over from NACA (National Advisory Committee for Aeronautics) and began advancing human space exploration.
+                </div>
+            </div>
+        </div>
 
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading1969">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1969" aria-expanded="false" aria-controls="collapse1969">
+                    1969 - First Humans on the Moon (Apollo 11)
+                </button>
+            </h2>
+            <div id="collapse1969" class="accordion-collapse collapse" aria-labelledby="heading1969" data-bs-parent="#nasaTimelineAccordion">
+                <div class="accordion-body">
+                    On July 20, 1969, Neil Armstrong and Buzz Aldrin became the first humans to walk on the Moon as part of the Apollo 11 mission, marking one of the most iconic moments in space exploration history.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading1981">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1981" aria-expanded="false" aria-controls="collapse1981">
+                    1981 - First Space Shuttle Flight
+                </button>
+            </h2>
+            <div id="collapse1981" class="accordion-collapse collapse" aria-labelledby="heading1981" data-bs-parent="#nasaTimelineAccordion">
+                <div class="accordion-body">
+                    The space shuttle Columbia launched on April 12, 1981, marking the first orbital flight of NASA's reusable spacecraft. This began a new era of space exploration with more frequent missions and the ability to repair satellites in orbit.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading1990">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1990" aria-expanded="false" aria-controls="collapse1990">
+                    1990 - Hubble Space Telescope Launched
+                </button>
+            </h2>
+            <div id="collapse1990" class="accordion-collapse collapse" aria-labelledby="heading1990" data-bs-parent="#nasaTimelineAccordion">
+                <div class="accordion-body">
+                    On April 24, 1990, NASA launched the Hubble Space Telescope, which revolutionized astronomy with unprecedented images of distant galaxies, black holes, and other cosmic phenomena, fundamentally changing how we understand the universe.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading2021">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2021" aria-expanded="false" aria-controls="collapse2021">
+                    2021 - Perseverance Rover Lands on Mars
+                </button>
+            </h2>
+            <div id="collapse2021" class="accordion-collapse collapse" aria-labelledby="heading2021" data-bs-parent="#nasaTimelineAccordion">
+                <div class="accordion-body">
+                    NASA's Perseverance rover successfully landed on Mars on February 18, 2021. Its mission is to search for signs of ancient life and collect rock and soil samples for future return to Earth.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>

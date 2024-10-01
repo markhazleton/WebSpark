@@ -1,4 +1,5 @@
-﻿using HttpClientUtility.MemoryCache;
+﻿using AspNetCoreGeneratedDocument;
+using HttpClientUtility.MemoryCache;
 using System.Diagnostics;
 using TriviaSpark.JShow.Models;
 using TriviaSpark.JShow.Service;
@@ -21,7 +22,7 @@ public class TriviaSparkBaseController(
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-    protected async Task<List<JShowVM>> GetJShowList()
+    protected async Task<List<JShowVM>> GetJShowList(JShowVM newShow = null)
     {
         var shows = await _memoryCacheManager.Get("JShowList", async () =>
         {
@@ -29,6 +30,24 @@ public class TriviaSparkBaseController(
             _memoryCacheManager.Set("JShowList", list, 30);
             return list;
         });
+        if(newShow == null)
+        {
+            return shows;
+        }
+        // look for the show in the list by theme
+        var existingShow = shows.FirstOrDefault(s => s.Theme == newShow.Theme);
+        if (existingShow == null)
+        {
+            newShow = await _jShowService.CreateJShowAsync(newShow);
+            shows = await _jShowService.GetJShowsAsync() ?? [];
+            _memoryCacheManager.Set("JShowList", shows, 30);
+            return shows;
+        }
         return shows;
     }
+
+
+
+
+
 }

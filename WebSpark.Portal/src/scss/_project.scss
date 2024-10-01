@@ -31,37 +31,6 @@ body {
     flex: 1;
 }
 
-.footer {
-    flex-shrink: 0;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    background-color: #f8f9fa; // bg-light
-}
-
-.footer .container {
-    padding-left: 1rem; // px-5
-    padding-right: 1rem; // px-5
-}
-
-.footer .row {
-    align-items: center; // gx-5 align-items-center
-}
-
-.footer .col-md-6.small {
-    margin-bottom: 0.5rem; // mb-3
-}
-
-.footer .icon-list-social {
-    margin-bottom: 0.5rem; // mb-3
-}
-
-.footer .icon-list-social-link {
-    margin-right: 0.5rem; // Adjust spacing between icons if necessary
-}
-
-.footer .text-md-end {
-    text-align: end;
-}
 .navbar-marketing {
     background: url(/img/backgrounds/bg-SardinaSunset.jpg) no-repeat 50%;
     background-size: cover;
@@ -110,16 +79,7 @@ header {
     border-bottom: 1px solid #dee2e6; /* Light border for the header */
 }
 
-/* Footer */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 50px; /* Height of the footer */
-    background: #f8f9fa; /* Light grey background */
-    z-index: 1000;
-    border-top: 1px solid #dee2e6; /* Light border for the footer */
-}
+
 
 /* Main Content Area */
 main.main-content {
@@ -190,4 +150,73 @@ main.main-content {
     padding: 0.5rem 1rem; /* Padding around the text */
     font-size: 0.875rem; /* Smaller font size */
     font-weight: bold; /* Bold font */
+}
+
+
+/* Footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px; /* Height of the footer */
+    background: #f8f9fa; /* Light grey background */
+    z-index: 1000;
+    border-top: 1px solid #dee2e6; /* Light border for the footer */
+    flex-shrink: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.footer .container {
+    padding-left: 1rem; // px-5
+    padding-right: 1rem; // px-5
+}
+
+.footer .row {
+    align-items: center; // gx-5 align-items-center
+}
+
+.footer .col-md-6.small {
+    margin-bottom: 0.5rem; // mb-3
+}
+
+.footer .icon-list-social {
+    margin-bottom: 0.5rem; // mb-3
+}
+
+.footer .icon-list-social-link {
+    margin-right: 0.5rem; // Adjust spacing between icons if necessary
+}
+
+.footer .text-md-end {
+    text-align: end;
+}
+
+
+/* Adjust footer padding globally */
+.custom-footer-padding {
+    padding-top: 1rem; /* Increased top padding */
+    padding-bottom: 1rem; /* Increased bottom padding */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    /* Increase height or padding of the footer on mobile */
+    .footer {
+        padding-top: 2rem; /* Add more padding for better spacing */
+        padding-bottom: 2rem;
+    }
+    /* Ensure sections are stacked and spaced out */
+    .footer .col-12 {
+        margin-bottom: 1.5rem; /* Space between sections */
+    }
+    /* Center all text and icons */
+    .text-center {
+        text-align: center;
+    }
+    /* Align social icons to the center on mobile */
+    .icon-list-social {
+        justify-content: center;
+        margin-bottom: 1rem; /* Add some spacing below the icons */
+    }
 }

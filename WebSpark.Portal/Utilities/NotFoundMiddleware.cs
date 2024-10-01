@@ -23,6 +23,12 @@ public class NotFoundMiddleware(RequestDelegate next)
             {
                 return; // Stop if redirect loop detected
             }
+            if (requestPath.StartsWith("/jshow"))
+            {
+                var newPath = requestPath.Replace("/jshow", "/TriviaSpark/JShow");
+                RedirectWithProtection(context, newPath);
+                return;
+            }
 
             if (requestPath.StartsWith("/openai/"))
             {

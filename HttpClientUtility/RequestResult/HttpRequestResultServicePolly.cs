@@ -66,12 +66,12 @@ public class HttpRequestResultServicePolly : IHttpRequestResultService
     /// <param name="statusCall">The HttpRequestResult object representing the request.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The HttpRequestResult object with the response content.</returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
     {
         // Wrap the GetAsync call with the circuit breaker policies
         try
         {
-            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpSendRequestAsync(statusCall, ct));
+            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpSendRequestResultAsync(statusCall, ct));
         }
         catch (Exception ex)
         {

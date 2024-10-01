@@ -21,7 +21,7 @@ public sealed class HttpRequestResultServiceCache(
     /// <param name="statusCall"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
     {
         var cacheKey = statusCall.RequestPath;
         if (statusCall.CacheDurationMinutes > 0)
@@ -47,7 +47,7 @@ public sealed class HttpRequestResultServiceCache(
         }
         // If the result is not cached, make the actual HTTP request using the wrapped service
         // and store the result in the cache before returning it
-        statusCall = await _service.HttpSendRequestAsync(statusCall, ct);
+        statusCall = await _service.HttpSendRequestResultAsync(statusCall, ct);
         statusCall.CompletionDate = DateTime.UtcNow;
         if (statusCall.CacheDurationMinutes > 0)
         {

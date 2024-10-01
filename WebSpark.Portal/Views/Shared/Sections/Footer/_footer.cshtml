@@ -8,11 +8,13 @@
     var canonicalUrl = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}";
 }
 
-<footer class="footer mt-4 bg-light footer-light custom-footer-padding">
+<footer class="footer mt-4 bg-light footer-light custom-footer-padding fixed-bottom">
     <div class="container px-5">
-        <div class="row gx-5 justify-content-between text-center text-md-start">
-            <div class="col-12 col-md-3 mb-3">
-                <div class="icon-list-social mb-3 d-flex justify-content-center justify-content-md-start">
+        <div class="row gx-5 text-center text-md-start">
+            
+            <!-- Left section: Social Icons -->
+            <div class="col-12 col-md-3 mb-3 d-flex justify-content-center justify-content-md-start">
+                <div class="icon-list-social d-flex">
                     <a class="icon-list-social-link me-2" href="https://www.linkedin.com/in/markhazleton/">
                         <i class="fab fa-linkedin"></i>
                     </a>
@@ -30,44 +32,36 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Center section: Link to main site & social sharing -->
             <div class="col-12 col-md-6 mb-3">
-                &copy; <a href="https://markhazleton.com">Mark Hazleton</a> 2002-@currentYear
-                <br /><br />
-                @status.BuildVersion.ToString()
-            </div>
-            <div class="col-12 col-md-3 text-center text-md-end small">
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-end mb-2">
-                    <a href="/home/privacy" class="me-md-2 mb-2 mb-md-0">Privacy Policy</a>
-                    &middot;
-                    <a href="/home/terms" class="me-md-2 mb-2 mb-md-0">Terms &amp; Conditions</a>
-                    &middot;
-                    <a href="/home/kitchensink" class="mb-2 mb-md-0">Demo</a>
-                </div>
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-end">
-                    <span class="me-0 me-md-2 mb-2 mb-md-0">Share:</span>
-                    <div class="d-inline-flex">
-                        <a href="https://www.linkedin.com/shareArticle?mini=true&url=@canonicalUrl&title=Page%20Title&summary=Page%20Description" class="btn btn-secondary btn-sm me-1 mb-2 mb-md-0" target="_blank">
+                <div class="d-flex justify-content-center flex-column flex-md-row align-items-center">
+                    <span class="me-md-2 mb-2 mb-md-0">&copy; 2002-@currentYear <a href="https://markhazleton.com">Mark Hazleton</a></span>
+                    <div class="d-flex justify-content-center">
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url=@canonicalUrl&title=Page%20Title&summary=Page%20Description" class="btn btn-secondary btn-sm me-1" target="_blank">
                             <i class="bi bi-linkedin"></i>
                         </a>
-                        <a href="mailto:?subject=Check%20this%20out&body=Check%20out%20this%20page: @canonicalUrl" class="btn btn-danger btn-sm me-1 mb-2 mb-md-0" target="_blank">
+                        <a href="mailto:?subject=Check%20this%20out&body=Check%20out%20this%20page: @canonicalUrl" class="btn btn-danger btn-sm me-1" target="_blank">
                             <i class="bi bi-envelope"></i>
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right section: Terms, Privacy links & Version number -->
+            <div class="col-12 col-md-3 text-center text-md-end small">
+                <div class="d-flex flex-column align-items-center align-items-md-end">
+                    <div>
+                        <a href="/home/privacy" class="me-md-2">Privacy Policy</a>
+                        &middot;
+                        <a href="/home/terms" class="me-md-2">Terms &amp; Conditions</a>
+                    </div>
+                    <div class="mt-2">
+                        <span>v@status.BuildVersion.ToString()</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </footer>
-
-
-@section Styles
-{
-    <!-- Custom CSS to handle padding for the footer -->
-    <style>
-        .custom-footer-padding {
-            padding-top: 0.25rem; /* Reduced top padding */
-            padding-bottom: 0.5rem; /* Adjust bottom padding as needed */
-        }
-    </style>
-}
 

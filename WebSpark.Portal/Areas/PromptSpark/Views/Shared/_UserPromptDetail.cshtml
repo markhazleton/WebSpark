@@ -4,6 +4,8 @@
     int ResponseIndex = 0;
     var link = $"/PromptSpark/explorer/details/{Model.DefinitionType}?UserPromptId={Model.UserPromptId}";
     var download_link = $"/PromptSpark/explorer/Download/{Model.UserPromptId}";
+    var definitionType = Model?.DefinitionType ?? string.Empty;
+    var definitionTypeEncoded = System.Text.Encodings.Web.UrlEncoder.Default.Encode(definitionType);
 }
 @functions {
     public string FormatTimeMS(long timeMs)
@@ -22,7 +24,7 @@
         </blockquote>
     </div>
     <div class="col-4">
-        <a class="btn btn-secondary" href="/PromptSpark/explorer/details/@Model.DefinitionType">Back to Prompts</a>
+        <a class="btn btn-secondary" href="/PromptSpark/explorer/details/@definitionTypeEncoded">Back to Prompts</a>
     </div>
 </div>
 <hr />

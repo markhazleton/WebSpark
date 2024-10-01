@@ -63,7 +63,7 @@ public class GitHubUserService
             : $"https://api.github.com/users/{user}/{endpoint}";
 
         var request = CreateGitHubRequest<T>(requestPath);
-        return await _httpRequestResultService.HttpSendRequestAsync<T>(request, ct);
+        return await _httpRequestResultService.HttpSendRequestResultAsync<T>(request, ct);
     }
     public async Task<GitHubCacheViewModel> FetchGitHubDataAsync(string userName, CancellationToken ct)
     {

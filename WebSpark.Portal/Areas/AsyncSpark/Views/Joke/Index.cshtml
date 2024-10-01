@@ -1,31 +1,33 @@
 ﻿@model HttpRequestResult<JokeModel>
 @{
     ViewData["Title"] = "Joke API - Random Jokes";
+    ViewData["Description"] = "Get a random joke from the Joke API using the JokeController in .NET 8. Explore the features of JokeAPI, including joke categories, filters, and async programming.";
+    ViewData["Keywords"] = "Joke API, JokeAPI, JokeController, .NET 8, async programming, random jokes, joke categories, joke filters";
 }
 
 <div class="container my-5">
     <div class="card border-info">
         <div class="card-header">
             <h1>
-                <i class="bi bi-emoji-smile text-primary"></i> Here's Your Joke (Category: @Model.ResponseResults?.category)
+                <i class="bi bi-emoji-smile text-primary"></i> Here's Your Joke (Category: @Model.ResponseResults?.Category)
             </h1>
         </div>
         <div class="card-body">
-            @if (Model.ResponseResults == null || Model.ResponseResults.error)
+            @if (Model.ResponseResults == null || Model.ResponseResults.Error)
             {
                 <p class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> There was an error getting the joke.</p>
             }
             else
             {
-                @if (Model.ResponseResults.type == "single")
+                @if (Model.ResponseResults.Type == "single")
                 {
-                    <p class="lead">@Model.ResponseResults.joke</p>
+                    <p class="lead">@Model.ResponseResults.Joke</p>
                 }
-                else if (Model.ResponseResults.type == "twopart")
+                else if (Model.ResponseResults.Type == "twopart")
                 {
                     <dl>
-                        <dt class="font-weight-bold"><i class="bi bi-chat-right-quote"></i> @Model.ResponseResults.setup</dt>
-                        <dd class="text-muted"><i class="bi bi-arrow-right"></i> @Model.ResponseResults.delivery</dd>
+                        <dt class="font-weight-bold"><i class="bi bi-chat-right-quote"></i> @Model.ResponseResults.Setup</dt>
+                        <dd class="text-muted"><i class="bi bi-arrow-right"></i> @Model.ResponseResults.Delivery</dd>
                     </dl>
                 }
             }
@@ -36,7 +38,7 @@
             </div>
         </div>
         <div class="card-footer">
-            @await Html.PartialAsync("_clientSendRequestFooter", Model)
+             @await Html.PartialAsync("_clientSendRequestFooter", Model)
         </div>
     </div>
 </div>
@@ -155,9 +157,3 @@
         For more information about JokeAPI and its features, visit their official documentation at <a href="https://v2.jokeapi.dev/" target="_blank">JokeAPI v2</a>. We thank them for providing a fun and engaging way to demonstrate the power of async programming in our project.
     </p>
 </div>
-
-@section Scripts {
-    <script>
-        document.querySelector('meta[name="description"]').setAttribute("content", "Explore how the JokeController in .NET 8 uses JokeAPI for async API calls. Learn about JokeAPI's features, including joke categories, filters, and integration tips for enhancing your web applications.");
-    </script>
-}

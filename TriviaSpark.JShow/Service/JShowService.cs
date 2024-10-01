@@ -7,8 +7,65 @@ namespace TriviaSpark.JShow.Service;
 
 public class JShowService : IJShowService
 {
+    private readonly JShowDbContext _context;
     private readonly string _jsonFilePath;
     private JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    public JShowService(JShowDbContext context, JShowConfig config)
+    {
+        _context = context;
+        _jsonFilePath = config.JsonOutputFolder;
+    }
+
+    // Helper method to deserialize and set properties on the JShowVM
+    private JShowVM DeserializeAndSetProperties(string jsonContent)
+    {
+        // Deserialize the JSON content into an instance of JShowVM
+        JShowVM jShow = JsonSerializer.Deserialize<JShowVM>(jsonContent, _jsonOptions);
+
+        jShow ??= new JShowVM();
+
+        // Loop over the categories and questions to set the Question Category and Round properties
+        jShow.Rounds.Jeopardy.Theme = jShow.Theme;
+        jShow.Rounds.Jeopardy.JShowId = jShow.Id;
+        jShow.Rounds.Jeopardy.Name = "Jeopardy";
+        foreach (var category in jShow.Rounds.Jeopardy.Categories)
+        {
+            category.RoundId = jShow.Rounds.Jeopardy.Id;
+            foreach (var question in category.Questions)
+            {
+                question.ShowNumber = jShow.ShowNumber;
+                question.AirDate = jShow.AirDate;
+                question.Theme = jShow.Theme;
+                question.JShowId = jShow.Id;
+                question.CategoryName = category.Name;
+                question.CategoryId = category.Id;
+                question.RoundName = jShow.Rounds.Jeopardy.Name;
+            }
+        }
+
+        jShow.Rounds.DoubleJeopardy.Theme = jShow.Theme;
+        jShow.Rounds.DoubleJeopardy.Name = "Double Jeopardy";
+        jShow.Rounds.DoubleJeopardy.JShowId = jShow.Id;
+        foreach (var category in jShow.Rounds.DoubleJeopardy.Categories)
+        {
+            category.RoundId = jShow.Rounds.DoubleJeopardy.Id;
+            foreach (var question in category.Questions)
+            {
+                question.ShowNumber = jShow.ShowNumber;
+                question.AirDate = jShow.AirDate;
+                question.Theme = jShow.Theme;
+                question.JShowId = jShow.Id;
+                question.CategoryName = category.Name;
+                question.CategoryId = category.Id;
+                question.RoundName = jShow.Rounds.DoubleJeopardy.Name;
+            }
+        }
+
+
+        return jShow;
+    }
+
     public async Task<List<JShowVM>> GetJShowsAsync()
     {
         var files = Directory.GetFiles(_jsonFilePath, "JSHOW_*.json");
@@ -18,7 +75,7 @@ public class JShowService : IJShowService
         {
             try
             {
-                var jShow = ReadJShowFromJson(file);
+                var jShow = LoadByJsonFile(file);
                 if (jShow != null)
                 {
                     // Check if the show is already in the database
@@ -29,7 +86,7 @@ public class JShowService : IJShowService
                         var newEntity = JShowMapper.ToEntity(jShow);
                         await _context.JShows.AddAsync(newEntity);
                         await _context.SaveChangesAsync(); // Save the newly added show to the database
-                        jeopardyShows.Add(JShowMapper.ToModel(newEntity)); 
+                        jeopardyShows.Add(JShowMapper.ToModel(newEntity));
                     }
                 }
             }
@@ -45,15 +102,57 @@ public class JShowService : IJShowService
             }
         }
         int showNumber = 1;
-        foreach (var show in jeopardyShows??[])
+        foreach (var show in jeopardyShows ?? [])
         {
             show.ShowNumber = showNumber;
             showNumber++;
         }
         return jeopardyShows ?? [];
     }
+    public JShowVM? LoadByJsonFile(string filePath)
+    {
+        try
+        {
+            // Read the JSON file as a string
+            string jsonContent = File.ReadAllText(filePath);
+            return DeserializeAndSetProperties(jsonContent);
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine($"File not found: {filePath}");
+            return null;
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            return null;
+        }
+    }
 
-    public JShowVM ReadJShowFromJson(string filePath)
+    public JShowVM? LoadByJsonString(string jsonContent)
+    {
+        try
+        {
+            return DeserializeAndSetProperties(jsonContent);
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            return null;
+        }
+    }
+
+    public JShowVM ReadJShowFromJsonFile(string filePath)
     {
         try
         {
@@ -107,13 +206,6 @@ public class JShowService : IJShowService
             return null;
         }
     }
-    private readonly JShowDbContext _context;
-
-    public JShowService(JShowDbContext context, JShowConfig config)
-    {
-        _context = context;
-        _jsonFilePath = config.JsonOutputFolder;
-    }
 
     #region JShowVM CRUD Operations
 
@@ -128,6 +220,40 @@ public class JShowService : IJShowService
         {
             // Theme is already in use
             throw new InvalidOperationException($"The theme '{jshow.Theme}' is already in use. Please choose a different theme.");
+        }
+
+        jshow.Id = Guid.NewGuid().ToString();
+        jshow.Rounds.Jeopardy.Id = Guid.NewGuid().ToString();
+        jshow.Rounds.DoubleJeopardy.Id = Guid.NewGuid().ToString();
+        foreach (var category in jshow.Rounds.Jeopardy.Categories)
+        {
+            category.Id = Guid.NewGuid().ToString();
+            category.RoundId = jshow.Rounds.Jeopardy.Id;
+            foreach (var question in category.Questions)
+            {
+                question.Id = Guid.NewGuid().ToString();
+                question.CategoryId = category.Id;
+                question.RoundName = jshow.Rounds.DoubleJeopardy.Name;
+                question.Theme = jshow.Theme;
+                question.JShowId = jshow.Id;
+                question.CategoryName = category.Name;
+                question.CategoryId = category.Id;
+            }
+        }
+        foreach (var category in jshow.Rounds.DoubleJeopardy.Categories)
+        {
+            category.Id = Guid.NewGuid().ToString();
+            category.RoundId = jshow.Rounds.Jeopardy.Id;
+            foreach (var question in category.Questions)
+            {
+                question.Id = Guid.NewGuid().ToString();
+                question.CategoryId = category.Id;
+                question.RoundName = jshow.Rounds.DoubleJeopardy.Name;
+                question.Theme = jshow.Theme;
+                question.JShowId = jshow.Id;
+                question.CategoryName = category.Name;
+                question.CategoryId = category.Id;
+            }
         }
 
         // Convert the view model to an entity
@@ -195,6 +321,7 @@ public class JShowService : IJShowService
         entity.AirDate = jshow.AirDate;
         entity.Theme = jshow.Theme;
         entity.Description = jshow.Description;
+        entity.Type = jshow.Type;
         // Update more properties as necessary
 
         // Update the entity in the context
@@ -233,7 +360,7 @@ public class JShowService : IJShowService
 
     public async Task<RoundVM> GetRoundByIdAsync(string id)
     {
-        var dbRound =  await _context.JShowRounds
+        var dbRound = await _context.JShowRounds
             .Include(r => r.Categories)
             .ThenInclude(c => c.Questions)
             .FirstOrDefaultAsync(r => r.Id == id) ?? new JShowRoundEntity();
@@ -242,7 +369,7 @@ public class JShowService : IJShowService
 
     public async Task<IEnumerable<RoundVM>> GetRoundsByJShowIdAsync(string showId)
     {
-        var dbList =  await _context.JShowRounds
+        var dbList = await _context.JShowRounds
             .Where(r => r.JShowId == showId)
             .Include(r => r.Categories)
             .ThenInclude(c => c.Questions)
@@ -308,9 +435,9 @@ public class JShowService : IJShowService
 
     public async Task<CategoryVM> GetCategoryByIdAsync(string id)
     {
-        CategoryEntity dbCategory =  await _context.Categories
+        CategoryEntity dbCategory = await _context.Categories
             .Include(c => c.Questions)
-            .FirstOrDefaultAsync(c => c.Id == id)?? new CategoryEntity();
+            .FirstOrDefaultAsync(c => c.Id == id) ?? new CategoryEntity();
 
         return JShowMapper.ToModel(dbCategory);
     }
@@ -397,7 +524,7 @@ public class JShowService : IJShowService
             throw new InvalidOperationException($"A question with the same text already exists in this category.");
         }
         // Convert the view model to an entity
-        QuestionEntity dbQuestion = JShowMapper.ToEntity(question);    
+        QuestionEntity dbQuestion = JShowMapper.ToEntity(question);
 
         // Add the new question to the context
         await _context.Questions.AddAsync(dbQuestion);
@@ -411,7 +538,7 @@ public class JShowService : IJShowService
 
     public async Task<QuestionVM> GetQuestionByIdAsync(string id)
     {
-        QuestionEntity dbQueston =  await _context.Questions.FindAsync(id) ?? new QuestionEntity();
+        QuestionEntity dbQueston = await _context.Questions.FindAsync(id) ?? new QuestionEntity();
         return JShowMapper.ToModel(dbQueston);
     }
 
@@ -484,18 +611,6 @@ public class JShowService : IJShowService
 }
 public static class JsonElementExtensions
 {
-    /// <summary>
-    /// Safely gets a property from a JsonElement. Returns null if the property does not exist.
-    /// </summary>
-    public static JsonElement? GetPropertySafe(this JsonElement element, string propertyName)
-    {
-        if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty(propertyName, out var value))
-        {
-            return value;
-        }
-
-        return null;
-    }
 
     /// <summary>
     /// Safely converts a JsonElement to a Guid. Returns null if the conversion fails.
@@ -507,5 +622,16 @@ public static class JsonElementExtensions
             return guid;
         }
         return Guid.Empty;
+    }
+    /// <summary>
+    /// Safely gets a property from a JsonElement. Returns null if the property does not exist.
+    /// </summary>
+    public static JsonElement? GetPropertySafe(this JsonElement element, string propertyName)
+    {
+        if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty(propertyName, out var value))
+        {
+            return value;
+        }
+        return null;
     }
 }

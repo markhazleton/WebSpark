@@ -1,9 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using TriviaSpark.JShow.Data;
 
 namespace TriviaSpark.JShow.Models;
 public class RoundVM
 {
+    public RoundVM()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
     [JsonPropertyName("id")]
     public string Id { get; set; }
     [JsonPropertyName("showid")]
@@ -16,6 +21,10 @@ public class RoundVM
 }
 public class CategoryVM
 {
+    public CategoryVM()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
 
     public string Id { get; set; }
     [JsonPropertyName("roundid")]
@@ -74,43 +83,33 @@ public class JShowVM
     {
         Id = Guid.NewGuid().ToString();
     }
-
     [JsonPropertyName("id")]
     public string Id { get; set; }
     [JsonPropertyName("show_number")]
     public int ShowNumber { get; set; }
-
     [JsonPropertyName("air_date")]
     public string AirDate { get; set; }
-
     [JsonPropertyName("theme")]
     public string Theme { get; set; }
-
     [JsonPropertyName("description")]
     public string Description { get; set; }
-
     [JsonPropertyName("rounds")]
-    public Rounds Rounds { get; set; }
-
+    public Rounds? Rounds { get; set; }
+    public JShowType Type { get; set; }
     public QuestionVM GetQuestionByID(string id)
     {
-        // Search through Jeopardy round
         foreach (var category in Rounds.Jeopardy.Categories)
         {
             var question = category.Questions.Find(q => q.Id == id);
             if (question != null)
                 return question;
         }
-
-        // Search through Double Jeopardy round
         foreach (var category in Rounds.DoubleJeopardy.Categories)
         {
             var question = category.Questions.Find(q => q.Id == id);
             if (question != null)
                 return question;
         }
-
-        // Return null if no question found with the specified ID
         return new QuestionVM();
     }
 }

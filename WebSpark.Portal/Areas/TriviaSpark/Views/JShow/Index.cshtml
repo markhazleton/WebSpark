@@ -1,4 +1,6 @@
-﻿@model List<JShowVM>
+﻿@using TriviaSpark.JShow.Data
+@model List<JShowVM>
+
 @{
     ViewData["Title"] = "JShowVM - Interactive Trivia Experience Powered by GPT";
     ViewData["Description"] = "Learn how the JShowVM Controller and JShowService utilize the J-Show Builder GPT to create a dynamic trivia experience. Explore the JSON-powered game with unique themes and questions.";
@@ -6,62 +8,106 @@
 }
 
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="display-4 text-center">
-                <i class="bi bi-controller"></i> Welcome to the JShow Trivia Experience
-            </h1>
-            <p class="lead text-center">
-                Discover a unique and interactive trivia experience created by the powerful J-Show Builder GPT.
-            </p>
-        </div>
-    </div>
-    <div class="row mt-5">
-        <div class="col-12">
-            <h2 class="text-center">Available JShows</h2>
-            <p class="text-center">
-                Explore the trivia questions and themes for each show by selecting a show card below.
-            </p>
-        </div>
-    </div>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
-        @if (Model == null || !Model.Any())
+    <h2 class="mb-3">Select a Show</h2>
+
+    <!-- Filter Navigation for Show Type -->
+    <nav class="nav nav-pills mb-4">
+        <a class="nav-link active" href="#" data-show-type="">All Types</a>
+        @foreach (var type in Enum.GetValues(typeof(JShowType)))
         {
-            <div class="col">
-                <div class="alert alert-warning text-center w-100">
-                    <i class="bi bi-exclamation-triangle-fill"></i> No shows are currently available. Please check back later.
-                </div>
-            </div>
+            <a class="nav-link" href="#" data-show-type="@type">@type</a>
         }
-        else
+    </nav>
+
+    <!-- Sort Controls -->
+    <div class="d-flex justify-content-end mb-3">
+        <div class="btn-group" role="group" aria-label="Sort by Theme">
+            <button id="sortAscBtn" class="btn btn-outline-secondary">Sort by Theme A-Z</button>
+            <button id="sortDescBtn" class="btn btn-outline-secondary">Sort by Theme Z-A</button>
+        </div>
+    </div>
+
+    <!-- Show List -->
+    <div id="showList" class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var show in Model)
         {
-            @foreach (var show in Model)
-            {
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <i class="bi bi-tv"></i> @show.Theme
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                <strong>Description:</strong> @show.Description
-                            </p>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <a asp-action="JShow" asp-route-id="@show.Theme" class="btn btn-primary w-100">
-                                <i class="bi bi-eye"></i> Play @show.Theme
-                            </a>
-                        </div>
+            <div class="col show-item" data-show-type="@show.Type" data-show-theme="@show.Theme">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@show.Theme</h5>
+                        <p class="card-text">
+                            <strong>Description:</strong> @show.Description
+                        </p>
+                        <a href="/TriviaSpark/JShow/@show.Theme" alt="Play @show.Theme" class="btn btn-outline-primary">Play @show.Theme</a>
                     </div>
                 </div>
-            }
+            </div>
         }
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        // Function to filter shows based on show type
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Remove active class from all nav links and add to clicked one
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                var selectedType = this.getAttribute('data-show-type');
+                var shows = document.querySelectorAll('.show-item');
+
+                shows.forEach(function(show) {
+                    var showType = show.getAttribute('data-show-type');
+                    if (selectedType === '' || showType === selectedType) {
+                        show.style.display = 'block';
+                    } else {
+                        show.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Sort shows by theme in ascending order
+        document.getElementById('sortAscBtn').addEventListener('click', function() {
+            sortShows('asc');
+        });
+
+        // Sort shows by theme in descending order
+        document.getElementById('sortDescBtn').addEventListener('click', function() {
+            sortShows('desc');
+        });
+
+        // Function to sort shows by theme
+        function sortShows(order) {
+            var showList = document.getElementById('showList');
+            var shows = Array.from(showList.getElementsByClassName('show-item'));
+
+            shows.sort(function(a, b) {
+                var themeA = a.getAttribute('data-show-theme').toLowerCase();
+                var themeB = b.getAttribute('data-show-theme').toLowerCase();
+
+                if (order === 'asc') {
+                    return themeA.localeCompare(themeB);
+                } else {
+                    return themeB.localeCompare(themeA);
+                }
+            });
+
+            // Clear and re-append sorted elements
+            showList.innerHTML = '';
+            shows.forEach(function(show) {
+                showList.appendChild(show);
+            });
+        }
+    </script>
+}
+
+
+
 <div class="container mt-4">
-
-
     <div class="row mt-5">
         <div class="col-md-8 offset-md-2">
             <h2>About the JShow Controller</h2>
@@ -73,7 +119,6 @@
             </p>
         </div>
     </div>
-
     <div class="row mt-4">
         <div class="col-md-8 offset-md-2">
             <h2>How J-Show Builder GPT Works</h2>
@@ -90,7 +135,6 @@
             </p>
         </div>
     </div>
-
     <div class="row mt-4">
         <div class="col-md-8 offset-md-2">
             <h2>Features of the JShowService</h2>
@@ -107,5 +151,4 @@
             </p>
         </div>
     </div>
-
 </div>

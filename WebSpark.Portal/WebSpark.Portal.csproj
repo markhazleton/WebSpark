@@ -57,14 +57,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.20.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.21.1" />
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.22.0-preview.24378.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0-rc.1.24457.2" />
     <PackageReference Include="ScottPlot" Version="5.0.39" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.7.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.8.1" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.0-rc.1.24431.7" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.21.0" />
@@ -84,7 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\AsyncSpark\Services\" />
-    <Folder Include="Areas\TriviaSpark\Models\JShow\" />
     <Folder Include="Areas\TriviaSpark\Models\TriviaMatch\" />
     <Folder Include="Areas\TriviaSpark\Pages\" />
     <Folder Include="Areas\TriviaSpark\Services\" />

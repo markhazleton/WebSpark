@@ -4,25 +4,163 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
 
-<div>
-    <h4>Response</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UserPrompt)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserPrompt)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.SystemResponse)
-        </dt>
-        <dd> @Html.DisplayFor(model => model.SystemResponse)</dd>
-    </dl>
+    <!-- Card with Response Details -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="bi bi-chat-square-dots"></i> Response From @Model.GPTName</h4>
+            <div class="d-flex justify-content-between mb-4">
+                <a class="btn btn-outline-secondary" asp-action="Index">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@Model?.ResponseId">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <!-- User Prompt -->
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-chat-left-text"></i> @Html.DisplayNameFor(model => model.UserPrompt)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.UserPrompt)
+                </dd>
+
+                <!-- System Response -->
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-terminal"></i> @Html.DisplayNameFor(model => model.SystemResponse)
+                </dt>
+                <dd class="col-sm-9">
+                    <!-- Copy to Clipboard Button -->
+                    <button type="button" class="btn btn-outline-primary mt-3" onclick="copyToClipboard()">
+                        <i class="bi bi-clipboard"></i> Copy to Clipboard
+                    </button>
+                    <div class="border rounded p-3 bg-light" id="responseContainer" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap;">
+                        @Html.Raw(Model.SystemResponse)
+                    </div>
+                </dd>
+
+                <!-- Additional Fields Below SystemResponse -->
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-clock"></i> Created
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Created.ToString("g")
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-clock-history"></i> Updated
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Updated.ToString("g")
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-speedometer"></i> Processing Time (ms)
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.TimeMS
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-cpu"></i> Total Tokens
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.TotalTokens
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-diagram-2"></i> Prompt Tokens
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.PromptTokens
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-diagram-3"></i> Completion Tokens
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.CompletionTokens
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-gear"></i> Model
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Model
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-thermometer-half"></i> Temperature
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Temperature
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-chat-left-dots"></i> System Prompt
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.Raw(Model.SystemPrompt)
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-exclamation-triangle"></i> Message Type
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.MessageType
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-person"></i> Role
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Role
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-pencil"></i> Description
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.GPTDescription
+                </dd>
+
+                <dt class="col-sm-3 text-muted">
+                    <i class="bi bi-chat-right-quote"></i> User Expected Response
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.UserExpectedResponse
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between mb-4">
+        <a class="btn btn-outline-secondary" asp-action="Index">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+        <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@Model?.ResponseId">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ResponseId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<!-- JavaScript for Copy to Clipboard -->
+<script>
+    function copyToClipboard() {
+        var textToCopy = document.getElementById("responseContainer").innerText;
+        var tempTextArea = document.createElement("textarea");
+        tempTextArea.value = textToCopy;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempTextArea);
+        alert("Response copied to clipboard!");
+    }
+</script>

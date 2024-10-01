@@ -21,7 +21,7 @@ public class NasaPictureController(
             throw new NullReferenceException(nameof(service));
         }
 
-        apiRequest = await service.HttpSendRequestAsync(apiRequest, ct).ConfigureAwait(false);
+        apiRequest = await service.HttpSendRequestResultAsync(apiRequest, ct).ConfigureAwait(false);
         return View(apiRequest);
     }
 }

@@ -176,7 +176,6 @@
                     event.preventDefault();
                     const sortOrder = event.target.getAttribute('data-sort');
                     const cardItems = Array.from(document.querySelectorAll('.card-item'));
-
                     const sortedItems = cardItems.sort((a, b) => {
                         const aType = a.getAttribute('data-definitiontype').toUpperCase();
                         const bType = b.getAttribute('data-definitiontype').toUpperCase();
@@ -186,10 +185,8 @@
                             return aType > bType ? -1 : aType < bType ? 1 : 0;
                         }
                     });
-
                     cardContainer.innerHTML = '';
                     sortedItems.forEach(item => cardContainer.appendChild(item));
-
                     // Reset filter to "all" after sorting
                     navLinks.forEach(link => link.classList.remove('active'));
                     document.querySelector('.nav-link[data-filter="all"]').classList.add('active');

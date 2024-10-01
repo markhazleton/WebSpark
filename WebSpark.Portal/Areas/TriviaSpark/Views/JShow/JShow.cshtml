@@ -67,7 +67,7 @@
         }
 
         function loadQuestion(id, showid) {
-            $.get('@Url.Action("Reveal", "JShow")', { id: id, showid: showid }, function(data) {
+            $.get('@Url.Action("Reveal", "JShow", new { area = "TriviaSpark" })', { id: id, showid: showid }, function(data) {
                 $('#questionContent').html(data);
             });
         }

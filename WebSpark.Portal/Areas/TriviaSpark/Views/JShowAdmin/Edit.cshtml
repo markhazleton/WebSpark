@@ -1,4 +1,5 @@
-﻿@model JShowVM
+﻿@using TriviaSpark.JShow.Data
+@model JShowVM
 
 @{
     ViewData["Title"] = "Edit JShow";
@@ -13,6 +14,12 @@
         <label for="ShowNumber" class="form-label">Show Number</label>
         <input type="number" class="form-control" asp-for="ShowNumber" />
         <span asp-validation-for="ShowNumber" class="text-danger"></span>
+    </div>
+    <!-- Enum dropdown using GetEnumSelectList -->
+    <div class="mb-3">
+        <label for="Type" class="form-label">Show Type</label>
+        <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<JShowType>()"></select>
+        <span asp-validation-for="Type" class="text-danger"></span>
     </div>
 
     <div class="mb-3">

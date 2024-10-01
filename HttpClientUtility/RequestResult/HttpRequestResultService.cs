@@ -21,7 +21,7 @@ public class HttpRequestResultService(
     /// <param name="httpSendResults">A container for the URL to make the GET request to, and the expected response data.</param>
     /// <param name="ct">The cancellation token to cancel the operation.</param>
     /// <returns>A container for the response data and any relevant error information.</returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestAsync<T>(HttpRequestResult<T> httpSendResults, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> httpSendResults, CancellationToken ct)
     {
         try
         {
@@ -44,28 +44,28 @@ public class HttpRequestResultService(
         {
             httpSendResults.ErrorList.Add($"ArgumentNullException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.BadRequest;
-            _logger.LogError(ex, "HttpSendRequestAsync:ArgumentNullException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync:ArgumentNullException {Message}", ex.Message);
             return httpSendResults;
         }
         catch (ArgumentException ex)
         {
             httpSendResults.ErrorList.Add($"ArgumentException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.BadRequest;
-            _logger.LogError(ex, "HttpSendRequestAsync:ArgumentException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync:ArgumentException {Message}", ex.Message);
             return httpSendResults;
         }
         catch (HttpRequestException ex)
         {
             httpSendResults.ErrorList.Add($"HttpRequestException: {ex.Message}");
             httpSendResults.StatusCode = (HttpStatusCode)(ex.StatusCode ?? HttpStatusCode.InternalServerError);
-            _logger.LogError(ex, "HttpSendRequestAsync:HttpRequestException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync:HttpRequestException {Message}", ex.Message);
             return httpSendResults;
         }
         catch (Exception ex)
         {
             httpSendResults.ErrorList.Add($"GeneralException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.InternalServerError;
-            _logger.LogError(ex, "HttpSendRequestAsync:GeneralException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync:GeneralException {Message}", ex.Message);
             return httpSendResults;
         }
     }

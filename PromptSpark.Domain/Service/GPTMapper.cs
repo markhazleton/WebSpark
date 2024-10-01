@@ -1,5 +1,6 @@
 ﻿using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Models;
+using System.Web;
 
 namespace PromptSpark.Domain.Service;
 
@@ -42,6 +43,7 @@ public static class GPTMapper
             DefinitionId = definition.DefinitionId,
             DefinitionType = definition.DefinitionType,
             Name = definition.GPTName,
+            UrlEncodedName = HttpUtility.UrlEncode(definition.GPTName),
             OutputType = definition.OutputType,
             Description = definition.Description,
             Role = definition.Role,
@@ -69,7 +71,6 @@ public static class GPTMapper
             DefinitionResponses = prompt.GPTResponses
                 .Select(r => r.ToDto()) // Make sure you have implemented ToDto for GPTDefinitionResponse to DefinitionResponseDto conversion
                 .ToList(),
-            // Populate the DefinitionTypes field either with the passed list or by defaulting to a list containing only the current DefinitionType
             DefinitionTypes = definitionTypes ?? [prompt.DefinitionType]
         };
 
@@ -113,6 +114,7 @@ public static class GPTMapper
             SystemResponse = r.SystemResponse,
             SystemPrompt = r.SystemPrompt ?? "MISSING",
             UserPromptId = r.ResponseId,
+            DefinitionId = r.DefinitionId,
             UserPrompt = r.UserPrompt ?? "MISING",
             Created = r.Created,
             Updated = r.Updated,
