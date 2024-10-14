@@ -16,3 +16,4 @@ public class StatusController(ApplicationStatus applicationStatus) : AsyncSparkB
         return applicationStatus;
     }
 }
+

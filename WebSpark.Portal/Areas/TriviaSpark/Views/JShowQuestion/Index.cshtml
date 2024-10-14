@@ -1,83 +1,126 @@
-﻿@model IEnumerable<TriviaSpark.JShow.Data.QuestionEntity>
+﻿@using TriviaSpark.JShow.Data
+@model IEnumerable<QuestionVM>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Full List of Questions - JShowVM Application";
+    ViewData["Description"] = "Explore the full list of questions created for the JShowVM game using the J-Show Builder GPT on ChatGPT.com. Easily manage and update your questions.";
+    ViewData["Keywords"] = "JShowVM, Question List, J-Show Builder, ChatGPT, Quiz Game, Manage Questions";
 }
 
-<h1>Index</h1>
+<!-- Filter Section -->
+<div class="d-flex mb-3">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Value)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QuestionText)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Answer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Theme)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModifiedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModifiedBy)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Value)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuestionText)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Answer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Theme)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedBy)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <!-- Theme Filter -->
+    <div>
+        <label for="themeFilter" class="form-label">Filter by Theme</label>
+        <select id="themeFilter" class="form-select">
+            <option value="">All Themes</option>
+            @foreach (var theme in Model.Select(q => q.Theme).Distinct())
+            {
+                <option value="@theme">@theme</option>
+            }
+        </select>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="me-3">
+        <label for="categoryFilter" class="form-label">Filter by Category</label>
+        <select id="categoryFilter" class="form-select">
+            <option value="">All Categories</option>
+            @foreach (var category in Model.Select(q => q.CategoryName).Distinct())
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+    </div>
+
+    <!-- Round Filter -->
+    <div class="me-3">
+        <label for="roundFilter" class="form-label">Filter by Round</label>
+        <select id="roundFilter" class="form-select">
+            <option value="">All Rounds</option>
+            @foreach (var round in Model.Select(q => q.RoundName).Distinct())
+            {
+                <option value="@round">@round</option>
+            }
+        </select>
+    </div>
+
+
+</div>
+
+
+<div class="table-responsive">
+    <table id="displayTable" class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+                <th>Value</th>
+                <th>Round</th>
+                <th>Category</th>
+                <th>Theme</th> <!-- New Theme Column -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var question in Model)
+            {
+                <tr data-round="@question.RoundName" data-category="@question.CategoryName" data-theme="@question.Theme">
+                    <td>@question.QuestionText</td>
+                    <td>@question.Answer</td>
+                    <td>@question.Value</td>
+                    <td>
+                        <span class="badge bg-secondary">@question.RoundName</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-info">@question.CategoryName</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-warning">@question.Theme</span> <!-- Display Theme -->
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-around">
+                            <a href="/TriviaSpark/JShowQuestion/Edit/@question.Id">
+                                <button class="btn btn-sm btn-outline-primary edit-btn">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section PageScripts {
+    <script>
+        $(document).ready(function() {
+            // DataTables Initialization
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '40vh',
+                scrollCollapse: true,
+                stateSave: false,
+                colReorder: true
+            });
+
+            // Filter Logic
+            $('#roundFilter').on('change', function() {
+                var selectedRound = $(this).val();
+                table.columns(3).search(selectedRound).draw();
+            });
+
+            $('#categoryFilter').on('change', function() {
+                var selectedCategory = $(this).val();
+                table.columns(4).search(selectedCategory).draw();
+            });
+
+            $('#themeFilter').on('change', function() {
+                var selectedTheme = $(this).val();
+                table.columns(5).search(selectedTheme).draw();
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>

@@ -31,7 +31,7 @@ public class CategoryVM
     public string RoundId { get; set; }
     [JsonPropertyName("name")]
     public string Name { get; set; }
-    [JsonPropertyName("questions")] 
+    [JsonPropertyName("questions")]
     public List<QuestionVM> Questions { get; set; }
 }
 public class QuestionVM

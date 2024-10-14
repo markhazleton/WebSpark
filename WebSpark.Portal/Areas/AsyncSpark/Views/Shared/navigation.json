@@ -2,35 +2,35 @@
   "menuItems": [
     {
       "text": "Polly",
-      "url": "/AsyncSpark/polly"
+      "url": "/AsyncSpark/Polly"
     },
     {
       "text": "Bulk Calls",
-      "url": "/AsyncSpark/bulkcalls"
+      "url": "/AsyncSpark/BulkCalls"
     },
     {
       "text": "Open Weather",
-      "url": "/AsyncSpark/openweather"
+      "url": "/AsyncSpark/OpenWeather"
     },
     {
       "text": "Joke",
-      "url": "/AsyncSpark/joke"
+      "url": "/AsyncSpark/Joke"
     },
     {
       "text": "Art Institute",
-      "url": "/AsyncSpark/artinstitute"
+      "url": "/AsyncSpark/ArtInstitute"
     },
     {
       "text": "NASA Picture",
-      "url": "/AsyncSpark/nasapicture"
+      "url": "/AsyncSpark/NasaPicture"
     },
     {
       "text": "Crawl Domain",
-      "url": "/AsyncSpark/crawldomain"
+      "url": "/AsyncSpark/CrawlDomain"
     },
     {
       "text": "GitHub",
-      "url":  "/AsyncSpark/github"
+      "url":  "/AsyncSpark/GitHub"
     }
   ]
 }

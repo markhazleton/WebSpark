@@ -6,7 +6,6 @@ using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 
 public class JShowAdminController(
-
     IMemoryCacheManager memoryCacheManager,
     IJShowService jShowService) : TriviaSparkBaseController(memoryCacheManager, jShowService)
 {
@@ -376,12 +375,8 @@ public class JShowAdminController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditQuestion(string id, QuestionVM question)
+    public async Task<IActionResult> EditQuestion(QuestionVM question)
     {
-        if (id != question.Id)
-        {
-            return NotFound();
-        }
 
         if (ModelState.IsValid)
         {

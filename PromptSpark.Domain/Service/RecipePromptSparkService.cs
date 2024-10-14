@@ -5,24 +5,6 @@ using System.Text.Json.Serialization;
 using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
-
-/// <summary>
-/// Initializes a new instance of the <see cref="RecipeAzureAIOpenAIService"/> class.
-/// </summary>
-/// <param name="_configuration">The _configuration object.</param>
-public class RecipePromptSparkService(
-    IConfiguration _configuration,
-    IGPTDefinitionService _definitionService,
-    IGPTService _promptService) : IRecipeGPTService
-{
-    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        AllowTrailingCommas = true,
-        UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
-    };
-
     public record RecipeData(
         string Name,
         string Description,
@@ -44,6 +26,24 @@ public class RecipePromptSparkService(
         )
         { }
     }
+
+
+/// <summary>
+/// Initializes a new instance of the <see cref="RecipeAzureAIOpenAIService"/> class.
+/// </summary>
+/// <param name="_configuration">The _configuration object.</param>
+public class RecipePromptSparkService(
+    IConfiguration _configuration,
+    IGPTDefinitionService _definitionService,
+    IGPTService _promptService) : IRecipeGPTService
+{
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        AllowTrailingCommas = true,
+        UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
+    };
 
     /// <summary>
     /// 

@@ -535,10 +535,25 @@ public class JShowService : IJShowService
         // Return the newly created question
         return question;
     }
-
+    public async Task<List<QuestionVM>> GetQuestionVMsAsync()
+    {
+        var entities = await _context
+            .Questions
+            .Include(q => q.Category).ThenInclude(c => c.JShowRound).ThenInclude(r => r.JShow)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .ToListAsync();
+        return entities.Select(JShowMapper.ToModel).ToList();
+    }
     public async Task<QuestionVM> GetQuestionByIdAsync(string id)
     {
-        QuestionEntity dbQueston = await _context.Questions.FindAsync(id) ?? new QuestionEntity();
+        QuestionEntity dbQueston = await _context
+            .Questions
+            .Include(QuestionVM => QuestionVM.Category).ThenInclude(CategoryVM => CategoryVM.JShowRound).ThenInclude(CategoryVM => CategoryVM.JShow)
+            .Where(w => w.Id == id)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .FirstOrDefaultAsync() ?? new QuestionEntity();
         return JShowMapper.ToModel(dbQueston);
     }
 

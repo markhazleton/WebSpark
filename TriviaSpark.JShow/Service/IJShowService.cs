@@ -1,5 +1,4 @@
-﻿using TriviaSpark.JShow.Data;
-using TriviaSpark.JShow.Models;
+﻿using TriviaSpark.JShow.Models;
 
 namespace TriviaSpark.JShow.Service;
 
@@ -31,6 +30,7 @@ public interface IJShowService
     Task<bool> DeleteCategoryAsync(string id);
 
     // QuestionEntity CRUD operations
+    Task<List<QuestionVM>> GetQuestionVMsAsync();
     Task<QuestionVM> CreateQuestionAsync(QuestionVM question);
     Task<QuestionVM> GetQuestionByIdAsync(string id);
     Task<IEnumerable<QuestionVM>> GetQuestionsByCategoryIdAsync(string categoryId);

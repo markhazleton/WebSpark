@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InquirySpark.Domain", "Inqu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriviaSpark.JShow", "TriviaSpark.JShow\TriviaSpark.JShow.csproj", "{B7520185-F7A0-4D6F-B21A-B3AD8CECD4EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromptSpark.SchemaTest", "PromptSpark.SchemaTest\PromptSpark.SchemaTest.csproj", "{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{B7520185-F7A0-4D6F-B21A-B3AD8CECD4EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7520185-F7A0-4D6F-B21A-B3AD8CECD4EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7520185-F7A0-4D6F-B21A-B3AD8CECD4EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{FC8AF618-B2F6-4971-AE36-8F6E56C3A8FB} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{A3ACA568-5823-4AD5-8F32-35DCA46B5322} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{B7520185-F7A0-4D6F-B21A-B3AD8CECD4EC} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
+		{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}

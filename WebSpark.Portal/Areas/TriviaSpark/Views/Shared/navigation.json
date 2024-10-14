@@ -8,7 +8,7 @@
     {
       "role": "admin",
       "text": "All Questions",
-      "url": "/TriviaSpark/JShowAdmin/AllQuestions"
+      "url": "/TriviaSpark/JShowQuestion"
     },
     {
       "role": "admin",

@@ -48,19 +48,19 @@ public class OpenWeatherController(
 
         if (myList.Any(w => w.Location?.Name == location))
         {
-            _logger.LogInformation("Location {location} is already in the list", location);
+            _logger.LogInformation("Location {Location} is already in the list", location);
         }
         else
         {
             var conditions = await _weatherClient.GetCurrentWeatherAsync(location);
             if (!conditions.Success)
             {
-                conditions.ErrorMessage = $"{conditions.ErrorMessage} received for location: {location}";
-                _logger.LogError(conditions.ErrorMessage);
+                var errorMessage = $"{conditions.ErrorMessage} received for location: {location}";
+                _logger.LogError("Error: {ErrorMessage}", errorMessage);
             }
             else
             {
-                _logger.LogInformation("Successfully retrieved weather data for {location}", location);
+                _logger.LogInformation("Successfully retrieved weather data for {Location}", location);
             }
             myList = AddCurrentWeatherList(conditions);
         }

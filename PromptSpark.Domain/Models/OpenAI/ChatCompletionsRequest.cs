@@ -1,5 +1,6 @@
 ﻿namespace PromptSpark.Domain.Models.OpenAI;
 
+using Newtonsoft.Json;
 using System.Collections.Generic;
 public class ChatCompletionsRequest
 {
@@ -96,9 +97,24 @@ public class ChatCompletionsRequest
 
 public class ResponseFormat
 {
+    [JsonProperty("type")]
     public string type { get; set; }
+
+    [JsonProperty("json_schema")]
+    public JsonSchema JsonSchema { get; set; }
 }
 
+public class JsonSchema
+{
+    [JsonProperty("name")]
+    public string Name { get; set; }
+
+    [JsonProperty("strict")]
+    public bool Strict { get; set; } 
+
+    [JsonProperty("schema")]
+    public string Schema { get; set; }
+}
 public class ToolChoice
 {
     public string Type { get; set; }

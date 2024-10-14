@@ -49,8 +49,8 @@ public class JShowEntity : BaseEntity
     public string Description { get; set; }
     public ICollection<JShowRoundEntity> Rounds { get; set; }
     public int ShowNumber { get; set; }
-    [Required] 
-    [StringLength(100, ErrorMessage = "Theme cannot be longer than 100 characters.")] 
+    [Required]
+    [StringLength(100, ErrorMessage = "Theme cannot be longer than 100 characters.")]
     public string Theme { get; set; }
     [Required]
     public JShowType Type { get; set; } = JShowType.PopCulture;
@@ -512,10 +512,15 @@ public static class JShowMapper
         {
             Id = dbQueston.Id,
             CategoryId = dbQueston.CategoryId,
+            CategoryName = dbQueston.Category?.Name ?? "Unknown",
+            RoundName = dbQueston.Category?.JShowRound?.Name ?? "Jeopardy",
             QuestionText = dbQueston.QuestionText,
             Answer = dbQueston.Answer,
             Value = dbQueston.Value,
-            Theme = dbQueston.Theme
+            Theme = dbQueston.Theme,
+            JShowId = dbQueston.Category?.JShowRound?.JShow?.Id ?? Guid.NewGuid().ToString(),
+            AirDate = dbQueston.Category?.JShowRound?.JShow?.AirDate ?? DateTime.UtcNow.ToLongDateString(),
+            ShowNumber = dbQueston.Category?.JShowRound?.JShow?.ShowNumber ?? 1
         };
     }
 }

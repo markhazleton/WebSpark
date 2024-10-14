@@ -1,23 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using HttpClientUtility.MemoryCache;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TriviaSpark.JShow.Data;
+using TriviaSpark.JShow.Models;
+using TriviaSpark.JShow.Service;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers
 {
     [Area("TriviaSpark")]
-    public class JShowQuestionController : Controller
+    public class JShowQuestionController(
+    IMemoryCacheManager memoryCacheManager,
+    IJShowService jShowService,
+    JShowDbContext context) : TriviaSparkBaseController(memoryCacheManager, jShowService)
     {
-        private readonly JShowDbContext _context;
+        private readonly JShowDbContext _context = context;
 
-        public JShowQuestionController(JShowDbContext context)
-        {
-            _context = context;
-        }
 
         // GET: TriviaSpark/JShowQuestion
         public async Task<IActionResult> Index()
         {
-            var jShowDbContext = _context.Questions.Include(q => q.Category);
-            return View(await jShowDbContext.ToListAsync());
+            var questions = await _jShowService.GetQuestionVMsAsync();
+            return View(questions);
         }
 
         // GET: TriviaSpark/JShowQuestion/Details/5
@@ -70,50 +72,25 @@ namespace WebSpark.Portal.Areas.TriviaSpark.Controllers
             {
                 return NotFound();
             }
-
-            var questionEntity = await _context.Questions.FindAsync(id);
-            if (questionEntity == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", questionEntity.CategoryId);
-            return View(questionEntity);
+            var questionVM = await _jShowService.GetQuestionByIdAsync(id);
+            return View(questionVM);
         }
 
         // POST: TriviaSpark/JShowQuestion/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CategoryId,Value,QuestionText,Answer,Theme,Id,CreatedDate,ModifiedDate,CreatedBy,ModifiedBy")] QuestionEntity questionEntity)
+        public async Task<IActionResult> Edit(string id, QuestionVM questionVM)
         {
-            if (id != questionEntity.Id)
+            if (id != questionVM.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(questionEntity);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuestionEntityExists(questionEntity.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                questionVM = await _jShowService.UpdateQuestionAsync(questionVM);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", questionEntity.CategoryId);
-            return View(questionEntity);
+            return View(questionVM);
         }
 
         // GET: TriviaSpark/JShowQuestion/Delete/5

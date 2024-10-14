@@ -2,7 +2,7 @@
   "menuItems": [
     {
       "text": "Pivot Table",
-      "url": "/DataSpark/pivottable"
+      "url": "/DataSpark/PivotTable"
     }
 
   ]
