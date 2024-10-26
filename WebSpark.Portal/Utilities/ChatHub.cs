@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
+using PromptSpark.Domain.Service;
 using System.Collections.Concurrent;
 
 namespace WebSpark.Portal.Utilities;
 public class ChatHub(
     ILogger<ChatHub> logger,
+    IGPTDefinitionService _gptDefinitionService,
     IChatCompletionService _chatCompletionService) : Hub
 {
+    private static readonly Dictionary<string, string> GptPrompts = new();
+
     public class ChatEntry
     {
         public DateTime Timestamp { get; set; }
@@ -17,15 +21,25 @@ public class ChatHub(
 
     private static readonly ConcurrentDictionary<string, List<ChatEntry>> ChatHistoryCache = new();
 
-    public async Task SendMessage(string user, string message, string conversationId = null)
+    public async Task SendMessage(string user, string message, string conversationId = null, string variantName = "helpful")
     {
+
+        if (GptPrompts.Count == 0)
+        {
+            var gptDefinitions = await _gptDefinitionService.GetDefinitionsAsync();
+            foreach (var gptDefinition in gptDefinitions) {
+                GptPrompts.Add(gptDefinition.Name, gptDefinition.Prompt);
+            }
+        }
+
+
         if (string.IsNullOrEmpty(conversationId))
         {
             conversationId = Context.ConnectionId;
         }
         if (!ChatHistoryCache.TryGetValue(conversationId, out List<ChatEntry>? value))
         {
-            value = new List<ChatEntry>();
+            value = [];
             ChatHistoryCache[conversationId] = value;
         }
         var timestamp = DateTime.Now;
@@ -33,8 +47,10 @@ public class ChatHub(
         // Broadcast the user's message to all clients with conversation ID
         await Clients.All.SendAsync("ReceiveMessage", user, message, conversationId);
 
+        // Check and apply the selected GPT type
+        var systemPrompt = GptPrompts.ContainsKey(variantName) ? GptPrompts[variantName] : GptPrompts["helpful"];
         var chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
+        chatHistory.AddSystemMessage(systemPrompt);
 
         foreach (var chatEntry in value)
         {
@@ -44,7 +60,7 @@ public class ChatHub(
         chatHistory.AddUserMessage(message);
 
         // Generate bot response with streaming
-        var botResponse = await GenerateStreamingBotResponse(chatHistory, conversationId);
+        var botResponse = await GenerateStreamingBotResponse(chatHistory, conversationId, variantName);
         value.Add(new ChatEntry
         {
             Timestamp = timestamp,
@@ -54,7 +70,7 @@ public class ChatHub(
         });
     }
 
-    private async Task<string> GenerateStreamingBotResponse(ChatHistory chatHistory, string conversationId)
+    private async Task<string> GenerateStreamingBotResponse(ChatHistory chatHistory, string conversationId, string variantName)
     {
         var buffer = new StringBuilder();
         var message = new StringBuilder();
@@ -70,7 +86,7 @@ public class ChatHub(
                     if (response.Content.Contains('\n'))
                     {
                         var contentToSend = buffer.ToString();
-                        await Clients.All.SendAsync("ReceiveMessage", "ChatBot", contentToSend, conversationId);
+                        await Clients.All.SendAsync("ReceiveMessage", variantName, contentToSend, conversationId);
                         message.Append(contentToSend);
                         buffer.Clear();
                     }
@@ -81,7 +97,7 @@ public class ChatHub(
             if (buffer.Length > 0)
             {
                 var remainingContent = buffer.ToString();
-                await Clients.All.SendAsync("ReceiveMessage", "ChatBot", remainingContent, conversationId);
+                await Clients.All.SendAsync("ReceiveMessage", variantName, remainingContent, conversationId);
                 message.Append(remainingContent);
             }
         }
