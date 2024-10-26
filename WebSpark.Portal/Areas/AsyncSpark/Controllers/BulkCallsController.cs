@@ -57,7 +57,7 @@ public class BulkCallsController(
             {
                 try
                 {
-                    // Get the async results
+                    // Index the async results
                     var result = await getRequestResult.HttpSendRequestResultAsync(statusCall, cts.Token);
                     lock (WriteLock)
                     {

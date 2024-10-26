@@ -23,7 +23,7 @@ public class ChatCompletionController(
     {
         try
         {
-            // Get the CSV output folder from configuration
+            // Index the CSV output folder from configuration
             string csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
             if (string.IsNullOrEmpty(csvOutputFolder))
             {
@@ -82,7 +82,7 @@ public class ChatCompletionController(
         {
             if (id == 0)
             {
-                // Get list of definitions
+                // Index list of definitions
                 var definitions = await definitionService.GetDefinitionsAsync();
                 logger.LogInformation("Retrieved {Count} definitions.", definitions.Count);
 

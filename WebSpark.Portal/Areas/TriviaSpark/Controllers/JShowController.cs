@@ -1,8 +1,6 @@
 ﻿using HttpClientUtility.MemoryCache;
-using System.Text.Json;
 using TriviaSpark.JShow.Models;
 using TriviaSpark.JShow.Service;
-using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 
@@ -10,7 +8,7 @@ public class JShowController(
     IMemoryCacheManager memoryCacheManager,
     IJShowService jShowService) : TriviaSparkBaseController(memoryCacheManager, jShowService)
 {
-
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var shows = await GetJShowList();
@@ -20,11 +18,12 @@ public class JShowController(
         }
         return View("Index", shows);
     }
+
+    [HttpGet]
     [Route("/TriviaSpark/JShow/{id}")]
     public async Task<IActionResult> JShow(string id)
     {
         var shows = await GetJShowList();
-
         // Find the selected show by show number
         var selectedShow = shows.FirstOrDefault(s => s.Theme.Equals(id, StringComparison.CurrentCultureIgnoreCase));
 
@@ -34,7 +33,7 @@ public class JShowController(
         }
         return View("JShow", selectedShow);
     }
-
+    [HttpGet]
     [Route("/TriviaSpark/JShow/Reveal")]
     public async Task<IActionResult> Reveal(string id, string showid)
     {

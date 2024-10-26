@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Recipes";
-    var categories = Model.Select(m => m.RecipeCategory.Name).Distinct().OrderBy(c => c).ToList(); // Get unique categories
+    var categories = Model.Select(m => m.RecipeCategory.Name).Distinct().OrderBy(c => c).ToList(); // Index unique categories
 }
 
 <h1>Recipes</h1>

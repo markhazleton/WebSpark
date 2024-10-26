@@ -3,17 +3,19 @@
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
 
 [Route("api/[area]/[controller]")]
-public class StatusController(ApplicationStatus applicationStatus) : AsyncSparkBaseController
+public class StatusController(ApplicationStatus applicationStatus) : BaseAsyncSparkApiController
 {
     /// <summary>
     /// Returns Current Application Status
     /// </summary>
     /// <returns></returns>
     [HttpGet]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [Route("")]
-    public ApplicationStatus Get()
+    public IActionResult Index()
     {
-        return applicationStatus;
+        return Ok(applicationStatus);
     }
 }
 

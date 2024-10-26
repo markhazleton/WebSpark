@@ -109,14 +109,11 @@ public class GPTDefinitionService(GPTDbContext context, IGPTService service) : I
     }
     public static string GetMd5HashBase64(string input)
     {
-        using (MD5 md5 = MD5.Create())
-        {
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-            byte[] hashBytes = md5.ComputeHash(inputBytes);
+        byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+        byte[] hashBytes = MD5.HashData(inputBytes);
 
-            // Convert the byte array to a Base64 string
-            return Convert.ToBase64String(hashBytes);
-        }
+        // Convert the byte array to a Base64 string
+        return Convert.ToBase64String(hashBytes);
     }
     public async Task<DefinitionDto> RefreshDefinitionResponses(int id)
     {

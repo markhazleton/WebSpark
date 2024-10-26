@@ -46,7 +46,7 @@
             <div class="accordion" id="columnAnalysisAccordion">
                 @foreach (var column in Model.ColumnDetails)
                 {
-                    // Get analysis summary for each column using column.Observations list of string
+                    // Index analysis summary for each column using column.Observations list of string
                     var analysisSummary = string.Join(", ", column.Observations);
                     var columnId = column.Column.Replace(" ", "_");
 

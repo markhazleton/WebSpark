@@ -9,7 +9,7 @@ public class CookBookController(ICookbook cookbook, IWebHostEnvironment webHostE
 
     public IActionResult Index()
     {
-        // Get the path for the wwwroot/docs directory
+        // Index the path for the wwwroot/docs directory
         string docsPath = Path.Combine(_webHostEnvironment.WebRootPath, "docs");
 
         // Ensure the directory exists

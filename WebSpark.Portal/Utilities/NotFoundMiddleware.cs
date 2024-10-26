@@ -1,6 +1,6 @@
 ﻿namespace WebSpark.Portal.Utilities;
 
-public class NotFoundMiddleware(RequestDelegate next)
+public class NotFoundMiddleware(RequestDelegate next, ILogger<NotFoundMiddleware> _logger)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -14,6 +14,7 @@ public class NotFoundMiddleware(RequestDelegate next)
             }
             else
             {
+                _logger.LogWarning("Response has already started, cannot reset status code");
                 return;
             }
 
@@ -61,6 +62,12 @@ public class NotFoundMiddleware(RequestDelegate next)
                     return;
                 }
             }
+            _logger.LogWarning("No redirect found for {RequestPath}", requestPath);
+
+            RedirectWithProtection(context, "/Error/404");
+
+
+
         }
     }
 

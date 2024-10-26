@@ -7,24 +7,24 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers;
 public class MenuController(
     ILogger<MenuController> _logger,
     IScopeInformation _scopeInfo,
-    IMenuService _menuService) : WebCMSBaseController
+    IMenuService menuService) : WebCMSBaseController
 {
     // GET: MenuController
     public ActionResult Index()
     {
-        return View(_menuService.GetAllMenuItems());
+        return View(menuService.GetAllMenuItems());
     }
 
     // GET: MenuController/Details/5
     public async Task<ActionResult> Details(int id)
     {
-        return View(await _menuService.GetMenuEditAsync(id));
+        return View(await menuService.GetMenuEditAsync(id));
     }
 
     // GET: MenuController/Create
     public async Task<ActionResult> Create()
     {
-        var item = await _menuService.GetMenuEditAsync(0);
+        var item = await menuService.GetMenuEditAsync(0);
         return View(item);
     }
 
@@ -51,7 +51,7 @@ public class MenuController(
                 menuToUpdate.Description = item.Description ?? menuToUpdate.Description;
                 menuToUpdate.DisplayInNavigation = item.DisplayInNavigation;
                 menuToUpdate.DisplayOrder = item.DisplayOrder;
-                var saveResult = _menuService.Save(menuToUpdate);
+                var saveResult = menuService.Save(menuToUpdate);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -64,7 +64,7 @@ public class MenuController(
     // GET: MenuController/Edit/5
     public async Task<ActionResult> Edit(int id)
     {
-        var item = await _menuService.GetMenuEditAsync(id);
+        var item = await menuService.GetMenuEditAsync(id);
         return View(item);
     }
 
@@ -81,7 +81,7 @@ public class MenuController(
     {
         try
         {
-            var menuToUpdate = _menuService.GetAllMenuItems().Where(w => w.Id == id).FirstOrDefault();
+            var menuToUpdate = menuService.GetAllMenuItems().Where(w => w.Id == id).FirstOrDefault();
             if (menuToUpdate != null)
             {
                 if (item.Controller == "Page")
@@ -112,7 +112,7 @@ public class MenuController(
                 menuToUpdate.Controller = item.Controller ?? menuToUpdate.Controller;
                 menuToUpdate.Action = item.Action ?? menuToUpdate.Action;
                 menuToUpdate.Argument = item.Argument ?? menuToUpdate.Argument;
-                var saveResult = _menuService.Save(menuToUpdate);
+                var saveResult = menuService.Save(menuToUpdate);
             }
             return RedirectToAction("Details", "Website", new { id = item.DomainID });
         }
@@ -125,7 +125,7 @@ public class MenuController(
     // GET: MenuController/Delete/5
     public async Task<ActionResult> Delete(int id)
     {
-        var item = await _menuService.GetMenuEditAsync(id);
+        var item = await menuService.GetMenuEditAsync(id);
         return View(item);
     }
 
@@ -136,7 +136,7 @@ public class MenuController(
     {
         try
         {
-            var deleteResult = await _menuService.DeleteMenuAsync(id);
+            var deleteResult = await menuService.DeleteMenuAsync(id);
 
             return RedirectToAction(nameof(Index));
         }

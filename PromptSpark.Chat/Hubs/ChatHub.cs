@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Collections.Concurrent;
+using System.Text;
 
-namespace WebSpark.Portal.Utilities;
-public class ChatHub(
-    ILogger<ChatHub> logger,
-    IChatCompletionService _chatCompletionService) : Hub
+namespace PromptSpark.Chat.Hubs;
+
+public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
 {
     public class ChatEntry
     {
@@ -16,17 +16,13 @@ public class ChatHub(
     }
 
     private static readonly ConcurrentDictionary<string, List<ChatEntry>> ChatHistoryCache = new();
+   
 
-    public async Task SendMessage(string user, string message, string conversationId = null)
+    public async Task SendMessage(string user, string message, string conversationId)
     {
-        if (string.IsNullOrEmpty(conversationId))
+        if (!ChatHistoryCache.ContainsKey(conversationId))
         {
-            conversationId = Context.ConnectionId;
-        }
-        if (!ChatHistoryCache.TryGetValue(conversationId, out List<ChatEntry>? value))
-        {
-            value = new List<ChatEntry>();
-            ChatHistoryCache[conversationId] = value;
+            ChatHistoryCache[conversationId] = new List<ChatEntry>();
         }
         var timestamp = DateTime.Now;
 
@@ -36,7 +32,7 @@ public class ChatHub(
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
 
-        foreach (var chatEntry in value)
+        foreach (var chatEntry in ChatHistoryCache[conversationId])
         {
             chatHistory.AddUserMessage(chatEntry.UserMessage);
             chatHistory.AddSystemMessage(chatEntry.BotResponse);
@@ -45,7 +41,9 @@ public class ChatHub(
 
         // Generate bot response with streaming
         var botResponse = await GenerateStreamingBotResponse(chatHistory, conversationId);
-        value.Add(new ChatEntry
+
+        // Add the message to the in-memory cache
+        ChatHistoryCache[conversationId].Add(new ChatEntry
         {
             Timestamp = timestamp,
             User = user,
@@ -71,6 +69,7 @@ public class ChatHub(
                     {
                         var contentToSend = buffer.ToString();
                         await Clients.All.SendAsync("ReceiveMessage", "ChatBot", contentToSend, conversationId);
+                        await AppendToCsvLog(conversationId, "System", contentToSend); // Log system message
                         message.Append(contentToSend);
                         buffer.Clear();
                     }
@@ -83,20 +82,23 @@ public class ChatHub(
                 var remainingContent = buffer.ToString();
                 await Clients.All.SendAsync("ReceiveMessage", "ChatBot", remainingContent, conversationId);
                 message.Append(remainingContent);
+                await AppendToCsvLog(conversationId, "System", remainingContent); // Log remaining content
             }
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error in generating bot response");
+            // Log the error and notify clients
+            Console.WriteLine($"Error in generating bot response: {ex.Message}");
             message.Append("An error occurred while processing your request.");
             await Clients.Caller.SendAsync("ReceiveMessage", "System", "An error occurred while processing your request.");
         }
-        LogConversation(conversationId, "System", message.ToString()); // Log remaining content
         return message.ToString();
     }
 
-    private void LogConversation(string conversationId, string sender, string message)
+    private async Task AppendToCsvLog(string conversationId, string sender, string message)
     {
-        logger.LogInformation("{Timestamp}, {ConversationId}, {Sender}: {Message}", DateTime.Now, conversationId, sender, message);
+        // Log messages to a CSV or other logging mechanism here
+        // For simplicity, we'll print the log here
+        Console.WriteLine($"{DateTime.Now}, {conversationId}, {sender}: {message}");
     }
 }

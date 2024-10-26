@@ -104,6 +104,13 @@ builder.Services.AddIdentity<WebSparkUser, IdentityRole>()
 RegisterHttpClientUtilities(builder);
 
 // ========================
+// Add OpenAPI/Swagger generation
+//  ========================
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+// ========================
 // OpenWeatherMap Client
 // ========================
 builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
@@ -153,7 +160,7 @@ builder.Services.AddScoped<IJShowService>(serviceProvider =>
     JShowConfig config = new() { JsonOutputFolder = jsonFolder };
     // get JShowDbContext from the service provider
     var dbContext = serviceProvider.GetRequiredService<JShowDbContext>();
-    JShowService service = new(dbContext,config);
+    JShowService service = new(dbContext, config);
     return service;
 });
 
@@ -214,10 +221,19 @@ var app = builder.Build();
 app.UseMiddleware<NotFoundMiddleware>();
 
 
+// Enable Swagger in development mode
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.RoutePrefix = "/swagger";  // To serve Swagger UI at the app's root URL
+});
+
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+
 }
 else
 {
@@ -250,6 +266,7 @@ app.UseCors("AllowAllOrigins"); // Apply CORS policy for SignalR
 // ========================
 // Endpoint Configuration
 // ========================
+//app.UseStatusCodePagesWithReExecute("/Error/{0}");
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "areaRoute",
