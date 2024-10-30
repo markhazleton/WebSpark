@@ -17,7 +17,6 @@ public class WebRouteValueTransformer(ILogger<WebRouteValueTransformer> logger) 
     public override ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
     {
         var route = httpContext?.Request?.Path.Value?.ToLower();
-
         if (string.IsNullOrEmpty(route))
         {
             logger.LogError("Route is null or empty");
@@ -31,10 +30,8 @@ public class WebRouteValueTransformer(ILogger<WebRouteValueTransformer> logger) 
             || HandleBlogLinks(route, values)
             || HandleAdmin(route, values))
         {
-            logger.LogInformation("Route handled: {route}", route);
             return new ValueTask<RouteValueDictionary>(values);
         }
-
         return HandleBaseView(httpContext, route, values);
     }
 

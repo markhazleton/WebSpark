@@ -1,0 +1,12 @@
+### Start Workflow
+GET http://localhost:5058/api/workflow/start
+Content-Type: application/json
+
+### Get Node by ID
+# Replace {nodeId} with the actual node ID you want to test.
+GET http://localhost:5058/api/workflow/{nodeId}
+Content-Type: application/json
+
+### Example for a specific node ID
+GET http://localhost:5058/api/workflow/node1
+Content-Type: application/json

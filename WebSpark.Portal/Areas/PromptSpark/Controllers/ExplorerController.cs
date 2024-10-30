@@ -105,7 +105,6 @@ public class ExplorerController(
     [HttpGet]
     public async Task<IActionResult> Details(string id, int UserPromptId = 0)
     {
-        logger.LogInformation("Entering Details method with DefinitionType: {DefinitionType}, UserPromptId: {UserPromptId}.", id, UserPromptId);
         try
         {
             var definitionType = await typeService.GetGPTDefinitionTypeByKey(id);
@@ -119,12 +118,12 @@ public class ExplorerController(
                 .Prompts.Where(w => w.UserPromptId == UserPromptId)
                 .FirstOrDefault()?.UserPromptId ?? 0;
 
-            logger.LogInformation("Details retrieved successfully for DefinitionType: {DefinitionType}.", id);
+            logger.LogInformation("Details retrieved successfully for DefinitionType: {DefinitionType}, UserPromptId: {UserPromptId}.", id, UserPromptId);
             return View(definitionType);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while retrieving details for DefinitionType: {DefinitionType}.", id);
+            logger.LogError(ex, "An error occurred while retrieving details for DefinitionType: {DefinitionType}, UserPromptId: {UserPromptId}.", id, UserPromptId);
             return View("Error");
         }
     }

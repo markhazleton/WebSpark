@@ -1,0 +1,22 @@
+﻿@using PromptSpark.Chat.Models;
+@using System.Reflection;
+@{
+    var currentYear = DateTime.Now.Year.ToString();
+    var status = new ApplicationStatus(Assembly.GetExecutingAssembly());
+}
+<footer class="container-fluid mt-auto border-top footer bg-dark d-print-none">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12" style="float:left">
+                Version: @status.BuildVersion?.ToString() <br />
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12" style="text-align:center;">
+                &copy; 2020-@currentYear PromptSpark.Chat <br />
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12" style="float:right">
+                Last Built: @status.BuildDate.ToLocalTime().ToLongDateString() <br />
+                <a href="https://markhazleton.com" title="Mark Hazleton, Solutions Architect, Lifelong Learner, not sidetracked by sizzle" target="_blank">Mark Hazleton</a>
+            </div>
+        </div>
+    </div>
+</footer>

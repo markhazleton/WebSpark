@@ -1,28 +1,20 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
+using PromptSpark.Chat.PromptFlow;
 using System.Collections.Concurrent;
 using System.Text;
 
 namespace PromptSpark.Chat.Hubs;
-
 public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
 {
-    public class ChatEntry
-    {
-        public DateTime Timestamp { get; set; }
-        public string User { get; set; }
-        public string UserMessage { get; set; }
-        public string BotResponse { get; set; }
-    }
-
     private static readonly ConcurrentDictionary<string, List<ChatEntry>> ChatHistoryCache = new();
-   
 
     public async Task SendMessage(string user, string message, string conversationId)
     {
-        if (!ChatHistoryCache.ContainsKey(conversationId))
+        if (!ChatHistoryCache.TryGetValue(conversationId, out List<ChatEntry>? value))
         {
-            ChatHistoryCache[conversationId] = new List<ChatEntry>();
+            value = ([]);
+            ChatHistoryCache[conversationId] = value;
         }
         var timestamp = DateTime.Now;
 
@@ -32,7 +24,7 @@ public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
 
-        foreach (var chatEntry in ChatHistoryCache[conversationId])
+        foreach (var chatEntry in value)
         {
             chatHistory.AddUserMessage(chatEntry.UserMessage);
             chatHistory.AddSystemMessage(chatEntry.BotResponse);
@@ -41,9 +33,7 @@ public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
 
         // Generate bot response with streaming
         var botResponse = await GenerateStreamingBotResponse(chatHistory, conversationId);
-
-        // Add the message to the in-memory cache
-        ChatHistoryCache[conversationId].Add(new ChatEntry
+        value.Add(new ChatEntry
         {
             Timestamp = timestamp,
             User = user,
@@ -69,7 +59,7 @@ public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
                     {
                         var contentToSend = buffer.ToString();
                         await Clients.All.SendAsync("ReceiveMessage", "ChatBot", contentToSend, conversationId);
-                        await AppendToCsvLog(conversationId, "System", contentToSend); // Log system message
+                        await LogToConsole(conversationId, "System", contentToSend); // Log system message
                         message.Append(contentToSend);
                         buffer.Clear();
                     }
@@ -82,7 +72,7 @@ public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
                 var remainingContent = buffer.ToString();
                 await Clients.All.SendAsync("ReceiveMessage", "ChatBot", remainingContent, conversationId);
                 message.Append(remainingContent);
-                await AppendToCsvLog(conversationId, "System", remainingContent); // Log remaining content
+                await LogToConsole(conversationId, "System", remainingContent); // Log remaining content
             }
         }
         catch (Exception ex)
@@ -95,10 +85,8 @@ public class ChatHub(IChatCompletionService _chatCompletionService) : Hub
         return message.ToString();
     }
 
-    private async Task AppendToCsvLog(string conversationId, string sender, string message)
+    private async Task LogToConsole(string conversationId, string sender, string message)
     {
-        // Log messages to a CSV or other logging mechanism here
-        // For simplicity, we'll print the log here
         Console.WriteLine($"{DateTime.Now}, {conversationId}, {sender}: {message}");
     }
 }

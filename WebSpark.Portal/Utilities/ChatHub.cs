@@ -48,10 +48,10 @@ public class ChatHub(
         await Clients.All.SendAsync("ReceiveMessage", user, message, conversationId);
 
         // Check and apply the selected GPT type
-        var systemPrompt = GptPrompts.ContainsKey(variantName) ? GptPrompts[variantName] : GptPrompts["helpful"];
+        var systemPrompt = GptPrompts.ContainsKey(variantName) ? GptPrompts[variantName] : "You are a general GPT for conversation";
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage(systemPrompt);
-
+        chatHistory.AddSystemMessage("You are a friendly and conversational assistant. Provide clear, engaging answers that invite further questions. Keep responses concise but leave room for curiosity, offering details that might naturally lead to follow-up questions. Use simple language, and if appropriate, suggest related topics to keep the conversation flowing.");
         foreach (var chatEntry in value)
         {
             chatHistory.AddUserMessage(chatEntry.UserMessage);

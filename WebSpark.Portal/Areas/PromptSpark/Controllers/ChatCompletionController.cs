@@ -150,7 +150,7 @@ public class ChatCompletionController(
 
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage(definitionDto.Prompt);
-        chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
+        chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions.");
 
         // Parse the conversationHistory JSON string into a list of messages
         List<string> messages;

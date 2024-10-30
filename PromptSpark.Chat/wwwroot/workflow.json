@@ -1,0 +1,169 @@
+{
+  "workflowId": "chatAssistantSelection",
+  "startNode": "node1",
+  "nodes": [
+    {
+      "id": "node1",
+      "question": "Welcome! Do you want to proceed to chat assistant selection?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "node2"
+        },
+        {
+          "response": "No",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "node2",
+      "question": "Choose your chat assistant category:",
+      "answers": [
+        {
+          "response": "General Assistants",
+          "nextNode": "node3"
+        },
+        {
+          "response": "Specialized Assistants",
+          "nextNode": "node7"
+        }
+      ]
+    },
+    {
+      "id": "node3",
+      "question": "Select your general chat assistant:",
+      "answers": [
+        {
+          "response": "Keller",
+          "nextNode": "node4"
+        },
+        {
+          "response": "Wichita",
+          "nextNode": "node5"
+        }
+      ]
+    },
+    {
+      "id": "node4",
+      "question": "You've chosen Keller. Would you like to switch to another assistant or continue with Keller?",
+      "answers": [
+        {
+          "response": "Switch",
+          "nextNode": "node2"
+        },
+        {
+          "response": "Continue",
+          "nextNode": "node6"
+        }
+      ]
+    },
+    {
+      "id": "node5",
+      "question": "You've chosen Wichita. Would you like to switch to another assistant or continue with Wichita?",
+      "answers": [
+        {
+          "response": "Switch",
+          "nextNode": "node2"
+        },
+        {
+          "response": "Continue",
+          "nextNode": "node6"
+        }
+      ]
+    },
+    {
+      "id": "node6",
+      "question": "You are now chatting with your selected assistant. Would you like to end the chat or return to the main menu?",
+      "answers": [
+        {
+          "response": "End Chat",
+          "nextNode": "end"
+        },
+        {
+          "response": "Main Menu",
+          "nextNode": "node2"
+        }
+      ]
+    },
+    {
+      "id": "node7",
+      "question": "Choose a specialized chat assistant:",
+      "answers": [
+        {
+          "response": "Pirate",
+          "nextNode": "node8"
+        },
+        {
+          "response": "Rotary",
+          "nextNode": "node9"
+        },
+        {
+          "response": "Sarcastic",
+          "nextNode": "node10"
+        }
+      ]
+    },
+    {
+      "id": "node8",
+      "question": "You've selected Pirate. Arr, matey! Would you like to switch or continue chatting with Pirate?",
+      "answers": [
+        {
+          "response": "Switch",
+          "nextNode": "node2"
+        },
+        {
+          "response": "Continue",
+          "nextNode": "node11"
+        }
+      ]
+    },
+    {
+      "id": "node9",
+      "question": "You've selected Rotary. Would you like to switch or continue chatting with Rotary?",
+      "answers": [
+        {
+          "response": "Switch",
+          "nextNode": "node2"
+        },
+        {
+          "response": "Continue",
+          "nextNode": "node11"
+        }
+      ]
+    },
+    {
+      "id": "node10",
+      "question": "You've selected Sarcastic. Are you sure you can handle the sarcasm? Switch or continue?",
+      "answers": [
+        {
+          "response": "Switch",
+          "nextNode": "node2"
+        },
+        {
+          "response": "Continue",
+          "nextNode": "node11"
+        }
+      ]
+    },
+    {
+      "id": "node11",
+      "question": "You are now chatting with your selected specialized assistant. Would you like to end the chat or return to the main menu?",
+      "answers": [
+        {
+          "response": "End Chat",
+          "nextNode": "end"
+        },
+        {
+          "response": "Main Menu",
+          "nextNode": "node2"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "question": "Thank you for using the chat assistant selection workflow. Have a great day!",
+      "answers": []
+    }
+  ]
+}
