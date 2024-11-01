@@ -2,6 +2,17 @@
 
 namespace PromptSpark.Chat.PromptFlow;
 
+public class Conversation
+{
+    public string UserName { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
+    public string PromptName { get; set; } = "helpful";
+    public List<ChatEntry> ChatHistory { get; set; } = [];
+    public Workflow Workflow { get; set; }
+    public string CurrentNodeId { get; set; }
+    public string ConversationId { get; set; }
+}
+
 public class ChatEntry
 {
     public DateTime Timestamp { get; set; }
@@ -9,6 +20,7 @@ public class ChatEntry
     public string UserMessage { get; set; }
     public string BotResponse { get; set; }
 }
+
 
 public class Workflow
 {
@@ -41,6 +53,11 @@ public class Answer
 
     [JsonPropertyName("nextNode")]
     public string NextNode { get; set; }
+}
+public class OptionResponse
+{
+    [JsonPropertyName("response")]
+    public string Response { get; set; }
 }
 
 public class WorkflowNodeResponse

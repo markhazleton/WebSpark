@@ -1,6 +1,9 @@
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 using PromptSpark.Chat.Hubs;
 using Scalar.AspNetCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,15 +34,22 @@ builder.Services.AddHttpClient("workflow", client =>
 
     if (!string.IsNullOrEmpty(urls))
     {
-        try
+        if (!string.IsNullOrEmpty(urls))
         {
-            var uri = new Uri(urls.Split(';').FirstOrDefault());
-            uriBuilder.Host = uri.Host;
-            uriBuilder.Port = uri.Port;
-        }
-        catch (UriFormatException)
-        {
-            // Log or handle URI parse error if needed
+            try
+            {
+                var firstUrl = urls.Split(';').FirstOrDefault();
+                if (!string.IsNullOrEmpty(firstUrl))
+                {
+                    var uri = new Uri(firstUrl);
+                    uriBuilder.Host = uri.Host;
+                    uriBuilder.Port = uri.Port;
+                }
+            }
+            catch (UriFormatException)
+            {
+                // Log or handle URI parse error if needed
+            }
         }
     }
     client.BaseAddress = uriBuilder.Uri;
@@ -52,6 +62,21 @@ builder.Services.AddHttpClient("workflow", client =>
 string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
 builder.Services.AddOpenAIChatCompletion(modelId, apikey);
+
+// Register ChatHub with workflow JSON as a parameter
+builder.Services.AddSingleton<ChatHub>(provider =>
+{
+    JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+    var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "workflow.json");
+    var jsonTemplate = System.IO.File.ReadAllText(jsonPath);
+    var logger = provider.GetRequiredService<ILogger<ChatHub>>();
+    var chatCompletionService = provider.GetRequiredService<IChatCompletionService>();
+    return new ChatHub(logger, chatCompletionService, jsonTemplate);
+});
 
 var app = builder.Build();
 
@@ -70,6 +95,5 @@ app.MapControllerRoute(
 
 // Map SignalR hubs
 app.MapHub<ChatHub>("/chatHub");
-app.MapHub<WorkflowHub>("/workflowHub");
 
 app.Run();

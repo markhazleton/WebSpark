@@ -1,7 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
 }
 
 @section HeadScripts {
@@ -22,6 +19,7 @@
             <div id="chatWindow" style="display: none;">
                 <ul id="messagesList" class="list-unstyled mb-3 p-3 border rounded bg-white" style="height: 300px; overflow-y: scroll;">
                 </ul>
+                <div id="optionsContainer" class="d-flex flex-wrap gap-2 mb-3" style="display: none;"></div>
                 <div class="input-group">
                     <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." />
                     <button class="btn btn-primary" onclick="sendMessage()">Send</button>
@@ -31,17 +29,18 @@
     </div>
 </div>
 
-
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.9/signalr.min.js"></script>
     <script>
-          const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/chatHub")
-            .configureLogging(signalR.LogLevel.Information)
-            .build();
+        const connection = new signalR.HubConnectionBuilder()
+          .withUrl("/chatHub")
+          .configureLogging(signalR.LogLevel.Information)
+          .build();
 
         let userName = "";
         let conversationId = localStorage.getItem("conversationId") || generateConversationId();
-        let botMessageElement = null; // Reference to current bot message line
+        let botMessageElement = null;
+        let inWorkflow = false;
         localStorage.setItem("conversationId", conversationId);
 
         function generateConversationId() {
@@ -58,41 +57,86 @@
             }
         }
 
+        async function startWorkflow() {
+            try {
+                await connection.invoke("StartWorkflow", conversationId);
+                inWorkflow = true;
+            } catch (err) {
+                console.error("Workflow initiation failed: ", err);
+            }
+        }
+
+        connection.on("ReceiveMessagePackage", (responsePackage) => {
+            const messagesList = document.getElementById("messagesList");
+            const optionsContainer = document.getElementById("optionsContainer");
+
+            const questionLi = document.createElement("li");
+            questionLi.classList.add("mb-2");
+            questionLi.innerHTML = `<strong>PromptSpark:</strong> ${responsePackage.question || "No question provided."}`;
+            messagesList.appendChild(questionLi);
+
+            optionsContainer.innerHTML = "";
+
+            if (Array.isArray(responsePackage.options) && responsePackage.options.length > 0) {
+                responsePackage.options.forEach(option => {
+                    const button = document.createElement("button");
+                    button.classList.add("btn", "btn-secondary", "me-2");
+                    button.textContent = option.response;
+                    button.onclick = () => progressWorkflow(option.response);
+                    optionsContainer.appendChild(button);
+                });
+                optionsContainer.style.display = "flex";
+            } else {
+                optionsContainer.style.display = "none";
+            }
+
+            messagesList.scrollTop = messagesList.scrollHeight;
+        });
+
         connection.on("ReceiveMessage", (user, message) => {
             const messagesList = document.getElementById("messagesList");
+            const optionsContainer = document.getElementById("optionsContainer");
 
-            if (user === "ChatBot") {
-                // Create a new message line for each new ChatBot response
+            optionsContainer.style.display = "none";
+
+            if (user === "PromptSpark") {
                 if (!botMessageElement) {
                     botMessageElement = document.createElement("li");
                     botMessageElement.classList.add("mb-2");
-                    botMessageElement.setAttribute("data-user", "ChatBot");
+                    botMessageElement.setAttribute("data-user", "PromptSpark");
                     botMessageElement.innerHTML = `<strong>${user}:</strong> <span class="bot-message-content"></span>`;
                     messagesList.appendChild(botMessageElement);
                 }
-                // Append each word to the bot message content span
                 botMessageElement.querySelector(".bot-message-content").textContent += message + " ";
             } else {
-                // Reset botMessageElement for a new bot response line in the next round
                 botMessageElement = null;
-
-                // Create a new message element for the user
                 const li = document.createElement("li");
                 li.classList.add("mb-2");
                 li.innerHTML = `<strong>${user}:</strong> ${message}`;
                 messagesList.appendChild(li);
             }
-
-            // Scroll to the bottom of the chat
             messagesList.scrollTop = messagesList.scrollHeight;
         });
 
-        function joinChat() {
+        async function joinChat() {
             userName = document.getElementById("userInput").value.trim();
             if (userName) {
                 document.getElementById("userForm").style.display = "none";
                 document.getElementById("chatWindow").style.display = "block";
                 document.getElementById("messageInput").focus();
+                // Set the user name on the server
+                await connection.invoke("SetUserName", conversationId, userName);
+                // Start the workflow
+                startWorkflow();
+            }
+        }
+
+
+        async function progressWorkflow(response) {
+            try {
+                await connection.invoke("ProgressWorkflow", conversationId, response);
+            } catch (err) {
+                console.error("ProgressWorkflow failed: ", err);
             }
         }
 
@@ -100,7 +144,11 @@
             const message = document.getElementById("messageInput").value.trim();
             if (userName && message) {
                 try {
-                    await connection.invoke("SendMessage", userName, message, conversationId);
+                    if (inWorkflow) {
+                        await progressWorkflow(message);
+                    } else {
+                        await connection.invoke("SendMessage", userName, message, conversationId);
+                    }
                     document.getElementById("messageInput").value = '';
                 } catch (err) {
                     console.error("SendMessage failed: ", err);
@@ -108,7 +156,6 @@
             }
         }
 
-        // Listen for Enter key on message input to send message
         document.getElementById("messageInput").addEventListener("keypress", function (event) {
             if (event.key === "Enter") {
                 event.preventDefault();
