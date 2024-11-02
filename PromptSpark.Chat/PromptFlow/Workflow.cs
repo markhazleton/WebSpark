@@ -1,6 +1,38 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.Extensions.Options;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PromptSpark.Chat.PromptFlow;
+
+
+public interface IWorkflowLoader
+{
+    Workflow LoadWorkflow();
+}
+public class WorkflowOptions
+{
+    public string FilePath { get; set; } = "wwwroot/workflow.json";
+}
+
+public class WorkflowLoader : IWorkflowLoader
+{
+    private readonly WorkflowOptions _options;
+    private readonly JsonSerializerOptions _jsonOptions;
+
+    public WorkflowLoader(IOptions<WorkflowOptions> options, JsonSerializerOptions jsonOptions)
+    {
+        _options = options.Value;
+        _jsonOptions = jsonOptions;
+    }
+
+    public Workflow LoadWorkflow()
+    {
+        var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), _options.FilePath);
+        var jsonTemplate = File.ReadAllText(jsonPath);
+        return JsonSerializer.Deserialize<Workflow>(jsonTemplate, _jsonOptions)
+               ?? throw new InvalidOperationException("Failed to load Workflow configuration.");
+    }
+}
 
 public class Conversation
 {

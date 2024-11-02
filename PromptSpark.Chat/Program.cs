@@ -1,6 +1,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using PromptSpark.Chat.Hubs;
+using PromptSpark.Chat.PromptFlow;
 using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -61,22 +62,33 @@ builder.Services.AddHttpClient("workflow", client =>
 // ========================
 string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
-builder.Services.AddOpenAIChatCompletion(modelId, apikey);
 
-// Register ChatHub with workflow JSON as a parameter
+builder.Services.AddOpenAIChatCompletion(modelId, apikey);
+builder.Services.AddSingleton<IWorkflowLoader, WorkflowLoader>();
+builder.Services.Configure<WorkflowOptions>(builder.Configuration.GetSection("Workflow"));
+
+// Configure JsonSerializerOptions
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+});
+
+// Register ConcurrentDictionaryService for Conversation
+builder.Services.AddSingleton<ConcurrentDictionaryService<Conversation>>();
+
+// Register ChatHub with all dependencies injected
 builder.Services.AddSingleton<ChatHub>(provider =>
 {
-    JsonSerializerOptions _jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-    var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "workflow.json");
-    var jsonTemplate = System.IO.File.ReadAllText(jsonPath);
     var logger = provider.GetRequiredService<ILogger<ChatHub>>();
     var chatCompletionService = provider.GetRequiredService<IChatCompletionService>();
-    return new ChatHub(logger, chatCompletionService, jsonTemplate);
+    var workflowLoader = provider.GetRequiredService<IWorkflowLoader>();
+    var workflow = workflowLoader.LoadWorkflow();
+    var chatHistoryService = provider.GetRequiredService<ConcurrentDictionaryService<Conversation>>();
+
+    return new ChatHub(logger, chatCompletionService, workflow, chatHistoryService);
 });
+
 
 var app = builder.Build();
 
