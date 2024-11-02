@@ -35,18 +35,18 @@
       "question": "Select your general chat assistant:",
       "answers": [
         {
-          "response": "Keller",
+          "response": "Keller, Texas Expert",
           "nextNode": "node4"
         },
         {
-          "response": "Wichita",
+          "response": "Wichita, Kansas Expert",
           "nextNode": "node5"
         }
       ]
     },
     {
       "id": "node4",
-      "question": "You've chosen Keller. Would you like to switch to another assistant or continue with Keller?",
+      "question": "You've chosen Keller, Texas. Would you like to switch to another assistant or continue with Keller?",
       "answers": [
         {
           "response": "Switch",
@@ -60,7 +60,7 @@
     },
     {
       "id": "node5",
-      "question": "You've chosen Wichita. Would you like to switch to another assistant or continue with Wichita?",
+      "question": "You've chosen Wichita, Kansas. Would you like to switch to another assistant or continue with Wichita?",
       "answers": [
         {
           "response": "Switch",
@@ -91,22 +91,22 @@
       "question": "Choose a specialized chat assistant:",
       "answers": [
         {
-          "response": "Pirate",
+          "response": "Talk Like A Pirate",
           "nextNode": "node8"
         },
         {
-          "response": "Rotary",
+          "response": "Rotary International",
           "nextNode": "node9"
         },
         {
-          "response": "Sarcastic",
+          "response": "Sarcastic Teenager",
           "nextNode": "node10"
         }
       ]
     },
     {
       "id": "node8",
-      "question": "You've selected Pirate. Arr, matey! Would you like to switch or continue chatting with Pirate?",
+      "question": "You've selected talk like a Pirate. Arr, matey! Would you like to switch or continue chatting with Pirate?",
       "answers": [
         {
           "response": "Switch",
@@ -120,7 +120,7 @@
     },
     {
       "id": "node9",
-      "question": "You've selected Rotary. Would you like to switch or continue chatting with Rotary?",
+      "question": "You've selected Rotary International. Would you like to switch or continue chatting with Rotary?",
       "answers": [
         {
           "response": "Switch",
@@ -134,7 +134,7 @@
     },
     {
       "id": "node10",
-      "question": "You've selected Sarcastic. Are you sure you can handle the sarcasm? Switch or continue?",
+      "question": "You've selected Sarcastic Teenager. Are you sure you can handle the sarcasm? Switch or continue?",
       "answers": [
         {
           "response": "Switch",

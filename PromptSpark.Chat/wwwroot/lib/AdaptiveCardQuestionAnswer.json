@@ -1,0 +1,26 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "{Question}",
+      "wrap": true,
+      "size": "Medium",
+      "weight": "Bolder"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Select an option below:",
+      "wrap": true,
+      "separator": true
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        // Option buttons will be dynamically inserted here
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+}

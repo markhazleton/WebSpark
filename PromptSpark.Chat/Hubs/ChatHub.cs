@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.VisualBasic;
 using PromptSpark.Chat.PromptFlow;
 using System.Collections.Concurrent;
 using System.Text;
@@ -75,8 +76,8 @@ public class ChatHub : Hub
 
         foreach (var chatEntry in conversation.ChatHistory)
         {
-            chatHistory.AddUserMessage(chatEntry.UserMessage);
-            chatHistory.AddSystemMessage(chatEntry.BotResponse);
+            if(chatEntry.UserMessage != null)
+                chatHistory.AddUserMessage(chatEntry.UserMessage);
         }
 
         chatHistory.AddUserMessage(message);
@@ -99,7 +100,7 @@ public class ChatHub : Hub
     {
         await ProgressWorkflow(conversationId, null);
     }
-    public async Task ProgressWorkflow(string conversationId, string? userResponse)
+    public async Task ProgressWorkflow(string conversationId, string userResponse)
     {
         if (!ChatHistoryCache.TryGetValue(conversationId, out var conversation))
         {
@@ -128,7 +129,7 @@ public class ChatHub : Hub
                 Timestamp = timestamp,
                 User = conversation.UserName ?? "User",
                 UserMessage = userResponse,
-                BotResponse = string.Empty // Placeholder for bot's response
+                BotResponse = currentNode.Question // Placeholder for bot's response
             });
 
             if (userResponse != null)
@@ -143,6 +144,13 @@ public class ChatHub : Hub
                 else
                 {
                     var chatHistory = new ChatHistory();
+                    foreach(var chatEntry in conversation.ChatHistory)
+                    {
+                        if (chatEntry.UserMessage != null)
+                            chatHistory.AddUserMessage(chatEntry.UserMessage);
+                        if (chatEntry.BotResponse != null)
+                            chatHistory.AddSystemMessage(chatEntry.BotResponse);
+                    }
                     chatHistory.AddUserMessage(userResponse);
 
                     await EngageChatAgent(chatHistory, conversationId);
@@ -150,20 +158,52 @@ public class ChatHub : Hub
                 }
             }
 
-            var responsePackage = new
+            // Prepare the AdaptiveCard content
+            // Prepare the AdaptiveCard content
+            var adaptiveCard = new Dictionary<string, object>
+{
+    { "type", "AdaptiveCard" },
+    { "version", "1.3" },
+    { "body", new object[]
+        {
+            new Dictionary<string, object>
             {
-                Question = currentNode.Question,
-                Options = currentNode.Answers?.Select(answer => new OptionResponse
-                {
-                    Response = answer.Response
-                }).ToList() ?? new List<OptionResponse>()
-            };
+                { "type", "TextBlock" },
+                { "text", currentNode.Question ?? "No question provided." },
+                { "wrap", true },
+                { "size", "Medium" },
+                { "weight", "Bolder" }
+            },
+            new Dictionary<string, object>
+            {
+                { "type", "TextBlock" },
+                { "text", "Select an option below:" },
+                { "wrap", true },
+                { "separator", true }
+            },
+            new Dictionary<string, object>
+            {
+                { "type", "ActionSet" },
+                { "actions", currentNode.Answers?.Select(answer => new Dictionary<string, object>
+                    {
+                        { "type", "Action.Submit" },
+                        { "title", answer.Response },
+                        { "data", new { option = answer.Response } }
+                    }).ToArray() ?? Array.Empty<object>()
+                }
+            }
+        }
+    },
+    { "$schema", "http://adaptivecards.io/schemas/adaptive-card.json" }
+};
 
-            _logger.LogInformation("ResponsePackage being sent: Question: {Question}, Options: {Options}",
-                       responsePackage.Question,
-                       JsonSerializer.Serialize(responsePackage.Options));
+            // Convert the AdaptiveCard object to JSON
+            var adaptiveCardJson = JsonSerializer.Serialize(adaptiveCard);
 
-            await Clients.Caller.SendAsync("ReceiveMessagePackage", responsePackage);
+            _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
+
+            // Send the AdaptiveCard JSON to the client
+            await Clients.Caller.SendAsync("ReceiveAdaptiveCard", adaptiveCardJson);
         }
         catch (Exception ex)
         {
