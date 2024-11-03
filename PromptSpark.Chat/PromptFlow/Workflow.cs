@@ -36,6 +36,17 @@ public class WorkflowLoader : IWorkflowLoader
 
 public class Conversation
 {
+    public Conversation()
+    {
+        
+    }
+    public Conversation(Workflow workflow,string conversationId,string? userName)
+    {
+        UserName = userName ?? "Anonymous";
+        ConversationId = conversationId;
+        Workflow = workflow;
+        CurrentNodeId = workflow.StartNode;
+    }
     public string UserName { get; set; }
     public DateTime StartDate { get; set; } = DateTime.Now;
     public string PromptName { get; set; } = "helpful";

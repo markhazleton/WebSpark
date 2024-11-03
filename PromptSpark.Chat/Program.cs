@@ -76,6 +76,7 @@ builder.Services.AddSingleton(new JsonSerializerOptions
 
 // Register ConcurrentDictionaryService for Conversation
 builder.Services.AddSingleton<ConcurrentDictionaryService<Conversation>>();
+builder.Services.AddSingleton<IChatService, ChatService>();
 
 // Register ChatHub with all dependencies injected
 builder.Services.AddSingleton<ChatHub>(provider =>
@@ -85,8 +86,8 @@ builder.Services.AddSingleton<ChatHub>(provider =>
     var workflowLoader = provider.GetRequiredService<IWorkflowLoader>();
     var workflow = workflowLoader.LoadWorkflow();
     var chatHistoryService = provider.GetRequiredService<ConcurrentDictionaryService<Conversation>>();
-
-    return new ChatHub(logger, chatCompletionService, workflow, chatHistoryService);
+    var chatService = provider.GetRequiredService<IChatService>();
+    return new ChatHub(logger, workflow, chatHistoryService,chatService);
 });
 
 
