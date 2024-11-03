@@ -24,11 +24,6 @@ public class ChatHub : Hub
         _chatService = chatService;
     }
 
-    private Task BroadcastUserMessage(string conversationId, string user, string message)
-    {
-        return Clients.All.SendAsync("ReceiveMessage", user, message, conversationId);
-    }
-
     private static ChatHistory BuildChatHistoryFromConversation(Conversation conversation)
     {
         var chatHistory = new ChatHistory();
@@ -130,9 +125,8 @@ public class ChatHub : Hub
                 await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "Error in workflow progression. Returning to the current node.");
                 return;
             }
-
             var timestamp = DateTime.Now;
-            await BroadcastUserMessage(conversationId, conversation.UserName ?? "User", userResponse);
+            await Clients.All.SendAsync("ReceiveMessage", conversation.UserName ?? "User", userResponse, conversationId);
 
             conversation.ChatHistory.Add(CreateChatEntry(conversation.UserName ?? "User", userResponse, timestamp, currentNode.Question));
 
@@ -171,19 +165,13 @@ public class ChatHub : Hub
     public async Task SendMessage(string message, string conversationId)
     {
         var conversation = _ConversationDictionary.Lookup(conversationId) ?? new Conversation(_workflow, conversationId, null);
-
         var user = conversation.UserName ?? "User";
         var timestamp = DateTime.Now;
-
-        await BroadcastUserMessage(conversationId, user, message);
-
+        await Clients.All.SendAsync("ReceiveMessage", user, message, conversationId);
         conversation.ChatHistory.Add(CreateChatEntry(user, message, timestamp, string.Empty));
-
         var chatHistory = BuildChatHistoryFromConversation(conversation);
         chatHistory.AddUserMessage(message);
-
         var botResponse = await _chatService.GenerateBotResponse(chatHistory);
-
         conversation.ChatHistory.Add(CreateChatEntry("PromptSpark", message, timestamp, botResponse));
     }
 

@@ -82,12 +82,11 @@ builder.Services.AddSingleton<IChatService, ChatService>();
 builder.Services.AddSingleton<ChatHub>(provider =>
 {
     var logger = provider.GetRequiredService<ILogger<ChatHub>>();
-    var chatCompletionService = provider.GetRequiredService<IChatCompletionService>();
     var workflowLoader = provider.GetRequiredService<IWorkflowLoader>();
     var workflow = workflowLoader.LoadWorkflow();
-    var chatHistoryService = provider.GetRequiredService<ConcurrentDictionaryService<Conversation>>();
+    var conversationHistoryService = provider.GetRequiredService<ConcurrentDictionaryService<Conversation>>();
     var chatService = provider.GetRequiredService<IChatService>();
-    return new ChatHub(logger, workflow, chatHistoryService,chatService);
+    return new ChatHub(logger, workflow, conversationHistoryService,chatService);
 });
 
 
