@@ -37,7 +37,7 @@ public class ChatHub : Hub
     public async Task ProgressWorkflow(string conversationId, string userResponse)
     {
         var conversation = _conversationService.Lookup(conversationId);
-
+        CancellationToken ct = new();
         try
         {
             var currentNode = _conversationService.GetCurrentNode(conversation);
@@ -56,7 +56,7 @@ public class ChatHub : Hub
                 {
                     var chatHistory = BuildChatHistoryFromConversation(conversation);
                     chatHistory.AddUserMessage(userResponse);
-                    await _chatService.EngageChatAgent(chatHistory, conversationId, Clients.Caller);
+                    await _chatService.EngageChatAgent(chatHistory, conversationId, Clients.Caller,ct);
                     return;
                 }
 

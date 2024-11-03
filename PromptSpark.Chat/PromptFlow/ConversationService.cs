@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace PromptSpark.Chat.PromptFlow;
 
@@ -7,10 +6,12 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
 {
     private readonly ILogger<ConversationService> _logger;
     private readonly IWorkflowService _workflowService;
+    private readonly IChatService _chatService;
 
-    public ConversationService(IWorkflowService workflowService, ILogger<ConversationService> logger)
+    public ConversationService(IWorkflowService workflowService, IChatService chatService, ILogger<ConversationService> logger)
     {
         _workflowService = workflowService ?? throw new ArgumentNullException(nameof(workflowService));
+        _chatService = chatService ?? throw new ArgumentNullException(nameof(chatService));
         _logger = logger;
     }
 

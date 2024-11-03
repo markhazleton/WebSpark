@@ -6,7 +6,7 @@ namespace PromptSpark.Chat.PromptFlow;
 public interface IChatService
 {
     Task<string> GenerateBotResponse(ChatHistory chatHistory);
-    Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients);
+    Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken);
 }
 
 public class ChatService : IChatService
@@ -24,28 +24,44 @@ public class ChatService : IChatService
     {
         var response = new StringBuilder();
 
-        await foreach (var content in _chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory))
+        try
         {
-            if (content?.Content != null)
+            await foreach (var content in _chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory))
             {
-                response.Append(content.Content);
+                if (content?.Content != null)
+                {
+                    response.Append(content.Content);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating bot response.");
+            return "An error occurred while generating a response.";
         }
 
         return response.ToString();
     }
 
-    public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients)
+    public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken)
     {
+        if (chatHistory == null) throw new ArgumentNullException(nameof(chatHistory));
+        if (clients == null) throw new ArgumentNullException(nameof(clients));
+        if (string.IsNullOrEmpty(conversationId)) throw new ArgumentException("Conversation ID cannot be null or empty.", nameof(conversationId));
+
         try
         {
-            await foreach (var response in _chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory))
+            await foreach (var response in _chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory).WithCancellation(cancellationToken))
             {
                 if (response?.Content != null)
                 {
-                    await clients.SendAsync("ReceiveMessage", "PromptSpark", response.Content, conversationId);
+                    await clients.SendAsync("ReceiveMessage", "PromptSpark", response.Content, conversationId, cancellationToken);
                 }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("EngageChatAgent operation was canceled.");
         }
         catch (Exception ex)
         {
@@ -54,4 +70,3 @@ public class ChatService : IChatService
         }
     }
 }
-

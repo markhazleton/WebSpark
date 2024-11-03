@@ -74,17 +74,11 @@ builder.Services.AddSingleton(new JsonSerializerOptions
 });
 
 // Register ConcurrentDictionaryService for Conversation
-builder.Services.AddSingleton<ConversationService>();
 builder.Services.AddSingleton<IChatService, ChatService>();
+builder.Services.AddSingleton<ConversationService>();
 
 // Register ChatHub with all dependencies injected
-builder.Services.AddSingleton<ChatHub>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<ChatHub>>();
-    var conversationHistoryService = provider.GetRequiredService<ConversationService>();
-    var chatService = provider.GetRequiredService<IChatService>();
-    return new ChatHub(chatService, conversationHistoryService, logger);
-});
+builder.Services.AddSingleton<ChatHub>();
 
 
 var app = builder.Build();
