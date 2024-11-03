@@ -83,7 +83,7 @@ builder.Services.AddSingleton<ChatHub>(provider =>
     var logger = provider.GetRequiredService<ILogger<ChatHub>>();
     var conversationHistoryService = provider.GetRequiredService<ConversationService>();
     var chatService = provider.GetRequiredService<IChatService>();
-    return new ChatHub(logger, conversationHistoryService, chatService);
+    return new ChatHub(chatService, conversationHistoryService, logger);
 });
 
 

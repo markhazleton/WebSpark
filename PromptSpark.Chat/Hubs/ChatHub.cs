@@ -11,9 +11,9 @@ public class ChatHub : Hub
     private readonly ILogger<ChatHub> _logger;
 
     public ChatHub(
-        ILogger<ChatHub> logger,
+        IChatService chatService,
         ConversationService conversationService,
-        IChatService chatService)
+        ILogger<ChatHub> logger)
     {
         _logger = logger;
         _conversationService = conversationService;
@@ -37,53 +37,45 @@ public class ChatHub : Hub
     public async Task ProgressWorkflow(string conversationId, string userResponse)
     {
         var conversation = _conversationService.Lookup(conversationId);
-        if (conversation == null)
-        {
-            await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "Error: Conversation not found.");
-            return;
-        }
 
         try
         {
-            var currentNode = conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
+            var currentNode = _conversationService.GetCurrentNode(conversation);
             if (currentNode == null)
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "Error in workflow progression. Returning to the current node.");
+                await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "Error in workflow progression.");
                 return;
             }
-            var timestamp = DateTime.Now;
-            await Clients.All.SendAsync("ReceiveMessage", conversation.UserName ?? "User", userResponse, conversationId);
-
-            _conversationService.AddChatEntry(conversation, conversation.UserName ?? "User", userResponse, timestamp);
+            var adaptiveCardJson = _conversationService.GenerateAdaptiveCardJson(currentNode);
 
             if (userResponse != null)
             {
-                var nextNodeId = currentNode.Answers
-                    ?.FirstOrDefault(a => a.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase))
-                    ?.NextNode;
-                if (nextNodeId != null)
-                {
-                    conversation.CurrentNodeId = nextNodeId;
-                    currentNode = conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
-                }
-                else
+                _conversationService.AddChatEntry(conversation, conversation.UserName ?? "User", userResponse, DateTime.Now, currentNode.Question);
+                var matchingAnswer = currentNode?.Answers.FirstOrDefault(answer => answer.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase));
+                if (matchingAnswer is null)
                 {
                     var chatHistory = BuildChatHistoryFromConversation(conversation);
                     chatHistory.AddUserMessage(userResponse);
-
                     await _chatService.EngageChatAgent(chatHistory, conversationId, Clients.Caller);
-
                     return;
                 }
+
+                var nextNode = _conversationService.ProgressWorkflow(conversation, userResponse);
+                if (nextNode == null)
+                {
+                    await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "Error in workflow progression.");
+                    return;
+                }
+                adaptiveCardJson = _conversationService.GenerateAdaptiveCardJson(nextNode);
             }
 
-            var adaptiveCardJson = _conversationService.GenerateAdaptiveCardJson(currentNode);
             _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
-
             await Clients.Caller.SendAsync("ReceiveAdaptiveCard", adaptiveCardJson);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error during workflow progression for conversation {ConversationId}", conversationId);
+            await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "An error occurred while processing your request.");
             _conversationService.HandleWorkflowError(ex, conversation);
         }
     }
@@ -104,11 +96,11 @@ public class ChatHub : Hub
     public Task SetUserName(string conversationId, string userName)
     {
         var conversation = _conversationService.Lookup(conversationId);
-
-        // Update existing conversation with new username and reset to start node if needed
         conversation.UserName = userName;
-        conversation.CurrentNodeId = conversation.CurrentNodeId == conversation.Workflow.StartNode ? conversation.Workflow.StartNode : conversation.Workflow.StartNode;
-
+        if (conversation.CurrentNodeId != conversation.Workflow.StartNode)
+        {
+            conversation.CurrentNodeId = conversation.Workflow.StartNode;
+        }
         // Save or update the conversation in the dictionary service
         _conversationService.Save(conversationId, conversation);
 
