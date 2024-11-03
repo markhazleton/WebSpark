@@ -7,8 +7,8 @@ namespace PromptSpark.Chat.Hubs;
 
 public class ChatHub : Hub
 {
-    private readonly ConcurrentDictionaryService<Conversation> _ConversationDictionary;
     private readonly IChatService _chatService;
+    private readonly ConcurrentDictionaryService<Conversation> _ConversationDictionary;
     private readonly ILogger<ChatHub> _logger;
     private readonly Workflow _workflow;
 
@@ -29,11 +29,10 @@ public class ChatHub : Hub
         return Clients.All.SendAsync("ReceiveMessage", user, message, conversationId);
     }
 
-    private ChatHistory BuildChatHistoryFromConversation(Conversation conversation)
+    private static ChatHistory BuildChatHistoryFromConversation(Conversation conversation)
     {
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
-
         foreach (var chatEntry in conversation.ChatHistory)
         {
             if (!string.IsNullOrEmpty(chatEntry.UserMessage))
@@ -41,7 +40,6 @@ public class ChatHub : Hub
             if (!string.IsNullOrEmpty(chatEntry.BotResponse))
                 chatHistory.AddSystemMessage(chatEntry.BotResponse);
         }
-
         return chatHistory;
     }
 
@@ -56,7 +54,7 @@ public class ChatHub : Hub
         };
     }
 
-    private string GenerateAdaptiveCardJson(Node currentNode)
+    private string GetQuestionAnswersAdaptiveCardJson(Node currentNode)
     {
         var adaptiveCard = new Dictionary<string, object>
         {
@@ -97,24 +95,11 @@ public class ChatHub : Hub
 
         return JsonSerializer.Serialize(adaptiveCard);
     }
-
-    private Node GetCurrentNode(Conversation conversation)
-    {
-        return conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
-    }
-
-    private string GetNextNodeId(Node currentNode, string userResponse)
-    {
-        return currentNode.Answers
-            ?.FirstOrDefault(a => a.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase))
-            ?.NextNode;
-    }
-    
     private void HandleWorkflowError(Exception ex, string conversationId, Conversation conversation)
     {
         _logger.LogError(ex, "Error in ProgressWorkflow. Returning the current node.");
 
-        var currentNode = GetCurrentNode(conversation);
+        var currentNode = conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
 
         var responsePackage = new
         {
@@ -139,7 +124,7 @@ public class ChatHub : Hub
 
         try
         {
-            var currentNode = GetCurrentNode(conversation);
+            var currentNode = conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
             if (currentNode == null)
             {
                 await Clients.Caller.SendAsync("ReceiveMessage", "PromptSpark", "Error in workflow progression. Returning to the current node.");
@@ -153,11 +138,13 @@ public class ChatHub : Hub
 
             if (userResponse != null)
             {
-                var nextNodeId = GetNextNodeId(currentNode, userResponse);
+                var nextNodeId = currentNode.Answers
+                    ?.FirstOrDefault(a => a.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase))
+                    ?.NextNode;
                 if (nextNodeId != null)
                 {
                     conversation.CurrentNodeId = nextNodeId;
-                    currentNode = GetCurrentNode(conversation);
+                    currentNode = conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
                 }
                 else
                 {
@@ -170,7 +157,7 @@ public class ChatHub : Hub
                 }
             }
 
-            var adaptiveCardJson = GenerateAdaptiveCardJson(currentNode);
+            var adaptiveCardJson = GetQuestionAnswersAdaptiveCardJson(currentNode);
             _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
 
             await Clients.Caller.SendAsync("ReceiveAdaptiveCard", adaptiveCardJson);
