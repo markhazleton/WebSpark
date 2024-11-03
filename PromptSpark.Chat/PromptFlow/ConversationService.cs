@@ -9,6 +9,10 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
     private readonly ILogger<ConversationService> _logger;
     private readonly IWorkflowService _workflowService;
     private readonly IChatService _chatService;
+    const string STR_EngageChatAgent = "EngageChatAgent";
+    const string STR_ReceiveMessage = "ReceiveMessage";
+    private const string STR_ReceiveAdaptiveCard = "ReceiveAdaptiveCard";
+    private const string STR_ChatBotName = "PromptSpark";
 
     public ConversationService(IWorkflowService workflowService, IChatService chatService, ILogger<ConversationService> logger)
     {
@@ -16,9 +20,74 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         _chatService = chatService ?? throw new ArgumentNullException(nameof(chatService));
         _logger = logger;
     }
+    public async Task<(string messageType, object messageData)?> ProcessSendMessage(
+        string message,
+        string conversationId,
+        Conversation conversation,
+        CancellationToken ct)
+    {
+        var user = conversation.UserName ?? STR_ChatBotName;
+        var timestamp = DateTime.Now;
+
+        // Add the message to the conversation history.
+        AddChatEntry(conversation, user, message, timestamp);
+
+        // Build the chat history and generate a bot response.
+        var chatHistory = BuildChatHistoryFromConversation(conversation);
+        chatHistory.AddUserMessage(message);
+        var botResponse = await GenerateBotResponse(chatHistory, ct);
+
+        // Add the bot response to the conversation history.
+        AddChatEntry(conversation, "STR_ChatBotName", message, timestamp, botResponse);
+
+        // Prepare the tuple result with message type and data for SendAsync.
+        return ("ReceiveMessage", new { User = user, Message = message, ConversationId = conversationId });
+    }
+
+    public (string messageType, object messageData)? ProcessUserResponse(
+        string conversationId,
+        string userResponse,
+        Conversation conversation,
+        CancellationToken ct)
+    {
+        var currentNode = GetCurrentNode(conversation);
+        if (currentNode == null)
+        {
+            return (STR_ReceiveMessage, new { sender = STR_ChatBotName, content = "Error in workflow progression." });
+        }
+
+        var adaptiveCardJson = GenerateAdaptiveCardJson(currentNode);
+
+        if (!string.IsNullOrWhiteSpace(userResponse))
+        {
+            AddChatEntry(conversation, conversation.UserName ?? "STR_ChatBotName", userResponse, DateTime.Now, currentNode.Question);
+            var matchingAnswer = currentNode?.Answers.FirstOrDefault(answer => answer.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase));
+
+            if (matchingAnswer is null)
+            {
+                var chatHistory = BuildChatHistoryFromConversation(conversation);
+                chatHistory.AddUserMessage(userResponse);
+
+                // This indicates that you may want to handle chat agent engagement separately
+                // since it's asynchronous. You could return a marker here or split this logic out.
+                return (STR_EngageChatAgent, new { chatHistory, conversationId });
+            }
+
+            var nextNode = ProgressWorkflow(conversation, userResponse);
+            if (nextNode == null)
+            {
+                return (STR_ReceiveMessage, new { sender = STR_ChatBotName, content = "Error in workflow progression." });
+            }
+
+            adaptiveCardJson = GenerateAdaptiveCardJson(nextNode);
+        }
+        _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
+        return (STR_ReceiveAdaptiveCard, adaptiveCardJson);
+    }
+
 
     public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken)
-    { 
+    {
         await _chatService.EngageChatAgent(chatHistory, conversationId, clients, cancellationToken);
     }
     public async Task<string> GenerateBotResponse(ChatHistory chatHistory, CancellationToken cancellationToken)
