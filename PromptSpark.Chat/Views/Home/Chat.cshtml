@@ -167,7 +167,7 @@
 
         async function startWorkflow() {
             try {
-                await connection.invoke("StartWorkflow", conversationId);
+                await connection.invoke("ProgressWorkflow", conversationId,"");
                 inWorkflow = true;
                 localStorage.setItem("inWorkflow", JSON.stringify(inWorkflow));
             } catch (err) {

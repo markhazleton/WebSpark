@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.SemanticKernel.ChatCompletion;
+using System.Text.Json;
 
 namespace PromptSpark.Chat.PromptFlow;
 
@@ -14,6 +16,31 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         _chatService = chatService ?? throw new ArgumentNullException(nameof(chatService));
         _logger = logger;
     }
+
+    public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken)
+    { 
+        await _chatService.EngageChatAgent(chatHistory, conversationId, clients, cancellationToken);
+    }
+    public async Task<string> GenerateBotResponse(ChatHistory chatHistory, CancellationToken cancellationToken)
+    {
+        return await _chatService.GenerateBotResponse(chatHistory);
+    }
+
+    public ChatHistory BuildChatHistoryFromConversation(Conversation conversation)
+    {
+        var chatHistory = new ChatHistory();
+        chatHistory.AddSystemMessage("You are in a conversation, keep your answers brief, always ask follow-up questions, ask if ready for full answer.");
+        foreach (var chatEntry in conversation.ChatHistory)
+        {
+            if (!string.IsNullOrEmpty(chatEntry.UserMessage))
+                chatHistory.AddUserMessage(chatEntry.UserMessage);
+            if (!string.IsNullOrEmpty(chatEntry.BotResponse))
+                chatHistory.AddSystemMessage(chatEntry.BotResponse);
+        }
+        return chatHistory;
+    }
+
+
 
     public void AddChatEntry(Conversation conversation, string user, string message, DateTime timestamp, string botResponse = "")
     {
