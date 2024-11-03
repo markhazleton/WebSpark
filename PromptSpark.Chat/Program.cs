@@ -1,5 +1,4 @@
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
 using PromptSpark.Chat.Hubs;
 using PromptSpark.Chat.PromptFlow;
 using Scalar.AspNetCore;
@@ -64,7 +63,7 @@ string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
 
 builder.Services.AddOpenAIChatCompletion(modelId, apikey);
-builder.Services.AddSingleton<IWorkflowLoader, WorkflowLoader>();
+builder.Services.AddSingleton<IWorkflowService, WorkflowService>();
 builder.Services.Configure<WorkflowOptions>(builder.Configuration.GetSection("Workflow"));
 
 // Configure JsonSerializerOptions
@@ -75,18 +74,16 @@ builder.Services.AddSingleton(new JsonSerializerOptions
 });
 
 // Register ConcurrentDictionaryService for Conversation
-builder.Services.AddSingleton<ConcurrentDictionaryService<Conversation>>();
+builder.Services.AddSingleton<ConversationService>();
 builder.Services.AddSingleton<IChatService, ChatService>();
 
 // Register ChatHub with all dependencies injected
 builder.Services.AddSingleton<ChatHub>(provider =>
 {
     var logger = provider.GetRequiredService<ILogger<ChatHub>>();
-    var workflowLoader = provider.GetRequiredService<IWorkflowLoader>();
-    var workflow = workflowLoader.LoadWorkflow();
-    var conversationHistoryService = provider.GetRequiredService<ConcurrentDictionaryService<Conversation>>();
+    var conversationHistoryService = provider.GetRequiredService<ConversationService>();
     var chatService = provider.GetRequiredService<IChatService>();
-    return new ChatHub(logger, workflow, conversationHistoryService,chatService);
+    return new ChatHub(logger, conversationHistoryService, chatService);
 });
 
 
