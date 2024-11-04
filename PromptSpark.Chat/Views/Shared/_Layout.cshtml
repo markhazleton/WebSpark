@@ -16,7 +16,10 @@
 
     <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    @RenderSection("HeadStyles", required: false)
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/jquery.min.js" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("HeadScripts", required: false)
 </head>
@@ -32,10 +35,10 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" href="/Home/start">Workflow</a>
+                            <a class="nav-link text-light" href="/Home/chat">Chat</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" href="/Home/chat">Chat</a>
+                            <a class="nav-link text-light" href="/WorkflowAdmin">Workflow Admin</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-light" href="/scalar/v1">API Docs</a>

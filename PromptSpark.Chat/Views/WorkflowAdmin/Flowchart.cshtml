@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Workflow Flowchart";
+}
+
+@section HeadStyles {
+    <style>
+        /* Restrict node width to make the flowchart more compact */
+        .mermaid svg .node rect, .mermaid svg .node polygon {
+            max-width: 100px;
+        }
+    </style>
+
+}
+
+<h2>Workflow Flowchart</h2>
+
+<!-- Container to hold the Mermaid flowchart -->
+<div id="flowchart-container">
+    <!-- The diagram will be rendered and injected here -->
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="nodeModal" tabindex="-1" role="dialog" aria-labelledby="nodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="nodeModalLabel">Node Details</h5>
+                <!-- Add data-dismiss="modal" to the close button -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Node ID:</strong> <span id="modalNodeId"></span></p>
+                <p><strong>Question:</strong> <span id="modalQuestion"></span></p>
+                <div>
+                    <strong>Answers:</strong>
+                    <ul id="modalAnswers"></ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- Add data-dismiss="modal" to the footer close button -->
+                <button type="button" class="btn btn-secondary" id="manualCloseButton">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+@section HeadScripts {
+    <!-- Load Mermaid via CDN -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        // Initialize Mermaid with custom settings
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',               // Use the 'base' theme for easier customization
+            flowchart: {
+                useMaxWidth: false,      // Prevents flowchart from stretching full width
+                nodeSpacing: 20,         // Reduce spacing between nodes
+                rankSpacing: 30,         // Reduce spacing between ranks for a more compact view
+                padding: 10              // Reduce padding within each node
+            }
+        });
+
+        window.mermaid = mermaid; // Expose to window for later access
+    </script>
+}
+
+@section Scripts {
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to convert workflow data to Mermaid syntax with prefixed IDs and top-to-bottom layout
+            function convertToMermaidSyntax(workflowData) {
+                let mermaidSyntax = "graph TD\n";  // Set the layout direction to Top-to-Bottom (TD)
+
+                workflowData.nodes.forEach(node => {
+                    const nodeId = `node_${node.id}`;
+                    const shortLabel = `Node ${node.id}`;
+                    mermaidSyntax += `    ${nodeId}[${shortLabel}]\n`;
+
+                    node.answers.forEach(answer => {
+                        const nextNodeId = `node_${answer.nextNode}`;
+                        mermaidSyntax += `    ${nodeId} -- "${answer.response}" --> ${nextNodeId}\n`;
+                    });
+                });
+                return mermaidSyntax;
+            }
+
+            // Fetch workflow data and render it in Mermaid
+            async function renderFlowchart() {
+                try {
+                    const response = await fetch('@Url.Action("GetWorkflowData")');
+                    const workflowData = await response.json();
+                    console.log("Workflow data loaded:", workflowData);
+
+                    const mermaidSyntax = convertToMermaidSyntax(workflowData);
+                    console.log("Generated Mermaid Syntax:\n", mermaidSyntax);
+
+                    const container = document.getElementById("flowchart-container");
+                    const { svg } = await window.mermaid.render("generatedDiagram", mermaidSyntax);
+                    container.innerHTML = svg;
+
+                    addModalListeners(workflowData); // Set up modal listeners
+                } catch (error) {
+                    console.error('Error loading or rendering workflow data:', error);
+                }
+            }
+
+            // Function to add click event listeners to open modal for each node
+            function addModalListeners(workflowData) {
+                workflowData.nodes.forEach(node => {
+                    const nodeId = `Node ${node.id}`;
+
+                    // Find the span element for this node within foreignObject
+                    const nodeElements = document.querySelectorAll(`#flowchart-container svg foreignObject span.nodeLabel`);
+
+                    nodeElements.forEach(element => {
+                        if (element.textContent === nodeId) {
+                            element.addEventListener("click", () => openNodeModal(node)); // Open modal on click
+                        }
+                    });
+                });
+            }
+
+            // Function to open the modal with node details
+            function openNodeModal(node) {
+                // Populate modal with node data
+                document.getElementById("modalNodeId").textContent = node.id;
+                document.getElementById("modalQuestion").textContent = node.question;
+
+                const answersList = document.getElementById("modalAnswers");
+                answersList.innerHTML = ''; // Clear previous answers
+
+                // Add each answer as a list item
+                node.answers.forEach(answer => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${answer.response} → ${answer.nextNode}`;
+                    answersList.appendChild(listItem);
+                });
+                
+                document.getElementById("manualCloseButton").addEventListener("click", function() 
+                {
+                    $('#nodeModal').modal('hide'); // Programmatically close the modal
+                });
+
+                // Show the modal
+                $('#nodeModal').modal('show'); // Requires jQuery and Bootstrap JS for modal
+            }
+
+            // Call the render function
+            renderFlowchart();
+        });
+
+
+
+    </script>
+}
+

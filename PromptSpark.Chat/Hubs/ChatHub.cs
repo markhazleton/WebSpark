@@ -25,19 +25,7 @@ public class ChatHub : Hub
         CancellationToken ct = CancellationToken.None;
         try
         {
-            var sendArgument = _conversationService.ProcessUserResponse(conversationId, userResponse, conversation, ct);
-            if (sendArgument.HasValue)
-            {
-                if (sendArgument.Value.messageType == MessageType.EngageChatAgent)
-                {
-                    var chatHistory = _conversationService.BuildChatHistoryFromConversation(conversation);
-                    await _conversationService.EngageChatAgent(chatHistory, conversationId, Clients.Caller, ct);
-                }
-                else
-                {
-                    await Clients.Caller.SendAsync(sendArgument.Value.messageType.ToString(), sendArgument.Value.messageData);
-                }
-            }
+            var sendArgument = await _conversationService.ProcessUserResponse(conversationId, userResponse, conversation,Clients.Caller, ct);
         }
         catch (Exception ex)
         {

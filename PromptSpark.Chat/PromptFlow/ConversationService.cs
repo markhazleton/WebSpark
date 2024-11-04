@@ -19,8 +19,6 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         _logger = logger;
     }
 
-
-
     public void AddChatEntry(Conversation conversation, string user, string message, DateTime timestamp, string botResponse = "")
     {
         conversation.ChatHistory.Add(new ChatEntry
@@ -75,6 +73,7 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
                     { "wrap", true },
                     { "separator", true }
                 },
+                // Options for answers as Action.Submit buttons
                 new Dictionary<string, object>
                 {
                     { "type", "ActionSet" },
@@ -140,10 +139,11 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         return (MessageType.ReceiveMessage, new { User = user, Message = message, ConversationId = conversationId });
     }
 
-    public (MessageType messageType, object messageData)? ProcessUserResponse(
+    public async Task<(MessageType messageType, object messageData)?> ProcessUserResponse(
         string conversationId,
         string userResponse,
         Conversation conversation,
+        ISingleClientProxy caller,
         CancellationToken ct)
     {
         var currentNode = GetCurrentNode(conversation);
@@ -164,6 +164,10 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
                 var chatHistory = BuildChatHistoryFromConversation(conversation);
                 chatHistory.AddUserMessage(userResponse);
 
+                await EngageChatAgent(chatHistory, conversationId, caller, ct);
+
+                await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson);
+
                 // Return EngageChatAgent if no matching answer is found.
                 return (MessageType.EngageChatAgent, new { chatHistory, conversationId });
             }
@@ -176,6 +180,7 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
 
             adaptiveCardJson = GenerateAdaptiveCardJson(nextNode);
         }
+        await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson);
 
         _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
         return (MessageType.ReceiveAdaptiveCard, adaptiveCardJson);

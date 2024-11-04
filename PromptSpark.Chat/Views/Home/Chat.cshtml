@@ -40,6 +40,10 @@
         let conversationId = localStorage.getItem("conversationId") || generateConversationId();
         let inWorkflow = JSON.parse(localStorage.getItem("inWorkflow")) || false;
         let retryCount = 0;
+        let currentMessageContainer = null;
+        let lastMessageUser = null;
+        let activeMessageId = null;
+
 
         function generateConversationId() {
             return Math.random().toString(36).substring(2, 15);
@@ -99,9 +103,6 @@
             };
         }
 
-        let currentMessageContainer = null;
-        let lastMessageUser = null;
-        let activeMessageId = null;
 
         function handleReceiveMessage(user, messageChunk, messageId) {
             const messagesList = document.getElementById("messagesList");

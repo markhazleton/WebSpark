@@ -63,8 +63,9 @@ string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
 
 builder.Services.AddOpenAIChatCompletion(modelId, apikey);
-builder.Services.AddSingleton<IWorkflowService, WorkflowService>();
 builder.Services.Configure<WorkflowOptions>(builder.Configuration.GetSection("Workflow"));
+
+builder.Services.AddSingleton<IWorkflowService, WorkflowService>();
 
 // Configure JsonSerializerOptions
 builder.Services.AddSingleton(new JsonSerializerOptions
