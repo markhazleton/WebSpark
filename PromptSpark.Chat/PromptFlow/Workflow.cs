@@ -3,7 +3,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace PromptSpark.Chat.PromptFlow;
-
+public enum MessageType
+{
+    EngageChatAgent,
+    ReceiveAdaptiveCard,
+    ReceiveMessage
+}
 
 public interface IWorkflowService
 {

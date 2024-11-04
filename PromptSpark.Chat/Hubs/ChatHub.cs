@@ -5,8 +5,6 @@ namespace PromptSpark.Chat.Hubs;
 
 public class ChatHub : Hub
 {
-    private const string STR_EngageChatAgent = "EngageChatAgent";
-    private const string STR_ReceiveMessage = "ReceiveMessage";
     private const string STR_ChatBotName = "PromptSpark";
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly ConversationService _conversationService;
@@ -30,21 +28,21 @@ public class ChatHub : Hub
             var sendArgument = _conversationService.ProcessUserResponse(conversationId, userResponse, conversation, ct);
             if (sendArgument.HasValue)
             {
-                if (sendArgument.Value.messageType == STR_EngageChatAgent)
+                if (sendArgument.Value.messageType == MessageType.EngageChatAgent)
                 {
                     var chatHistory = _conversationService.BuildChatHistoryFromConversation(conversation);
                     await _conversationService.EngageChatAgent(chatHistory, conversationId, Clients.Caller, ct);
                 }
                 else
                 {
-                    await Clients.Caller.SendAsync(sendArgument.Value.messageType, sendArgument.Value.messageData);
+                    await Clients.Caller.SendAsync(sendArgument.Value.messageType.ToString(), sendArgument.Value.messageData);
                 }
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during workflow progression for conversation {ConversationId}", conversationId);
-            await Clients.Caller.SendAsync(STR_ReceiveMessage, STR_ChatBotName, "An error occurred while processing your request.");
+            await Clients.Caller.SendAsync(MessageType.ReceiveMessage.ToString(), STR_ChatBotName, "An error occurred while processing your request.");
             _conversationService.HandleWorkflowError(ex, conversation);
         }
     }
@@ -56,14 +54,14 @@ public class ChatHub : Hub
         var sendArgument = await _conversationService.ProcessSendMessage(message, conversationId, conversation, ct);
         if (sendArgument.HasValue)
         {
-            if (sendArgument.Value.messageType == STR_EngageChatAgent)
+            if (sendArgument.Value.messageType == MessageType.EngageChatAgent)
             {
                 var chatHistory = _conversationService.BuildChatHistoryFromConversation(conversation);
                 await _conversationService.EngageChatAgent(chatHistory, conversationId, Clients.Caller, ct);
             }
             else
             {
-                await Clients.Caller.SendAsync(sendArgument.Value.messageType, sendArgument.Value.messageData);
+                await Clients.Caller.SendAsync(sendArgument.Value.messageType.ToString(), sendArgument.Value.messageData);
             }
         }
     }

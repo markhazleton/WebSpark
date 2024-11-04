@@ -6,13 +6,11 @@ namespace PromptSpark.Chat.PromptFlow;
 
 public class ConversationService : ConcurrentDictionaryService<Conversation>
 {
+    private const string STR_ChatBotName = "PromptSpark";
+
+    private readonly IChatService _chatService;
     private readonly ILogger<ConversationService> _logger;
     private readonly IWorkflowService _workflowService;
-    private readonly IChatService _chatService;
-    const string STR_EngageChatAgent = "EngageChatAgent";
-    const string STR_ReceiveMessage = "ReceiveMessage";
-    private const string STR_ReceiveAdaptiveCard = "ReceiveAdaptiveCard";
-    private const string STR_ChatBotName = "PromptSpark";
 
     public ConversationService(IWorkflowService workflowService, IChatService chatService, ILogger<ConversationService> logger)
     {
@@ -20,79 +18,18 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         _chatService = chatService ?? throw new ArgumentNullException(nameof(chatService));
         _logger = logger;
     }
-    public async Task<(string messageType, object messageData)?> ProcessSendMessage(
-        string message,
-        string conversationId,
-        Conversation conversation,
-        CancellationToken ct)
+
+
+
+    public void AddChatEntry(Conversation conversation, string user, string message, DateTime timestamp, string botResponse = "")
     {
-        var user = conversation.UserName ?? STR_ChatBotName;
-        var timestamp = DateTime.Now;
-
-        // Add the message to the conversation history.
-        AddChatEntry(conversation, user, message, timestamp);
-
-        // Build the chat history and generate a bot response.
-        var chatHistory = BuildChatHistoryFromConversation(conversation);
-        chatHistory.AddUserMessage(message);
-        var botResponse = await GenerateBotResponse(chatHistory, ct);
-
-        // Add the bot response to the conversation history.
-        AddChatEntry(conversation, "STR_ChatBotName", message, timestamp, botResponse);
-
-        // Prepare the tuple result with message type and data for SendAsync.
-        return ("ReceiveMessage", new { User = user, Message = message, ConversationId = conversationId });
-    }
-
-    public (string messageType, object messageData)? ProcessUserResponse(
-        string conversationId,
-        string userResponse,
-        Conversation conversation,
-        CancellationToken ct)
-    {
-        var currentNode = GetCurrentNode(conversation);
-        if (currentNode == null)
+        conversation.ChatHistory.Add(new ChatEntry
         {
-            return (STR_ReceiveMessage, new { sender = STR_ChatBotName, content = "Error in workflow progression." });
-        }
-
-        var adaptiveCardJson = GenerateAdaptiveCardJson(currentNode);
-
-        if (!string.IsNullOrWhiteSpace(userResponse))
-        {
-            AddChatEntry(conversation, conversation.UserName ?? "STR_ChatBotName", userResponse, DateTime.Now, currentNode.Question);
-            var matchingAnswer = currentNode?.Answers.FirstOrDefault(answer => answer.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase));
-
-            if (matchingAnswer is null)
-            {
-                var chatHistory = BuildChatHistoryFromConversation(conversation);
-                chatHistory.AddUserMessage(userResponse);
-
-                // This indicates that you may want to handle chat agent engagement separately
-                // since it's asynchronous. You could return a marker here or split this logic out.
-                return (STR_EngageChatAgent, new { chatHistory, conversationId });
-            }
-
-            var nextNode = ProgressWorkflow(conversation, userResponse);
-            if (nextNode == null)
-            {
-                return (STR_ReceiveMessage, new { sender = STR_ChatBotName, content = "Error in workflow progression." });
-            }
-
-            adaptiveCardJson = GenerateAdaptiveCardJson(nextNode);
-        }
-        _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
-        return (STR_ReceiveAdaptiveCard, adaptiveCardJson);
-    }
-
-
-    public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken)
-    {
-        await _chatService.EngageChatAgent(chatHistory, conversationId, clients, cancellationToken);
-    }
-    public async Task<string> GenerateBotResponse(ChatHistory chatHistory, CancellationToken cancellationToken)
-    {
-        return await _chatService.GenerateBotResponse(chatHistory);
+            Timestamp = timestamp,
+            User = user,
+            UserMessage = message,
+            BotResponse = botResponse
+        });
     }
 
     public ChatHistory BuildChatHistoryFromConversation(Conversation conversation)
@@ -110,16 +47,9 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
     }
 
 
-
-    public void AddChatEntry(Conversation conversation, string user, string message, DateTime timestamp, string botResponse = "")
+    public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken)
     {
-        conversation.ChatHistory.Add(new ChatEntry
-        {
-            Timestamp = timestamp,
-            User = user,
-            UserMessage = message,
-            BotResponse = botResponse
-        });
+        await _chatService.EngageChatAgent(chatHistory, conversationId, clients, cancellationToken);
     }
 
     public string GenerateAdaptiveCardJson(Node currentNode)
@@ -163,6 +93,15 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
 
         return JsonSerializer.Serialize(adaptiveCard);
     }
+    public async Task<string> GenerateBotResponse(ChatHistory chatHistory, CancellationToken cancellationToken)
+    {
+        return await _chatService.GenerateBotResponse(chatHistory);
+    }
+
+    public Node? GetCurrentNode(Conversation conversation)
+    {
+        return conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
+    }
 
     public void HandleWorkflowError(Exception ex, Conversation conversation)
     {
@@ -177,6 +116,70 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
             return new Conversation(workflow, id, null);
         });
     }
+    public async Task<(MessageType messageType, object messageData)?> ProcessSendMessage(
+        string message,
+        string conversationId,
+        Conversation conversation,
+        CancellationToken ct)
+    {
+        var user = conversation.UserName ?? STR_ChatBotName;
+        var timestamp = DateTime.Now;
+
+        // Add the message to the conversation history.
+        AddChatEntry(conversation, user, message, timestamp);
+
+        // Build the chat history and generate a bot response.
+        var chatHistory = BuildChatHistoryFromConversation(conversation);
+        chatHistory.AddUserMessage(message);
+        var botResponse = await GenerateBotResponse(chatHistory, ct);
+
+        // Add the bot response to the conversation history.
+        AddChatEntry(conversation, STR_ChatBotName, message, timestamp, botResponse);
+
+        // Prepare the tuple result with message type and data for SendAsync.
+        return (MessageType.ReceiveMessage, new { User = user, Message = message, ConversationId = conversationId });
+    }
+
+    public (MessageType messageType, object messageData)? ProcessUserResponse(
+        string conversationId,
+        string userResponse,
+        Conversation conversation,
+        CancellationToken ct)
+    {
+        var currentNode = GetCurrentNode(conversation);
+        if (currentNode == null)
+        {
+            return (MessageType.ReceiveMessage, new { sender = STR_ChatBotName, content = "Error in workflow progression." });
+        }
+
+        var adaptiveCardJson = GenerateAdaptiveCardJson(currentNode);
+
+        if (!string.IsNullOrWhiteSpace(userResponse))
+        {
+            AddChatEntry(conversation, conversation.UserName ?? STR_ChatBotName, userResponse, DateTime.Now, currentNode.Question);
+            var matchingAnswer = currentNode?.Answers.FirstOrDefault(answer => answer.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase));
+
+            if (matchingAnswer is null)
+            {
+                var chatHistory = BuildChatHistoryFromConversation(conversation);
+                chatHistory.AddUserMessage(userResponse);
+
+                // Return EngageChatAgent if no matching answer is found.
+                return (MessageType.EngageChatAgent, new { chatHistory, conversationId });
+            }
+
+            var nextNode = ProgressWorkflow(conversation, userResponse);
+            if (nextNode == null)
+            {
+                return (MessageType.ReceiveMessage, new { sender = STR_ChatBotName, content = "Error in workflow progression." });
+            }
+
+            adaptiveCardJson = GenerateAdaptiveCardJson(nextNode);
+        }
+
+        _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
+        return (MessageType.ReceiveAdaptiveCard, adaptiveCardJson);
+    }
 
     public Node? ProgressWorkflow(Conversation conversation, string userResponse)
     {
@@ -188,11 +191,6 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         }
         var selectedAnswer = currentNode.Answers.FirstOrDefault(a => a.Response.Equals(userResponse, StringComparison.OrdinalIgnoreCase));
         conversation.CurrentNodeId = selectedAnswer?.NextNode ?? conversation.CurrentNodeId;
-        return conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
-    }
-
-    public Node? GetCurrentNode(Conversation conversation)
-    {
         return conversation.Workflow.Nodes.FirstOrDefault(node => node.Id == conversation.CurrentNodeId);
     }
 }
