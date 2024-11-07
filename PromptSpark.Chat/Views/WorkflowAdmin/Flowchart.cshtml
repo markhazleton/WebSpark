@@ -86,7 +86,7 @@
 
                 workflowData.nodes.forEach(node => {
                     const nodeId = `node_${node.id}`;
-                    const shortLabel = `Node ${node.id}`;
+                    const shortLabel = `${node.id}`;
                     mermaidSyntax += `    ${nodeId}[${shortLabel}]\n`;
 
                     node.answers.forEach(answer => {
@@ -120,7 +120,7 @@
             // Function to add click event listeners to open modal for each node
             function addModalListeners(workflowData) {
                 workflowData.nodes.forEach(node => {
-                    const nodeId = `Node ${node.id}`;
+                    const nodeId = `${node.id}`;
 
                     // Find the span element for this node within foreignObject
                     const nodeElements = document.querySelectorAll(`#flowchart-container svg foreignObject span.nodeLabel`);
@@ -161,8 +161,6 @@
             // Call the render function
             renderFlowchart();
         });
-
-
 
     </script>
 }
