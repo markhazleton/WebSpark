@@ -1,4 +1,6 @@
-﻿@{
+﻿@model string  // This model is the workflow name passed from the controller
+
+@{
     ViewData["Title"] = "Workflow Flowchart";
 }
 
@@ -9,10 +11,9 @@
             max-width: 100px;
         }
     </style>
-
 }
 
-<h2>Workflow Flowchart</h2>
+<h2>Workflow Flowchart for "@Model"</h2>
 
 <!-- Container to hold the Mermaid flowchart -->
 <div id="flowchart-container">
@@ -25,7 +26,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="nodeModalLabel">Node Details</h5>
-                <!-- Add data-dismiss="modal" to the close button -->
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -39,21 +39,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <!-- Add data-dismiss="modal" to the footer close button -->
                 <button type="button" class="btn btn-secondary" id="manualCloseButton">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
 
 @section HeadScripts {
     <!-- Load Mermaid via CDN -->
@@ -63,16 +53,16 @@
         // Initialize Mermaid with custom settings
         mermaid.initialize({
             startOnLoad: false,
-            theme: 'base',               // Use the 'base' theme for easier customization
+            theme: 'base',
             flowchart: {
-                useMaxWidth: false,      // Prevents flowchart from stretching full width
-                nodeSpacing: 20,         // Reduce spacing between nodes
-                rankSpacing: 30,         // Reduce spacing between ranks for a more compact view
-                padding: 10              // Reduce padding within each node
+                useMaxWidth: false,
+                nodeSpacing: 20,
+                rankSpacing: 30,
+                padding: 10
             }
         });
 
-        window.mermaid = mermaid; // Expose to window for later access
+        window.mermaid = mermaid;
     </script>
 }
 
@@ -82,7 +72,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Function to convert workflow data to Mermaid syntax with prefixed IDs and top-to-bottom layout
             function convertToMermaidSyntax(workflowData) {
-                let mermaidSyntax = "graph TD\n";  // Set the layout direction to Top-to-Bottom (TD)
+                let mermaidSyntax = "graph TD\n";
 
                 workflowData.nodes.forEach(node => {
                     const nodeId = `node_${node.id}`;
@@ -100,7 +90,8 @@
             // Fetch workflow data and render it in Mermaid
             async function renderFlowchart() {
                 try {
-                    const response = await fetch('@Url.Action("GetWorkflowData")');
+                    // Pass workflow name to the GetWorkflowData endpoint
+                    const response = await fetch(`@Url.Action("GetWorkflowData")?fileName=${encodeURIComponent("@Model")}`);
                     const workflowData = await response.json();
                     console.log("Workflow data loaded:", workflowData);
 
@@ -111,7 +102,7 @@
                     const { svg } = await window.mermaid.render("generatedDiagram", mermaidSyntax);
                     container.innerHTML = svg;
 
-                    addModalListeners(workflowData); // Set up modal listeners
+                    addModalListeners(workflowData);
                 } catch (error) {
                     console.error('Error loading or rendering workflow data:', error);
                 }
@@ -122,12 +113,11 @@
                 workflowData.nodes.forEach(node => {
                     const nodeId = `${node.id}`;
 
-                    // Find the span element for this node within foreignObject
                     const nodeElements = document.querySelectorAll(`#flowchart-container svg foreignObject span.nodeLabel`);
 
                     nodeElements.forEach(element => {
                         if (element.textContent === nodeId) {
-                            element.addEventListener("click", () => openNodeModal(node)); // Open modal on click
+                            element.addEventListener("click", () => openNodeModal(node));
                         }
                     });
                 });
@@ -135,33 +125,28 @@
 
             // Function to open the modal with node details
             function openNodeModal(node) {
-                // Populate modal with node data
                 document.getElementById("modalNodeId").textContent = node.id;
                 document.getElementById("modalQuestion").textContent = node.question;
 
                 const answersList = document.getElementById("modalAnswers");
-                answersList.innerHTML = ''; // Clear previous answers
+                answersList.innerHTML = '';
 
-                // Add each answer as a list item
                 node.answers.forEach(answer => {
                     const listItem = document.createElement("li");
                     listItem.textContent = `${answer.response} → ${answer.nextNode}`;
                     answersList.appendChild(listItem);
                 });
-                
-                document.getElementById("manualCloseButton").addEventListener("click", function() 
+
+                document.getElementById("manualCloseButton").addEventListener("click", function()
                 {
-                    $('#nodeModal').modal('hide'); // Programmatically close the modal
+                    $('#nodeModal').modal('hide');
                 });
 
-                // Show the modal
-                $('#nodeModal').modal('show'); // Requires jQuery and Bootstrap JS for modal
+                $('#nodeModal').modal('show');
             }
 
-            // Call the render function
             renderFlowchart();
         });
 
     </script>
 }
-

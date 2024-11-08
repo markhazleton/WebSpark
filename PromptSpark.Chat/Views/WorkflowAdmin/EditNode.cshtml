@@ -1,4 +1,4 @@
-﻿@model Node
+﻿@model EditNodeViewModel
 
 @{
     ViewData["Title"] = "Edit Node - " + Model.Id;
@@ -7,8 +7,8 @@
 <h2>Edit Node - @Model.Id</h2>
 
 <form asp-action="EditNode" method="post">
-    @Html.HiddenFor(m => m.Id) <!-- Hidden field for Node ID -->
-
+    @Html.HiddenFor(m => m.Id) 
+    @Html.HiddenFor(m => m.FileName) 
     <div class="form-group">
         <label asp-for="Question">Question</label>
         <input asp-for="Question" class="form-control" />
@@ -19,18 +19,23 @@
     <div id="answersContainer">
         @for (int i = 0; i < Model.Answers.Count; i++)
         {
-                <div class="answer-item" data-index="@i">
-                    <div class="form-group">
-                        <label>Response</label>
-                        <input name="Answers[@i].Response" value="@Model.Answers[i].Response" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Next Node</label>
-                        <input name="Answers[@i].NextNode" value="@Model.Answers[i].NextNode" class="form-control" />
-                    </div>
-                    <button type="button" class="btn btn-danger" onclick="removeAnswer(this)">Remove Answer</button>
-                    <hr />
+            <div class="answer-item" data-index="@i">
+                <div class="form-group">
+                    <label>Response</label>
+                    <input name="Answers[@i].Response" value="@Model.Answers[i].Response" class="form-control" />
                 </div>
+                <div class="form-group">
+                    <label>Next Node</label>
+                    <input name="Answers[@i].NextNode" value="@Model.Answers[i].NextNode" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>System Prompt</label>
+                    <input name="Answers[@i].SystemPrompt" value="@Model.Answers[i].SystemPrompt" class="form-control" />
+                </div>
+
+                <button type="button" class="btn btn-danger" onclick="removeAnswer(this)">Remove Answer</button>
+                <hr />
+            </div>
         }
     </div>
 
@@ -43,40 +48,40 @@
 </form>
 
 @section Scripts {
-        <script>
-            // JavaScript to dynamically add and remove answers
-            function addAnswer() {
-                const answersContainer = document.getElementById("answersContainer");
-                const answerIndex = answersContainer.children.length;
+    <script>
+        // JavaScript to dynamically add and remove answers
+        function addAnswer() {
+            const answersContainer = document.getElementById("answersContainer");
+            const answerIndex = answersContainer.children.length;
 
-                const answerHtml = `
-                    <div class="answer-item" data-index="${answerIndex}">
-                        <div class="form-group">
-                            <label>Response</label>
-                            <input name="Answers[${answerIndex}].Response" class="form-control" />
-                        </div>
-                        <div class="form-group">
-                            <label>Next Node</label>
-                            <input name="Answers[${answerIndex}].NextNode" class="form-control" />
-                        </div>
-                        <button type="button" class="btn btn-danger" onclick="removeAnswer(this)">Remove Answer</button>
-                        <hr />
+            const answerHtml = `
+                <div class="answer-item" data-index="${answerIndex}">
+                    <div class="form-group">
+                        <label>Response</label>
+                        <input name="Answers[${answerIndex}].Response" class="form-control" />
                     </div>
-                `;
-                answersContainer.insertAdjacentHTML("beforeend", answerHtml);
-            }
+                    <div class="form-group">
+                        <label>Next Node</label>
+                        <input name="Answers[${answerIndex}].NextNode" class="form-control" />
+                    </div>
+                    <button type="button" class="btn btn-danger" onclick="removeAnswer(this)">Remove Answer</button>
+                    <hr />
+                </div>
+            `;
+            answersContainer.insertAdjacentHTML("beforeend", answerHtml);
+        }
 
-            function removeAnswer(button) {
-                const answerItem = button.closest(".answer-item");
-                answerItem.remove();
+        function removeAnswer(button) {
+            const answerItem = button.closest(".answer-item");
+            answerItem.remove();
 
-                // Update the name attributes for remaining answers to keep indices sequential
-                const answersContainer = document.getElementById("answersContainer");
-                Array.from(answersContainer.children).forEach((item, index) => {
-                    item.setAttribute("data-index", index);
-                    item.querySelector("input[name$='Response']").setAttribute("name", `Answers[${index}].Response`);
-                    item.querySelector("input[name$='NextNode']").setAttribute("name", `Answers[${index}].NextNode`);
-                });
-            }
-        </script>
+            // Update the name attributes for remaining answers to keep indices sequential
+            const answersContainer = document.getElementById("answersContainer");
+            Array.from(answersContainer.children).forEach((item, index) => {
+                item.setAttribute("data-index", index);
+                item.querySelector("input[name$='Response']").setAttribute("name", `Answers[${index}].Response`);
+                item.querySelector("input[name$='NextNode']").setAttribute("name", `Answers[${index}].NextNode`);
+            });
+        }
+    </script>
 }

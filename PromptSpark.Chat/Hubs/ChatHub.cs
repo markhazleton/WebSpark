@@ -11,7 +11,7 @@ public class ChatHub : Hub
     private readonly ILogger<ChatHub> _logger;
 
     public ChatHub(
-         IHubContext<ChatHub> hubContext,
+        IHubContext<ChatHub> hubContext,
         ConversationService conversationService,
         ILogger<ChatHub> logger)
     {
@@ -19,13 +19,14 @@ public class ChatHub : Hub
         _hubContext = hubContext;
         _conversationService = conversationService;
     }
-    public async Task ProgressWorkflow(string conversationId, string userResponse)
+
+    public async Task SendMessage(string conversationId, string message)
     {
+        CancellationToken ct = Context.ConnectionAborted;
         var conversation = _conversationService.Lookup(conversationId);
-        CancellationToken ct = CancellationToken.None;
         try
         {
-            var sendArgument = await _conversationService.ProcessUserResponse(conversationId, userResponse, conversation,Clients.Caller, ct);
+            var sendArgument = await _conversationService.ProcessUserResponse(conversationId, message, conversation, Clients.Caller, ct);
         }
         catch (Exception ex)
         {
@@ -35,36 +36,16 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task SendMessage(string message, string conversationId)
-    {
-        CancellationToken ct = CancellationToken.None;
-        var conversation = _conversationService.Lookup(conversationId);
-        var sendArgument = await _conversationService.ProcessSendMessage(message, conversationId, conversation, ct);
-        if (sendArgument.HasValue)
-        {
-            if (sendArgument.Value.messageType == MessageType.EngageChatAgent)
-            {
-                var chatHistory = _conversationService.BuildChatHistoryFromConversation(conversation);
-                await _conversationService.EngageChatAgent(chatHistory, conversationId, Clients.Caller, ct);
-            }
-            else
-            {
-                await Clients.Caller.SendAsync(sendArgument.Value.messageType.ToString(), sendArgument.Value.messageData);
-            }
-        }
-    }
-
-    public Task SetUserName(string conversationId, string userName)
+    public Task SetUserName(string conversationId, string userName, string workflowName)
     {
         var conversation = _conversationService.Lookup(conversationId);
         conversation.UserName = userName;
+        conversation.Workflow = _conversationService.LoadWorkflow(workflowName);
         if (conversation.CurrentNodeId != conversation.Workflow.StartNode)
         {
             conversation.CurrentNodeId = conversation.Workflow.StartNode;
         }
-        // Save or update the conversation in the dictionary service
         _conversationService.Save(conversationId, conversation);
-
         return Task.CompletedTask;
     }
 }

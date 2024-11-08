@@ -1,6 +1,6 @@
 ﻿@{
+    ViewData["Title"] = "PromptSpark Chat";
 }
-
 
 <div class="container py-5">
     <div class="card shadow-sm">
@@ -11,6 +11,13 @@
             <div id="userForm" class="mb-4">
                 <label for="userInput" class="form-label">Enter your name to join the chat:</label>
                 <input type="text" id="userInput" class="form-control" placeholder="Your name" aria-label="User name input" />
+                <button class="btn btn-primary mt-2" onclick="showWorkflowSelection()">Next</button>
+            </div>
+            <div id="workflowForm" class="mb-4" style="display: none;">
+                <label for="workflowSelect" class="form-label">Select a workflow:</label>
+                <select id="workflowSelect" class="form-select" aria-label="Workflow selection">
+                    <!-- Workflow options will be populated here by JavaScript -->
+                </select>
                 <button class="btn btn-primary mt-2" onclick="joinChat()">Join Chat</button>
             </div>
             <div id="chatWindow" style="display: none;">
@@ -37,13 +44,13 @@
     <script>
         let connection;
         let userName = "";
+        let selectedWorkflow = "";
         let conversationId = localStorage.getItem("conversationId") || generateConversationId();
         let inWorkflow = JSON.parse(localStorage.getItem("inWorkflow")) || false;
         let retryCount = 0;
         let currentMessageContainer = null;
         let lastMessageUser = null;
         let activeMessageId = null;
-
 
         function generateConversationId() {
             return Math.random().toString(36).substring(2, 15);
@@ -62,23 +69,79 @@
                 document.getElementById("connectionStatus").style.display = "none";
                 connection.on("ReceiveAdaptiveCard", handleReceiveAdaptiveCard);
                 connection.on("ReceiveMessage", handleReceiveMessage);
-
+                await loadWorkflows();
             } catch (err) {
                 retryCount++;
                 console.error("Connection failed: ", err);
                 document.getElementById("connectionStatus").textContent = "Reconnecting...";
                 if (retryCount < 5) {
-                    setTimeout(start, Math.min(5000 * retryCount, 30000)); // Exponential backoff
+                    setTimeout(start, Math.min(5000 * retryCount, 30000));
                 } else {
                     document.getElementById("connectionStatus").textContent = "Unable to connect. Please try again later.";
                 }
             }
         }
 
+        // Show workflow selection step after entering name
+        function showWorkflowSelection() {
+            userName = document.getElementById("userInput").value.trim();
+            if (userName && userName.length <= 50) {
+                document.getElementById("userForm").style.display = "none";
+                document.getElementById("workflowForm").style.display = "block";
+            } else {
+                alert("Please enter a valid name (max 50 characters).");
+            }
+        }
+
+        // Load workflows into the dropdown
+        async function loadWorkflows() {
+            try {
+                const response = await fetch('@Url.Action("workflows", "WorkflowAdmin")');
+                const workflows = await response.json();
+                const workflowSelect = document.getElementById("workflowSelect");
+
+                workflows.forEach(workflow => {
+                    const option = document.createElement("option");
+                    option.value = workflow;
+                    option.textContent = workflow;
+                    workflowSelect.appendChild(option);
+                });
+            } catch (err) {
+                console.error("Failed to load workflows:", err);
+            }
+        }
+
+        async function joinChat() {
+            selectedWorkflow = document.getElementById("workflowSelect").value;
+            if (!selectedWorkflow) {
+                alert("Please select a workflow.");
+                return;
+            }
+
+            document.getElementById("workflowForm").style.display = "none";
+            document.getElementById("chatWindow").style.display = "block";
+            document.getElementById("messageInput").focus();
+
+            // Pass the selected workflow name as an additional parameter to SetUserName
+            await connection.invoke("SetUserName", conversationId, userName, selectedWorkflow);
+            startWorkflow();
+        }
+
+        async function startWorkflow() {
+            try {
+                // Call SendMessage with conversationId and an empty string for userResponse to initiate the workflow
+                await connection.invoke("SendMessage", conversationId, "");
+                inWorkflow = true;
+                localStorage.setItem("inWorkflow", JSON.stringify(inWorkflow));
+            } catch (err) {
+                console.error("Workflow initiation failed: ", err);
+            }
+        }
+
+
         function handleReceiveAdaptiveCard(adaptiveCardJson) {
             const messagesList = document.getElementById("messagesList");
 
-            // Initialize the AdaptiveCard instance
             const adaptiveCard = new AdaptiveCards.AdaptiveCard();
             adaptiveCard.parse(JSON.parse(adaptiveCardJson));
             const renderedCard = adaptiveCard.render();
@@ -89,90 +152,44 @@
             messagesList.appendChild(cardContainer);
             messagesList.scrollTop = messagesList.scrollHeight;
 
-            // Set up the onExecuteAction to disable buttons on click
             adaptiveCard.onExecuteAction = async function (action) {
                 if (action.data && action.data.option) {
                     await progressWorkflow(action.data.option);
-                    // Disable all buttons and selects within the rendered card
                     renderedCard.querySelectorAll("button, select").forEach(element => element.disabled = true);
-
-                    // Add visual indication that the card is disabled
                     renderedCard.style.opacity = "0.5";
                     renderedCard.style.pointerEvents = "none";
                 }
             };
         }
 
-
         function handleReceiveMessage(user, messageChunk, messageId) {
             const messagesList = document.getElementById("messagesList");
 
-            console.log(`Received message chunk from ${user}: "${messageChunk}", message ID: ${messageId}`);
-
-            // Check if we need to start a new container based on a new message ID or sender
             if (!currentMessageContainer || lastMessageUser !== user || activeMessageId !== messageId) {
-                console.log("Creating a new message container for:", user);
-
-                // Create a new message container for the new message
                 currentMessageContainer = document.createElement("div");
                 currentMessageContainer.classList.add("mb-2", "p-3", "rounded");
 
-                // Apply different styles based on sender
                 if (user === "PromptSpark") {
                     currentMessageContainer.classList.add("bg-primary", "text-white");
                 } else {
                     currentMessageContainer.classList.add("bg-light", "text-dark");
                 }
 
-                // Only add the sender label once
                 currentMessageContainer.innerHTML = `<strong>${user}:</strong> <span class="message-content"></span>`;
                 messagesList.appendChild(currentMessageContainer);
                 lastMessageUser = user;
-                activeMessageId = messageId; // Set the active message ID
-            } else {
-                console.log("Appending to the existing message container for:", user);
+                activeMessageId = messageId;
             }
 
-            // Append the current message chunk to the message content
             const messageContentSpan = currentMessageContainer.querySelector(".message-content");
             const formattedChunk = typeof marked !== "undefined" ? marked.parseInline(messageChunk) : messageChunk;
             messageContentSpan.innerHTML += formattedChunk;
-
-            // Scroll to the latest message to maintain streaming effect
             messagesList.scrollTop = messagesList.scrollHeight;
 
-            // If the chunk is empty, it likely indicates the end of the message
             if (messageChunk === "") {
-                console.log("Final chunk received, resetting container for next message.");
                 currentMessageContainer = null;
                 lastMessageUser = null;
                 activeMessageId = null;
-            }
-
-            // Debugging: log the current state of the container after each update
-            console.log("Current message container content:", currentMessageContainer ? currentMessageContainer.innerHTML : "No active container");
-        }
-
-        async function joinChat() {
-            userName = document.getElementById("userInput").value.trim();
-            if (userName && userName.length <= 50) { // Basic validation
-                document.getElementById("userForm").style.display = "none";
-                document.getElementById("chatWindow").style.display = "block";
-                document.getElementById("messageInput").focus();
-                await connection.invoke("SetUserName", conversationId, userName);
-                startWorkflow();
-            } else {
-                alert("Please enter a valid name (max 50 characters).");
-            }
-        }
-
-        async function startWorkflow() {
-            try {
-                await connection.invoke("ProgressWorkflow", conversationId,"");
-                inWorkflow = true;
-                localStorage.setItem("inWorkflow", JSON.stringify(inWorkflow));
-            } catch (err) {
-                console.error("Workflow initiation failed: ", err);
             }
         }
 
@@ -194,9 +211,9 @@
 
         async function progressWorkflow(response) {
             try {
-                await connection.invoke("ProgressWorkflow", conversationId, response);
+                await connection.invoke("SendMessage", conversationId, response);
             } catch (err) {
-                console.error("ProgressWorkflow failed: ", err);
+                console.error("SendMessage failed: ", err);
             }
         }
 

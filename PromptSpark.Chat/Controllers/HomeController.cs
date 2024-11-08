@@ -20,7 +20,7 @@ public class HomeController(IHttpClientFactory factory) : Controller
     public async Task<IActionResult> Start()
     {
         // Call the API to start the workflow using only the path
-        var response = await _httpClient.GetAsync("workflow/start");
+        var response = await _httpClient.GetAsync("workflow/init");
         response.EnsureSuccessStatusCode();
 
         // Deserialize the response content

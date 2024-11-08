@@ -55,7 +55,7 @@ public class WorkflowController : ApiBaseController
     /// Starts the workflow by redirecting to the start node.
     /// </summary>
     /// <returns>Redirection to the start node.</returns>
-    [HttpGet("start")]
+    [HttpGet("init")]
     public IActionResult StartWorkflow()
     {
         return RedirectToAction(nameof(GetNode), new { nodeId = _workflow.StartNode });

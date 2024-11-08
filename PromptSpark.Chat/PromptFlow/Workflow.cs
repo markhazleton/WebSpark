@@ -13,16 +13,19 @@ public enum MessageType
 public interface IWorkflowService
 {
     Workflow LoadWorkflow();
-    Node GetNodeById(string nodeId);
+    Workflow LoadWorkflow(string fileName);
+    Node? GetNodeById(string nodeId);
     void AddNode(Node newNode);
     void UpdateNode(Node updatedNode);
     void DeleteNode(string nodeId);
     void SaveWorkflow(Workflow workflow);
-    object GetSankeyData();
+    List<string> ListAvailableWorkflows();
 }
+
 public class WorkflowOptions
 {
-    public string FilePath { get; set; } = "wwwroot/workflow.json";
+    public string FilePath { get; set; } = "wwwroot/workflow.json";  // Default workflow file
+    public string DirectoryPath { get; set; } = "wwwroot/workflows";  // Directory for workflow files
 }
 
 public class WorkflowService : IWorkflowService
@@ -31,7 +34,6 @@ public class WorkflowService : IWorkflowService
     private readonly WorkflowOptions _options;
     private Workflow _workflow;
 
-
     public WorkflowService(IOptions<WorkflowOptions> options, JsonSerializerOptions jsonOptions)
     {
         _options = options.Value;
@@ -39,15 +41,45 @@ public class WorkflowService : IWorkflowService
         _workflow = LoadWorkflow();
     }
 
-
     public Workflow LoadWorkflow()
     {
-        var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), _options.FilePath);
-        var jsonTemplate = File.ReadAllText(jsonPath);
-        return JsonSerializer.Deserialize<Workflow>(jsonTemplate, _jsonOptions)
-               ?? throw new InvalidOperationException("Failed to load Workflow configuration.");
+        return LoadWorkflow("workflow.json");
     }
-    public Node GetNodeById(string nodeId)
+
+    public Workflow LoadWorkflow(string fileName)
+    {
+        var filePath = fileName ?? "workflow.json";
+        var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), _options.DirectoryPath, filePath);
+
+        if (!File.Exists(jsonPath))
+            throw new FileNotFoundException($"Workflow file '{filePath}' not found in '{_options.DirectoryPath}'");
+
+        var jsonTemplate = File.ReadAllText(jsonPath);
+        var workflow = JsonSerializer.Deserialize<Workflow>(jsonTemplate, _jsonOptions)
+                      ?? throw new InvalidOperationException("Failed to load Workflow configuration.");
+
+        workflow.WorkFlowName = Path.GetFileNameWithoutExtension(filePath);
+        workflow.WorkFlowFileName = filePath;
+        return workflow;
+    }
+
+    public List<string> ListAvailableWorkflows()
+    {
+        var list = new List<string>();
+        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), _options.DirectoryPath);
+
+        if (!Directory.Exists(directoryPath))
+            return list;
+
+        foreach (var file in Directory.GetFiles(directoryPath, "*.json"))
+        {
+            list.Add(Path.GetFileName(file));
+        }
+
+        return list;
+    }
+
+    public Node? GetNodeById(string nodeId)
     {
         return _workflow.Nodes.Find(n => n.Id == nodeId);
     }
@@ -55,9 +87,7 @@ public class WorkflowService : IWorkflowService
     public void AddNode(Node newNode)
     {
         if (_workflow.Nodes.Any(n => n.Id == newNode.Id))
-        {
             throw new InvalidOperationException($"Node with ID {newNode.Id} already exists.");
-        }
 
         _workflow.Nodes.Add(newNode);
         SaveWorkflow(_workflow);
@@ -67,9 +97,7 @@ public class WorkflowService : IWorkflowService
     {
         var existingNodeIndex = _workflow.Nodes.FindIndex(n => n.Id == updatedNode.Id);
         if (existingNodeIndex == -1)
-        {
             throw new InvalidOperationException($"Node with ID {updatedNode.Id} does not exist.");
-        }
 
         _workflow.Nodes[existingNodeIndex] = updatedNode;
         SaveWorkflow(_workflow);
@@ -79,9 +107,7 @@ public class WorkflowService : IWorkflowService
     {
         var nodeToRemove = _workflow.Nodes.Find(n => n.Id == nodeId);
         if (nodeToRemove == null)
-        {
             throw new InvalidOperationException($"Node with ID {nodeId} does not exist.");
-        }
 
         _workflow.Nodes.Remove(nodeToRemove);
         UpdateReferencesAfterNodeDeletion(nodeId);
@@ -90,8 +116,17 @@ public class WorkflowService : IWorkflowService
 
     public void SaveWorkflow(Workflow workflow)
     {
-        var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), _options.FilePath);
+        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), _options.DirectoryPath);
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        var fileName = string.IsNullOrEmpty(workflow.WorkFlowFileName) ? "workflow.json" : workflow.WorkFlowFileName;
+        var jsonPath = Path.Combine(directoryPath, fileName);
         var json = JsonSerializer.Serialize(workflow, _jsonOptions);
+
         File.WriteAllText(jsonPath, json);
     }
 
@@ -102,64 +137,6 @@ public class WorkflowService : IWorkflowService
             node.Answers.RemoveAll(answer => answer.NextNode == deletedNodeId);
         }
     }
-
-    public object GetSankeyData()
-    {
-        // Step 1: Collect all nodes and create a map from node ID to index
-        var nodes = _workflow.Nodes.Select(n => new { id = n.Id, name = n.Question }).ToList();
-        var nodeIndexMap = nodes.Select((node, index) => new { node.id, index })
-                                .ToDictionary(x => x.id, x => x.index);
-
-        // Step 2: Helper function to detect cycles using Depth-First Search (DFS)
-        bool IsCircularLink(string sourceId, string targetId, HashSet<string> visited)
-        {
-            if (visited.Contains(targetId)) return true;
-            visited.Add(targetId);
-
-            var targetNode = _workflow.Nodes.FirstOrDefault(n => n.Id == targetId);
-            if (targetNode != null)
-            {
-                foreach (var answer in targetNode.Answers)
-                {
-                    if (!string.IsNullOrEmpty(answer.NextNode) && IsCircularLink(targetId, answer.NextNode, new HashSet<string>(visited)))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        // Step 3: Collect all links, replacing source/target with indices from the map and filtering out circular links
-        var links = new List<object>();
-
-        foreach (var node in _workflow.Nodes)
-        {
-            foreach (var answer in node.Answers)
-            {
-                if (!string.IsNullOrEmpty(answer.NextNode) && nodeIndexMap.ContainsKey(answer.NextNode))
-                {
-                    // Check if this link is circular
-                    if (!IsCircularLink(node.Id, answer.NextNode, new HashSet<string> { node.Id }))
-                    {
-                        links.Add(new
-                        {
-                            source = nodeIndexMap[node.Id],      // Use index for source
-                            target = nodeIndexMap[answer.NextNode], // Use index for target
-                            value = 1 // Default weight for each link
-                        });
-                    }
-                }
-            }
-        }
-
-        return new { nodes, links };
-    }
-
-
-
-
-
 }
 
 public class Conversation
@@ -198,13 +175,30 @@ public class Workflow
 
     [JsonPropertyName("nodes")]
     public List<Node> Nodes { get; set; }
-
     [JsonPropertyName("startNode")]
     public string StartNode { get; set; }
     [JsonPropertyName("workflowId")]
     public string WorkflowId { get; set; }
+    [JsonPropertyName("workflowName")]
+    public string WorkFlowName { get; set; } = "workflow";
+    public string? WorkFlowFileName { get; internal set; }
 }
+public class EditNodeViewModel : Node
+{
+    public EditNodeViewModel()
+    {
+            
+    }
+    public EditNodeViewModel(Node node,string filename)
+    {
+        Id = node.Id;
+        Question = node.Question;
+        Answers = node.Answers;
+        FileName = filename;
+    }
 
+    public string FileName { get; set; } 
+}
 public class Node
 {
 
@@ -224,6 +218,8 @@ public class Answer
     public string NextNode { get; set; }
     [JsonPropertyName("response")]
     public string Response { get; set; }
+    [JsonPropertyName("system")]
+    public string SystemPrompt { get; set; } = "You are a chat agent";
 }
 public class OptionResponse
 {

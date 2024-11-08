@@ -7,7 +7,6 @@ namespace PromptSpark.Chat.PromptFlow;
 public class ConversationService : ConcurrentDictionaryService<Conversation>
 {
     private const string STR_ChatBotName = "PromptSpark";
-
     private readonly IChatService _chatService;
     private readonly ILogger<ConversationService> _logger;
     private readonly IWorkflowService _workflowService;
@@ -44,7 +43,6 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         return chatHistory;
     }
 
-
     public async Task EngageChatAgent(ChatHistory chatHistory, string conversationId, IClientProxy clients, CancellationToken cancellationToken)
     {
         await _chatService.EngageChatAgent(chatHistory, conversationId, clients, cancellationToken);
@@ -53,45 +51,45 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
     public string GenerateAdaptiveCardJson(Node currentNode)
     {
         var adaptiveCard = new Dictionary<string, object>
-    {
-        { "type", "AdaptiveCard" },
-        { "version", "1.3" },
-        { "body", new object[]
-            {
-                new Dictionary<string, object>
+        {
+            { "type", "AdaptiveCard" },
+            { "version", "1.3" },
+            { "body", new object[]
                 {
-                    { "type", "TextBlock" },
-                    { "text", currentNode?.Question ?? "No question provided." },
-                    { "wrap", true },
-                    { "size", "Medium" },
-                    { "weight", "Bolder" }
-                },
-                new Dictionary<string, object>
-                {
-                    { "type", "TextBlock" },
-                    { "text", "Select an option below:" },
-                    { "wrap", true },
-                    { "separator", true }
-                },
-                // Options for answers as Action.Submit buttons
-                new Dictionary<string, object>
-                {
-                    { "type", "ActionSet" },
-                    { "actions", currentNode?.Answers?.Select(answer => new Dictionary<string, object>
-                        {
-                            { "type", "Action.Submit" },
-                            { "title", answer.Response },
-                            { "data", new { option = answer.Response } }
-                        }).ToArray() ?? Array.Empty<object>()
+                    new Dictionary<string, object>
+                    {
+                        { "type", "TextBlock" },
+                        { "text", currentNode?.Question ?? "No question provided." },
+                        { "wrap", true },
+                        { "size", "Medium" },
+                        { "weight", "Bolder" }
+                    },
+                    new Dictionary<string, object>
+                    {
+                        { "type", "TextBlock" },
+                        { "text", "Select an option below:" },
+                        { "wrap", true },
+                        { "separator", true }
+                    },
+                    new Dictionary<string, object>
+                    {
+                        { "type", "ActionSet" },
+                        { "actions", currentNode?.Answers?.Select(answer => new Dictionary<string, object>
+                            {
+                                { "type", "Action.Submit" },
+                                { "title", answer.Response },
+                                { "data", new { option = answer.Response } }
+                            }).ToArray() ?? Array.Empty<object>()
+                        }
                     }
                 }
-            }
-        },
-        { "$schema", "http://adaptivecards.io/schemas/adaptive-card.json" }
-    };
+            },
+            { "$schema", "http://adaptivecards.io/schemas/adaptive-card.json" }
+        };
 
         return JsonSerializer.Serialize(adaptiveCard);
     }
+
     public async Task<string> GenerateBotResponse(ChatHistory chatHistory, CancellationToken cancellationToken)
     {
         return await _chatService.GenerateBotResponse(chatHistory);
@@ -115,6 +113,22 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
             return new Conversation(workflow, id, null);
         });
     }
+
+    // New method to load a specific workflow by name
+    public Workflow LoadWorkflow(string workflowName)
+    {
+        try
+        {
+            return _workflowService.LoadWorkflow(workflowName)
+                   ?? throw new InvalidOperationException($"Workflow '{workflowName}' could not be loaded.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load workflow '{WorkflowName}'", workflowName);
+            throw;
+        }
+    }
+
     public async Task<(MessageType messageType, object messageData)?> ProcessSendMessage(
         string message,
         string conversationId,
@@ -124,18 +138,14 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
         var user = conversation.UserName ?? STR_ChatBotName;
         var timestamp = DateTime.Now;
 
-        // Add the message to the conversation history.
         AddChatEntry(conversation, user, message, timestamp);
 
-        // Build the chat history and generate a bot response.
         var chatHistory = BuildChatHistoryFromConversation(conversation);
         chatHistory.AddUserMessage(message);
         var botResponse = await GenerateBotResponse(chatHistory, ct);
 
-        // Add the bot response to the conversation history.
         AddChatEntry(conversation, STR_ChatBotName, message, timestamp, botResponse);
 
-        // Prepare the tuple result with message type and data for SendAsync.
         return (MessageType.ReceiveMessage, new { User = user, Message = message, ConversationId = conversationId });
     }
 
@@ -168,7 +178,6 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
 
                 await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson);
 
-                // Return EngageChatAgent if no matching answer is found.
                 return (MessageType.EngageChatAgent, new { chatHistory, conversationId });
             }
 
@@ -180,7 +189,7 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
 
             adaptiveCardJson = GenerateAdaptiveCardJson(nextNode);
         }
-        await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson);
+        await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson, cancellationToken: ct);
 
         _logger.LogInformation("AdaptiveCard being sent: {AdaptiveCardJson}", adaptiveCardJson);
         return (MessageType.ReceiveAdaptiveCard, adaptiveCardJson);
