@@ -51,41 +51,58 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
     public string GenerateAdaptiveCardJson(Node currentNode)
     {
         var adaptiveCard = new Dictionary<string, object>
-        {
-            { "type", "AdaptiveCard" },
-            { "version", "1.3" },
-            { "body", new object[]
+    {
+        { "type", "AdaptiveCard" },
+        { "version", "1.3" },
+        { "body", new object[]
+            {
+                new Dictionary<string, object>
                 {
-                    new Dictionary<string, object>
-                    {
-                        { "type", "TextBlock" },
-                        { "text", currentNode?.Question ?? "No question provided." },
-                        { "wrap", true },
-                        { "size", "Medium" },
-                        { "weight", "Bolder" }
-                    },
-                    new Dictionary<string, object>
-                    {
-                        { "type", "TextBlock" },
-                        { "text", "Select an option below:" },
-                        { "wrap", true },
-                        { "separator", true }
-                    },
-                    new Dictionary<string, object>
-                    {
-                        { "type", "ActionSet" },
-                        { "actions", currentNode?.Answers?.Select(answer => new Dictionary<string, object>
-                            {
-                                { "type", "Action.Submit" },
-                                { "title", answer.Response },
-                                { "data", new { option = answer.Response } }
-                            }).ToArray() ?? Array.Empty<object>()
+                    { "type", "TextBlock" },
+                    { "text", currentNode?.Question ?? "No question provided." },
+                    { "wrap", true },
+                    { "size", "Medium" },
+                    { "weight", "Bolder" }
+                },
+                new Dictionary<string, object>
+                {
+                    { "type", "TextBlock" },
+                    { "text", "Select an option below or type your response:" },
+                    { "wrap", true },
+                    { "separator", true }
+                },
+                new Dictionary<string, object>
+                {
+                    { "type", "ActionSet" },
+                    { "actions", currentNode?.Answers?.Select(answer => new Dictionary<string, object>
+                        {
+                            { "type", "Action.Submit" },
+                            { "title", answer.Response },
+                            { "data", new { option = answer.Response } }
+                        }).ToArray() ?? Array.Empty<object>()
+                    }
+                },
+                // Adding a TextInput field with auto-submit on Enter
+                new Dictionary<string, object>
+                {
+                    { "type", "Input.Text" },
+                    { "id", "userResponse" },
+                    { "placeholder", "Type your answer here and press Enter..." },
+                    { "isMultiline", false },
+                    { "style", "text" },
+                    { "maxLength", 100 },
+                    { "inlineAction", new Dictionary<string, object> // Auto-submit on Enter
+                        {
+                            { "type", "Action.Submit" },
+                            { "title", "Submit" },
+                            { "data", new { action = "submitText", userResponse = "${userResponse}" } }
                         }
                     }
                 }
-            },
-            { "$schema", "http://adaptivecards.io/schemas/adaptive-card.json" }
-        };
+            }
+        },
+        { "$schema", "http://adaptivecards.io/schemas/adaptive-card.json" }
+    };
 
         return JsonSerializer.Serialize(adaptiveCard);
     }
@@ -176,7 +193,7 @@ public class ConversationService : ConcurrentDictionaryService<Conversation>
 
                 await EngageChatAgent(chatHistory, conversationId, caller, ct);
 
-                await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson);
+                await caller.SendAsync(MessageType.ReceiveAdaptiveCard.ToString(), adaptiveCardJson, cancellationToken: ct);
 
                 return (MessageType.EngageChatAgent, new { chatHistory, conversationId });
             }

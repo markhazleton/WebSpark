@@ -22,31 +22,71 @@ namespace PromptSpark.Domain.Models
                 _ => response.SystemResponse,
             };
         }
-
-        public static string JSONtoHtml(string json)
+        public static string JSONtoHtml(string input)
         {
-            if (string.IsNullOrEmpty(json))
+            if (string.IsNullOrEmpty(input))
                 return string.Empty;
+
+            string json = input;
+
+            // First, check if the input is valid JSON
+            if (!IsValidJson(input))
+            {
+                // Look for JSON block marked with ```JSON and ending with ```
+                int startIndex = input.IndexOf("```json", StringComparison.OrdinalIgnoreCase);
+                int endIndex = input.IndexOf("```", startIndex + 7, StringComparison.OrdinalIgnoreCase);
+
+                // If both markers are found, extract the JSON block
+                if (startIndex != -1 && endIndex != -1)
+                {
+                    // Extract JSON between ```json and ```
+                    json = input.Substring(startIndex + 7, endIndex - (startIndex + 7)).Trim();
+
+                    // Check if extracted text is valid JSON
+                    if (!IsValidJson(json))
+                    {
+                        // If not valid JSON, return the original input unmodified
+                        return input;
+                    }
+                }
+                else
+                {
+                    // If no JSON block is found, return the original input
+                    return input;
+                }
+            }
 
             try
             {
-                // Attempt to parse the JSON string to validate it
-                var jsonObject = JsonDocument.Parse(json);
-
-                // If JSON is valid, pretty print it using JsonSerializer
+                // Pretty print the JSON if it's valid
                 var prettyJson = JsonSerializer.Serialize(
                     JsonSerializer.Deserialize<object>(json),
                     new JsonSerializerOptions { WriteIndented = true });
 
-                // Convert JSON text to HTML with proper formatting
+                // Convert JSON to HTML with proper formatting
                 return $"<pre class='language-json'><code class='language-json'>{System.Net.WebUtility.HtmlEncode(prettyJson)}</code></pre>";
             }
             catch (JsonException ex)
             {
-                // Handle JSON parsing errors (optional: log the error)
-                return $"<p>Error parsing JSON: {System.Net.WebUtility.HtmlEncode(ex.Message)}</p>";
+                // Return the original input if any error occurs during formatting
+                return input;
             }
         }
+
+        // Helper method to check if a string is valid JSON
+        private static bool IsValidJson(string json)
+        {
+            try
+            {
+                JsonDocument.Parse(json);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static string PugToHtml(string input)
         {
 

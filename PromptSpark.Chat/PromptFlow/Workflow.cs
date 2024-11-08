@@ -9,7 +9,26 @@ public enum MessageType
     ReceiveAdaptiveCard,
     ReceiveMessage
 }
+public class FlexibleStringConverter : JsonConverter<string>
+{
+    public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.Number)
+        {
+            return reader.GetInt32().ToString();
+        }
+        else if (reader.TokenType == JsonTokenType.String)
+        {
+            return reader.GetString();
+        }
+        throw new JsonException("Unexpected token type for Id property.");
+    }
 
+    public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value);
+    }
+}
 public interface IWorkflowService
 {
     Workflow LoadWorkflow();
@@ -176,8 +195,10 @@ public class Workflow
     [JsonPropertyName("nodes")]
     public List<Node> Nodes { get; set; }
     [JsonPropertyName("startNode")]
+    [JsonConverter(typeof(FlexibleStringConverter))]
     public string StartNode { get; set; }
     [JsonPropertyName("workflowId")]
+    [JsonConverter(typeof(FlexibleStringConverter))]
     public string WorkflowId { get; set; }
     [JsonPropertyName("workflowName")]
     public string WorkFlowName { get; set; } = "workflow";
@@ -205,6 +226,7 @@ public class Node
     [JsonPropertyName("answers")]
     public List<Answer> Answers { get; set; }
     [JsonPropertyName("id")]
+    [JsonConverter(typeof(FlexibleStringConverter))]
     public string Id { get; set; }
 
     [JsonPropertyName("question")]
@@ -215,6 +237,7 @@ public class Answer
 {
 
     [JsonPropertyName("nextNode")]
+    [JsonConverter(typeof(FlexibleStringConverter))]
     public string NextNode { get; set; }
     [JsonPropertyName("response")]
     public string Response { get; set; }

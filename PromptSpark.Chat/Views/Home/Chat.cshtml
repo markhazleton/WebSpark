@@ -25,10 +25,6 @@
                 <ul id="messagesList" class="list-unstyled mb-3 p-3 border rounded bg-light overflow-auto" style="height: 300px; max-height: 400px;" aria-live="polite">
                 </ul>
                 <div id="optionsContainer" class="d-flex flex-wrap gap-2 mb-3" style="display: none;"></div>
-                <div class="input-group" id="inputMessage">
-                    <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." aria-label="Message input" />
-                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
-                </div>
             </div>
         </div>
     </div>
@@ -82,7 +78,6 @@
             }
         }
 
-        // Show workflow selection step after entering name
         function showWorkflowSelection() {
             userName = document.getElementById("userInput").value.trim();
             if (userName && userName.length <= 50) {
@@ -93,7 +88,6 @@
             }
         }
 
-        // Load workflows into the dropdown
         async function loadWorkflows() {
             try {
                 const response = await fetch('@Url.Action("workflows", "WorkflowAdmin")');
@@ -120,16 +114,13 @@
 
             document.getElementById("workflowForm").style.display = "none";
             document.getElementById("chatWindow").style.display = "block";
-            document.getElementById("messageInput").focus();
 
-            // Pass the selected workflow name as an additional parameter to SetUserName
             await connection.invoke("SetUserName", conversationId, userName, selectedWorkflow);
             startWorkflow();
         }
 
         async function startWorkflow() {
             try {
-                // Call SendMessage with conversationId and an empty string for userResponse to initiate the workflow
                 await connection.invoke("SendMessage", conversationId, "");
                 inWorkflow = true;
                 localStorage.setItem("inWorkflow", JSON.stringify(inWorkflow));
@@ -137,7 +128,6 @@
                 console.error("Workflow initiation failed: ", err);
             }
         }
-
 
         function handleReceiveAdaptiveCard(adaptiveCardJson) {
             const messagesList = document.getElementById("messagesList");
@@ -153,9 +143,10 @@
             messagesList.scrollTop = messagesList.scrollHeight;
 
             adaptiveCard.onExecuteAction = async function (action) {
-                if (action.data && action.data.option) {
-                    await progressWorkflow(action.data.option);
-                    renderedCard.querySelectorAll("button, select").forEach(element => element.disabled = true);
+                if (action.data && (action.data.option || action.data.userResponse)) {
+                    const response = action.data.option || action.data.userResponse;
+                    await progressWorkflow(response);
+                    renderedCard.querySelectorAll("button, select, input").forEach(element => element.disabled = true);
                     renderedCard.style.opacity = "0.5";
                     renderedCard.style.pointerEvents = "none";
                 }
@@ -193,22 +184,6 @@
             }
         }
 
-        async function sendMessage() {
-            const message = document.getElementById("messageInput").value.trim();
-            if (userName && message) {
-                try {
-                    if (inWorkflow) {
-                        await progressWorkflow(message);
-                    } else {
-                        await connection.invoke("SendMessage", userName, message, conversationId);
-                    }
-                    document.getElementById("messageInput").value = '';
-                } catch (err) {
-                    console.error("SendMessage failed: ", err);
-                }
-            }
-        }
-
         async function progressWorkflow(response) {
             try {
                 await connection.invoke("SendMessage", conversationId, response);
@@ -219,13 +194,6 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             start();
-        });
-
-        document.getElementById("messageInput").addEventListener("keypress", function (event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                sendMessage();
-            }
         });
     </script>
 }

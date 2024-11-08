@@ -38,10 +38,10 @@ public class OpenAIChatCompletionService(
         };
         if (definitionResponse.OutputType.ToString().Equals("json", StringComparison.CurrentCultureIgnoreCase))
         {
+            // response_format = new ResponseFormat() { type = "json_object" },
             return new OpenAiApiRequest()
             {
                 model = definitionResponse.Model,
-                response_format = new ResponseFormat() { type = "json_object" },
                 messages =
                     [
                         systemMessage,
@@ -56,10 +56,10 @@ public class OpenAIChatCompletionService(
         }
         else
         {
+            //    response_format = new ResponseFormat() { type = "text" },
             return new OpenAiApiRequest()
             {
                 model = definitionResponse.Model,
-                response_format = new ResponseFormat() { type = "text" },
                 messages =
                     [
                         systemMessage,
@@ -85,10 +85,10 @@ public class OpenAIChatCompletionService(
         };
         if (definitionResponse.OutputType.ToString().ToLower() == "json")
         {
+//                response_format = new ResponseFormat() { type = "json_object" },
             return new OpenAiApiRequest()
             {
                 model = definitionResponse.Model,
-                response_format = new ResponseFormat() { type = "json_object" },
                 messages =
                     [
                         systemMessage,
@@ -103,10 +103,10 @@ public class OpenAIChatCompletionService(
         }
         else
         {
+//                response_format = new ResponseFormat() { type = "text" },
             return new OpenAiApiRequest()
             {
                 model = definitionResponse.Model,
-                response_format = new ResponseFormat() { type = "text" },
                 messages =
                     [
                         systemMessage,
@@ -327,9 +327,6 @@ public class OpenAIChatCompletionService(
         string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
         Uri openAiUri = new(openAiUrl);
 
-
-
-
         var openAIRequest = GetOpenAiApiRequest(gptResponse);
         CancellationToken ct = new();
         HttpRequestResult<OpenAiApiResponse> serviceResponse = new();
@@ -347,8 +344,8 @@ public class OpenAIChatCompletionService(
         gptResponse.SystemResponse = serviceResponse?.ResponseResults?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
         gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
         gptResponse.ElapsedMilliseconds = serviceResponse?.ElapsedMilliseconds ?? 0;
-        gptResponse.TotalTokens = serviceResponse?.ResponseResults?.Usage?.TotalTokens?? 0;
-        gptResponse.CompletionTokens = serviceResponse?.ResponseResults?.Usage?.CompletionTokens?? 0;
+        gptResponse.TotalTokens = serviceResponse?.ResponseResults?.Usage?.TotalTokens ?? 0;
+        gptResponse.CompletionTokens = serviceResponse?.ResponseResults?.Usage?.CompletionTokens ?? 0;
         gptResponse.PromptTokens = serviceResponse?.ResponseResults?.Usage?.PromptTokens ?? 0;
         gptResponse.Model = serviceResponse?.ResponseResults?.Model ?? "Unknown";
         return gptResponse;

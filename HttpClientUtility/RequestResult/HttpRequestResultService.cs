@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 
 namespace HttpClientUtility.RequestResult;
@@ -25,47 +26,90 @@ public class HttpRequestResultService(
     {
         try
         {
+            // Step 1: Validate input data
             ValidateHttpSendResults(httpSendResults);
-            using var request = CreateHttpRequest(httpSendResults);
-            HttpResponseMessage? response = null;
-            response = await _httpClient.SendAsync(request, ct).ConfigureAwait(true);
 
-            // Check for redirects
+            // Step 2: Create the HTTP request
+            using var request = CreateHttpRequest(httpSendResults);
+
+            // Step 3: Build the curl command for debugging
+            var curlCommand = new StringBuilder();
+            curlCommand.Append("curl -X ");
+            curlCommand.Append(request.Method.Method);
+            curlCommand.Append(" '").Append(request.RequestUri).Append("'");
+
+            // Add headers to the curl command
+            foreach (var header in request.Headers)
+            {
+                curlCommand.Append(" -H '").Append(header.Key).Append(": ").Append(string.Join(",", header.Value)).Append("'");
+            }
+
+            // Add request body to the curl command if it's a POST, PUT, or PATCH request
+            if (request.Content != null)
+            {
+                var content = await request.Content.ReadAsStringAsync();
+                curlCommand.Append(" -d '").Append(content.Replace("'", "\\'")).Append("'");
+                _logger.LogInformation("Request Content: {Content}", content);
+            }
+
+            // Save the curl command to a file
+            string curlFilePath = "curl_request.txt";  // Adjust the path as needed
+            await File.WriteAllTextAsync(curlFilePath, curlCommand.ToString());
+            _logger.LogInformation("Saved curl command to {Path}", curlFilePath);
+
+            // Step 4: Send the HTTP request
+            _logger.LogInformation("Sending HTTP request to {Url}", request.RequestUri);
+            HttpResponseMessage? response = await _httpClient.SendAsync(request, ct).ConfigureAwait(true);
+
+            // Step 5: Handle response for redirects
             if (response?.StatusCode == HttpStatusCode.MovedPermanently)
             {
                 httpSendResults.StatusCode = HttpStatusCode.MovedPermanently;
-                httpSendResults.ErrorList.Add($"New: {response?.RequestMessage?.RequestUri} Old:{request?.RequestUri}");
-                _logger.LogInformation("Redirected to {NewUrl}", response?.RequestMessage?.RequestUri);
+                httpSendResults.ErrorList.Add($"Redirected from {request.RequestUri} to {response?.RequestMessage?.RequestUri}");
+                _logger.LogInformation("Request redirected to {NewUrl}", response?.RequestMessage?.RequestUri);
             }
 
+            // Step 6: Process the response
             return await ProcessHttpResponseAsync(response, httpSendResults, ct).ConfigureAwait(true);
         }
         catch (ArgumentNullException ex)
         {
+            // Log and handle ArgumentNullException
             httpSendResults.ErrorList.Add($"ArgumentNullException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.BadRequest;
-            _logger.LogError(ex, "HttpSendRequestResultAsync:ArgumentNullException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync encountered ArgumentNullException: {Message}", ex.Message);
             return httpSendResults;
         }
         catch (ArgumentException ex)
         {
+            // Log and handle ArgumentException
             httpSendResults.ErrorList.Add($"ArgumentException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.BadRequest;
-            _logger.LogError(ex, "HttpSendRequestResultAsync:ArgumentException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync encountered ArgumentException: {Message}", ex.Message);
             return httpSendResults;
         }
         catch (HttpRequestException ex)
         {
+            // Log and handle HttpRequestException
             httpSendResults.ErrorList.Add($"HttpRequestException: {ex.Message}");
-            httpSendResults.StatusCode = (HttpStatusCode)(ex.StatusCode ?? HttpStatusCode.InternalServerError);
-            _logger.LogError(ex, "HttpSendRequestResultAsync:HttpRequestException {Message}", ex.Message);
+            httpSendResults.StatusCode = ex.StatusCode ?? HttpStatusCode.InternalServerError;
+            _logger.LogError(ex, "HttpSendRequestResultAsync encountered HttpRequestException: {Message} with StatusCode {StatusCode}", ex.Message, ex.StatusCode);
+            return httpSendResults;
+        }
+        catch (OperationCanceledException ex) when (ct.IsCancellationRequested)
+        {
+            // Log and handle task cancellation
+            httpSendResults.ErrorList.Add("OperationCanceledException: Request was canceled.");
+            httpSendResults.StatusCode = HttpStatusCode.RequestTimeout;
+            _logger.LogWarning(ex, "HttpSendRequestResultAsync operation canceled: {Message}", ex.Message);
             return httpSendResults;
         }
         catch (Exception ex)
         {
+            // Log and handle any other general exceptions
             httpSendResults.ErrorList.Add($"GeneralException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.InternalServerError;
-            _logger.LogError(ex, "HttpSendRequestResultAsync:GeneralException {Message}", ex.Message);
+            _logger.LogError(ex, "HttpSendRequestResultAsync encountered GeneralException: {Message}", ex.Message);
             return httpSendResults;
         }
     }
