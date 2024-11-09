@@ -1,19 +1,19 @@
 using Microsoft.AspNetCore.SignalR;
-using PromptSpark.Chat.PromptFlow;
+using Microsoft.Extensions.Logging;
 
-namespace PromptSpark.Chat.Hubs;
+namespace PromptSpark.Domain.PromptSparkChat;
 
-public class ChatHub : Hub
+public class PromptSparkHub : Hub
 {
     private const string STR_ChatBotName = "PromptSpark";
-    private readonly IHubContext<ChatHub> _hubContext;
+    private readonly IHubContext<PromptSparkHub> _hubContext;
     private readonly ConversationService _conversationService;
-    private readonly ILogger<ChatHub> _logger;
+    private readonly ILogger<PromptSparkHub> _logger;
 
-    public ChatHub(
-        IHubContext<ChatHub> hubContext,
+    public PromptSparkHub(
+        IHubContext<PromptSparkHub> hubContext,
         ConversationService conversationService,
-        ILogger<ChatHub> logger)
+        ILogger<PromptSparkHub> logger)
     {
         _logger = logger;
         _hubContext = hubContext;

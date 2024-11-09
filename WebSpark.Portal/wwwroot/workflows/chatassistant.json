@@ -1,0 +1,508 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "question": "Welcome to the GPT Assistant Designer! Let\u0027s start by choosing the personality of your assistant. Which personality trait should it embody?",
+      "answers": [
+        {
+          "response": "Friendly",
+          "nextNode": 2,
+          "system": "The assistant will have a warm, approachable demeanor."
+        },
+        {
+          "response": "Professional",
+          "nextNode": 3,
+          "system": "The assistant will maintain a formal and efficient tone."
+        },
+        {
+          "response": "Humorous",
+          "nextNode": 4,
+          "system": "The assistant will incorporate humor and wit into interactions."
+        },
+        {
+          "response": "Empathetic",
+          "nextNode": 5,
+          "system": "The assistant will display understanding and compassion."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Great choice! Now, what level of expertise should your assistant have?",
+      "answers": [
+        {
+          "response": "General Knowledge",
+          "nextNode": 6,
+          "system": "The assistant will provide well-rounded information across various topics."
+        },
+        {
+          "response": "Niche Topics",
+          "nextNode": 7,
+          "system": "The assistant will focus on specific areas of interest."
+        },
+        {
+          "response": "Expert-Level",
+          "nextNode": 8,
+          "system": "The assistant will deliver in-depth and authoritative responses."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "You\u0027ve chosen a professional demeanor. Select the level of expertise for your assistant.",
+      "answers": [
+        {
+          "response": "General Knowledge",
+          "nextNode": 6,
+          "system": "The assistant will provide well-rounded information across various topics."
+        },
+        {
+          "response": "Niche Topics",
+          "nextNode": 7,
+          "system": "The assistant will focus on specific areas of interest."
+        },
+        {
+          "response": "Expert-Level",
+          "nextNode": 8,
+          "system": "The assistant will deliver in-depth and authoritative responses."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "A humorous assistant! What level of expertise should it have?",
+      "answers": [
+        {
+          "response": "General Knowledge",
+          "nextNode": 6,
+          "system": "The assistant will provide well-rounded information across various topics."
+        },
+        {
+          "response": "Niche Topics",
+          "nextNode": 7,
+          "system": "The assistant will focus on specific areas of interest."
+        },
+        {
+          "response": "Expert-Level",
+          "nextNode": 8,
+          "system": "The assistant will deliver in-depth and authoritative responses."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "An empathetic assistant! What level of expertise should it have?",
+      "answers": [
+        {
+          "response": "General Knowledge",
+          "nextNode": 6,
+          "system": "The assistant will provide well-rounded information across various topics."
+        },
+        {
+          "response": "Niche Topics",
+          "nextNode": 7,
+          "system": "The assistant will focus on specific areas of interest."
+        },
+        {
+          "response": "Expert-Level",
+          "nextNode": 8,
+          "system": "The assistant will deliver in-depth and authoritative responses."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "question": "How would you like your assistant to communicate?",
+      "answers": [
+        {
+          "response": "Concise",
+          "nextNode": 9,
+          "system": "The assistant will provide brief and to-the-point answers."
+        },
+        {
+          "response": "Detailed",
+          "nextNode": 10,
+          "system": "The assistant will offer comprehensive and elaborate responses."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "question": "How would you like your assistant to communicate?",
+      "answers": [
+        {
+          "response": "Concise",
+          "nextNode": 9,
+          "system": "The assistant will provide brief and to-the-point answers."
+        },
+        {
+          "response": "Detailed",
+          "nextNode": 10,
+          "system": "The assistant will offer comprehensive and elaborate responses."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "question": "How would you like your assistant to communicate?",
+      "answers": [
+        {
+          "response": "Concise",
+          "nextNode": 9,
+          "system": "The assistant will provide brief and to-the-point answers."
+        },
+        {
+          "response": "Detailed",
+          "nextNode": 10,
+          "system": "The assistant will offer comprehensive and elaborate responses."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "question": "What should be the assistant\u0027s communication style?",
+      "answers": [
+        {
+          "response": "Casual",
+          "nextNode": 11,
+          "system": "The assistant will interact in a relaxed and informal manner."
+        },
+        {
+          "response": "Formal",
+          "nextNode": 12,
+          "system": "The assistant will maintain a professional and official tone."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "question": "What should be the assistant\u0027s communication style?",
+      "answers": [
+        {
+          "response": "Casual",
+          "nextNode": 11,
+          "system": "The assistant will interact in a relaxed and informal manner."
+        },
+        {
+          "response": "Formal",
+          "nextNode": 12,
+          "system": "The assistant will maintain a professional and official tone."
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "question": "What is the primary purpose of your assistant?",
+      "answers": [
+        {
+          "response": "Customer Support",
+          "nextNode": 13,
+          "system": "The assistant will aid in addressing customer inquiries and issues."
+        },
+        {
+          "response": "Creative Writing",
+          "nextNode": 14,
+          "system": "The assistant will focus on generating creative content and ideas."
+        },
+        {
+          "response": "Technical Assistance",
+          "nextNode": 15,
+          "system": "The assistant will assist with technical problems and solutions."
+        },
+        {
+          "response": "Personal Assistant",
+          "nextNode": 16,
+          "system": "The assistant will help manage daily tasks and schedules."
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "question": "What is the primary purpose of your assistant?",
+      "answers": [
+        {
+          "response": "Customer Support",
+          "nextNode": 13,
+          "system": "The assistant will aid in addressing customer inquiries and issues."
+        },
+        {
+          "response": "Creative Writing",
+          "nextNode": 14,
+          "system": "The assistant will focus on generating creative content and ideas."
+        },
+        {
+          "response": "Technical Assistance",
+          "nextNode": 15,
+          "system": "The assistant will assist with technical problems and solutions."
+        },
+        {
+          "response": "Personal Assistant",
+          "nextNode": 16,
+          "system": "The assistant will help manage daily tasks and schedules."
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "question": "Choose your assistant\u0027s tone preference.",
+      "answers": [
+        {
+          "response": "Upbeat",
+          "nextNode": 17,
+          "system": "The assistant will maintain an energetic and positive tone."
+        },
+        {
+          "response": "Calm",
+          "nextNode": 18,
+          "system": "The assistant will communicate in a soothing and steady tone."
+        },
+        {
+          "response": "Neutral",
+          "nextNode": 19,
+          "system": "The assistant will keep a balanced and impartial tone."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "question": "Choose your assistant\u0027s tone preference.",
+      "answers": [
+        {
+          "response": "Upbeat",
+          "nextNode": 17,
+          "system": "The assistant will maintain an energetic and positive tone."
+        },
+        {
+          "response": "Calm",
+          "nextNode": 18,
+          "system": "The assistant will communicate in a soothing and steady tone."
+        },
+        {
+          "response": "Neutral",
+          "nextNode": 19,
+          "system": "The assistant will keep a balanced and impartial tone."
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "question": "Choose your assistant\u0027s tone preference.",
+      "answers": [
+        {
+          "response": "Upbeat",
+          "nextNode": 17,
+          "system": "The assistant will maintain an energetic and positive tone."
+        },
+        {
+          "response": "Calm",
+          "nextNode": 18,
+          "system": "The assistant will communicate in a soothing and steady tone."
+        },
+        {
+          "response": "Neutral",
+          "nextNode": 19,
+          "system": "The assistant will keep a balanced and impartial tone."
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "question": "Choose your assistant\u0027s tone preference.",
+      "answers": [
+        {
+          "response": "Upbeat",
+          "nextNode": 17,
+          "system": "The assistant will maintain an energetic and positive tone."
+        },
+        {
+          "response": "Calm",
+          "nextNode": 18,
+          "system": "The assistant will communicate in a soothing and steady tone."
+        },
+        {
+          "response": "Neutral",
+          "nextNode": 19,
+          "system": "The assistant will keep a balanced and impartial tone."
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "question": "Select the engagement style for your assistant.",
+      "answers": [
+        {
+          "response": "Interactive",
+          "nextNode": 20,
+          "system": "The assistant will engage users with questions and interactive elements."
+        },
+        {
+          "response": "Informative",
+          "nextNode": 21,
+          "system": "The assistant will primarily provide information and explanations."
+        },
+        {
+          "response": "Question-Focused",
+          "nextNode": 22,
+          "system": "The assistant will encourage users to explore through questions."
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "question": "Select the engagement style for your assistant.",
+      "answers": [
+        {
+          "response": "Interactive",
+          "nextNode": 20,
+          "system": "The assistant will engage users with questions and interactive elements."
+        },
+        {
+          "response": "Informative",
+          "nextNode": 21,
+          "system": "The assistant will primarily provide information and explanations."
+        },
+        {
+          "response": "Question-Focused",
+          "nextNode": 22,
+          "system": "The assistant will encourage users to explore through questions."
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "question": "Select the engagement style for your assistant.",
+      "answers": [
+        {
+          "response": "Interactive",
+          "nextNode": 20,
+          "system": "The assistant will engage users with questions and interactive elements."
+        },
+        {
+          "response": "Informative",
+          "nextNode": 21,
+          "system": "The assistant will primarily provide information and explanations."
+        },
+        {
+          "response": "Question-Focused",
+          "nextNode": 22,
+          "system": "The assistant will encourage users to explore through questions."
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "question": "How should your assistant handle user data and privacy?",
+      "answers": [
+        {
+          "response": "Strict Privacy",
+          "nextNode": 23,
+          "system": "The assistant will prioritize user privacy with minimal data retention."
+        },
+        {
+          "response": "Balanced Approach",
+          "nextNode": 24,
+          "system": "The assistant will use user data to enhance experience, with privacy measures."
+        },
+        {
+          "response": "Data-Driven",
+          "nextNode": 25,
+          "system": "The assistant will leverage user data extensively to optimize interactions."
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "question": "How should your assistant handle user data and privacy?",
+      "answers": [
+        {
+          "response": "Strict Privacy",
+          "nextNode": 23,
+          "system": "The assistant will prioritize user privacy with minimal data retention."
+        },
+        {
+          "response": "Balanced Approach",
+          "nextNode": 24,
+          "system": "The assistant will use user data to enhance experience, with privacy measures."
+        },
+        {
+          "response": "Data-Driven",
+          "nextNode": 25,
+          "system": "The assistant will leverage user data extensively to optimize interactions."
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "question": "How should your assistant handle user data and privacy?",
+      "answers": [
+        {
+          "response": "Strict Privacy",
+          "nextNode": 23,
+          "system": "The assistant will prioritize user privacy with minimal data retention."
+        },
+        {
+          "response": "Balanced Approach",
+          "nextNode": 24,
+          "system": "The assistant will use user data to enhance experience, with privacy measures."
+        },
+        {
+          "response": "Data-Driven",
+          "nextNode": 25,
+          "system": "The assistant will leverage user data extensively to optimize interactions."
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "question": "Congratulations! You have designed your GPT Assistant. Would you like to start over or exit?",
+      "answers": [
+        {
+          "response": "Start Over",
+          "nextNode": 1,
+          "system": "Restart the workflow to design a new assistant."
+        },
+        {
+          "response": "Exit",
+          "nextNode": null,
+          "system": "End the workflow."
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "question": "Congratulations! You have designed your GPT Assistant. Would you like to start over or exit?",
+      "answers": [
+        {
+          "response": "Start Over",
+          "nextNode": 1,
+          "system": "Restart the workflow to design a new assistant."
+        },
+        {
+          "response": "Exit",
+          "nextNode": null,
+          "system": "End the workflow."
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "question": "Congratulations! You have designed your GPT Assistant. Would you like to start over or exit?",
+      "answers": [
+        {
+          "response": "Start Over",
+          "nextNode": 1,
+          "system": "Restart the workflow to design a new assistant."
+        },
+        {
+          "response": "Exit",
+          "nextNode": null,
+          "system": "End the workflow."
+        }
+      ]
+    }
+  ],
+  "startNode": 1,
+  "workflowId": "GPTAssistantDesignWorkflow",
+  "workflowName": "GPT Assistant Design",
+  "WorkFlowFileName": "gpt_assistant_design.json"
+}

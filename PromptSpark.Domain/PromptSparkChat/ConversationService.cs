@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Text.Json;
 
-namespace PromptSpark.Chat.PromptFlow;
+namespace PromptSpark.Domain.PromptSparkChat;
 
 public class ConversationService : ConcurrentDictionaryService<Conversation>
 {

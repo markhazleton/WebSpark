@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PromptSpark.Chat.PromptFlow;
+namespace PromptSpark.Domain.PromptSparkChat;
 public enum MessageType
 {
     EngageChatAgent,

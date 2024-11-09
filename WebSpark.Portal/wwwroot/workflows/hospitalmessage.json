@@ -1,0 +1,106 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "question": "What is the purpose of your message?",
+      "answers": [
+        {
+          "response": "Virtual Urgent Care",
+          "nextNode": "end",
+          "system": "Guide the user to book a virtual urgent care appointment for immediate medical issues."
+        },
+        {
+          "response": "Schedule an Appointment",
+          "nextNode": "end",
+          "system": "Assist the user in booking a future appointment with their care team."
+        },
+        {
+          "response": "Renew or Refill Prescription",
+          "nextNode": "end",
+          "system": "Help the user request a prescription renewal or refill."
+        },
+        {
+          "response": "Ask My Provider or Clinic",
+          "nextNode": "2",
+          "system": "Allow the user to submit a non-urgent question for their care team."
+        },
+        {
+          "response": "Ask a Billing or Insurance Question",
+          "nextNode": "3",
+          "system": "Direct the user to submit questions regarding billing, insurance, or service cost estimates."
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "question": "What type of provider question do you have?",
+      "answers": [
+        {
+          "response": "Visit Follow-Up Question",
+          "nextNode": "end",
+          "system": "Assist the user in framing a follow-up question related to a recent visit."
+        },
+        {
+          "response": "Test Results Question",
+          "nextNode": "end",
+          "system": "Guide the user in inquiring about their test results."
+        },
+        {
+          "response": "Prescription or Prescription Benefits Question",
+          "nextNode": "end",
+          "system": "Help the user with questions about prescriptions or benefits, excluding refill requests."
+        },
+        {
+          "response": "Referrals",
+          "nextNode": "end",
+          "system": "Assist the user in requesting a referral to a specialist or another provider."
+        },
+        {
+          "response": "Scheduling or Pre-Service Insurance Authorization",
+          "nextNode": "end",
+          "system": "Guide the user with scheduling or pre-visit insurance approval questions."
+        },
+        {
+          "response": "New Medical Questions",
+          "nextNode": "end",
+          "system": "Help the user with general medical inquiries not related to previous categories."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "question": "What type of billing or insurance question do you have?",
+      "answers": [
+        {
+          "response": "Billing Support and Assistance",
+          "nextNode": "end",
+          "system": "Guide the user in obtaining assistance with billing inquiries or issues."
+        },
+        {
+          "response": "Post-Service Insurance or Benefits Question",
+          "nextNode": "end",
+          "system": "Help the user clarify questions about insurance or benefits related to a service already received."
+        },
+        {
+          "response": "Payment, Payment Plan, or Financial Aid",
+          "nextNode": "end",
+          "system": "Assist the user with questions about payments or financial aid options."
+        },
+        {
+          "response": "Itemized Statement or Receipt Request",
+          "nextNode": "end",
+          "system": "Guide the user in requesting a detailed bill or receipt."
+        },
+        {
+          "response": "Cost Estimate",
+          "nextNode": "end",
+          "system": "Help the user request a cost estimate for a future visit or service."
+        }
+      ]
+    }
+  ],
+  "startNode": "1",
+  "workflowId": "healthcare_portal_messaging_01",
+  "workflowName": "Healthcare Portal Messaging Workflow",
+  "WorkFlowFileName": "healthcare_portal_messaging_workflow.json"
+}

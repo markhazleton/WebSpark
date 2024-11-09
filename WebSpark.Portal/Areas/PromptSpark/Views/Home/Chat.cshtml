@@ -135,7 +135,7 @@
 
         async function loadWorkflows() {
             try {
-                const response = await fetch('@Url.Action("workflows", "WorkflowAdmin")');
+                const response = await fetch('@Url.Action("workflows", "Home")');
                 const workflows = await response.json();
                 const workflowSelect = document.getElementById("workflowSelect");
 

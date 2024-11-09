@@ -1,0 +1,256 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "question": "What department do you need to communicate with?",
+      "answers": [
+        {
+          "response": "Lab",
+          "nextNode": "2",
+          "system": "Route the message to the lab department for processing."
+        },
+        {
+          "response": "Primary Doctor",
+          "nextNode": "5",
+          "system": "Route the message to the primary care physician for handling."
+        },
+        {
+          "response": "Appointments",
+          "nextNode": "8",
+          "system": "Route the message to the appointments department for scheduling tasks."
+        },
+        {
+          "response": "Billing",
+          "nextNode": "11",
+          "system": "Route the message to the billing department for financial inquiries."
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "question": "What is the purpose of your lab communication?",
+      "answers": [
+        {
+          "response": "Request lab work",
+          "nextNode": "3",
+          "system": "Initiate a new lab work request."
+        },
+        {
+          "response": "Follow-up on lab results",
+          "nextNode": "3",
+          "system": "Follow-up on pending lab results."
+        },
+        {
+          "response": "Clarify a test order",
+          "nextNode": "3",
+          "system": "Seek clarification on a lab test order."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "question": "Set the priority for this lab communication.",
+      "answers": [
+        {
+          "response": "Urgent",
+          "nextNode": "4",
+          "system": "Mark the message as urgent for immediate attention."
+        },
+        {
+          "response": "Routine",
+          "nextNode": "4",
+          "system": "Mark the message as routine, to be addressed in normal order."
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "question": "Would you like to add any attachments or specify follow-up preferences?",
+      "answers": [
+        {
+          "response": "Add attachments",
+          "nextNode": "14",
+          "system": "Attach relevant documents to the message."
+        },
+        {
+          "response": "Specify follow-up preference",
+          "nextNode": "15",
+          "system": "Indicate preferred follow-up method."
+        },
+        {
+          "response": "All complete",
+          "nextNode": "16",
+          "system": "Proceed without additional options."
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "question": "What is the purpose of communication with your primary doctor?",
+      "answers": [
+        {
+          "response": "Relay health updates",
+          "nextNode": "6",
+          "system": "Send health updates to the doctor."
+        },
+        {
+          "response": "Ask for advice on a recent diagnosis",
+          "nextNode": "6",
+          "system": "Seek advice on a recent diagnosis."
+        },
+        {
+          "response": "Discuss medication adjustments",
+          "nextNode": "6",
+          "system": "Discuss potential changes to medication."
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "question": "Set the priority for this doctor communication.",
+      "answers": [
+        {
+          "response": "Urgent",
+          "nextNode": "4",
+          "system": "Mark the message as urgent for immediate attention."
+        },
+        {
+          "response": "Routine",
+          "nextNode": "4",
+          "system": "Mark the message as routine, to be addressed in normal order."
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "question": "What would you like to do with your appointment?",
+      "answers": [
+        {
+          "response": "Schedule a new appointment",
+          "nextNode": "9",
+          "system": "Initiate scheduling of a new appointment."
+        },
+        {
+          "response": "Reschedule an existing appointment",
+          "nextNode": "9",
+          "system": "Reschedule an already booked appointment."
+        },
+        {
+          "response": "Cancel an appointment",
+          "nextNode": "9",
+          "system": "Cancel the appointment."
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "question": "Set the priority for this appointment request.",
+      "answers": [
+        {
+          "response": "Urgent",
+          "nextNode": "4",
+          "system": "Mark the message as urgent for immediate attention."
+        },
+        {
+          "response": "Routine",
+          "nextNode": "4",
+          "system": "Mark the message as routine, to be addressed in normal order."
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "question": "What is the purpose of your billing inquiry?",
+      "answers": [
+        {
+          "response": "Inquire about a billing statement",
+          "nextNode": "12",
+          "system": "Seek clarification on a billing statement."
+        },
+        {
+          "response": "Dispute charges",
+          "nextNode": "12",
+          "system": "Initiate a dispute on charges."
+        },
+        {
+          "response": "Set up a payment plan",
+          "nextNode": "12",
+          "system": "Arrange a payment plan."
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "question": "Set the priority for this billing communication.",
+      "answers": [
+        {
+          "response": "Urgent",
+          "nextNode": "4",
+          "system": "Mark the message as urgent for immediate attention."
+        },
+        {
+          "response": "Routine",
+          "nextNode": "4",
+          "system": "Mark the message as routine, to be addressed in normal order."
+        }
+      ]
+    },
+    {
+      "id": "14",
+      "question": "Would you like to specify follow-up preferences?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "15",
+          "system": "Indicate preferred follow-up method."
+        },
+        {
+          "response": "No, proceed",
+          "nextNode": "16",
+          "system": "Proceed without specifying follow-up preferences."
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "question": "Select your preferred follow-up method.",
+      "answers": [
+        {
+          "response": "Phone",
+          "nextNode": "16",
+          "system": "Indicate preference for phone follow-up."
+        },
+        {
+          "response": "Email",
+          "nextNode": "16",
+          "system": "Indicate preference for email follow-up."
+        },
+        {
+          "response": "In-person",
+          "nextNode": "16",
+          "system": "Indicate preference for in-person follow-up."
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "question": "Would you like to loop in another department for further clarification or approval?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "1",
+          "system": "Allow user to select another department for further actions."
+        },
+        {
+          "response": "No, finish communication",
+          "nextNode": null,
+          "system": "Complete the communication workflow."
+        }
+      ]
+    }
+  ],
+  "startNode": "1",
+  "workflowId": "medical_communication_001",
+  "workflowName": "Medical Communication Management",
+  "WorkFlowFileName": "medical_communication_workflow.json"
+}

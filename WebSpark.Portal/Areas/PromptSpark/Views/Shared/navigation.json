@@ -10,6 +10,11 @@
     },
     {
       "role": "anonymous",
+      "text": "PromptSpark.Chat",
+      "url": "/PromptSpark/Home/Chat"
+    },
+    {
+      "role": "anonymous",
       "text": "Variant Chat",
       "url": "/PromptSpark/ChatCompletion"
     },

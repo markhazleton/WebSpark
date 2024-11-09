@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Text;
-namespace PromptSpark.Chat.PromptFlow;
+namespace PromptSpark.Domain.PromptSparkChat;
 
 public interface IChatService
 {

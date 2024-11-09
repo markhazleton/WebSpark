@@ -1,7 +1,6 @@
-﻿using global::PromptSpark.Chat.Hubs;
-using global::PromptSpark.Chat.PromptFlow;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using PromptSpark.Domain.PromptSparkChat;
 
 namespace PromptSpark.Chat.Controllers.Api;
 
@@ -11,10 +10,10 @@ namespace PromptSpark.Chat.Controllers.Api;
 public class ConversationsController : ControllerBase
 {
     private readonly ConversationService _conversationService;
-    private readonly IHubContext<ChatHub> _hubContext;
+    private readonly IHubContext<PromptSparkHub> _hubContext;
     private readonly ILogger<ConversationsController> _logger;
 
-    public ConversationsController(ConversationService conversationService, IHubContext<ChatHub> hubContext, ILogger<ConversationsController> logger)
+    public ConversationsController(ConversationService conversationService, IHubContext<PromptSparkHub> hubContext, ILogger<ConversationsController> logger)
     {
         _conversationService = conversationService;
         _hubContext = hubContext;

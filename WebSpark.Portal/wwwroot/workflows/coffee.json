@@ -1,0 +1,152 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "question": "Welcome! Ready to brew the perfect cup of coffee? Shall we start?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "chooseStrength",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "No",
+          "nextNode": "end",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "chooseStrength",
+      "question": "How strong would you like your coffee?",
+      "answers": [
+        {
+          "response": "Mild",
+          "nextNode": "chooseBrewMethod",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "Medium",
+          "nextNode": "chooseBrewMethod",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "Strong",
+          "nextNode": "chooseBrewMethod",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "chooseBrewMethod",
+      "question": "Do you prefer a drip coffee or a pour-over method?",
+      "answers": [
+        {
+          "response": "Drip",
+          "nextNode": "prepDrip",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "Pour Over",
+          "nextNode": "prepPourOver",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "prepDrip",
+      "question": "For drip coffee, make sure to use fresh water and your desired coffee strength. Ready to start brewing?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "dripInstructions",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "No",
+          "nextNode": "end",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "prepPourOver",
+      "question": "For a pour-over, set up your filter, rinse it with hot water, and measure out your coffee. Ready to begin?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "pourOverInstructions",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "No",
+          "nextNode": "end",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "dripInstructions",
+      "question": "Start your drip coffee maker and let it brew. Enjoy the aroma! Would you like any tips for enhancing the flavor?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "flavorTips",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "No",
+          "nextNode": "end",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "pourOverInstructions",
+      "question": "Pour hot water over the grounds in a slow, circular motion. Breathe in the aroma! Need any tips on technique?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "flavorTips",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "No",
+          "nextNode": "end",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "flavorTips",
+      "question": "To enhance flavor, try adjusting the grind size, water temperature, or blooming time. Would you like to start over or end here?",
+      "answers": [
+        {
+          "response": "Start Over",
+          "nextNode": "start",
+          "system": "Coffee Assistant"
+        },
+        {
+          "response": "End",
+          "nextNode": "end",
+          "system": "Coffee Assistant"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "question": "Thank you for making coffee with us! Enjoy your perfect cup!",
+      "answers": [
+        {
+          "response": "Goodbye",
+          "nextNode": "start",
+          "system": "Coffee Assistant"
+        }
+      ]
+    }
+  ],
+  "startNode": "start",
+  "workflowId": "coffeeBrewGuide",
+  "workflowName": "Coffee Brewing Workflow",
+  "WorkFlowFileName": "coffee.json"
+}

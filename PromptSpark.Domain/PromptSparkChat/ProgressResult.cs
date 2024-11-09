@@ -1,4 +1,4 @@
-﻿namespace PromptSpark.Chat.PromptFlow;
+﻿namespace PromptSpark.Domain.PromptSparkChat;
 
 public class ProgressResult
 {

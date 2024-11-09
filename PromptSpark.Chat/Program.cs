@@ -1,6 +1,5 @@
 using Microsoft.SemanticKernel;
-using PromptSpark.Chat.Hubs;
-using PromptSpark.Chat.PromptFlow;
+using PromptSpark.Domain.PromptSparkChat;
 using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -63,8 +62,8 @@ string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
 
 builder.Services.AddOpenAIChatCompletion(modelId, apikey);
-builder.Services.Configure<WorkflowOptions>(builder.Configuration.GetSection("Workflow"));
 
+builder.Services.Configure<WorkflowOptions>(builder.Configuration.GetSection("Workflow"));
 builder.Services.AddSingleton<IWorkflowService, WorkflowService>();
 
 // Configure JsonSerializerOptions
@@ -77,9 +76,8 @@ builder.Services.AddSingleton(new JsonSerializerOptions
 // Register ConcurrentDictionaryService for Conversation
 builder.Services.AddSingleton<IChatService, ChatService>();
 builder.Services.AddSingleton<ConversationService>();
-
-// Register ChatHub with all dependencies injected
-builder.Services.AddSingleton<ChatHub>();
+// Register PromptSparkHub with all dependencies injected
+builder.Services.AddSingleton<PromptSparkHub>();
 
 
 var app = builder.Build();
@@ -98,6 +96,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // Map SignalR hubs
-app.MapHub<ChatHub>("/chatHub");
+app.MapHub<PromptSparkHub>("/promptSparkHub");
 
 app.Run();

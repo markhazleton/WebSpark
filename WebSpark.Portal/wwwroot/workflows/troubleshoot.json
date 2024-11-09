@@ -1,0 +1,152 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "question": "Is your internet connection slow on all devices?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "2",
+          "system": "Determine if the issue is widespread across all connected devices."
+        },
+        {
+          "response": "No",
+          "nextNode": "3",
+          "system": "Focus on troubleshooting the specific device experiencing issues."
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "question": "Have you tried restarting your router?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "4",
+          "system": "Confirm if a basic restart has been attempted."
+        },
+        {
+          "response": "No",
+          "nextNode": "5",
+          "system": "Guide the user to perform a router restart."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "question": "Check the device\u0027s connection settings. Is the issue resolved?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "6",
+          "system": "Issue resolved by adjusting device settings."
+        },
+        {
+          "response": "No",
+          "nextNode": "9",
+          "system": "Proceed with further device-specific troubleshooting."
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "question": "Did restarting the router solve the issue?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "6",
+          "system": "Successful resolution by router restart."
+        },
+        {
+          "response": "No",
+          "nextNode": "7",
+          "system": "Explore additional troubleshooting steps."
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "question": "Please restart your router. Once restarted, is the connection improved?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "6",
+          "system": "Router restart resolved the connectivity issue."
+        },
+        {
+          "response": "No",
+          "nextNode": "7",
+          "system": "Further action is required to diagnose the issue."
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "question": "Great! Your internet issue seems to be resolved. Would you like to exit the workflow?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "end",
+          "system": "Conclude the troubleshooting session."
+        },
+        {
+          "response": "No",
+          "nextNode": "1",
+          "system": "Restart the workflow for further exploration."
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "question": "Have you checked for any service outages in your area?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "8",
+          "system": "Ensure there are no known service disruptions."
+        },
+        {
+          "response": "No",
+          "nextNode": "8",
+          "system": "Prompt user to check for service provider updates."
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "question": "Consider contacting your service provider for further assistance. Do you wish to do so?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "end",
+          "system": "Guide the user to contact their service provider."
+        },
+        {
+          "response": "No",
+          "nextNode": "1",
+          "system": "Restart troubleshooting or explore other solutions."
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "question": "Try connecting the device to a different network. Does the issue persist?",
+      "answers": [
+        {
+          "response": "Yes",
+          "nextNode": "8",
+          "system": "Indicates a potential issue with the device or ISP."
+        },
+        {
+          "response": "No",
+          "nextNode": "6",
+          "system": "Issue likely resolved by switching networks."
+        }
+      ]
+    }
+  ],
+  "startNode": "1",
+  "workflowId": "troubleshoot-slow-internet-001",
+  "workflowName": "Troubleshooting Slow Internet Connection",
+  "WorkFlowFileName": "troubleshooting_slow_internet_connection.json"
+}

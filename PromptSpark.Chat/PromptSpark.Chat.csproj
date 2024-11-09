@@ -21,10 +21,13 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0-rc.2.24474.3" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.25.0" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.28.0" />
 		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Scalar.AspNetCore" Version="1.2.27" />
+		<PackageReference Include="Scalar.AspNetCore" Version="1.2.33" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="wwwroot\js\flowchart.js">

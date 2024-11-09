@@ -7,8 +7,11 @@ using Microsoft.SemanticKernel;
 using OpenWeatherMapClient.Interfaces;
 using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
+using PromptSpark.Domain.PromptSparkChat;
 using PromptSpark.Domain.Service;
 using System.Reflection;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using TriviaSpark.Domain.Entities;
 using TriviaSpark.Domain.OpenTriviaDb;
 using TriviaSpark.Domain.Services;
@@ -213,6 +216,24 @@ string apikey = builder.Configuration.GetValue<string>("OPENAI_API_KEY") ?? "not
 string modelId = builder.Configuration.GetValue<string>("MODEL_ID") ?? "gpt-4o";
 builder.Services.AddOpenAIChatCompletion(modelId, apikey);
 
+builder.Services.Configure<WorkflowOptions>(builder.Configuration.GetSection("Workflow"));
+builder.Services.AddSingleton<IWorkflowService, WorkflowService>();
+
+// Configure JsonSerializerOptions
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+});
+
+// Register ConcurrentDictionaryService for Conversation
+builder.Services.AddSingleton<IChatService, ChatService>();
+builder.Services.AddSingleton<ConversationService>();
+// Register PromptSparkHub with all dependencies injected
+builder.Services.AddSingleton<PromptSparkHub>();
+
+
+
 var app = builder.Build();
 
 // ========================
@@ -276,6 +297,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
+app.MapHub<PromptSparkHub>("/promptSparkHub");
 app.MapHub<ChatHub>("/chatHub");
 app.MapHub<CrawlHub>("/crawlHub");
 
