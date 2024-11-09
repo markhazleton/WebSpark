@@ -1,8 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "PromptSpark Chat";
+    ViewData["Title"] = "PromptSpark.Chat";
 }
 
-<div class="container py-5">
+<div class="chat-container">
     <div class="card shadow-sm">
         <header class="card-header bg-primary text-white text-center">
             <h2 class="mb-0">PromptSpark Chat</h2>
@@ -22,7 +22,7 @@
             </div>
             <div id="chatWindow" style="display: none;">
                 <div id="connectionStatus" class="text-muted mb-2">Connecting...</div>
-                <ul id="messagesList" class="list-unstyled mb-3 p-3 border rounded bg-light overflow-auto" style="height: 300px; max-height: 400px;" aria-live="polite">
+                <ul id="messagesList" class="list-unstyled mb-3 p-3 border rounded bg-light overflow-auto" style="height: 70vh; max-height: 70vh;" aria-live="polite">
                 </ul>
                 <div id="optionsContainer" class="d-flex flex-wrap gap-2 mb-3" style="display: none;"></div>
             </div>
@@ -30,6 +30,37 @@
     </div>
 </div>
 
+@section Styles {
+    <style>
+        /* Chat container styling */
+        .chat-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 550px; /* Adjust width as needed */
+            max-width: 90vw; /* Ensure it doesn't exceed viewport width */
+            height: 90vh; /* Take up 90% of the viewport height */
+            z-index: 1000; /* Stay on top of other elements */
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: white;
+        }
+
+            /* Adjust card body height to fit container */
+            .chat-container .card-body {
+                height: calc(100% - 60px); /* Subtract header height */
+                overflow-y: auto;
+            }
+
+        /* Overflow scrolling in messages list */
+        #messagesList {
+            height: 65vh; /* Adjust to fit chat messages comfortably */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+}
 @section HeadScripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.9/signalr.min.js" defer></script>
     <script src="https://unpkg.com/adaptivecards@2.11.0/dist/adaptivecards.min.js" defer></script>
