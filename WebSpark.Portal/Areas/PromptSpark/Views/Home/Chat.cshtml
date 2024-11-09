@@ -2,29 +2,68 @@
     ViewData["Title"] = "PromptSpark.Chat";
 }
 
-<div class="chat-container">
-    <div class="card shadow-sm">
-        <header class="card-header bg-primary text-white text-center">
-            <h2 class="mb-0">PromptSpark Chat</h2>
-        </header>
-        <div class="card-body">
-            <div id="userForm" class="mb-4">
-                <label for="userInput" class="form-label">Enter your name to join the chat:</label>
-                <input type="text" id="userInput" class="form-control" placeholder="Your name" aria-label="User name input" />
-                <button class="btn btn-primary mt-2" onclick="showWorkflowSelection()">Next</button>
+<!-- Chat Explanation Section -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">
+                        <i class="bi bi-chat-dots-fill"></i> PromptSpark Workflow Chat
+                    </h2>
+                    <p class="card-text mt-3">
+                        Welcome to the <strong>PromptSpark Workflow Chat</strong>! This chat interface is powered by workflows
+                        and adaptive cards, allowing for an interactive, guided experience tailored to your needs. With the adaptive cards feature,
+                        you’ll receive interactive options, buttons, and forms that make the conversation more engaging and structured.
+                    </p>
+                    <p>
+                        Each workflow is designed to lead you through a set of predefined steps, ensuring a smooth and intuitive process.
+                        Whether you’re looking to complete a task, gather insights, or follow a structured interaction, the workflows here will
+                        make your chat experience more productive and enjoyable.
+                    </p>
+                    <a href="@Url.Action("Index", "Workflow")" class="btn btn-outline-primary mt-2">
+                        <i class="bi bi-list-check"></i> View Available Workflows
+                    </a>
+                </div>
             </div>
-            <div id="workflowForm" class="mb-4" style="display: none;">
-                <label for="workflowSelect" class="form-label">Select a workflow:</label>
-                <select id="workflowSelect" class="form-select" aria-label="Workflow selection">
-                    <!-- Workflow options will be populated here by JavaScript -->
-                </select>
-                <button class="btn btn-primary mt-2" onclick="joinChat()">Join Chat</button>
+        </div>
+    </div>
+
+    <!-- Button to open the chat modal -->
+    <div class="text-center mt-4">
+        <button class="btn btn-lg btn-primary shadow" data-bs-toggle="modal" data-bs-target="#chatModal">
+            <i class="bi bi-chat-right-text"></i> Open Chat
+        </button>
+    </div>
+</div>
+
+
+<!-- Chat Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-sm-down modal-lg modal-dialog-centered" style="max-height: 90vh;">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="chatModalLabel">PromptSpark Chat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="chatWindow" style="display: none;">
-                <div id="connectionStatus" class="text-muted mb-2">Connecting...</div>
-                <ul id="messagesList" class="list-unstyled mb-3 p-3 border rounded bg-light overflow-auto" style="height: 70vh; max-height: 70vh;" aria-live="polite">
-                </ul>
-                <div id="optionsContainer" class="d-flex flex-wrap gap-2 mb-3" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="userForm" class="mb-4">
+                    <label for="userInput" class="form-label">Enter your name to join the chat:</label>
+                    <input type="text" id="userInput" class="form-control" placeholder="Your name" aria-label="User name input" />
+                    <button class="btn btn-primary mt-2" onclick="showWorkflowSelection()">Next</button>
+                </div>
+                <div id="workflowForm" class="mb-4" style="display: none;">
+                    <label for="workflowSelect" class="form-label">Select a workflow:</label>
+                    <select id="workflowSelect" class="form-select" aria-label="Workflow selection">
+                        <!-- Workflow options will be populated here by JavaScript -->
+                    </select>
+                    <button class="btn btn-primary mt-2" onclick="joinChat()">Join Chat</button>
+                </div>
+                <div id="chatWindow" style="display: none;">
+                    <div id="connectionStatus" class="text-muted mb-2">Connecting...</div>
+                    <ul id="messagesList" class="list-unstyled mb-3 p-3 border rounded bg-light overflow-auto" style="height: 65vh; max-height: 65vh;" aria-live="polite"></ul>
+                    <div id="optionsContainer" class="d-flex flex-wrap gap-2 mb-3" style="display: none;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -32,48 +71,24 @@
 
 @section Styles {
     <style>
-        /* Chat container styling */
-        .chat-container {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 800px; /* Adjust width as needed */
-            max-width: 90vw; /* Ensure it doesn't exceed viewport width */
-            height: 90vh; /* Take up 90% of the viewport height */
-            z-index: 1000; /* Stay on top of other elements */
+        /* Adjusted modal content for responsiveness */
+        #chatModal .modal-content {
+            width: 100%;
+            max-width: 100vw;
+            max-height: 90vh; /* Restrict modal height to 90% of viewport */
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background-color: white;
         }
 
-            /* Adjust card body height to fit container */
-            .chat-container .card-body {
-                height: calc(100% - 60px); /* Subtract header height */
-                overflow-y: auto;
-            }
-
-        /* Overflow scrolling in messages list */
+        /* Chat container styling within modal */
         #messagesList {
-            height: 65vh; /* Adjust to fit chat messages comfortably */
+            height: 65vh;
             overflow-y: auto;
             overflow-x: hidden;
         }
-
-        /* Adaptive card adjustments */
-        .adaptive-card-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            max-width: 100%; /* Prevents overflow */
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            -ms-word-break: break-all;
-            word-break: break-word;
-            hyphens: auto;
-        }
     </style>
 }
-
 
 @section HeadScripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.9/signalr.min.js" defer></script>

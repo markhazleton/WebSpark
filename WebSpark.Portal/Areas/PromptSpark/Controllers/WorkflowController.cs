@@ -1,17 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PromptSpark.Domain.PromptSparkChat;
+﻿using PromptSpark.Domain.PromptSparkChat;
 
-namespace PromptSpark.Chat.Controllers;
+namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 
-public class WorkflowAdminController : Controller
+public class WorkflowController(IWorkflowService _workflowService) : PromptSparkBaseController
 {
-    private readonly IWorkflowService _workflowService;
-
-    public WorkflowAdminController(IWorkflowService workflowService)
-    {
-        _workflowService = workflowService;
-    }
-
     public IActionResult AddNode(string fileName)
     {
         ViewBag.FileName = fileName; // Pass the fileName to the view for reference
@@ -49,19 +41,6 @@ public class WorkflowAdminController : Controller
         }
     }
 
-    public IActionResult EditNode(string id, string fileName)
-    {
-        var workflow = _workflowService.LoadWorkflow(fileName);
-        var node = workflow.Nodes.FirstOrDefault(n => n.Id == id);
-
-        if (node == null)
-        {
-            return NotFound();
-        }
-        var viewModel = new EditNodeViewModel(node,fileName);
-        return View(viewModel);
-    }
-
     [HttpPost]
     public IActionResult EditNode(EditNodeViewModel updatedNode)
     {
@@ -80,6 +59,19 @@ public class WorkflowAdminController : Controller
         _workflowService.SaveWorkflow(workflow); // Save the workflow file
 
         return RedirectToAction("Details", new { fileName = updatedNode.FileName });
+    }
+
+    public IActionResult EditNode(string id, string fileName)
+    {
+        var workflow = _workflowService.LoadWorkflow(fileName);
+        var node = workflow.Nodes.FirstOrDefault(n => n.Id == id);
+
+        if (node == null)
+        {
+            return NotFound();
+        }
+        var viewModel = new EditNodeViewModel(node, fileName);
+        return View(viewModel);
     }
 
     // View to display the flowchart
@@ -118,5 +110,3 @@ public class WorkflowAdminController : Controller
         return Json(workflows);
     }
 }
-
-

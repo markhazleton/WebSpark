@@ -1,0 +1,178 @@
+﻿@model string  // This model is the workflow name passed from the controller
+
+@{
+    ViewData["Title"] = "Workflow Flowchart";
+}
+
+<h2>Workflow Flowchart for "@Model"</h2>
+
+<!-- Link back to workflow list -->
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left-circle"></i> Back to Workflows
+    </a>
+</div>
+
+<!-- Container for Zoom Controls and Flowchart -->
+<div class="d-flex flex-column align-items-center">
+    <!-- Zoom Controls -->
+    <div class="mb-2">
+        <button class="btn btn-secondary me-2" id="zoomInButton"><i class="bi bi-zoom-in"></i> Zoom In</button>
+        <button class="btn btn-secondary me-2" id="zoomOutButton"><i class="bi bi-zoom-out"></i> Zoom Out</button>
+        <button class="btn btn-secondary" id="resetZoomButton"><i class="bi bi-aspect-ratio"></i> Reset Zoom</button>
+    </div>
+
+    <!-- Scrollable and Zoomable Flowchart Container -->
+    <div id="flowchart-container" class="border rounded bg-light p-3 mb-4" style="overflow: auto; max-width: 100%; max-height: 75vh;">
+        <!-- The Mermaid diagram will be rendered here -->
+    </div>
+</div>
+
+<!-- Node Details Table -->
+<div class="container">
+    <h3 class="mt-4">Node Details</h3>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col" class="w-10">Node ID</th>
+                <th scope="col" class="w-50 question-col">Question</th>
+                <th scope="col" class="w-40 answers-col">Answers</th>
+            </tr>
+        </thead>
+        <tbody id="nodeTableBody">
+            <!-- Node data will be populated here by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+@section Styles {
+    <style>
+        /* Mermaid diagram zoom scaling */
+        #flowchart-container svg {
+            transform-origin: top left;
+        }
+
+        .question-col {
+            max-width: 50%; /* Set maximum width for the Question column */
+            word-wrap: break-word; /* Break words that exceed max-width */
+            white-space: normal; /* Allow text to wrap onto multiple lines */
+        }
+        /* No wrapping for "Answers" column */
+        .answers-col {
+            white-space: nowrap;
+        }
+    </style>
+}
+
+@section HeadScripts {
+    <!-- Load Mermaid via CDN -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        // Initialize Mermaid with custom settings
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            flowchart: {
+                useMaxWidth: false,
+                nodeSpacing: 20,
+                rankSpacing: 30,
+                padding: 10
+            }
+        });
+
+        window.mermaid = mermaid;
+    </script>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let zoomLevel = 1;
+
+            // Zoom controls
+            const flowchartContainer = document.getElementById("flowchart-container");
+            const zoomInButton = document.getElementById("zoomInButton");
+            const zoomOutButton = document.getElementById("zoomOutButton");
+            const resetZoomButton = document.getElementById("resetZoomButton");
+
+            zoomInButton.addEventListener('click', () => adjustZoom(1.2));
+            zoomOutButton.addEventListener('click', () => adjustZoom(0.8));
+            resetZoomButton.addEventListener('click', () => adjustZoom(1, true));
+
+            function adjustZoom(factor, reset = false) {
+                zoomLevel = reset ? 1 : zoomLevel * factor;
+                const svg = flowchartContainer.querySelector("svg");
+                if (svg) svg.style.transform = `scale(${zoomLevel})`;
+            }
+
+            // Function to convert workflow data to Mermaid syntax
+            function convertToMermaidSyntax(workflowData) {
+                let mermaidSyntax = "graph TD\n";
+
+                workflowData.nodes.forEach(node => {
+                    const nodeId = `node_${node.id}`;
+                    const shortLabel = `${node.id}`;
+                    mermaidSyntax += `    ${nodeId}[${shortLabel}]\n`;
+
+                    node.answers.forEach(answer => {
+                        const nextNodeId = `node_${answer.nextNode}`;
+                        mermaidSyntax += `    ${nodeId} -- "${answer.response}" --> ${nextNodeId}\n`;
+                    });
+                });
+                return mermaidSyntax;
+            }
+
+            // Fetch workflow data, render in Mermaid, and populate the table
+            async function renderFlowchart() {
+                try {
+                    const response = await fetch(`@Url.Action("GetWorkflowData")?fileName=${encodeURIComponent("@Model")}`);
+                    const workflowData = await response.json();
+                    const mermaidSyntax = convertToMermaidSyntax(workflowData);
+
+                    const { svg } = await window.mermaid.render("generatedDiagram", mermaidSyntax);
+                    flowchartContainer.innerHTML = svg;
+
+                    populateNodeTable(workflowData);
+                } catch (error) {
+                    console.error('Error loading or rendering workflow data:', error);
+                }
+            }
+
+            // Function to populate the table with node details
+            function populateNodeTable(workflowData) {
+                const nodeTableBody = document.getElementById("nodeTableBody");
+                nodeTableBody.innerHTML = '';
+
+                workflowData.nodes.forEach(node => {
+                    const row = document.createElement("tr");
+
+                    // Node ID column
+                    const nodeIdCell = document.createElement("td");
+                    nodeIdCell.textContent = node.id;
+                    row.appendChild(nodeIdCell);
+
+                    // Question column
+                    const questionCell = document.createElement("td");
+                    questionCell.textContent = node.question;
+                    row.appendChild(questionCell);
+
+                    // Answers column
+                    const answersCell = document.createElement("td");
+                    const answerList = document.createElement("ul");
+                    node.answers.forEach(answer => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `${answer.response} → ${answer.nextNode}`;
+                        answerList.appendChild(listItem);
+                    });
+                    answersCell.appendChild(answerList);
+                    row.appendChild(answersCell);
+
+                    nodeTableBody.appendChild(row);
+                });
+            }
+
+            renderFlowchart();
+        });
+    </script>
+}
