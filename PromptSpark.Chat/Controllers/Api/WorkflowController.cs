@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PromptSpark.Domain.PromptSparkChat;
+using PromptSpark.Chat.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

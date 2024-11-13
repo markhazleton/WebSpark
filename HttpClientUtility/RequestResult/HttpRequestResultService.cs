@@ -29,8 +29,14 @@ public class HttpRequestResultService(
             // Step 1: Validate input data
             ValidateHttpSendResults(httpSendResults);
 
-            // Step 2: Create the HTTP request
+            // Step 2: Create the HTTP request with JSON content
             using var request = CreateHttpRequest(httpSendResults);
+
+            // Ensure JSON content type
+            if (request.Content != null && request.Content.Headers.ContentType.MediaType != "application/json")
+            {
+                request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            }
 
             // Step 3: Build the curl command for debugging
             var curlCommand = new StringBuilder();
@@ -43,6 +49,9 @@ public class HttpRequestResultService(
             {
                 curlCommand.Append(" -H '").Append(header.Key).Append(": ").Append(string.Join(",", header.Value)).Append("'");
             }
+
+            // Add content type header for JSON in curl
+            curlCommand.Append(" -H 'Content-Type: application/json'");
 
             // Add request body to the curl command if it's a POST, PUT, or PATCH request
             if (request.Content != null)
@@ -74,7 +83,6 @@ public class HttpRequestResultService(
         }
         catch (ArgumentNullException ex)
         {
-            // Log and handle ArgumentNullException
             httpSendResults.ErrorList.Add($"ArgumentNullException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.BadRequest;
             _logger.LogError(ex, "HttpSendRequestResultAsync encountered ArgumentNullException: {Message}", ex.Message);
@@ -82,7 +90,6 @@ public class HttpRequestResultService(
         }
         catch (ArgumentException ex)
         {
-            // Log and handle ArgumentException
             httpSendResults.ErrorList.Add($"ArgumentException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.BadRequest;
             _logger.LogError(ex, "HttpSendRequestResultAsync encountered ArgumentException: {Message}", ex.Message);
@@ -90,7 +97,6 @@ public class HttpRequestResultService(
         }
         catch (HttpRequestException ex)
         {
-            // Log and handle HttpRequestException
             httpSendResults.ErrorList.Add($"HttpRequestException: {ex.Message}");
             httpSendResults.StatusCode = ex.StatusCode ?? HttpStatusCode.InternalServerError;
             _logger.LogError(ex, "HttpSendRequestResultAsync encountered HttpRequestException: {Message} with StatusCode {StatusCode}", ex.Message, ex.StatusCode);
@@ -98,7 +104,6 @@ public class HttpRequestResultService(
         }
         catch (OperationCanceledException ex) when (ct.IsCancellationRequested)
         {
-            // Log and handle task cancellation
             httpSendResults.ErrorList.Add("OperationCanceledException: Request was canceled.");
             httpSendResults.StatusCode = HttpStatusCode.RequestTimeout;
             _logger.LogWarning(ex, "HttpSendRequestResultAsync operation canceled: {Message}", ex.Message);
@@ -106,7 +111,6 @@ public class HttpRequestResultService(
         }
         catch (Exception ex)
         {
-            // Log and handle any other general exceptions
             httpSendResults.ErrorList.Add($"GeneralException: {ex.Message}");
             httpSendResults.StatusCode = HttpStatusCode.InternalServerError;
             _logger.LogError(ex, "HttpSendRequestResultAsync encountered GeneralException: {Message}", ex.Message);

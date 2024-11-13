@@ -1,11 +1,15 @@
 ﻿using HttpClientUtility.RequestResult;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Schema;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Models.OpenAI;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PromptSpark.Domain.Service;
 
@@ -21,10 +25,68 @@ namespace PromptSpark.Domain.Service;
 public class OpenAIChatCompletionService(
     IHttpRequestResultService httpClientService,
     IConfiguration configuration,
-    GPTDbContext context) : IGPTService
+    GPTDbContext context,
+    ILogger<OpenAIChatCompletionService> logger) : IGPTService
 {
-    private readonly Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
-    private readonly Uri openAiUrl = new(configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions");
+    private readonly JsonSerializerOptions options = new()
+    {
+        WriteIndented = false, // Prevents pretty-printing
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Excludes null values
+    };
+
+    private OpenAiApiRequestJson GetOpenAiApiRequestJson<T>(GPTDefinitionResponse definitionResponse)
+    {
+        try
+        {
+            if (!double.TryParse(definitionResponse.Temperature, out double temperature))
+                throw new Exception("temperature is not a valid double.");
+
+            var systemMessage = new Message
+            {
+                role = "system",
+                content = definitionResponse.SystemPrompt
+            };
+
+            var userMessage = new Message
+            {
+                role = "user",
+                content = definitionResponse.UserPrompt
+            };
+
+            var messages = new List<Message> { systemMessage, userMessage };
+
+            var openAiRequest = new OpenAiApiRequestJson
+            {
+                model = definitionResponse.Model,
+                messages = messages,
+                temperature = temperature
+            };
+
+            // Check if OutputType is "json" and add the JSON schema for T to the response_format
+            if (definitionResponse.OutputType.ToString().Equals("json", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var jsonSchema = JsonSchemaGenerator.GenerateJsonSchema<T>(options);
+                var jsonElement = JsonSerializer.Deserialize<JsonElement>(jsonSchema);
+                var stringJsonSchema = jsonElement.GetRawText();
+                //openAiRequest.response_format = new ResponseFormat
+                //{
+                //    type = "json_object",
+                //    JsonSchema = new Models.OpenAI.JsonSchema()
+                //    {
+                //        Name = "recipe_schema",
+                //        Schema = stringJsonSchema
+                //    }
+                //};
+            }
+            return openAiRequest;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error creating OpenAI API request: {Message}", ex.Message);
+        }
+        return new OpenAiApiRequestJson();
+    }
+
 
     private static OpenAiApiRequest GetOpenAiApiRequest(GPTDefinitionResponse definitionResponse)
     {
@@ -56,54 +118,6 @@ public class OpenAIChatCompletionService(
         }
         else
         {
-            //    response_format = new ResponseFormat() { type = "text" },
-            return new OpenAiApiRequest()
-            {
-                model = definitionResponse.Model,
-                messages =
-                    [
-                        systemMessage,
-                    new Message
-                    {
-                        role = "user",
-                        content = definitionResponse.UserPrompt
-                    }
-                    ],
-                temperature = temperature
-            };
-        }
-    }
-    private static OpenAiApiRequest GetOpenAiApiRequest(DefinitionResponseDto definitionResponse)
-    {
-        if (Double.TryParse(definitionResponse.Temperature, out double temperature) == false)
-            throw new Exception("temperature is not a valid double.");
-
-        var systemMessage = new Message()
-        {
-            role = "system",
-            content = definitionResponse.SystemPrompt,
-        };
-        if (definitionResponse.OutputType.ToString().ToLower() == "json")
-        {
-//                response_format = new ResponseFormat() { type = "json_object" },
-            return new OpenAiApiRequest()
-            {
-                model = definitionResponse.Model,
-                messages =
-                    [
-                        systemMessage,
-                    new Message
-                    {
-                        role = "user",
-                        content = definitionResponse.UserPrompt
-                    }
-                    ],
-                temperature = temperature
-            };
-        }
-        else
-        {
-//                response_format = new ResponseFormat() { type = "text" },
             return new OpenAiApiRequest()
             {
                 model = definitionResponse.Model,
@@ -320,6 +334,54 @@ public class OpenAIChatCompletionService(
             }
         }
     }
+    public async Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse)
+    {
+        Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
+        string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
+        Uri openAiUri = new(openAiUrl);
+
+        var openAIRequest = GetOpenAiApiRequestJson<T>(gptResponse);
+        CancellationToken ct = new();
+        HttpRequestResult<OpenAiApiResponse> serviceResponse = new();
+
+        // JsonSerializer options to control formatting and remove unnecessary whitespace
+        // Serialize, trim, and create StringContent
+        var serializedRequest = JsonSerializer.Serialize(openAIRequest, options).Trim();
+        StringContent content = new(serializedRequest, Encoding.UTF8, "application/json");
+
+        // Optional: Explicitly set the Content-Length if your HttpClientService requires it
+        content.Headers.ContentLength = Encoding.UTF8.GetByteCount(serializedRequest);
+
+        serviceResponse.RequestBody = content;
+        serviceResponse.Retries = 0;
+        serviceResponse.CacheDurationMinutes = 0;
+        serviceResponse.RequestMethod = HttpMethod.Post;
+        serviceResponse.RequestHeaders = headers;
+        serviceResponse.RequestPath = openAiUrl.ToString();
+
+        // Log serialized JSON for debugging if needed
+        Console.WriteLine("Serialized Request JSON: " + serializedRequest);
+
+        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct);
+        try
+        {
+
+            gptResponse.DefinitionType = gptResponse.DefinitionType;
+            gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
+            gptResponse.SystemResponse = serviceResponse?.ResponseResults?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
+            gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
+            gptResponse.ElapsedMilliseconds = serviceResponse?.ElapsedMilliseconds ?? 0;
+            gptResponse.TotalTokens = serviceResponse?.ResponseResults?.Usage?.TotalTokens ?? 0;
+            gptResponse.CompletionTokens = serviceResponse?.ResponseResults?.Usage?.CompletionTokens ?? 0;
+            gptResponse.PromptTokens = serviceResponse?.ResponseResults?.Usage?.PromptTokens ?? 0;
+            gptResponse.Model = serviceResponse?.ResponseResults?.Model ?? "Unknown";
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating GPT Response: {Message}", ex.Message);
+        }
+        return gptResponse;
+    }
 
     public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse)
     {
@@ -330,24 +392,183 @@ public class OpenAIChatCompletionService(
         var openAIRequest = GetOpenAiApiRequest(gptResponse);
         CancellationToken ct = new();
         HttpRequestResult<OpenAiApiResponse> serviceResponse = new();
-        StringContent content = new(JsonSerializer.Serialize(openAIRequest), Encoding.UTF8, "application/json");
+
+        // JsonSerializer options to control formatting and remove unnecessary whitespace
+        // Serialize, trim, and create StringContent
+        var serializedRequest = JsonSerializer.Serialize(openAIRequest, options).Trim();
+        StringContent content = new(serializedRequest, Encoding.UTF8, "application/json");
+
+        // Optional: Explicitly set the Content-Length if your HttpClientService requires it
+        content.Headers.ContentLength = Encoding.UTF8.GetByteCount(serializedRequest);
+
         serviceResponse.RequestBody = content;
         serviceResponse.Retries = 0;
         serviceResponse.CacheDurationMinutes = 0;
         serviceResponse.RequestMethod = HttpMethod.Post;
         serviceResponse.RequestHeaders = headers;
         serviceResponse.RequestPath = openAiUrl.ToString();
-        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct);
 
-        gptResponse.DefinitionType = gptResponse.DefinitionType;
-        gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
-        gptResponse.SystemResponse = serviceResponse?.ResponseResults?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
-        gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
-        gptResponse.ElapsedMilliseconds = serviceResponse?.ElapsedMilliseconds ?? 0;
-        gptResponse.TotalTokens = serviceResponse?.ResponseResults?.Usage?.TotalTokens ?? 0;
-        gptResponse.CompletionTokens = serviceResponse?.ResponseResults?.Usage?.CompletionTokens ?? 0;
-        gptResponse.PromptTokens = serviceResponse?.ResponseResults?.Usage?.PromptTokens ?? 0;
-        gptResponse.Model = serviceResponse?.ResponseResults?.Model ?? "Unknown";
+        // Log serialized JSON for debugging if needed
+        Console.WriteLine("Serialized Request JSON: " + serializedRequest);
+
+        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct);
+        try
+        {
+
+            gptResponse.DefinitionType = gptResponse.DefinitionType;
+            gptResponse.SystemPrompt = openAIRequest.messages.Where(w => w.role == "system").FirstOrDefault()?.content;
+            gptResponse.SystemResponse = serviceResponse?.ResponseResults?.Choices?.FirstOrDefault()?.Message?.content ?? "No Answer";
+            gptResponse.Updated = serviceResponse?.CompletionDate ?? DateTime.Now;
+            gptResponse.ElapsedMilliseconds = serviceResponse?.ElapsedMilliseconds ?? 0;
+            gptResponse.TotalTokens = serviceResponse?.ResponseResults?.Usage?.TotalTokens ?? 0;
+            gptResponse.CompletionTokens = serviceResponse?.ResponseResults?.Usage?.CompletionTokens ?? 0;
+            gptResponse.PromptTokens = serviceResponse?.ResponseResults?.Usage?.PromptTokens ?? 0;
+            gptResponse.Model = serviceResponse?.ResponseResults?.Model ?? "Unknown";
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating GPT Response: {Message}", ex.Message);
+        }
         return gptResponse;
+    }
+
+}
+public static class JsonSchemaGenerator
+{
+    public static string GenerateJsonSchema<T>(JsonSerializerOptions options)
+    {
+        return GetSchemaSerialized<T>(options);
+    }
+
+    private static string GetSchemaSerialized<T>(JsonSerializerOptions options)
+    {
+        var schema = new
+        {
+            type = "object",
+            properties = GeneratePropertiesSchema(typeof(T)),
+            additionalProperties = false
+        };
+
+        return JsonSerializer.Serialize(schema, options);
+    }
+
+    private static Dictionary<string, object> GeneratePropertiesSchema(Type type)
+    {
+        var propertiesSchema = new Dictionary<string, object>();
+
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            var propertySchema = GetPropertySchema(property.PropertyType);
+            propertiesSchema.Add(property.Name, propertySchema);
+        }
+
+        return propertiesSchema;
+    }
+
+    private static object GetPropertySchema(Type propertyType)
+    {
+        if (propertyType == typeof(string))
+        {
+            return new { type = "string" };
+        }
+        else if (propertyType == typeof(int) || propertyType == typeof(long))
+        {
+            return new { type = "integer" };
+        }
+        else if (propertyType == typeof(double) || propertyType == typeof(float) || propertyType == typeof(decimal))
+        {
+            return new { type = "number" };
+        }
+        else if (propertyType == typeof(bool))
+        {
+            return new { type = "boolean" };
+        }
+        else if (typeof(IEnumerable<string>).IsAssignableFrom(propertyType))
+        {
+            return new
+            {
+                type = "array",
+                items = new { type = "string" }
+            };
+        }
+        else if (typeof(IEnumerable<int>).IsAssignableFrom(propertyType) || typeof(IEnumerable<long>).IsAssignableFrom(propertyType))
+        {
+            return new
+            {
+                type = "array",
+                items = new { type = "integer" }
+            };
+        }
+        else if (typeof(IEnumerable<double>).IsAssignableFrom(propertyType) || typeof(IEnumerable<float>).IsAssignableFrom(propertyType) || typeof(IEnumerable<decimal>).IsAssignableFrom(propertyType))
+        {
+            return new
+            {
+                type = "array",
+                items = new { type = "number" }
+            };
+        }
+        else if (propertyType.IsClass)
+        {
+            return new
+            {
+                type = "object",
+                properties = GeneratePropertiesSchema(propertyType)
+            };
+        }
+        else
+        {
+            return new { type = "string" }; // Default to string if type is unknown
+        }
+    }
+
+    public static bool ValidateJsonAgainstSchema<T>(string json, JsonSerializerOptions options)
+    {
+        var schemaJson = GenerateJsonSchema<T>(options);
+        var schemaDocument = JsonDocument.Parse(schemaJson);
+        var jsonDocument = JsonDocument.Parse(json);
+
+        // Get schema properties
+        if (schemaDocument.RootElement.TryGetProperty("properties", out var schemaProperties))
+        {
+            return ValidateProperties(schemaProperties, jsonDocument.RootElement);
+        }
+
+        Console.WriteLine("Invalid schema format.");
+        return false;
+    }
+
+    private static bool ValidateProperties(JsonElement schemaProperties, JsonElement jsonElement)
+    {
+        foreach (var schemaProperty in schemaProperties.EnumerateObject())
+        {
+            if (!jsonElement.TryGetProperty(schemaProperty.Name, out var jsonProperty))
+            {
+                Console.WriteLine($"Property '{schemaProperty.Name}' is missing in JSON.");
+                return false;
+            }
+
+            var schemaType = schemaProperty.Value.GetProperty("type").GetString();
+            if (!ValidatePropertyType(schemaType, jsonProperty))
+            {
+                Console.WriteLine($"Property '{schemaProperty.Name}' is of incorrect type. Expected: {schemaType}");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool ValidatePropertyType(string schemaType, JsonElement jsonElement)
+    {
+        return schemaType switch
+        {
+            "string" => jsonElement.ValueKind == JsonValueKind.String,
+            "integer" => jsonElement.ValueKind == JsonValueKind.Number && jsonElement.TryGetInt32(out _),
+            "number" => jsonElement.ValueKind == JsonValueKind.Number,
+            "boolean" => jsonElement.ValueKind == JsonValueKind.True || jsonElement.ValueKind == JsonValueKind.False,
+            "array" => jsonElement.ValueKind == JsonValueKind.Array,
+            "object" => jsonElement.ValueKind == JsonValueKind.Object,
+            _ => false
+        };
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PromptSpark.Domain.PromptSparkChat;
+using PromptSpark.Chat.Services;
 
 namespace PromptSpark.Chat.Controllers;
 
@@ -12,26 +12,48 @@ public class WorkflowAdminController : Controller
         _workflowService = workflowService;
     }
 
+    public IActionResult ExportJson(string fileName)
+    {
+        var workflow = _workflowService.LoadWorkflow(fileName);
+
+        if (workflow == null)
+        {
+            return NotFound();
+        }
+        // Return the workflow as JSON
+        return Json(workflow);
+    }
+
+
     public IActionResult AddNode(string fileName)
     {
-        ViewBag.FileName = fileName; // Pass the fileName to the view for reference
-        return View(new Node());
+        var workflow = _workflowService.LoadWorkflow(fileName);
+        if (workflow == null) {
+            return NotFound();
+        }
+        var addNode = new EditNodeViewModel()
+        {
+            FileName = fileName
+        };
+        return View(addNode);
     }
 
     [HttpPost]
-    public IActionResult AddNode(Node newNode, string fileName)
+    public IActionResult AddNode(EditNodeViewModel newNode)
     {
-        var workflow = _workflowService.LoadWorkflow(fileName);
+        var workflow = _workflowService.LoadWorkflow(newNode.FileName);
         _workflowService.AddNode(newNode);
         _workflowService.SaveWorkflow(workflow);
-        return RedirectToAction("Details", new { fileName });  // Redirect to the Details view for the current workflow
+        return RedirectToAction("Details", new { newNode.FileName });  // Redirect to the Details view for the current workflow
     }
 
     public IActionResult DeleteNode(string id, string fileName)
     {
-        var workflow = _workflowService.LoadWorkflow(fileName);
-        _workflowService.DeleteNode(id);
-        _workflowService.SaveWorkflow(workflow);
+        var node = _workflowService.LoadNode(id,fileName);
+        if (node == null) {
+            return NotFound();
+        }
+        _workflowService.DeleteNode(node);
         return RedirectToAction("Details", new { fileName });  // Redirect to Details after deletion
     }
 
@@ -51,34 +73,25 @@ public class WorkflowAdminController : Controller
 
     public IActionResult EditNode(string id, string fileName)
     {
-        var workflow = _workflowService.LoadWorkflow(fileName);
-        var node = workflow.Nodes.FirstOrDefault(n => n.Id == id);
-
+        var node = _workflowService.LoadNode(id,fileName);
         if (node == null)
         {
             return NotFound();
         }
-        var viewModel = new EditNodeViewModel(node,fileName);
-        return View(viewModel);
+        return View(node);
     }
 
     [HttpPost]
     public IActionResult EditNode(EditNodeViewModel updatedNode)
     {
         var workflow = _workflowService.LoadWorkflow(updatedNode.FileName);
-
         var node = workflow.Nodes.FirstOrDefault(n => n.Id == updatedNode.Id);
         if (node == null)
         {
             return NotFound();
         }
-
-        // Update node properties
-        node.Question = updatedNode.Question;
-
-        _workflowService.UpdateNode(node);    // Update the node in-memory
+        _workflowService.UpdateNode(updatedNode);    // Update the node in-memory
         _workflowService.SaveWorkflow(workflow); // Save the workflow file
-
         return RedirectToAction("Details", new { fileName = updatedNode.FileName });
     }
 

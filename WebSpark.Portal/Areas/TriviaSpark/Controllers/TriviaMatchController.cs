@@ -9,8 +9,8 @@ public class TriviaMatchController : TriviaSparkBaseController
 {
     private readonly ITriviaMatchService _matchService;
     public TriviaMatchController(
-        ITriviaMatchService matchService, 
-        IMemoryCacheManager memoryCacheManager, 
+        ITriviaMatchService matchService,
+        IMemoryCacheManager memoryCacheManager,
         IJShowService jShowService) : base(memoryCacheManager, jShowService)
     {
         _matchService = matchService;

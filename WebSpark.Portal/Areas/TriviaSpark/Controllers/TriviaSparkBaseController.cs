@@ -1,5 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
-using HttpClientUtility.MemoryCache;
+﻿using HttpClientUtility.MemoryCache;
 using System.Diagnostics;
 using TriviaSpark.JShow.Models;
 using TriviaSpark.JShow.Service;
@@ -30,7 +29,7 @@ public class TriviaSparkBaseController(
             _memoryCacheManager.Set("JShowList", list, 30);
             return list;
         });
-        if(newShow == null)
+        if (newShow == null)
         {
             return shows;
         }

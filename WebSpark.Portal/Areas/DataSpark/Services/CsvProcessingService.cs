@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Analysis;
-using ScottPlot;
 using System.Data;
 using System.Globalization;
 using System.Text.Json;
@@ -126,7 +125,7 @@ public class CsvProcessingService
             double min = data.Min();
             double max = data.Max();
             double median = CalculateMedian(data);
-            double q1 = CalculateQuantile(data,0.25);
+            double q1 = CalculateQuantile(data, 0.25);
             double q3 = CalculateQuantile(data, 0.75);
 
             // Create a box plot using the calculated statistics

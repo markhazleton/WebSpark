@@ -46,5 +46,5 @@ public class ErrorController(ILogger<ErrorController> _logger) : Controller
     }
 
     // Helper method to log the error with the requested URL
-    private void LogError(int statusCode) => _logger.LogInformation("Error {StatusCode} - Requested Page: {RequestedUrl}", statusCode, (string?)(HttpContext.Request.Path + HttpContext.Request.QueryString));
+    private void LogError(int statusCode) => _logger.LogInformation("Error {StatusCode} - Requested Page: {RequestedUrl}", statusCode, HttpContext.Request.Path + HttpContext.Request.QueryString);
 }

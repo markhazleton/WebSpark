@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
+﻿namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
 
 /// <summary>
 /// Base for all Api Controllers in this project

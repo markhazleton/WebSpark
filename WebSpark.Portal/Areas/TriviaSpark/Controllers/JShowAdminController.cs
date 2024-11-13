@@ -1,6 +1,6 @@
-﻿using global::TriviaSpark.JShow.Models;
+﻿using HttpClientUtility.MemoryCache;
+using global::TriviaSpark.JShow.Models;
 using global::TriviaSpark.JShow.Service;
-using HttpClientUtility.MemoryCache;
 using System.Text.Json;
 using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
@@ -345,7 +345,7 @@ public class JShowAdminController(
     // Question CRUD Operations
     public async Task<IActionResult> CreateQuestion(string categoryId)
     {
-        var category = await _jShowService.GetCategoryByIdAsync(categoryId); 
+        var category = await _jShowService.GetCategoryByIdAsync(categoryId);
 
         var question = new QuestionVM { CategoryName = category.Name };
         return View(question);

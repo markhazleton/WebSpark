@@ -4,7 +4,7 @@
     {
         public ArtWork()
         {
-                
+
         }
         public ArtWork(ArtData? artData)
         {

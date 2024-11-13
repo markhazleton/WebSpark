@@ -16,7 +16,7 @@ public class HomeController(
     // GET: RecipeListController
     public ActionResult Index()
     {
-        _logger.LogInformation("Recipe List Controller Index");
+        _logger.LogInformation("RecipeSpark Home Controller Index");
         var recipes = _RecipeService.Get().ToList();
         return View(recipes);
     }
@@ -69,7 +69,7 @@ public class HomeController(
         {
             _logger.LogError(ex, "Error Saving Recipe with Create Method");
         }
-        return RedirectToAction("List");
+        return RedirectToAction(nameof(Index));
     }
     public ActionResult Create()
     {

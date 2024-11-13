@@ -1,14 +1,23 @@
-﻿@model             EditNodeViewModel
+﻿@model EditNodeViewModel
 
 @{
     ViewData["Title"] = "Edit Node - " + Model.Id;
+    var questionTypeOptions = Enum.GetValues(typeof(QuestionType))
+                                  .Cast<QuestionType>()
+                                  .Select(qt => new SelectListItem
+                                          {
+                                              Text = qt.ToString(),
+                                              Value = ((int)qt).ToString(),
+                                              Selected = Model.QuestionType == qt
+                                          });
 }
+
 
 <h2>Edit Node - @Model.Id</h2>
 
 <form asp-action="EditNode" method="post">
-    @Html.HiddenFor(m => m.Id) 
-    @Html.HiddenFor(m => m.FileName) 
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.FileName)
     <div class="form-group">
         <label asp-for="Question">Question</label>
         <input asp-for="Question" class="form-control" />
@@ -32,7 +41,12 @@
                     <label>System Prompt</label>
                     <input name="Answers[@i].SystemPrompt" value="@Model.Answers[i].SystemPrompt" class="form-control" />
                 </div>
-
+                <div class="form-group">
+                    <label for="questionTypeDropdown" class="form-label">Select Question Type</label>
+                    <select asp-for="QuestionType" asp-items="questionTypeOptions" class="form-select" id="questionTypeDropdown">
+                        <option value="">Choose...</option> <!-- Placeholder option -->
+                    </select>
+                </div>
                 <button type="button" class="btn btn-danger" onclick="removeAnswer(this)">Remove Answer</button>
                 <hr />
             </div>

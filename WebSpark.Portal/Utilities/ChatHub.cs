@@ -27,7 +27,8 @@ public class ChatHub(
         if (GptPrompts.Count == 0)
         {
             var gptDefinitions = await _gptDefinitionService.GetDefinitionsAsync();
-            foreach (var gptDefinition in gptDefinitions) {
+            foreach (var gptDefinition in gptDefinitions)
+            {
                 GptPrompts.Add(gptDefinition.Name, gptDefinition.Prompt);
             }
         }
