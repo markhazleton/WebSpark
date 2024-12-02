@@ -112,7 +112,6 @@ public class RecipePromptSparkService(
         request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
         request.Headers.Add("Accept", "application/json");
         request.Headers.Add("Accept-Language", "en-US,en; q=0.9");
-        string systemPrompt = "You are MOM Recipe. Write an easy-to-read, easy-to-make recipe...";
         var requestPayload = CreateRequest(defResponse.UserPrompt, defResponse.SystemPrompt, MomRecipeSchema);
         request.Content = new StringContent(JsonConvert.SerializeObject(requestPayload), Encoding.UTF8, "application/json");
         HttpClient httpClient = httpClientFactory.CreateClient();
