@@ -2,31 +2,9 @@
 using Newtonsoft.Json;
 using PromptSpark.Domain.Data;
 using System.Text;
-using System.Text.RegularExpressions;
 using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
-public record RecipeData(
-    string Name,
-    string Description,
-    string Category,
-    int Servings,
-    List<string> Ingredients = null,
-    List<string> Instructions = null,
-    List<string> SEO_Keywords = null
-)
-{
-    public RecipeData() : this(
-        Name: string.Empty,
-        Description: string.Empty,
-        Category: string.Empty,
-        Ingredients: [],
-        Instructions: [],
-        Servings: 4,
-        SEO_Keywords: []
-    )
-    { }
-}
 
 
 /// <summary>
