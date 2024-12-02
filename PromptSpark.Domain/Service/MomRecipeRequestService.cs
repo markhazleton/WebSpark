@@ -1,110 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using PromptSpark.Domain.Data;
 using System.Text;
-using System.Text.RegularExpressions;
 using WebSpark.Core.Models;
 
 namespace PromptSpark.Domain.Service;
-public record RecipeData(
-    string Name,
-    string Description,
-    string Category,
-    int Servings,
-    List<string> Ingredients = null,
-    List<string> Instructions = null,
-    List<string> SEO_Keywords = null
-)
+
+public class MomRecipeRequestService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
 {
-    public RecipeData() : this(
-        Name: string.Empty,
-        Description: string.Empty,
-        Category: string.Empty,
-        Ingredients: [],
-        Instructions: [],
-        Servings: 4,
-        SEO_Keywords: []
-    )
-    { }
-}
-
-
-/// <summary>
-/// Initializes a new instance of the <see cref="RecipeAzureAIOpenAIService"/> class.
-/// </summary>
-/// <param name="configuration">The configuration object.</param>
-public class RecipePromptSparkService(
-    IConfiguration configuration,
-    IHttpClientFactory httpClientFactory,
-    IGPTDefinitionService _definitionService,
-    IGPTService _promptService) : IRecipeGPTService
-{
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="prompt"></param>
-    /// <param name="category"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public async Task<RecipeModel> CreateMomGPTRecipe(RecipeModel recipeModel, string prompt, string category)
-    {
-
-        var recipeDefinition = await _definitionService.GetDefinitionDtoAsync(8);
-        GPTDefinitionResponse defResponse = new()
-        {
-            DefinitionType = recipeDefinition.DefinitionType,
-            GPTDescription = recipeDefinition.Description,
-            SystemPrompt = recipeDefinition.Prompt,
-            DefinitionId = recipeDefinition.DefinitionId,
-            UserPrompt = prompt,
-            Temperature = recipeDefinition.Temperature,
-            Model = recipeDefinition.Model,
-            OutputType = recipeDefinition.OutputType,
-            GPTName = recipeDefinition.Name,
-        };
-
-        try
-        {
-            var recipe = await GetMomRecipeAIAsync(defResponse);
-            try
-            {
-
-                if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
-                {
-                    recipeModel.LastViewDT = DateTime.Now;
-                    recipeModel.ModifiedDT = DateTime.Now;
-                    recipeModel.Name = recipe.Name;
-                    recipeModel.Description = recipe.Description;
-                    recipeModel.Ingredients = recipe.Ingredients;
-                    recipeModel.Instructions = recipe.Instructions;
-                    recipeModel.Servings = recipe.Servings;
-                    recipeModel.SEO_Keywords = recipe.SEO_Keywords;
-                    recipeModel.IsApproved = true;
-                    recipeModel.AverageRating = 5;
-                    recipeModel.AuthorNM = "MOM Recipe";
-                    recipeModel.RecipeCategoryNM = category;
-                }
-            }
-            catch (JsonException)
-            {
-                Console.WriteLine("Failed to parse JSON data; skipping invalid entry.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-            throw;
-        }
-
-        if (string.IsNullOrEmpty(recipeModel.Name))
-        {
-            throw new InvalidOperationException("No valid recipes were found.");
-        }
-        return recipeModel;
-    }
-
-    public async Task<RecipeModel> GetMomRecipeAIAsync(GPTDefinitionResponse defResponse)
+    public async Task<RecipeModel> GetMomRecipeAIAsync(string userContent)
     {
         string apikey = configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found";
         var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
@@ -113,7 +16,7 @@ public class RecipePromptSparkService(
         request.Headers.Add("Accept", "application/json");
         request.Headers.Add("Accept-Language", "en-US,en; q=0.9");
         string systemPrompt = "You are MOM Recipe. Write an easy-to-read, easy-to-make recipe...";
-        var requestPayload = CreateRequest(defResponse.UserPrompt, defResponse.SystemPrompt, MomRecipeSchema);
+        var requestPayload = CreateRequest(userContent, systemPrompt, MomRecipeSchema);
         request.Content = new StringContent(JsonConvert.SerializeObject(requestPayload), Encoding.UTF8, "application/json");
         HttpClient httpClient = httpClientFactory.CreateClient();
         var response = await httpClient.SendAsync(request);
@@ -295,9 +198,5 @@ public class RecipePromptSparkService(
         [JsonProperty("rejected_prediction_tokens")]
         public int RejectedPredictionTokens { get; set; }
     }
-
 }
-
-
-
 

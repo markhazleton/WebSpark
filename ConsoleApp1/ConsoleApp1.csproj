@@ -5,10 +5,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>40c9aa10-c8b2-4e03-9d48-40fc6a373ee9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
+    <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
   </ItemGroup>
 
 </Project>

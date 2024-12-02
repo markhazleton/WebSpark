@@ -1,6 +1,6 @@
-﻿using iText.IO.Font.Constants;
+﻿using iText.Commons.Actions;
+using iText.IO.Font.Constants;
 using iText.Kernel.Colors;
-using iText.Kernel.Events;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
@@ -117,7 +117,7 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
             PdfDocument pdfDoc = new(writer);
 
             // Add header and footer event handler
-            pdfDoc.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterEventHandler());
+            // pdfDoc.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterEventHandler());
 
             Document doc = new(pdfDoc);
             List<TocEntry> tocEntries = [];
@@ -191,34 +191,34 @@ public class Cookbook(ILogger<Cookbook> logger, IRecipeService recipeService) : 
     }
 
     // Event handler class for header and footer
-    private class HeaderFooterEventHandler : IEventHandler
-    {
-        public void HandleEvent(Event @event)
-        {
-            PdfDocumentEvent docEvent = (PdfDocumentEvent)@event;
-            PdfDocument pdfDoc = docEvent.GetDocument();
-            PdfPage page = docEvent.GetPage();
-            int pageNumber = pdfDoc.GetPageNumber(page);
-            PdfCanvas pdfCanvas = new(page.NewContentStreamBefore(), page.GetResources(), pdfDoc);
+    //private class HeaderFooterEventHandler : IEventHandler
+    //{
+    //    public void HandleEvent(iText.Kernel.Pdf.Event @event)
+    //    {
+    //        PdfDocumentEvent docEvent = (PdfDocumentEvent)@event;
+    //        PdfDocument pdfDoc = docEvent.GetDocument();
+    //        PdfPage page = docEvent.GetPage();
+    //        int pageNumber = pdfDoc.GetPageNumber(page);
+    //        PdfCanvas pdfCanvas = new(page.NewContentStreamBefore(), page.GetResources(), pdfDoc);
 
-            Rectangle pageSize = page.GetPageSize();
-            float x = pageSize.GetWidth() / 2;
-            float y = pageSize.GetTop() - 20;
-            float footerY = pageSize.GetBottom() + 20;
+    //        Rectangle pageSize = page.GetPageSize();
+    //        float x = pageSize.GetWidth() / 2;
+    //        float y = pageSize.GetTop() - 20;
+    //        float footerY = pageSize.GetBottom() + 20;
 
-            // Header
-            Canvas canvas = new(pdfCanvas, pageSize);
-            canvas.ShowTextAligned(new Paragraph("Recipe Cookbook")
-                .SetFontSize(12)
-                .SetBold(), x, y, TextAlignment.CENTER);
+    //        // Header
+    //        Canvas canvas = new(pdfCanvas, pageSize);
+    //        canvas.ShowTextAligned(new Paragraph("Recipe Cookbook")
+    //            .SetFontSize(12)
+    //            .SetBold(), x, y, TextAlignment.CENTER);
 
-            // Footer with page number
-            canvas.ShowTextAligned(new Paragraph($"Page {pageNumber}")
-                .SetFontSize(10), x, footerY, TextAlignment.CENTER);
+    //        // Footer with page number
+    //        canvas.ShowTextAligned(new Paragraph($"Page {pageNumber}")
+    //            .SetFontSize(10), x, footerY, TextAlignment.CENTER);
 
-            canvas.Close();
-        }
-    }
+    //        canvas.Close();
+    //    }
+    //}
 
     // Class to store TOC entries
     private class TocEntry(string title, int pageNumber)

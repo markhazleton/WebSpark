@@ -1,4 +1,4 @@
-﻿@model                         Node
+﻿@model EditNodeViewModel
 
 @{
     ViewData["Title"] = "Add New Node";
@@ -8,6 +8,7 @@
 
 <form asp-action="AddNode" method="post">
     <div class="form-group">
+        @Html.HiddenFor(m => m.FileName)
         <label asp-for="Id">Node ID</label>
         <input asp-for="Id" class="form-control" />
         <small class="form-text text-muted">The Node ID should be unique.</small>

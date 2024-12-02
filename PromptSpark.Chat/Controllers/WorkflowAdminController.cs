@@ -28,7 +28,8 @@ public class WorkflowAdminController : Controller
     public IActionResult AddNode(string fileName)
     {
         var workflow = _workflowService.LoadWorkflow(fileName);
-        if (workflow == null) {
+        if (workflow == null)
+        {
             return NotFound();
         }
         var addNode = new EditNodeViewModel()
@@ -49,8 +50,9 @@ public class WorkflowAdminController : Controller
 
     public IActionResult DeleteNode(string id, string fileName)
     {
-        var node = _workflowService.LoadNode(id,fileName);
-        if (node == null) {
+        var node = _workflowService.LoadNode(id, fileName);
+        if (node == null)
+        {
             return NotFound();
         }
         _workflowService.DeleteNode(node);
@@ -73,7 +75,7 @@ public class WorkflowAdminController : Controller
 
     public IActionResult EditNode(string id, string fileName)
     {
-        var node = _workflowService.LoadNode(id,fileName);
+        var node = _workflowService.LoadNode(id, fileName);
         if (node == null)
         {
             return NotFound();
@@ -91,7 +93,6 @@ public class WorkflowAdminController : Controller
             return NotFound();
         }
         _workflowService.UpdateNode(updatedNode);    // Update the node in-memory
-        _workflowService.SaveWorkflow(workflow); // Save the workflow file
         return RedirectToAction("Details", new { fileName = updatedNode.FileName });
     }
 

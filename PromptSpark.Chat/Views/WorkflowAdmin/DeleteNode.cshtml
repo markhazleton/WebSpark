@@ -1,5 +1,4 @@
-﻿@model                         Node
-
+﻿@model   EditNodeViewModel
 @{
     ViewData["Title"] = "Delete Node - " + Model.Id;
 }
@@ -14,6 +13,8 @@
 <div>
     <h4>Node Details</h4>
     <dl class="row">
+        @Html.HiddenFor(m => m.FileName)
+
         <dt class="col-sm-3">Node ID</dt>
         <dd class="col-sm-9">@Model.Id</dd>
 

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Schema;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Models.OpenAI;

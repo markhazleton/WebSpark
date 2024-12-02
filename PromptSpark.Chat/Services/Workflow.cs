@@ -63,13 +63,13 @@ public class WorkflowService : IWorkflowService
         return node == null
             ? throw new InvalidOperationException($"Node with ID {nodeId} does not exist in workflow {fileName}.")
             : new EditNodeViewModel()
-        {
-            Id = node.Id,
-            Question = node.Question,
-            Answers = node.Answers,
-            FileName = fileName,
-            QuestionType = node.QuestionType
-        };
+            {
+                Id = node.Id,
+                Question = node.Question,
+                Answers = node.Answers,
+                FileName = fileName,
+                QuestionType = node.QuestionType
+            };
     }
     public Workflow LoadWorkflow(string fileName)
     {
@@ -197,7 +197,8 @@ public enum QuestionType
 {
     Options,
     OptionsWithText,
-    Text
+    Text,
+    Message
 }
 public class ChatEntry
 {

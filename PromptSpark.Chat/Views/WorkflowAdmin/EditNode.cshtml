@@ -23,7 +23,12 @@
         <input asp-for="Question" class="form-control" />
         <span asp-validation-for="Question" class="text-danger"></span>
     </div>
-
+    <div class="form-group">
+        <label for="questionTypeDropdown" class="form-label">Select Question Type</label>
+        <select asp-for="QuestionType" asp-items="questionTypeOptions" class="form-select" id="questionTypeDropdown">
+            <option value="">Choose...</option> <!-- Placeholder option -->
+        </select>
+    </div>
     <h3>Answers</h3>
     <div id="answersContainer">
         @for (int i = 0; i < Model.Answers.Count; i++)
@@ -41,12 +46,7 @@
                     <label>System Prompt</label>
                     <input name="Answers[@i].SystemPrompt" value="@Model.Answers[i].SystemPrompt" class="form-control" />
                 </div>
-                <div class="form-group">
-                    <label for="questionTypeDropdown" class="form-label">Select Question Type</label>
-                    <select asp-for="QuestionType" asp-items="questionTypeOptions" class="form-select" id="questionTypeDropdown">
-                        <option value="">Choose...</option> <!-- Placeholder option -->
-                    </select>
-                </div>
+
                 <button type="button" class="btn btn-danger" onclick="removeAnswer(this)">Remove Answer</button>
                 <hr />
             </div>

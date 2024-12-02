@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Text;
 namespace PromptSpark.Chat.Services;
