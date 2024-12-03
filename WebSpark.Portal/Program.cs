@@ -110,7 +110,6 @@ RegisterHttpClientUtilities(builder);
 // Add OpenAPI/Swagger generation
 //  ========================
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 
 // ========================
@@ -153,7 +152,6 @@ builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
 builder.Services.AddScoped<IRecipeImageService, RecipeImageService>();
 builder.Services.AddScoped<ICookbook, Cookbook>();
-
 builder.Services.AddScoped<IQuestionSourceAdapter, OpenTriviaDbQuestionSource>();
 builder.Services.AddScoped<ITriviaMatchService, TriviaMatchService>();
 
@@ -166,7 +164,6 @@ builder.Services.AddScoped<IJShowService>(serviceProvider =>
     JShowService service = new(dbContext, config);
     return service;
 });
-
 
 
 // Transient Services
@@ -242,14 +239,6 @@ var app = builder.Build();
 app.UseMiddleware<NotFoundMiddleware>();
 
 
-// Enable Swagger in development mode
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-    c.RoutePrefix = "/swagger";  // To serve Swagger UI at the app's root URL
-});
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -268,7 +257,6 @@ app.UseStaticFiles();
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-    // context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';");
     context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Append("X-Frame-Options", "DENY");
     context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
