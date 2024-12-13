@@ -99,7 +99,6 @@ public class OpenAIChatCompletionService(
         };
         if (definitionResponse.OutputType.ToString().Equals("json", StringComparison.CurrentCultureIgnoreCase))
         {
-            // response_format = new ResponseFormat() { type = "json_object" },
             return new OpenAiApiRequest()
             {
                 model = definitionResponse.Model,

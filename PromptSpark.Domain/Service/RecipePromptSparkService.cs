@@ -17,6 +17,61 @@ public class RecipePromptSparkService(
     IGPTDefinitionService _definitionService,
     IGPTService _promptService) : IRecipeGPTService
 {
+    private static object CreateRequest(string userContent, string systemPrompt, object schema, double temperature = 0.8)
+    {
+        return new
+        {
+            model = "gpt-4o",
+            messages = new[]
+            {
+                new { role = "system", content = systemPrompt },
+                new { role = "user", content = userContent }
+            },
+            temperature,
+            response_format = new
+            {
+                type = "json_schema",
+                json_schema = new
+                {
+                    name = "custom_model",
+                    schema,
+                    strict = true
+                }
+            }
+        };
+    }
+    private string GetStringFromList(List<string> list)
+    {
+        StringBuilder sb = new();
+        foreach (var item in list)
+        {
+            sb.Append("- ");
+            sb.Append(item);
+            sb.Append("\n");
+        }
+        return sb.ToString();
+    }
+
+    private static object MomRecipeSchema => new
+    {
+        type = "object",
+        properties = new
+        {
+            Name = new { type = "string" },
+            Description = new { type = "string" },
+            Category = new { type = "string" },
+            Ingredients = new { type = "array", items = new { type = "string" } },
+            Instructions = new { type = "array", items = new { type = "string" } },
+            Servings = new { type = "integer" },
+            SEO_Keywords = new { type = "array", items = new { type = "string" } }
+        },
+        required = new[]
+        {
+                "Name", "Description", "Category", "Ingredients",
+                "Instructions", "Servings", "SEO_Keywords"
+            },
+        additionalProperties = false
+    };
 
     /// <summary>
     /// 
@@ -47,7 +102,6 @@ public class RecipePromptSparkService(
             var recipe = await GetMomRecipeAIAsync(defResponse);
             try
             {
-
                 if (recipe != null && !string.IsNullOrWhiteSpace(recipe.Name))
                 {
                     recipeModel.LastViewDT = DateTime.Now;
@@ -99,6 +153,9 @@ public class RecipePromptSparkService(
         var chatCompletionResponse = JsonConvert.DeserializeObject<ChatCompletionResponse>(responseContent);
         RecipeModelAI recipeAI = JsonConvert.DeserializeObject<RecipeModelAI>(chatCompletionResponse.Choices[0].Message.Content);
 
+
+        
+
         RecipeModel recipe = new()
         {
             Name = recipeAI.Name,
@@ -113,60 +170,7 @@ public class RecipePromptSparkService(
 
         return recipe;
     }
-    private static object CreateRequest(string userContent, string systemPrompt, object schema, double temperature = 0.8)
-    {
-        return new
-        {
-            model = "gpt-4o",
-            messages = new[]
-            {
-                new { role = "system", content = systemPrompt },
-                new { role = "user", content = userContent }
-            },
-            temperature,
-            response_format = new
-            {
-                type = "json_schema",
-                json_schema = new
-                {
-                    name = "custom_model",
-                    schema,
-                    strict = true
-                }
-            }
-        };
-    }
-    private string GetStringFromList(List<string> list)
-    {
-        StringBuilder sb = new();
-        foreach (var item in list)
-        {
-            sb.Append("- ");
-            sb.Append(item);
-            sb.Append("\n");
-        }
-        return sb.ToString();
-    }
-    private static object MomRecipeSchema => new
-    {
-        type = "object",
-        properties = new
-        {
-            Name = new { type = "string" },
-            Description = new { type = "string" },
-            Category = new { type = "string" },
-            Ingredients = new { type = "array", items = new { type = "string" } },
-            Instructions = new { type = "array", items = new { type = "string" } },
-            Servings = new { type = "integer" },
-            SEO_Keywords = new { type = "array", items = new { type = "string" } }
-        },
-        required = new[]
-        {
-                "Name", "Description", "Category", "Ingredients",
-                "Instructions", "Servings", "SEO_Keywords"
-            },
-        additionalProperties = false
-    };
+
     private class RecipeModelAI
     {
 
