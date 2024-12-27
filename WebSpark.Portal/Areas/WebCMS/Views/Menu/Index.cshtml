@@ -2,80 +2,83 @@
 
 @{
     ViewData["Title"] = "Menus";
+    var domainNames = Model.Select(m => m.DomainName).Distinct().OrderBy(d => d).ToList();
 }
 
 <h1>Menus</h1>
 
+<div class="mb-3 d-flex align-items-center">
+    <label for="domainFilter" class="form-label me-2"><i class="bi bi-filter"></i> Filter by Domain:</label>
+    <select id="domainFilter" class="form-select w-auto">
+        <option value="">All Domains</option>
+        @foreach (var domain in domainNames)
+        {
+            <option value="@domain">@domain</option>
+        }
+    </select>
+</div>
+
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New</a>
 </p>
-<table class="table" id="displayTable">
+
+<table class="table table-striped" id="displayTable">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DisplayOrder)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DomainName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Icon)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Url)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VirtualPath)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
+            <th>@Html.DisplayNameFor(model => model.DomainName)</th>
+            <th>@Html.DisplayNameFor(model => model.Icon)</th>
+            <th>@Html.DisplayNameFor(model => model.ParentTitle)</th>
+            <th>@Html.DisplayNameFor(model => model.Url)</th>
+            <th>@Html.DisplayNameFor(model => model.VirtualPath)</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Title, "Edit", new {id=item.Id })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DisplayOrder)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DomainName) | @Html.DisplayFor(modelItem => item.DomainID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Icon)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ParentTitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Url)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VirtualPath)
-                </td>
+            <tr data-domain="@item.DomainName">
+                <td>@Html.ActionLink(item.Title, "Edit", new { id = item.Id })</td>
+                <td>@Html.DisplayFor(modelItem => item.DisplayOrder)</td>
+                <td>@Html.DisplayFor(modelItem => item.DomainName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Icon)</td>
+                <td>@Html.DisplayFor(modelItem => item.ParentTitle)</td>
+                <td>@Html.DisplayFor(modelItem => item.Url)</td>
+                <td>@Html.DisplayFor(modelItem => item.VirtualPath)</td>
             </tr>
         }
     </tbody>
 </table>
+
 @section PageScripts {
     <script>
-        $(document).ready(function ()
-        {
-            var table = $('#displayTable').DataTable(
-                {
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
-                });
+        $(document).ready(function () {
+            var table = $('#displayTable').DataTable({
+                paging: false,
+                scrollY: '40vh',
+                scrollCollapse: true,
+                stateSave: false,
+                colReorder: true
+            });
+
+            $('#domainFilter').on('change', function () {
+                var selectedDomain = $(this).val();
+                if (selectedDomain) {
+                    table.rows().every(function () {
+                        var domain = $(this.node()).data('domain');
+                        if (domain === selectedDomain) {
+                            $(this.node()).show();
+                        } else {
+                            $(this.node()).hide();
+                        }
+                    });
+                } else {
+                    table.rows().every(function () {
+                        $(this.node()).show();
+                    });
+                }
+                table.draw(false);
+            });
         });
     </script>
 }
