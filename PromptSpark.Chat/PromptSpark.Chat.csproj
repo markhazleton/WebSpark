@@ -24,7 +24,7 @@
 		<PackageReference Include="Microsoft.SemanticKernel" Version="1.32.0" />
 		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Scalar.AspNetCore" Version="1.2.71" />
+		<PackageReference Include="Scalar.AspNetCore" Version="1.2.72" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="wwwroot\js\flowchart.js">
