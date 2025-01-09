@@ -1,0 +1,9 @@
+﻿@DataSpark.Web_HostAddress = https://localhost:7104
+
+@fileName=string
+@targetColumn=string
+POST {{DataSpark.Web_HostAddress}}/api/files/train?fileName={{fileName}}&targetColumn={{targetColumn}}
+
+###
+
+POST https://localhost:7104/api/files/train?fileName=boston.csv&targetColumn=CRIM

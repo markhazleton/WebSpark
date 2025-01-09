@@ -1,0 +1,175 @@
+﻿@{
+    ViewData["Title"] = "CSV Files with EDA";
+}
+
+<h2>CSV Files with Exploratory Data Analysis</h2>
+
+<div id="fileList"></div>
+
+<div id="modelSelector" style="display: none; margin-top: 20px;">
+    <h3>Select File and Target Column for Modeling</h3>
+    <form id="modelForm">
+        <div class="form-group">
+            <label for="fileSelector">Choose a file:</label>
+            <select id="fileSelector" class="form-control" required></select>
+        </div>
+        <div class="form-group mt-3">
+            <label for="columnSelector">Choose a target column:</label>
+            <select id="columnSelector" class="form-control" required></select>
+        </div>
+        <button type="button" class="btn btn-primary mt-3" onclick="startModeling()">Start Modeling</button>
+    </form>
+</div>
+
+<div id="trainingResults" style="display: none; margin-top: 20px;">
+    <h3>Modeling Results</h3>
+    <pre id="resultsOutput"></pre>
+</div>
+
+<script>
+    let filesData = [];
+
+    async function fetchFiles() {
+        const response = await fetch('/api/files/list');
+        const data = await response.json();
+
+        console.log(data); // Debugging: Log the response
+
+        const fileListDiv = document.getElementById('fileList');
+        fileListDiv.innerHTML = "";
+
+        if (!data.files || data.files.length === 0) {
+            fileListDiv.innerHTML = `<p>${data.message || "No files found."}</p>`;
+            return;
+        }
+
+        filesData = data.files;
+
+        const ul = document.createElement("ul");
+        data.files.forEach(file => {
+            const fileName = file.fileName || "N/A";
+            const numberOfRows = file.numberOfRows !== undefined ? file.numberOfRows : "N/A";
+            const numberOfColumns = file.numberOfColumns !== undefined ? file.numberOfColumns : "N/A";
+            const fileSizeKB = file.fileSizeKB !== undefined ? file.fileSizeKB.toFixed(2) : "N/A";
+            const nullPercentage = file.nullPercentage !== undefined ? file.nullPercentage.toFixed(2) : "N/A";
+            const duplicateRows = file.duplicateRows !== undefined ? file.duplicateRows : "N/A";
+
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <strong>${fileName}</strong>
+                (Rows: ${numberOfRows}, Columns: ${numberOfColumns}, File Size: ${fileSizeKB} KB, Null %: ${nullPercentage}, Duplicate Rows: ${duplicateRows})
+            `;
+
+            const columnDetails = document.createElement("ul");
+
+            if (Array.isArray(file.columns)) {
+                file.columns.forEach(column => {
+                    const columnName = column.columnName || "N/A";
+                    const dataType = column.dataType || "N/A";
+                    const uniqueCount = column.uniqueCount !== undefined ? column.uniqueCount : "N/A";
+                    const mostCommonValue = column.mostCommonValue !== null ? column.mostCommonValue : "N/A";
+                    const nullCount = column.nullCount !== undefined ? column.nullCount : "N/A";
+
+                    let numericDetails = "";
+                    if (dataType === "Numeric") {
+                        const minValue = column.minValue !== null ? column.minValue : "N/A";
+                        const maxValue = column.maxValue !== null ? column.maxValue : "N/A";
+                        const mean = column.mean !== null ? column.mean.toFixed(2) : "N/A";
+                        const stdDev = column.stdDev !== null ? column.stdDev.toFixed(2) : "N/A";
+
+                        numericDetails = `
+                            <li>Min Value: ${minValue}</li>
+                            <li>Max Value: ${maxValue}</li>
+                            <li>Mean: ${mean}</li>
+                            <li>Std Dev: ${stdDev}</li>
+                        `;
+                    }
+
+                    const columnLi = document.createElement("li");
+                    columnLi.innerHTML = `
+                        <strong>${columnName}</strong>
+                        <ul>
+                            <li>Data Type: ${dataType}</li>
+                            <li>Unique Count: ${uniqueCount}</li>
+                            <li>Most Common Value: ${mostCommonValue}</li>
+                            <li>Null Count: ${nullCount}</li>
+                            ${numericDetails}
+                        </ul>
+                    `;
+                    columnDetails.appendChild(columnLi);
+                });
+            }
+
+            li.appendChild(columnDetails);
+            ul.appendChild(li);
+        });
+
+        fileListDiv.appendChild(ul);
+
+        populateFileSelector();
+    }
+
+    function populateFileSelector() {
+        const fileSelector = document.getElementById('fileSelector');
+        fileSelector.innerHTML = "";
+
+        filesData.forEach(file => {
+            const option = document.createElement('option');
+            option.value = file.fileName;
+            option.textContent = file.fileName;
+            fileSelector.appendChild(option);
+        });
+
+        fileSelector.addEventListener('change', updateColumnSelector);
+        updateColumnSelector();
+        document.getElementById('modelSelector').style.display = 'block';
+    }
+
+    function updateColumnSelector() {
+        const fileSelector = document.getElementById('fileSelector');
+        const selectedFile = fileSelector.value;
+
+        const columnSelector = document.getElementById('columnSelector');
+        columnSelector.innerHTML = "";
+
+        const file = filesData.find(f => f.fileName === selectedFile);
+        if (file && Array.isArray(file.columns)) {
+            file.columns.forEach(column => {
+                const option = document.createElement('option');
+                option.value = column.columnName;
+                option.textContent = column.columnName;
+                columnSelector.appendChild(option);
+            });
+        }
+    }
+
+    async function startModeling() {
+        const fileSelector = document.getElementById('fileSelector');
+        const columnSelector = document.getElementById('columnSelector');
+        const selectedFile = fileSelector.value;
+        const selectedColumn = columnSelector.value;
+
+        if (!selectedFile || !selectedColumn) {
+            alert('Please select both a file and a target column.');
+            return;
+        }
+
+        const trainingResults = document.getElementById('trainingResults');
+        const resultsOutput = document.getElementById('resultsOutput');
+        trainingResults.style.display = 'block';
+        resultsOutput.textContent = 'Training in progress...';
+
+        try {
+            const response = await fetch(`/api/files/train?fileName=${selectedFile}&targetColumn=${selectedColumn}`, {
+                method: 'GET'
+            });
+            const results = await response.json();
+
+            resultsOutput.textContent = JSON.stringify(results, null, 2);
+        } catch (error) {
+            resultsOutput.textContent = `An error occurred: ${error.message}`;
+        }
+    }
+
+    fetchFiles();
+</script>

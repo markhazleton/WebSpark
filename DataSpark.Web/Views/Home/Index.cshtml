@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Upload CSV File";
+}
+
+<h2>Upload CSV File</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-success">
+        @ViewBag.Message
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data" asp-action="UploadCSV" asp-controller="Home">
+    <div class="form-group">
+        <label for="csvFile">Choose a CSV file:</label>
+        <input type="file" name="file" id="csvFile" class="form-control" accept=".csv" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Upload</button>
+</form>
+
+@if (ViewBag.Records != null)
+{
+    <h3>Sample Records</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                @foreach (var key in ((IDictionary<string, object>)ViewBag.Records[0]).Keys)
+                {
+                    <th>@key</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var record in ViewBag.Records)
+            {
+                <tr>
+                    @foreach (var value in ((IDictionary<string, object>)record).Values)
+                    {
+                        <td>@value</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
