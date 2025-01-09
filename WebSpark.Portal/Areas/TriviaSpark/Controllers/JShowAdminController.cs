@@ -208,9 +208,14 @@ public class JShowAdminController(
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(string id)
+    public async Task<IActionResult> DeleteConfirmed(JShowVM showToDelete)
     {
-        await _jShowService.DeleteJShowAsync(id);
+        if(showToDelete == null)
+        {
+            return NotFound();
+        }
+
+        await _jShowService.DeleteJShowAsync(showToDelete.Id);
         return RedirectToAction(nameof(Index));
     }
 

@@ -205,6 +205,7 @@ public static class DefinitionResponseDto_Extension
         // Create a custom pipeline
         var pipeline = new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
+            .UseGenericAttributes()
             .Build();
 
         // Create a custom HTML renderer

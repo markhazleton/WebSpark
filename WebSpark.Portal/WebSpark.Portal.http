@@ -1,0 +1,6 @@
+﻿@WebSpark.Portal_HostAddress = https://localhost:55863
+
+@id=string
+POST {{WebSpark.Portal_HostAddress}}/{area:exists}/jshowadmin/deleteconfirmed/{{id}}
+
+###

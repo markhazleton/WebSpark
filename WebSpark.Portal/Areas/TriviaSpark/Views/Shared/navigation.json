@@ -3,7 +3,7 @@
     {
       "role": "anonymous",
       "text": "JShow",
-      "url": "/TriviaSpark/JShow"
+      "url": "/TriviaSpark/JShowMain"
     },
     {
       "role": "admin",
@@ -18,7 +18,7 @@
     {
       "role": "admin",
       "text": "Validate Json",
-      "url": "/TriviaSpark/JShowAdmin/ValidateJson"
+      "url": "/TriviaSpark/JShowJson"
     },
     {
       "role": "anonymous",

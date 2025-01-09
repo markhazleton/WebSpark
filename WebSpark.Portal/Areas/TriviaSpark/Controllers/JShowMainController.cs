@@ -4,7 +4,7 @@ using TriviaSpark.JShow.Service;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 
-public class JShowController(
+public class JShowMainController(
     IMemoryCacheManager memoryCacheManager,
     IJShowService jShowService) : TriviaSparkBaseController(memoryCacheManager, jShowService)
 {

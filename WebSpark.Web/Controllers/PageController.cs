@@ -27,8 +27,10 @@ public class PageController(
     public ActionResult Index(string id)
     {
 
-        PageVM pageVM = new(BaseVM);
-        pageVM.Item = BaseVM.Menu.Where(w => w.Argument == id?.ToLower(CultureInfo.CurrentCulture) && w.Controller == "Page").FirstOrDefault();
+        PageVM pageVM = new(BaseVM)
+        {
+            Item = BaseVM.Menu.Where(w => w.Argument == id?.ToLower(CultureInfo.CurrentCulture) && w.Controller == "Page").FirstOrDefault()
+        };
         if (pageVM.Item == null || id == null)
         {
             pageVM.Item = BaseVM.Menu?.Where(w => w.ParentId == null).OrderBy(o => o.DisplayOrder).FirstOrDefault();

@@ -1,3 +1,7 @@
+using Markdig;
+using Markdig.Renderers;
+using Markdig.Renderers.Html;
+using Markdig.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure;
@@ -162,6 +166,53 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
 
         return menuList;
     }
+    public class CustomCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+    {
+        protected override void Write(HtmlRenderer renderer, CodeBlock obj)
+        {
+            // Determine the language class based on the fenced code block info
+            var fencedCodeBlock = obj as FencedCodeBlock;
+            string language = fencedCodeBlock?.Info ?? "plaintext";
+            string languageClass = $"language-{language}";
+
+            // Write the <pre> and <code> tags with the dynamic language class
+            renderer.Write($"<pre class=\"{languageClass}\">")
+                    .Write($"<code class=\"{languageClass}\">");
+
+            renderer.WriteLeafRawLines(obj, true, true);
+
+            renderer.Write("</code></pre>");
+        }
+
+    }
+
+    public static string MarkdownToHtml(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return string.Empty;
+
+        // Create a custom pipeline
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .UseGenericAttributes()
+            .Build();
+
+        // Create a custom HTML renderer
+        var writer = new StringWriter();
+        var renderer = new HtmlRenderer(writer);
+
+        // Customize the code block rendering
+        renderer.ObjectRenderers.Replace<CodeBlockRenderer>(new CustomCodeBlockRenderer());
+
+        // Render the markdown
+        var document = Markdown.Parse(markdown, pipeline);
+        renderer.Render(document);
+        writer.Flush();
+
+        return writer.ToString();
+    }
+
+
     /// <summary>
     /// Creates the specified menu.
     /// </summary>
@@ -173,6 +224,8 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
         {
             return new Models.MenuModel();
         }
+
+
 
         var item = new Models.MenuModel()
         {
@@ -190,7 +243,7 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
             ParentController = menu.Parent != null ? menu.Parent.Controller : string.Empty,
             ParentTitle = menu.Parent != null ? menu.Parent.Title : string.Empty,
             DisplayOrder = menu.DisplayOrder,
-            PageContent = Markdig.Markdown.ToHtml(menu.PageContent),
+            PageContent = MarkdownToHtml(menu.PageContent),
             VirtualPath = menu.Parent != null ? ($"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}") : menu.Action.ToLower(CultureInfo.CurrentCulture)
         };
 

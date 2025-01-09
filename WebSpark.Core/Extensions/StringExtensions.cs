@@ -114,6 +114,7 @@ namespace WebSpark.Core.Extensions
             var mpl = new MarkdownPipelineBuilder()
                 .UsePipeTables()
                 .UseAdvancedExtensions()
+                .UseGenericAttributes()
                 .Build();
 
             return Markdown.ToHtml(str, mpl);

@@ -5,6 +5,30 @@ body {
   padding-top: 2.6em;
 }
 
+.banner-image {
+    width: 50%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 10px;
+}
+
+.highlight {
+    color: #ff9800;
+    font-weight: bold;
+    text-align: center;
+}
+
+#subtitle-id {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+}
+
+
+
+
+
+
 @media print {
     /* Hide everything by default */
     body * {
@@ -36,3 +60,4 @@ body {
         background-color: red;
     }
 }
+

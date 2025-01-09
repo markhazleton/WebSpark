@@ -146,6 +146,13 @@ public class WebRouteValueTransformer(ILogger<WebRouteValueTransformer> logger) 
 
         if (myPage == null)
         {
+            if (HandlePredefinedRoutes(route, values)
+                || HandleFileExtensions(route, values)
+                || HandleBlogLinks(route, values)
+                || HandleAdmin(route, values))
+            {
+                return new ValueTask<RouteValueDictionary>(values);
+            }
             logger.LogWarning("Page not found for route: {Route}", route);
             return CreateErrorRoute(values);
         }

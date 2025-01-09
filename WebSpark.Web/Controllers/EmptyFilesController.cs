@@ -14,18 +14,32 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     [Route("/blank.js")]
     public ContentResult BlankJS()
     {
-        logger.LogInformation("Serving blank JS file");
         return BlankFile("application/javascript");
     }
 
     /// <summary>
-    /// Action Method for service blank PHP file 
+    /// Action Method for service blank PHP file
     /// </summary>
     /// <returns></returns>
     [Route("/blank.php")]
     public ContentResult BlankPHP()
     {
-        return BlankFile("application/x-httpd-php");
+        string htmlContent = @"
+        <html>
+        <head>
+            <title>Redirecting...</title>
+            <script src=""/_framework/aspnetcore-browser-refresh.js""></script>
+            <script>
+                // Redirect to the home page
+                window.location.href = '/';
+            </script>
+        </head>
+        <body>
+            <!-- Nice Try! -->
+        </body>
+        </html>";
+
+        return Content(htmlContent, "text/html");
     }
 
     /// <summary>
@@ -35,7 +49,6 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     [Route("/blank.css")]
     public ContentResult BlankCSS()
     {
-        logger.LogInformation("Serving blank CSS file");
         return BlankFile("text/css");
     }
 
@@ -46,7 +59,6 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     [Route("/blank.png")]
     public IActionResult BlankPNG()
     {
-        logger.LogInformation("Serving blank PNG file");
         return BlankImage("image/png");
     }
 
@@ -57,7 +69,6 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     [Route("/blank.jpg")]
     public IActionResult BlankJPG()
     {
-        logger.LogInformation("Serving blank JPG file");
         return BlankImage("image/jpeg");
     }
 
@@ -68,7 +79,6 @@ public class EmptyFilesController(IWebHostEnvironment env, ILogger<EmptyFilesCon
     [Route("/blank.gif")]
     public IActionResult BlankGIF()
     {
-        logger.LogInformation("Serving blank GIF file");
         return BlankImage("image/gif");
     }
 
