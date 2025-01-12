@@ -1,0 +1,101 @@
+﻿@model GitHubRepositoryAnalysisViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+
+
+<h1>Repository Analysis: @Model.RepositoryName</h1>
+<h3>Repository Owner: @Model.UserName</h3>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Repository.Name</h4>
+        <p class="card-text">@Model.Repository.Description</p>
+        <p>
+            <strong>Stars:</strong> @Model.Repository.StargazersCount<br />
+            <strong>Forks:</strong> @Model.Repository.ForksCount<br />
+            <strong>Open Issues:</strong> @Model.TotalIssues<br />
+            <strong>Primary Language:</strong> @Model.PrimaryLanguage
+        </p>
+        <a href="@Model.Repository.HtmlUrl" target="_blank" class="btn btn-primary">View on GitHub</a>
+    </div>
+</div>
+
+<hr />
+
+<h2>Contributors (@Model.TotalContributors)</h2>
+@if (Model.Contributors != null && Model.Contributors.Any())
+{
+    <ul class="list-group">
+        @foreach (var contributor in Model.Contributors)
+        {
+            <li class="list-group-item">
+                <strong>@contributor.Login</strong> - @contributor.Contributions contributions
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No contributors found for this repository.</p>
+}
+
+<hr />
+
+<h2>Languages Used</h2>
+@if (Model.Languages != null && Model.Languages.Any())
+{
+    <ul class="list-group">
+        @foreach (var language in Model.Languages.OrderByDescending(l => l.Value))
+        {
+            <li class="list-group-item">
+                <strong>@language.Key:</strong> @language.Value bytes
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No language data found for this repository.</p>
+}
+
+<hr />
+
+<h2>Open Issues</h2>
+@if (Model.Issues != null && Model.Issues.Any())
+{
+    <ul class="list-group">
+        @foreach (var issue in Model.Issues)
+        {
+            <li class="list-group-item">
+                <a href="@issue.HtmlUrl" target="_blank">@issue.Title</a> (@issue.State)
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No open issues found for this repository.</p>
+}
+
+<hr />
+
+<h2>Errors</h2>
+@if (Model.ErrorList != null && Model.ErrorList.Any())
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in Model.ErrorList)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <p>No errors reported.</p>
+}

@@ -1,5 +1,4 @@
-﻿@using WebSpark.Portal.Areas.AsyncSpark.Models.GitHub
-@model HttpRequestResult<List<GitHubFollower>>?
+﻿@model HttpRequestResult<List<GitHubFollower>>?
 @{
     var title = ViewData["SubTitle"] as string;
     var errorMessage = Model?.ErrorList.FirstOrDefault();
@@ -32,8 +31,10 @@
                     @foreach (var user in Model.ResponseResults.OrderBy(o => o.Login))
                     {
                         <div class="col">
-                            <img src="@user.AvatarUrl" alt="@user.Login Avatar" class="img-fluid rounded-circle mb-2" style="width: 75px; height: 75px;">
-                            <div class="fw-bold text-truncate" style="max-width: 80px;">@user.Login</div>
+                            <a href="@user.HtmlUrl" title="@user.Login" target="github" >
+                                <img src="@user.AvatarUrl" alt="@user.Login Avatar" class="img-fluid rounded-circle mb-2" style="width: 75px; height: 75px;">
+                                <div class="fw-bold text-truncate" style="max-width: 80px;">@user.Login</div>
+                            </a>
                         </div>
                     }
                 </div>

@@ -82,7 +82,6 @@
     <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\AsyncSpark\Services\" />
     <Folder Include="Areas\TriviaSpark\Models\TriviaMatch\" />
     <Folder Include="Areas\TriviaSpark\Pages\" />
     <Folder Include="Areas\TriviaSpark\Services\" />
