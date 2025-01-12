@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{02EA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromptSpark.Recipe.Console", "PromptSpark.Recipe.Console\PromptSpark.Recipe.Console.csproj", "{5684BF6A-FDFF-8909-D236-9A50AF92BE85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocSpark", "DocSpark\DocSpark.csproj", "{A29C8377-71D2-66D6-68AC-FB1F9ACAD22A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{5684BF6A-FDFF-8909-D236-9A50AF92BE85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5684BF6A-FDFF-8909-D236-9A50AF92BE85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5684BF6A-FDFF-8909-D236-9A50AF92BE85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A29C8377-71D2-66D6-68AC-FB1F9ACAD22A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A29C8377-71D2-66D6-68AC-FB1F9ACAD22A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A29C8377-71D2-66D6-68AC-FB1F9ACAD22A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A29C8377-71D2-66D6-68AC-FB1F9ACAD22A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -135,6 +141,7 @@ Global
 		{B0FB1BAA-53FE-412A-8D3F-115ADB1D4C0F} = {83E5AC53-6F44-4CDB-9127-01082E0D143F}
 		{DD5E9D0F-5B02-4888-B439-F029BD14948B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5684BF6A-FDFF-8909-D236-9A50AF92BE85} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A29C8377-71D2-66D6-68AC-FB1F9ACAD22A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {568FC914-C197-49F3-8CF4-FAB6FD0712B2}
