@@ -6,8 +6,10 @@ using System.Net;
 using System.Text.Json.Serialization;
 using static System.Net.WebRequestMethods;
 using Microsoft.CodeAnalysis;
+using MimeKit;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Services.GitHub;
+
 public class FileContent
 {
     [JsonPropertyName("sha")]
@@ -38,8 +40,8 @@ public class FileContent
         {
             if (Encoding?.ToLowerInvariant() == "base64" && !string.IsNullOrEmpty(EncodedContent))
             {
-                var bytes = Convert.FromBase64String(EncodedContent);
-                return Encoding.UTF8.GetString(bytes);
+                ReadOnlySpan<byte> decodedBytes = Convert.FromBase64String(EncodedContent);
+                return System.Text.Encoding.UTF8.GetString(decodedBytes); // Fully qualified Encoding
             }
             return string.Empty;
         }
@@ -130,6 +132,7 @@ public class FileSystemNode
     /// </remarks>
     public List<FileSystemNode> Children { get; set; }
     public string Sha { get; internal set; }
+    public List<ClassInfo> ClassInformationList { get; set; } = [];
 }
 public class GitHubTreeResponse
 {
@@ -260,11 +263,11 @@ public class GitHubRepositoryService
                 FileType = isDirectory ? FileType.Unknown : DetermineFileType(nodeName) // Set FileType
             };
 
-            if (node.FileType == FileType.Code && nodeName.EndsWith(".cs"))
+            if (node.FileType == FileType.Code && nodeName.EndsWith(".cs99"))
             {
                 node.Content = FetchFileContentAsync(item.Url).GetAwaiter().GetResult();
+                rootNode.ClassInformationList.AddRange(ProcessCsFile(node, node.Content));
             }
-
 
             directoryMap[parentPath].Children.Add(node);
 
