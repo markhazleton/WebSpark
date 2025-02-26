@@ -10,9 +10,9 @@
     <AssemblyVersion>9.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="itext.bouncy-castle-adapter" Version="9.0.0" />
-    <PackageReference Include="itext7" Version="9.0.0" />
-    <PackageReference Include="itext7.commons" Version="9.0.0" />
+    <PackageReference Include="itext.bouncy-castle-adapter" Version="9.1.0" />
+    <PackageReference Include="itext7" Version="9.1.0" />
+    <PackageReference Include="itext7.commons" Version="9.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />

@@ -2,3 +2,93 @@
 @{
 }
 
+<main class="container my-5">
+    <section class="mb-5">
+        <h2 class="mb-3"><i class="bi bi-lightning"></i> Overview</h2>
+        <p>PromptSpark.Chat is an advanced platform designed to optimize and enhance interactions with Large Language Models (LLMs). It leverages cutting-edge technologies such as ASP.NET SignalR for real-time communication and Semantic Kernel for intelligent, context-aware responses. By integrating AI into real-time chat systems, PromptSpark.Chat empowers developers and businesses to provide dynamic and interactive solutions tailored to their users' needs.</p>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="mb-3"><i class="bi bi-stars"></i> Key Features</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Real-Time Chat:</strong> Seamless, live communication using SignalR for low-latency interactions.</li>
+            <li class="list-group-item"><strong>AI-Driven Responses:</strong> Integrated with Semantic Kernel to provide contextual, high-quality answers.</li>
+            <li class="list-group-item"><strong>Core Sparks:</strong> Foundational templates defining the behavior and expectations of AI models.</li>
+            <li class="list-group-item"><strong>Spark Variants:</strong> Customizable implementations of Core Sparks, allowing for flexibility and comparative analysis.</li>
+            <li class="list-group-item"><strong>User Prompts:</strong> Predefined collections of inputs for testing and validating AI outputs.</li>
+        </ul>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="mb-3"><i class="bi bi-chat-square-dots"></i> Chat.cshtml Code and Functionality</h2>
+        <p>The <code>Chat.cshtml</code> file is the user-facing interface of PromptSpark.Chat. It provides a responsive and interactive chat window powered by SignalR and adaptive cards. The key sections include:</p>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>User Registration:</strong> Users can enter their name and select a workflow to join the chat. This interaction is facilitated by forms and JavaScript event handlers.
+            </li>
+            <li class="list-group-item">
+                <strong>Workflow Selection:</strong> A dropdown menu dynamically populated with available workflows from the server enables users to customize their chat experience.
+            </li>
+            <li class="list-group-item">
+                <strong>Chat Window:</strong> Displays chat messages and adaptive cards, allowing for interactive and visually compelling conversations.
+            </li>
+            <li class="list-group-item">
+                <strong>JavaScript Logic:</strong> Handles real-time communication with the server via SignalR, manages workflows, and processes user inputs and adaptive cards.
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2 class="mb-3"><i class="bi bi-code-slash"></i> Technical Implementation</h2>
+        <article class="mb-4">
+            <h3 class="mb-2">SignalR Integration</h3>
+            <p>ASP.NET SignalR is the backbone of PromptSpark.Chat’s real-time communication. It enables persistent connections and efficient message delivery, ensuring smooth, interactive experiences for users.</p>
+            <pre class="bg-light p-3 rounded border"><code>
+public class ChatHub : Hub
+{
+    public async Task SendMessage(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessage", user, message);
+    }
+}
+                </code></pre>
+        </article>
+
+        <article class="mb-4">
+            <h3 class="mb-2">Semantic Kernel Integration</h3>
+            <p>The Semantic Kernel provides advanced AI capabilities, including natural language understanding and contextual responses. By combining Core Sparks with Spark Variants, the platform allows for iterative improvements in AI interactions.</p>
+            <pre class="bg-light p-3 rounded border"><code>
+public async Task<string> GetChatResponseAsync(string input)
+{
+    var kernel = new Kernel();
+    kernel.AddSemanticFunction("chat", "path/to/semantic/function");
+    return await kernel.InvokeAsync("chat", input);
+}
+                </code></pre>
+        </article>
+
+        <article>
+            <h3 class="mb-2">Prompt Management</h3>
+            <p>Prompts are at the heart of AI optimization in PromptSpark.Chat. Developers can define Core Sparks and test multiple Spark Variants using structured User Prompts. This process ensures consistent and accurate AI behavior.</p>
+            <pre class="bg-light p-3 rounded border"><code>
+{
+    "CoreSpark": {
+        "Description": "Handles FAQs about PromptSpark.Chat",
+        "ExpectedOutput": "Concise and informative replies"
+    },
+    "SparkVariants": [
+        {
+            "VariantId": "FAQHandler1",
+            "Settings": { ... }
+        },
+        {
+            "VariantId": "FAQHandler2",
+            "Settings": { ... }
+        }
+    ]
+}
+                </code></pre>
+        </article>
+    </section>
+</main>
+

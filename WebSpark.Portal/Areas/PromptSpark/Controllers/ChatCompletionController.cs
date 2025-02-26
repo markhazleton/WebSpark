@@ -24,7 +24,7 @@ public class ChatCompletionController(
         try
         {
             // Index the CSV output folder from configuration
-            string csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
+            var csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
             if (string.IsNullOrEmpty(csvOutputFolder))
             {
                 logger.LogError("CsvOutputFolder is not configured.");
