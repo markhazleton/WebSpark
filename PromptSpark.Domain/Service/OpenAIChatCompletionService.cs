@@ -33,7 +33,7 @@ public class OpenAIChatCompletionService(
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Excludes null values
     };
 
-    private OpenAiApiRequestJson GetOpenAiApiRequestJson<T>(GPTDefinitionResponse definitionResponse)
+    private OpenAiApiRequestJson GetOpenAiApiRequestJson<T>(GPTDefinitionResponse definitionResponse, CancellationToken ct = default)
     {
         try
         {
@@ -87,7 +87,7 @@ public class OpenAIChatCompletionService(
     }
 
 
-    private static OpenAiApiRequest GetOpenAiApiRequest(GPTDefinitionResponse definitionResponse)
+    private static OpenAiApiRequest GetOpenAiApiRequest(GPTDefinitionResponse definitionResponse, CancellationToken ct = default)
     {
         if (Double.TryParse(definitionResponse.Temperature, out double temperature) == false)
             throw new Exception("temperature is not a valid double.");
@@ -304,7 +304,7 @@ public class OpenAIChatCompletionService(
             await RefreshGPTResponse(req);
         }
     }
-    public async Task RerunAllPrompts(int DefinitionId)
+    public async Task RerunAllPrompts(int DefinitionId, CancellationToken ct = default)
     {
         // Filter chats to include only those that have at least one response matching the specified DefinitionId
         var userPrompts = await context.Chats
@@ -332,14 +332,13 @@ public class OpenAIChatCompletionService(
             }
         }
     }
-    public async Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse)
+    public async Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse,CancellationToken ct = default)
     {
         Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
         string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
         Uri openAiUri = new(openAiUrl);
 
         var openAIRequest = GetOpenAiApiRequestJson<T>(gptResponse);
-        CancellationToken ct = new();
         HttpRequestResult<OpenAiApiResponse> serviceResponse = new();
 
         // JsonSerializer options to control formatting and remove unnecessary whitespace
@@ -360,7 +359,7 @@ public class OpenAIChatCompletionService(
         // Log serialized JSON for debugging if needed
         Console.WriteLine("Serialized Request JSON: " + serializedRequest);
 
-        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct);
+        var response = await httpClientService.HttpSendRequestResultAsync(serviceResponse,ct:ct);
         try
         {
 
@@ -381,14 +380,13 @@ public class OpenAIChatCompletionService(
         return gptResponse;
     }
 
-    public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse)
+    public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse,CancellationToken ct=default)
     {
         Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
         string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
         Uri openAiUri = new(openAiUrl);
 
         var openAIRequest = GetOpenAiApiRequest(gptResponse);
-        CancellationToken ct = new();
         HttpRequestResult<OpenAiApiResponse> serviceResponse = new();
 
         // JsonSerializer options to control formatting and remove unnecessary whitespace
@@ -409,7 +407,7 @@ public class OpenAIChatCompletionService(
         // Log serialized JSON for debugging if needed
         Console.WriteLine("Serialized Request JSON: " + serializedRequest);
 
-        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct);
+        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse,ct:ct);
         try
         {
 
@@ -433,12 +431,12 @@ public class OpenAIChatCompletionService(
 }
 public static class JsonSchemaGenerator
 {
-    public static string GenerateJsonSchema<T>(JsonSerializerOptions options)
+    public static string GenerateJsonSchema<T>(JsonSerializerOptions options, CancellationToken ct = default)
     {
         return GetSchemaSerialized<T>(options);
     }
 
-    private static string GetSchemaSerialized<T>(JsonSerializerOptions options)
+    private static string GetSchemaSerialized<T>(JsonSerializerOptions options, CancellationToken ct = default)
     {
         var schema = new
         {
@@ -450,7 +448,7 @@ public static class JsonSchemaGenerator
         return JsonSerializer.Serialize(schema, options);
     }
 
-    private static Dictionary<string, object> GeneratePropertiesSchema(Type type)
+    private static Dictionary<string, object> GeneratePropertiesSchema(Type type, CancellationToken ct = default)
     {
         var propertiesSchema = new Dictionary<string, object>();
 
@@ -463,7 +461,7 @@ public static class JsonSchemaGenerator
         return propertiesSchema;
     }
 
-    private static object GetPropertySchema(Type propertyType)
+    private static object GetPropertySchema(Type propertyType, CancellationToken ct = default)
     {
         if (propertyType == typeof(string))
         {

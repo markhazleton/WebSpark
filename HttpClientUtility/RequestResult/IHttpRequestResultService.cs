@@ -1,15 +1,15 @@
-﻿namespace HttpClientUtility.RequestResult;
+﻿using System.Runtime.CompilerServices;
+
+namespace HttpClientUtility.RequestResult;
 /// <summary>
 /// HttpClientService interface to send HTTP requests.
 /// </summary>
 public interface IHttpRequestResultService
 {
-    /// <summary>
-    /// HttpSendRequestResultAsync
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="statusCall"></param>
-    /// <param name="ct"></param>
-    /// <returns></returns>
-    Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct);
+
+    Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> httpSendResults,
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        CancellationToken ct = default);
 }

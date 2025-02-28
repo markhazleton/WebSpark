@@ -10,7 +10,7 @@ public interface IGPTService
     Task<UserPromptDto> RefreshGPTResponse(UserPromptDto req);
     Task<UserPromptDto> RefreshUserPromptResponses(UserPromptDto req);
     Task RerunAllPrompts();
-    Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse);
-    Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse);
+    Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse, CancellationToken ct = default);
+    Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse, CancellationToken ct=default);
 }
 

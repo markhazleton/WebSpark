@@ -26,7 +26,7 @@ public class JokeController(
         };
         try
         {
-            jokeRequestResult = await getCallService.HttpSendRequestResultAsync(jokeRequestResult, ct).ConfigureAwait(false);
+            jokeRequestResult = await getCallService.HttpSendRequestResultAsync(jokeRequestResult).ConfigureAwait(false);
             return View(jokeRequestResult);
         }
         catch (Exception ex)

@@ -14,13 +14,13 @@ public class GitHubRepositoryAnalysisViewModel
     public int TotalIssues => Issues?.Count ?? 0;
     public string PrimaryLanguage => Languages?.OrderByDescending(kv => kv.Value).FirstOrDefault().Key;
 
-    public List<string> ErrorList { get; set; } = new List<string>();
+    public List<string> ErrorList { get; set; } = [];
 
     public GitHubRepositoryAnalysisViewModel()
     {
-        Contributors = new List<GitHubContributor>();
-        Languages = new Dictionary<string, int>();
-        Issues = new List<GitHubIssue>();
+        Contributors = [];
+        Languages = [];
+        Issues = [];
     }
 }
 

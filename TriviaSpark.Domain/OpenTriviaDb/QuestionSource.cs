@@ -64,7 +64,7 @@ public class OpenTriviaDbQuestionSource(
         {
             RequestPath = $"https://opentdb.com/api.php?amount={questionCount}&difficulty={difficulty.ToString().ToLower()}&type=multiple"
         };
-        results = await httpGetCallService.HttpSendRequestResultAsync<OpenTBbResponse>(results, ct).ConfigureAwait(false);
+        results = await httpGetCallService.HttpSendRequestResultAsync<OpenTBbResponse>(results,ct:ct).ConfigureAwait(false);
         if (results?.ResponseResults?.results is null)
         {
             logger.LogError("No results returned from OpenTriviaDb");

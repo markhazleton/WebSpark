@@ -306,12 +306,14 @@ static void RegisterHttpClientUtilities(WebApplicationBuilder builder)
     // HTTP Send Service with Decorator Pattern
     builder.Services.AddSingleton(serviceProvider =>
     {
-        IHttpRequestResultService baseService = new HttpRequestResultService(
-            serviceProvider.GetRequiredService<ILogger<HttpRequestResultService>>(),
-            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
-
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var retryOptions = configuration.GetSection("HttpRequestResultPollyOptions").Get<HttpRequestResultPollyOptions>();
+
+        IHttpRequestResultService baseService = new HttpRequestResultService(
+            serviceProvider.GetRequiredService<ILogger<HttpRequestResultService>>(),
+            configuration,
+            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
+
 
         IHttpRequestResultService pollyService = new HttpRequestResultServicePolly(
             serviceProvider.GetRequiredService<ILogger<HttpRequestResultServicePolly>>(),

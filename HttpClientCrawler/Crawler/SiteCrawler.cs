@@ -34,7 +34,7 @@ public class SiteCrawler(
 
         try
         {
-            var response = await httpClientService.HttpSendRequestResultAsync((HttpRequestResult<string>)crawlRequest, ct).ConfigureAwait(false);
+            var response = await httpClientService.HttpSendRequestResultAsync((HttpRequestResult<string>)crawlRequest, ct: ct).ConfigureAwait(false);
             crawlRequest = new CrawlResult(response);
         }
         catch (HttpRequestException ex)

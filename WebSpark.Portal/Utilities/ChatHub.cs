@@ -9,7 +9,7 @@ public class ChatHub(
     IGPTDefinitionService _gptDefinitionService,
     IChatCompletionService _chatCompletionService) : Hub
 {
-    private static readonly Dictionary<string, string> GptPrompts = new();
+    private static readonly Dictionary<string, string> GptPrompts = [];
 
     public class ChatEntry
     {

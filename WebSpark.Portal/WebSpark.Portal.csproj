@@ -58,7 +58,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.39.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.40.0" />
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.22.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     <PackageReference Include="ScottPlot" Version="5.0.54" />
@@ -80,10 +80,5 @@
     <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
     <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
     <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Areas\TriviaSpark\Models\TriviaMatch\" />
-    <Folder Include="Areas\TriviaSpark\Pages\" />
-    <Folder Include="Areas\TriviaSpark\Services\" />
   </ItemGroup>
 </Project>

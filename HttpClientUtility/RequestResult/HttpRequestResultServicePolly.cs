@@ -2,6 +2,7 @@
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
+using System.Runtime.CompilerServices;
 
 namespace HttpClientUtility.RequestResult;
 
@@ -66,12 +67,22 @@ public class HttpRequestResultServicePolly : IHttpRequestResultService
     /// <param name="statusCall">The HttpRequestResult object representing the request.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The HttpRequestResult object with the response content.</returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(
+        HttpRequestResult<T> statusCall,
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        CancellationToken ct = default)
     {
         // Wrap the GetAsync call with the circuit breaker policies
         try
         {
-            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpSendRequestResultAsync(statusCall, ct));
+            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpSendRequestResultAsync(
+                statusCall,
+                memberName, 
+                filePath, 
+                lineNumber, 
+                ct));
         }
         catch (Exception ex)
         {

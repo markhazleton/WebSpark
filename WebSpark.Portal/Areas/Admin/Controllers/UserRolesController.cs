@@ -77,6 +77,6 @@ public class UserRolesController(
     }
     private async Task<List<string>> GetUserRoles(WebSparkUser user)
     {
-        return new List<string>(await _userManager.GetRolesAsync(user));
+        return [.. await _userManager.GetRolesAsync(user)];
     }
 }

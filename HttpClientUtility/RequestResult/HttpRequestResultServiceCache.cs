@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
 namespace HttpClientUtility.RequestResult;
 
@@ -21,7 +22,12 @@ public sealed class HttpRequestResultServiceCache(
     /// <param name="statusCall"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(
+        HttpRequestResult<T> statusCall,
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        CancellationToken ct = default)
     {
         var cacheKey = statusCall.RequestPath;
         if (statusCall.CacheDurationMinutes > 0)
@@ -47,7 +53,7 @@ public sealed class HttpRequestResultServiceCache(
         }
         // If the result is not cached, make the actual HTTP request using the wrapped service
         // and store the result in the cache before returning it
-        statusCall = await _service.HttpSendRequestResultAsync(statusCall, ct);
+        statusCall = await _service.HttpSendRequestResultAsync(statusCall, memberName, filePath, lineNumber, ct);
         statusCall.CompletionDate = DateTime.UtcNow;
         if (statusCall.CacheDurationMinutes > 0)
         {

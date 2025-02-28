@@ -35,7 +35,7 @@ public class SyntaxAnalysisService
         if (node == null)
         {
             _logger.LogError("FileSystemNode is null. Cannot proceed with syntax analysis.");
-            return new List<ClassInfo>();
+            return [];
         }
 
         var classes = new ConcurrentBag<ClassInfo>();
@@ -243,7 +243,7 @@ public class SyntaxAnalysisService
         return classDeclaration.BaseList?.Types
             .Where(t => t.Type is IdentifierNameSyntax)
             .Select(t => t.Type.ToString())
-            .ToList() ?? new List<string>();
+            .ToList() ?? [];
     }
 
     private List<PropertyInfo> ExtractProperties(ClassDeclarationSyntax classDeclaration)

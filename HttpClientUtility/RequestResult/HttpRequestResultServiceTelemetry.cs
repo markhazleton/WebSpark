@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace HttpClientUtility.RequestResult;
 
@@ -12,23 +13,22 @@ namespace HttpClientUtility.RequestResult;
 /// </remarks>
 /// <param name="logger">ILogger instance</param>
 /// <param name="service">IHttpRequestResultService instance</param>
-public class HttpRequestResultServiceTelemetry(ILogger<HttpRequestResultServiceTelemetry> logger, IHttpRequestResultService service) : IHttpRequestResultService
+public class HttpRequestResultServiceTelemetry(ILogger<HttpRequestResultServiceTelemetry> logger, 
+    IHttpRequestResultService service) : IHttpRequestResultService
 {
-
-    /// <summary>
-    /// GetAsync performs a GET request and adds telemetry information to the response.
-    /// </summary>
-    /// <typeparam name="T">Result type of the GET request</typeparam>
-    /// <param name="statusCall">HttpRequestResult instance</param>
-    /// <param name="ct">Cancellation Token</param>
-    /// <returns>HttpRequestResult instance including telemetry information</returns>
-    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(HttpRequestResult<T> statusCall, CancellationToken ct)
+    public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(
+        HttpRequestResult<T> statusCall,
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        CancellationToken ct = default)
     {
         Stopwatch sw = new();
         sw.Start();
         try
         {
-            statusCall = await service.HttpSendRequestResultAsync(statusCall, ct).ConfigureAwait(false);
+            statusCall = await service.HttpSendRequestResultAsync(statusCall,
+                memberName, filePath, lineNumber,ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

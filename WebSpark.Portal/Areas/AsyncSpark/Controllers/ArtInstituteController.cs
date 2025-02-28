@@ -27,7 +27,7 @@ public class ArtInstituteController(
             CacheDurationMinutes = 90,
             Retries = 1
         };
-        artListRequest = await _getCallService.HttpSendRequestResultAsync(artListRequest, ct).ConfigureAwait(false);
+        artListRequest = await _getCallService.HttpSendRequestResultAsync(artListRequest, ct: ct).ConfigureAwait(false);
 
         ViewBag.Title = $"{style} Artworks List";
         ViewBag.MetaDescription = $"Explore the extensive collection of {style} artworks featuring various artists and materials. Browse and discover unique art pieces that inspire.";
@@ -41,7 +41,7 @@ public class ArtInstituteController(
     {
         var detailsUrl = $"{BaseUrl}/{id}?fields=id,title,image_id,artist_title,material_titles,style_title,artist_display,date_display,dimensions,medium_display";
         var artDetailsRequest = new HttpRequestResult<ArtDetailsResponse> { RequestPath = detailsUrl, CacheDurationMinutes = 60, Retries = 1 };
-        artDetailsRequest = await _getCallService.HttpSendRequestResultAsync(artDetailsRequest, ct).ConfigureAwait(false);
+        artDetailsRequest = await _getCallService.HttpSendRequestResultAsync(artDetailsRequest, ct: ct).ConfigureAwait(false);
         return View(artDetailsRequest);
     }
 }

@@ -37,10 +37,12 @@ public class HttpClientConcurrentProcessor(Func<int, HttpClientConcurrentModel> 
     /// <param name="taskData">The task data.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The result of the task.</returns>
-    protected override async Task<HttpClientConcurrentModel> ProcessAsync(HttpClientConcurrentModel taskData, CancellationToken ct = default)
+    protected override async Task<HttpClientConcurrentModel> ProcessAsync(
+        HttpClientConcurrentModel taskData, 
+        CancellationToken ct = default)
     {
         Stopwatch sw = Stopwatch.StartNew();
-        var result = await service.HttpSendRequestResultAsync(taskData.StatusCall, ct).ConfigureAwait(false);
+        var result = await service.HttpSendRequestResultAsync(taskData.StatusCall, ct: ct).ConfigureAwait(false);
         taskData.StatusCall = result;
         sw.Stop();
         taskData.DurationMS = sw.ElapsedMilliseconds;
