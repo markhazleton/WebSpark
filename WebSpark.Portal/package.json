@@ -55,12 +55,12 @@
         "jquery": "^3.7.1",
         "jszip": "^3.10.1",
         "pdfmake": "^0.2.18",
-        "prismjs": "^1.29.0",
+        "prismjs": "^1.30.0",
         "terser": "^5.39.0"
     },
     "devDependencies": {
         "@fullhuman/postcss-purgecss": "^7.0.2",
-        "autoprefixer": "10.4.20",
+        "autoprefixer": "10.4.21",
         "bootswatch": "^5.3.3",
         "browser-sync": "3.0.3",
         "chokidar": "4.0.3",
@@ -71,9 +71,9 @@
         "ncp": "^2.0.0",
         "p-limit": "6.2.0",
         "postcss": "8.5.3",
-        "prettier": "3.5.2",
+        "prettier": "3.5.3",
         "sass": "^1.85.1",
-        "shelljs": "0.8.5",
+        "shelljs": "0.9.1",
         "uglify-js": "^3.19.3",
         "upath": "2.0.1",
         "workerpool": "9.2.0"

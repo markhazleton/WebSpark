@@ -4,3 +4,8 @@
 POST {{WebSpark.Portal_HostAddress}}/{area:exists}/jshowadmin/deleteconfirmed/{{id}}
 
 ###
+
+@location="Dallas"
+GET {{WebSpark.Portal_HostAddress}}/api/AsyncSpark/openweatherapi/weather?location=Dallas
+
+###
