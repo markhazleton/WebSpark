@@ -4,7 +4,7 @@
     var encodedDescription = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model.Description);
     ViewData["Title"] = $"Interactive Chat with AI - {encodedName}";
     ViewData["Description"] = $"Experience an interactive chat interface with {encodedName} powered by AI. Discover how PromptSpark enhances communication with advanced SignalR integration and seamless user interactions.";
-    ViewData["Keywords"] = $"PromptSpark, AI Chat, SignalR, Interactive Chat,Chat Completions, .Net 9, Bootstrap 5, AI Communication,{encodedName}";
+    ViewData["Keywords"] = $"PromptSpark, AI Chat, SignalR, Interactive Chat, Chat Completions, .Net 9, Bootstrap 5, AI Communication,{encodedName}";
 }
 
 <div class="container-fluid vh-100 d-flex flex-column bg-dark text-light p-0">
@@ -34,61 +34,102 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
 
     <script>
+        // Establish the SignalR connection
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub")
             .build();
 
-        connection.on("ReceiveMessage", (user, message) => {
-            const messagesList = document.getElementById('receiveMessage');
-            messagesList.innerHTML += `${message}`;
+        // Handle incoming messages by appending them to the messages container
+        connection.on("ReceiveMessage", (user, message, conversationId) => {
+            // Create a container for the message and set alignment based on sender
+            const msgContainer = document.createElement('div');
+            msgContainer.classList.add('message-container');
+            msgContainer.classList.add(user === "System" ? 'text-start' : 'text-end');
 
+            // Create a Bootstrap button for the sender label
+            const senderButton = document.createElement('button');
+            senderButton.className = 'btn btn-sm btn-outline-primary me-2';
+            senderButton.textContent = user === "System" ? "AI" : "You";
+            msgContainer.appendChild(senderButton);
+
+            // Create the message content element
+            const msgDiv = document.createElement('div');
+            msgDiv.className = user === "System" ? 'systemResponse d-inline-block' : 'userInput d-inline-block';
+            if (user === "System") {
+                msgDiv.innerHTML = message;
+            } else {
+                msgDiv.textContent = message;
+            }
+            msgContainer.appendChild(msgDiv);
+
+            // Append the message container to the messages container and scroll to the bottom
             const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.appendChild(msgContainer);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         });
 
+        // Start the SignalR connection
         connection.start().catch(err => console.error(err.toString()));
 
+        // Function to send a message
         function sendMessage() {
-            const message = document.getElementById('messageInput').value;
-            if (message) {
-                const userMessageDiv = document.createElement('div');
-                userMessageDiv.className = 'userInput';
-                userMessageDiv.textContent = message;
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message === "") return;
 
-                const messagesList = document.getElementById('messagesContainer');
-                messagesList.appendChild(userMessageDiv);
+            // Create a container for the user message with right alignment
+            const msgContainer = document.createElement('div');
+            msgContainer.classList.add('message-container', 'text-end');
 
-                const allMessages = [];
-                const messageDivs = messagesList.getElementsByTagName('div');
-                for (let i = 0; i < messageDivs.length; i++) {
-                    allMessages.push(messageDivs[i].textContent);
-                }
+            // Create a Bootstrap button for the sender label
+            const senderButton = document.createElement('button');
+            senderButton.className = 'btn btn-sm btn-outline-primary me-2';
+            senderButton.textContent = "You";
+            msgContainer.appendChild(senderButton);
 
-                document.getElementById('messageInput').value = '';
+            // Create the user message element
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'userInput d-inline-block';
+            userMsgDiv.textContent = message;
+            msgContainer.appendChild(userMsgDiv);
 
-                const existingReceiveMessage = document.getElementById('receiveMessage');
-                if (existingReceiveMessage) {
-                    existingReceiveMessage.removeAttribute('id');
-                }
-                const newReceiveMessageDiv = document.createElement('div');
-                newReceiveMessageDiv.id = 'receiveMessage';
-                newReceiveMessageDiv.className = 'systemResponse';
-                messagesList.appendChild(newReceiveMessageDiv);
+            // Append the user message container and scroll down
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.appendChild(msgContainer);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-                const formData = new FormData();
-                formData.append('message', message);
-                formData.append('conversationHistory', JSON.stringify(allMessages));
-                fetch('/PromptSpark/ChatCompletion/SendMessage', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch(err => console.error(err.toString()));
+            // Gather conversation history (only user messages) from the messages container
+            const allUserMessages = [];
+            const userMessageDivs = messagesContainer.getElementsByClassName('userInput');
+            for (let i = 0; i < userMessageDivs.length; i++) {
+                allUserMessages.push(userMessageDivs[i].textContent);
             }
+
+            // Clear the input field
+            input.value = '';
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('conversationHistory', JSON.stringify(allUserMessages));
+
+            // Send message via fetch to the server
+            fetch('/PromptSpark/ChatCompletion/SendMessage', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => console.log('Server response:', data))
+            .catch(err => console.error('Fetch error:', err.toString()));
         }
 
+        // Event listeners for the send button and Enter key
         document.getElementById('sendButton').addEventListener('click', sendMessage);
-
         document.getElementById('messageInput').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 sendMessage();
