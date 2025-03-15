@@ -275,7 +275,7 @@ app.UseCors("AllowAllOrigins"); // Apply CORS policy for SignalR
 // ========================
 // Endpoint Configuration
 // ========================
-//app.UseStatusCodePagesWithReExecute("/Error/{0}");
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "areaRoute",

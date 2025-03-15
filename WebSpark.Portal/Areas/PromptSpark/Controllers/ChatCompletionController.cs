@@ -7,9 +7,11 @@ using Newtonsoft.Json;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Service;
 using System.Globalization;
+using WebSpark.Core.Providers;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
-
+[Area("PromptSpark")]
+[Route("PromptSpark/ChatCompletion")]
 public class ChatCompletionController(
     IHttpContextAccessor _httpContextAccessor,
     IHubContext<ChatHub> hubContext,
@@ -75,8 +77,43 @@ public class ChatCompletionController(
         }
     }
 
-    public async Task<IActionResult> Index(int id = 0)
+
+    [HttpGet("{id}/{slug}")]
+    public async Task<IActionResult> Variant(int id =0, string? slug = null)
     {
+        logger.LogInformation("Entering Index method with id: {Id}", id);
+        if (id == 0)
+        {
+            // Index list of definitions
+            var definitions = await definitionService.GetDefinitionsAsync();
+            logger.LogInformation("Retrieved {Count} definitions.", definitions.Count);
+
+            // Return to pick definition view
+            return View("PickDefinition", definitions);
+        }
+        var definitionDto = await definitionService.GetDefinitionDtoAsync(id);
+
+        var session = _httpContextAccessor.HttpContext.Session;
+        session.SetString("DefinitionDto", JsonConvert.SerializeObject(definitionDto));
+        logger.LogInformation("Definition stored in session for id: {Id}", id);
+        if (definitionDto == null)
+        {
+            logger.LogWarning("Definition Not Found. {Id}:{Slug}", id, slug);
+            return RedirectToAction("Index");
+        }
+        if (!string.Equals(definitionDto.Slug, slug, StringComparison.OrdinalIgnoreCase))
+        {
+            return RedirectToActionPermanent(nameof(Variant), new { id, slug = definitionDto.Slug });
+        }
+        return View(definitionDto);
+    }
+
+
+
+    [HttpGet("")]
+    public async Task<IActionResult> Index()
+    {
+        int id = 0;
         logger.LogInformation("Entering Index method with id: {Id}", id);
         try
         {
