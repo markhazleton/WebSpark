@@ -1,8 +1,6 @@
-// Project styles
-
-// This file is intentionally blank
-// Use this file to override SCSS within the project, or to add new SCSS
-// for creating your own CSS components
+﻿// ==============================
+// 🌟 Global Styles
+// ==============================
 html, body {
     height: 100%;
 }
@@ -18,17 +16,40 @@ html {
         font-size: 16px;
     }
 }
+
 body {
-    margin: 0; /* Removes default body margin */
+    margin: 0; // Removes default margin
     display: flex;
     flex-direction: column;
+    transition: margin 0.3s ease-in-out;
+}
+
+// ==============================
+// 🌟 Layout & Content
+// ==============================
+.content {
+    flex: 1;
 }
 
 .bg-site {
     background-color: #0B253C;
 }
-.content {
-    flex: 1;
+
+/* Ensure main content is correctly spaced */
+main.main-content {
+    padding-top: 128px; /* Adjusted to prevent overlap */
+    padding-bottom: 60px; /* Footer spacing */
+    overflow-y: auto;
+    height: calc(100vh - 60px);
+    width: 100%;
+}
+
+// ==============================
+// 🌟 Navbar Styles
+// ==============================
+
+.navbar {
+    z-index: 1050; // Ensures navbar is above content
 }
 
 .navbar-marketing {
@@ -36,187 +57,197 @@ body {
     background-size: cover;
     z-index: 1030;
 }
+
+// Mobile Adjustments for Navbar
+.with-top-nav {
+    margin-top: 64px; /* Adds extra space below the top navbar */
+}
+@media (max-width: 991px) {
+    .with-top-nav {
+        margin-top: 72px; /* Slightly more space for mobile */
+    }
+}
+
+// Top navbar toggler button
 .navbar-toggler {
-    background-color: #000; /* Semi-transparent dark background */
-    border: 1px solid #000; /* White border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 0.5rem .5rem; /* More padding */
-    margin-right: 10px; /* Space from the edge or other elements */
+    background-color: #000;
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin-right: 10px;
 }
+
 .navbar-toggler-icon {
-    width: 2.5em; /* Increase size */
-    height: 2.5em; /* Increase size */
+    width: 2.5em;
+    height: 2.5em;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%288, 173, 255, 1%29' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-    /* SVG data with a bright stroke color (adjust as needed) */
 }
 
-
+// Pill-style navigation links
 .nav-pills .nav-link.custom-pill {
-    background-color: rgba(255, 255, 255, 0.5); /* semi-transparent white */
-    border-radius: 50px; /* pill shape */
-    color: #000; /* text color */
-    padding: 0.5rem 1rem; /* padding for the pill */
-    margin: 0 0.5rem; /* spacing between pills */
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+    color: #000;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .nav-pills .nav-link.custom-pill:hover,
 .nav-pills .nav-link.custom-pill:focus {
-    background-color: rgba(255, 255, 255, 0.8); /* slightly less transparent on hover */
-    color: #333; /* darker text color on hover */
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
 }
 
+// Mobile Navigation Fixes
+@media (max-width: 991px) {
+    .area-navbar {
+        display: none !important;
+    }
+}
 
-
-/* Header */
+// ==============================
+// 🌟 Header
+// ==============================
 header {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 50px; /* Height of the header */
-    background: #f8f9fa; /* Light grey background */
+    height: 50px;
+    background: #f8f9fa;
     z-index: 1000;
-    border-bottom: 1px solid #dee2e6; /* Light border for the header */
+    border-bottom: 1px solid #dee2e6;
 }
 
-
-
-/* Main Content Area */
-main.main-content {
-    padding-top: 120px; /* Slightly more than the height of the header */
-    padding-bottom: 60px; /* Slightly more than the height of the footer */
-    overflow-y: auto; /* Allows scrolling */
-    height: calc(100vh - 60px); /* Full viewport height minus header/footer adjustments */
-    width: 100%; /* Takes full width */
-}
-
-
-
-#chatDropdown {
-    font-size: 1.25rem; /* Larger font size */
-    padding: 10px 15px; /* More padding for a taller dropdown */
-    width: 100%; /* Full width to stand out more */
-    border: 2px solid #007bff; /* Bootstrap primary blue border */
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow for depth */
-}
-
-.accordion-footer {
-    padding: 0.5rem 1.25rem; /* Match the padding of the accordion-body */
-    border-top: 1px solid rgba(0, 0, 0, 0.125); /* Adds a line similar to the accordion header */
-    background-color: #f8f9fa; /* Light background for the footer, match or customize */
-    display: flex;
-    justify-content: flex-end; /* Align content to the right */
-    align-items: center; /* Center content vertically */
-}
-/* Custom CSS to ensure all text in the navbar is white */
-.navbar-dark .navbar-nav .nav-link {
-    color: white;
-}
-
-/* Ensuring the toggler icon is also white */
-.navbar-dark .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 16 16' width='16' height='16'%3e%3cpath d='M1.5 2.5A.5.5 0 0 1 2 2h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5zm0 4A.5.5 0 0 1 2 6h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5zm0 4A.5.5 0 0 1 2 10h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5z'%3e%3c/path%3e%3c/svg%3e");
-}
-/* Aligns items inside the accordion-footer to the bottom */
-.accordion-footer {
-    display: flex;
-    align-items: flex-end; /* Aligns children to the bottom */
-    width: 100%;
-}
-
-.dl-horizontal {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%; /* Ensures the dl takes full width to distribute items properly */
-}
-
-.dl-horizontal dt, .dl-horizontal dd {
-    flex: 0 0 auto;
-    margin-right: 10px; /* Spacing between dt and dd */
-}
-
-.dl-horizontal dd {
-    margin-right: 20px; /* Additional spacing after dd before next dt */
-}
-
-.custom-popover {
-    max-width: 80vw; /* You can set this to whatever width suits your needs */
-}
-
-.custom-blockquote {
-    border-left: 5px solid #007bff; /* Blue border on the left */
-    background-color: #f8f9fa; /* Light grey background */
-    padding: 0.5rem 1rem; /* Padding around the text */
-    font-size: 0.875rem; /* Smaller font size */
-    font-weight: bold; /* Bold font */
-}
-
-
-/* Footer */
+// ==============================
+// 🌟 Footer
+// ==============================
 footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 50px; /* Height of the footer */
-    background: #f8f9fa; /* Light grey background */
+    height: 50px;
+    background: #f8f9fa;
     z-index: 1000;
-    border-top: 1px solid #dee2e6; /* Light border for the footer */
+    border-top: 1px solid #dee2e6;
     flex-shrink: 0;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
 }
 
-.footer .container {
-    padding-left: 1rem; // px-5
-    padding-right: 1rem; // px-5
+// Footer Spacing Adjustments
+.footer {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .row {
+        align-items: center;
+    }
+
+    .col-md-6.small {
+        margin-bottom: 0.5rem;
+    }
+
+    .icon-list-social {
+        margin-bottom: 0.5rem;
+    }
+
+    .icon-list-social-link {
+        margin-right: 0.5rem;
+    }
+
+    .text-md-end {
+        text-align: end;
+    }
 }
 
-.footer .row {
-    align-items: center; // gx-5 align-items-center
-}
-
-.footer .col-md-6.small {
-    margin-bottom: 0.5rem; // mb-3
-}
-
-.footer .icon-list-social {
-    margin-bottom: 0.5rem; // mb-3
-}
-
-.footer .icon-list-social-link {
-    margin-right: 0.5rem; // Adjust spacing between icons if necessary
-}
-
-.footer .text-md-end {
-    text-align: end;
-}
-
-
-/* Adjust footer padding globally */
-.custom-footer-padding {
-    padding-top: 1rem; /* Increased top padding */
-    padding-bottom: 1rem; /* Increased bottom padding */
-}
-
-/* Media query for mobile devices */
+// Adjust Footer for Mobile
 @media (max-width: 768px) {
-    /* Increase height or padding of the footer on mobile */
     .footer {
-        padding-top: 2rem; /* Add more padding for better spacing */
+        padding-top: 2rem;
         padding-bottom: 2rem;
     }
-    /* Ensure sections are stacked and spaced out */
+
     .footer .col-12 {
-        margin-bottom: 1.5rem; /* Space between sections */
+        margin-bottom: 1.5rem;
     }
-    /* Center all text and icons */
+
     .text-center {
         text-align: center;
     }
-    /* Align social icons to the center on mobile */
+
     .icon-list-social {
         justify-content: center;
-        margin-bottom: 1rem; /* Add some spacing below the icons */
+        margin-bottom: 1rem;
     }
+}
+
+// ==============================
+// 🌟 Additional Components
+// ==============================
+
+// Chat Dropdown
+#chatDropdown {
+    font-size: 1.25rem;
+    padding: 10px 15px;
+    width: 100%;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+// Accordion Footer
+.accordion-footer {
+    padding: 0.5rem 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+// Blockquote Styling
+.custom-blockquote {
+    border-left: 5px solid #007bff;
+    background-color: #f8f9fa;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+// Ensuring navbar text is always white
+.navbar-dark .navbar-nav .nav-link {
+    color: white;
+}
+
+// Navbar toggler icon styling
+.navbar-dark .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 16 16' width='16' height='16'%3e%3cpath d='M1.5 2.5A.5.5 0 0 1 2 2h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5zm0 4A.5.5 0 0 1 2 6h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5zm0 4A.5.5 0 0 1 2 10h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5z'%3e%3c/path%3e%3c/svg%3e");
+}
+
+// ==============================
+// 🌟 Definition Lists
+// ==============================
+.dl-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.dl-horizontal dt, .dl-horizontal dd {
+    flex: 0 0 auto;
+    margin-right: 10px;
+}
+
+.dl-horizontal dd {
+    margin-right: 20px;
+}
+
+// ==============================
+// 🌟 Custom Popovers
+// ==============================
+.custom-popover {
+    max-width: 80vw;
 }

@@ -1,0 +1,146 @@
+﻿@using System.IO
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
+@{
+    var areaName = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
+    var currentPath = $"/{ViewContext.RouteData.Values["area"]}/{ViewContext.RouteData.Values["controller"]}/{ViewContext.RouteData.Values["action"]}";
+    var currentArea = $"/{ViewContext.RouteData.Values["area"]}";
+
+    // Fully qualified System.IO.Path.Combine to avoid ambiguity
+    var jsonFile = !string.IsNullOrEmpty(areaName)
+        ? System.IO.Path.Combine(Environment.ContentRootPath, "Areas", areaName, "Views", "Shared", "navigation.json")
+        : System.IO.Path.Combine(Environment.ContentRootPath, "Views", "Shared", "navigation.json");
+
+    JsonDocument menuItems = null;
+    if (File.Exists(jsonFile))
+    {
+        try
+        {
+            string json = File.ReadAllText(jsonFile);
+            menuItems = JsonDocument.Parse(json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading JSON: {ex.Message}");
+        }
+    }
+}
+
+<!-- 🏠 TOP NAVIGATION (Only When NOT in an Area) -->
+@if (string.IsNullOrEmpty(areaName))
+{
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">WebSpark</a>
+
+            <!-- Mobile Toggle Button (Uses Offcanvas) -->
+            <button class="btn btn-outline-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto me-lg-5 nav-pills">
+                    <li class="nav-item"><a class="nav-link" href="/PromptSpark">PromptSpark</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/AsyncSpark">AsyncSpark</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/DataSpark">DataSpark</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/TriviaSpark">TriviaSpark</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+}
+
+<!-- 📍 AREA NAVIGATION (Only When Inside an Area) -->
+@if (!string.IsNullOrEmpty(areaName) && menuItems != null)
+{
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary sticky-top shadow-sm">
+        <div class="container-fluid">
+            <!-- "Back to Home" Button -->
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-house-door"></i> Home
+            </a>
+
+            <!-- Link to Area Root -->
+            <a class="navbar-brand" href="@currentArea">
+                <i class="bi bi-folder"></i> @areaName
+            </a>
+
+            <!-- Mobile Toggle (Uses Offcanvas) -->
+            <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#areaNavCanvas" aria-controls="areaNavCanvas">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="areaNav">
+                <ul class="navbar-nav nav-pills ms-auto">
+                    @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
+                    {
+                        string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() : "anonymous";
+                        var url = item.GetProperty("url").GetString().ToLower();
+                        var text = item.GetProperty("text").GetString();
+                        var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
+
+                        if ((role == "admin" && User.Identity.IsAuthenticated) || role == "anonymous")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(isActive ? "active" : "")" href="@url">@text</a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+}
+
+<!-- 📱 MOBILE OFFCANVAS NAVIGATION -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Navigation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="/PromptSpark">PromptSpark</a></li>
+            <li class="nav-item"><a class="nav-link" href="/AsyncSpark">AsyncSpark</a></li>
+            <li class="nav-item"><a class="nav-link" href="/DataSpark">DataSpark</a></li>
+            <li class="nav-item"><a class="nav-link" href="/TriviaSpark">TriviaSpark</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- 📱 AREA NAVIGATION OFFCANVAS (For Mobile) -->
+@if (!string.IsNullOrEmpty(areaName) && menuItems != null)
+{
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="areaNavCanvas">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">@areaName Navigation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
+                {
+                    string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() : "anonymous";
+                    var url = item.GetProperty("url").GetString().ToLower();
+                    var text = item.GetProperty("text").GetString();
+                    var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
+
+                    if ((role == "admin" && User.Identity.IsAuthenticated) || role == "anonymous")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(isActive ? "active" : "")" href="@url">@text</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+}
+@if (string.IsNullOrEmpty(areaName))
+{
+    <script> document.body.classList.add("with-top-nav"); </script>
+}
+else
+{
+    <script> document.body.classList.remove("with-top-nav"); </script>
+}

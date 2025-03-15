@@ -12,12 +12,8 @@
 </head>
 <body>
     <main>
-        @await Html.PartialAsync("Sections/NavBar/_navbar")
-        <section class="bg-white py-10 container-fluid">
-            @await Html.PartialAsync("Sections/NavBar/_nav_area")
-
-            @RenderBody()
-        </section>
+        @await Html.PartialAsync("Sections/Navigation")
+        @RenderBody()
         <hr class="m-0" />
     </main>
 
