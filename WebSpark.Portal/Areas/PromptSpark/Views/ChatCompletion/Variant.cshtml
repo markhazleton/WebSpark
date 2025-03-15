@@ -32,88 +32,98 @@
 
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
-
     <script>
-        // Establish the SignalR connection
+        // Save the AI sender name from the model
+        const aiSenderName = "@Model.Name";
+
+        // Helper function to append a message
+        // - sender: the sender label (aiSenderName or "You")
+        // - message: the message content
+        // - alignment: "text-start" (left) or "text-end" (right)
+        function appendMessage(sender, message, alignment) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            let lastMsgContainer = messagesContainer.lastElementChild;
+
+            // Check if the last container exists and is from the same sender.
+            if (lastMsgContainer && lastMsgContainer.getAttribute('data-sender') === sender) {
+                // Append a new message element to the existing container.
+                const msgDiv = document.createElement('div');
+                msgDiv.className = sender === "You" ? 'userInput d-inline-block mt-1' : 'systemResponse d-inline-block mt-1';
+                if (sender !== "You") {
+                    msgDiv.innerHTML = message;
+                } else {
+                    msgDiv.textContent = message;
+                }
+                lastMsgContainer.appendChild(msgDiv);
+            } else {
+                // Create a new container with a sender header.
+                const msgContainer = document.createElement('div');
+                msgContainer.classList.add('message-container', alignment, 'mb-2');
+                msgContainer.setAttribute('data-sender', sender);
+
+                // Create a Bootstrap button as the sender label.
+                const senderButton = document.createElement('button');
+                senderButton.className = 'btn btn-sm btn-outline-primary me-2';
+                senderButton.textContent = sender;
+                msgContainer.appendChild(senderButton);
+
+                // Create the message content element.
+                const msgDiv = document.createElement('div');
+                msgDiv.className = sender === "You" ? 'userInput d-inline-block' : 'systemResponse d-inline-block';
+                if (sender !== "You") {
+                    msgDiv.innerHTML = message;
+                } else {
+                    msgDiv.textContent = message;
+                }
+                msgContainer.appendChild(msgDiv);
+
+                messagesContainer.appendChild(msgContainer);
+            }
+            // Scroll to the bottom.
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Establish the SignalR connection.
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub")
             .build();
 
-        // Handle incoming messages by appending them to the messages container
+        // Handle incoming messages.
         connection.on("ReceiveMessage", (user, message, conversationId) => {
-            // Create a container for the message and set alignment based on sender
-            const msgContainer = document.createElement('div');
-            msgContainer.classList.add('message-container');
-            msgContainer.classList.add(user === "System" ? 'text-start' : 'text-end');
-
-            // Create a Bootstrap button for the sender label
-            const senderButton = document.createElement('button');
-            senderButton.className = 'btn btn-sm btn-outline-primary me-2';
-            senderButton.textContent = user === "System" ? "AI" : "You";
-            msgContainer.appendChild(senderButton);
-
-            // Create the message content element
-            const msgDiv = document.createElement('div');
-            msgDiv.className = user === "System" ? 'systemResponse d-inline-block' : 'userInput d-inline-block';
-            if (user === "System") {
-                msgDiv.innerHTML = message;
-            } else {
-                msgDiv.textContent = message;
-            }
-            msgContainer.appendChild(msgDiv);
-
-            // Append the message container to the messages container and scroll to the bottom
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.appendChild(msgContainer);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Determine sender and alignment.
+            const sender = (user === "System") ? aiSenderName : "You";
+            const alignment = (user === "System") ? 'text-start' : 'text-end';
+            appendMessage(sender, message, alignment);
         });
 
-        // Start the SignalR connection
+        // Start the SignalR connection.
         connection.start().catch(err => console.error(err.toString()));
 
-        // Function to send a message
+        // Function to send a message.
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             if (message === "") return;
 
-            // Create a container for the user message with right alignment
-            const msgContainer = document.createElement('div');
-            msgContainer.classList.add('message-container', 'text-end');
+            // Append the user message (right aligned).
+            appendMessage("You", message, 'text-end');
 
-            // Create a Bootstrap button for the sender label
-            const senderButton = document.createElement('button');
-            senderButton.className = 'btn btn-sm btn-outline-primary me-2';
-            senderButton.textContent = "You";
-            msgContainer.appendChild(senderButton);
-
-            // Create the user message element
-            const userMsgDiv = document.createElement('div');
-            userMsgDiv.className = 'userInput d-inline-block';
-            userMsgDiv.textContent = message;
-            msgContainer.appendChild(userMsgDiv);
-
-            // Append the user message container and scroll down
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.appendChild(msgContainer);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            // Gather conversation history (only user messages) from the messages container
+            // Gather conversation history (only user messages) from the messages container.
             const allUserMessages = [];
-            const userMessageDivs = messagesContainer.getElementsByClassName('userInput');
+            const userMessageDivs = document.getElementsByClassName('userInput');
             for (let i = 0; i < userMessageDivs.length; i++) {
                 allUserMessages.push(userMessageDivs[i].textContent);
             }
 
-            // Clear the input field
+            // Clear the input field.
             input.value = '';
 
-            // Prepare form data
+            // Prepare form data.
             const formData = new FormData();
             formData.append('message', message);
             formData.append('conversationHistory', JSON.stringify(allUserMessages));
 
-            // Send message via fetch to the server
+            // Send the message to the server.
             fetch('/PromptSpark/ChatCompletion/SendMessage', {
                 method: 'POST',
                 body: formData
@@ -128,7 +138,7 @@
             .catch(err => console.error('Fetch error:', err.toString()));
         }
 
-        // Event listeners for the send button and Enter key
+        // Event listeners for the send button and Enter key.
         document.getElementById('sendButton').addEventListener('click', sendMessage);
         document.getElementById('messageInput').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
