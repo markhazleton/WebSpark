@@ -148,6 +148,7 @@ public class ChatCompletionController(
     }
 
     [HttpPost]
+    [Route("SendMessage")]
     public async Task<IActionResult> SendMessage([FromForm] string message, [FromForm] string conversationHistory)
     {
         logger.LogInformation("Entering SendMessage method with message: {Message} and conversation history length: {Length}", message, conversationHistory?.Length);
