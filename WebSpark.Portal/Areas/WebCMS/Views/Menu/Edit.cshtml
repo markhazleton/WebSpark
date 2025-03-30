@@ -23,6 +23,8 @@
 
     <form asp-action="@ViewContext.RouteData.Values["action"]" method="post" class="needs-validation" novalidate>
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="KeyWords"  />
+        <input type="hidden" asp-for="VirtualPath" />
 
         <div class="row">
             <div class="col-lg-8">

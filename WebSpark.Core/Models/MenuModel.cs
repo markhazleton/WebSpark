@@ -20,7 +20,7 @@ public class MenuModel
     /// <value>The URL.</value>
     [DisplayName("Api Url")]
     [JsonPropertyName("api_url")]
-    public string ApiUrl { get; set; }
+    public string? ApiUrl { get; set; }
     /// <summary>
     /// Gets or sets the Argument for the controller action.
     /// </summary>
@@ -52,9 +52,8 @@ public class MenuModel
     [JsonPropertyName("keywords")]
     [DisplayName("KeyWords")]
     [StringLength(100, ErrorMessage = "Max length is 100.")]
-    [Required]
     [DataType(DataType.MultilineText)]
-    public string KeyWords { get; set; }
+    public string? KeyWords { get; set; } = " ";
 
     /// <summary>
     /// Gets or sets a value indicating whether [display in navigation].
@@ -85,12 +84,12 @@ public class MenuModel
     /// Domain Name
     /// </summary>
     [JsonPropertyName("domain_name")]
-    public string DomainName { get; set; }
+    public string? DomainName { get; set; }
     /// <summary>
     /// Domain Url for API
     /// </summary>
     [JsonPropertyName("domain_url")]
-    public string DomainUrl { get; set; }
+    public string? DomainUrl { get; set; }
     /// <summary>
     /// Gets or sets the icon.
     /// </summary>
@@ -149,7 +148,7 @@ public class MenuModel
     /// </summary>
     /// <value>The parent controller.</value>
     [JsonPropertyName("parent")]
-    public string ParentController { get; set; }
+    public string? ParentController { get; set; }
 
     /// <summary>
     /// Gets or sets the parent identifier.
@@ -164,7 +163,7 @@ public class MenuModel
     /// </summary>
     /// <value>The parent title.</value>
     [JsonPropertyName("parent_title")]
-    public string ParentTitle { get; set; }
+    public string? ParentTitle { get; set; }
 
     /// <summary>
     /// Gets or sets the title.
@@ -191,5 +190,5 @@ public class MenuModel
     /// </summary>
     /// <value>The virtual path.</value>
     [JsonPropertyName("virtual_path")]
-    public string VirtualPath { get; set; }
+    public string? VirtualPath { get; set; }
 }
