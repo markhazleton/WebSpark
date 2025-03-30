@@ -1,100 +1,232 @@
 @model IEnumerable<RecipeModel>
 
 @{
-    ViewData["Title"] = "Recipes";
-    var categories = Model.Select(m => m.RecipeCategory.Name).Distinct().OrderBy(c => c).ToList(); // Index unique categories
+    ViewData["Title"] = "Recipe Collection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = Model.Select(m => m.RecipeCategory?.Name).Where(c => !string.IsNullOrEmpty(c)).Distinct().OrderBy(c => c).ToList();
 }
 
-<h1>Recipes</h1>
+<div class="container py-4">
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<p>
-    <a asp-action="MomCreate">Mom AI Recipe</a>
-</p>
-<p>
-    <a asp-action="Create">Create Recipe</a>
-</p>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<!-- Category Filter Dropdown -->
-<div class="mb-3">
-    <label for="categoryFilter" class="form-label">Filter by Category:</label>
-    <select id="categoryFilter" class="form-select">
-        <option value="All">All Categories</option>
-        @foreach (var category in categories)
-        {
-            <option value="@category">@category</option>
-        }
-    </select>
-</div>
+    <!-- Page Header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h1 class="display-5 mb-0">
+                <i class="bi bi-journal-richtext text-primary me-2"></i>Recipe Collection
+            </h1>
+            <p class="text-muted mt-2">Discover and manage your favorite recipes</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a asp-action="MomCreate" class="btn btn-primary me-2">
+                <i class="bi bi-magic me-1"></i> AI Recipe Generator
+            </a>
+            <a asp-action="Create" class="btn btn-outline-primary">
+                <i class="bi bi-plus-circle me-1"></i> Create Recipe
+            </a>
+        </div>
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-dark" id="displayTable">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.RecipeCategory.Name)
-                </th>
-                <th class="d-none d-md-table-cell" style="max-width: 300px; white-space: normal; overflow-wrap: break-word;">
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th style="white-space: nowrap;">
-                    @Html.DisplayNameFor(model => model.ModifiedDT)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
+    <!-- Filter Controls -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="categoryFilter" class="form-label">
+                        <i class="bi bi-funnel-fill me-1"></i> Filter by Category
+                    </label>
+                    <select id="categoryFilter" class="form-select">
+                        <option value="All">All Categories</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label for="searchInput" class="form-label">
+                        <i class="bi bi-search me-1"></i> Search Recipes
+                    </label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by recipe name, ingredients...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Grid/Cards for Mobile -->
+    <div class="d-md-none mb-4">
+        <div class="row row-cols-1 row-cols-sm-2 g-3" id="recipeCardContainer">
             @foreach (var item in Model)
             {
-                <tr class="recipe-row" data-category="@item.RecipeCategory.Name">
-                    <td>
-                        @Html.ActionLink(item.Name, "Edit", new { id = item.Id })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
-                    </td>
-                    <td class="d-none d-md-table-cell" style="max-width: 300px; white-space: normal; overflow-wrap: break-word;">
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td style="white-space: nowrap;">
-                        @item.ModifiedDT.ToString("yyyy-MM-dd :HH.mm")
-                    </td>
-                </tr>
+                <div class="col recipe-card" data-category="@item.RecipeCategory?.Name">
+                    <div class="card h-100 shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">
+                                @item.Name
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="bi bi-tag-fill me-1"></i> @item.RecipeCategory?.Name
+                            </h6>
+                            <p class="card-text small text-truncate">@item.Description</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i> @item.ModifiedDT.ToString("yyyy-MM-dd")
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i> View
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil me-1"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    </div>
+
+    <!-- Data Table for Larger Screens -->
+    <div class="d-none d-md-block">
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="recipeTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>
+                                    <i class="bi bi-card-heading me-1"></i> @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th>
+                                    <i class="bi bi-tag me-1"></i> Category
+                                </th>
+                                <th class="d-none d-lg-table-cell">
+                                    <i class="bi bi-info-circle me-1"></i> Description
+                                </th>
+                                <th>
+                                    <i class="bi bi-calendar3 me-1"></i> Updated
+                                </th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="recipe-row" data-category="@item.RecipeCategory?.Name">
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none fw-medium text-primary">
+                                            @item.Name
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            @item.RecipeCategory?.Name
+                                        </span>
+                                    </td>
+                                    <td class="d-none d-lg-table-cell text-muted small" style="max-width: 300px;">
+                                        <div class="text-truncate">@item.Description</div>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            @item.ModifiedDT.ToString("yyyy-MM-dd")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary" title="Edit Recipe">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section PageScripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize DataTable
-            var table = $('#displayTable').DataTable({
-                paging: false,
-                scrollY: '50vh',
-                scrollCollapse: true,
-                stateSave: true,
-                colReorder: {
-                    realtime: true,
-                    fixedColumnsLeft: 1,
-                    fixedColumnsRight: 1
-                },
+            // Initialize DataTable for larger screens
+            const table = $('#recipeTable').DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthChange: false,
+                info: false,
                 autoWidth: false,
-                scrollX: false
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search recipes..."
+                },
+                dom: '<"row"<"col-md-6"l><"col-md-6"f>>rtip',
+                responsive: true
             });
 
-            // Filter table rows based on category selection
+            // Handle category filtering
             $('#categoryFilter').on('change', function() {
-                var selectedCategory = $(this).val();
+                const selectedCategory = $(this).val();
 
                 if (selectedCategory === "All") {
                     // Clear any search filter to show all rows
                     table.search('').columns().search('').draw();
+                    $('.recipe-card').show();
                 } else {
-                    // Apply the filter to the category column (assumed to be the second column, index 1)
-                    table.columns(1).search('^' + selectedCategory + '$', true, false).draw();
+                    // Apply the filter to the category column (index 1)
+                    table.columns(1).search(selectedCategory).draw();
+
+                    // Filter the cards for mobile view
+                    $('.recipe-card').hide();
+                    $(`.recipe-card[data-category="${selectedCategory}"]`).show();
                 }
+            });
+
+            // Handle search for mobile cards
+            $('#searchInput').on('keyup', function() {
+                const searchTerm = $(this).val().toLowerCase();
+
+                // For DataTable (larger screens)
+                table.search(searchTerm).draw();
+
+                // For cards (mobile view)
+                $('.recipe-card').each(function() {
+                    const cardText = $(this).text().toLowerCase();
+                    if (cardText.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Add hover effect for table rows
+            $('#recipeTable tbody').on('mouseenter', 'tr', function() {
+                $(this).addClass('bg-light');
+            }).on('mouseleave', 'tr', function() {
+                $(this).removeClass('bg-light');
             });
         });
     </script>

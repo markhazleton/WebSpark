@@ -1,96 +1,153 @@
 @model RecipeModel
 @{
-    ViewData["Title"] = "Edit Recipe";
+    ViewData["Title"] = $"Edit {Model.Name}";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="display-6 mb-3">
-        <i class="bi bi-pencil-square"></i> Edit Recipe
-    </h1>
-    <hr />
+<div class="container py-4">
+    <!-- Success/Error Messages -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="row">
-        <div class="col-md-12">
-            <form asp-action="Edit">
+    <!-- Back Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-house"></i> Recipes</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none">@Model.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-pencil-square me-2"></i> Edit Recipe
+            </h1>
+            <span class="badge bg-light text-dark">ID: @Model.Id</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label fw-bold">
-                        <i class="bi bi-card-text"></i> Name
-                    </label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+                <div class="row g-4">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Recipe Name -->
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold">
+                                <i class="bi bi-card-heading me-1"></i> Recipe Name <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Name" class="form-control form-control-lg" required />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="RecipeCategoryID" class="form-label fw-bold">
-                        <i class="bi bi-tags"></i> Category
-                    </label>
-                    @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-select", id = "RecipeCategoryID" })
-                    <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
-                </div>
+                        <!-- Recipe Category -->
+                        <div class="mb-4">
+                            <label asp-for="RecipeCategoryID" class="form-label fw-bold">
+                                <i class="bi bi-tag me-1"></i> Category <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="RecipeCategoryID" class="form-select" required>
+                                <option value="">-- Select Category --</option>
+                                @foreach (var category in Model.RecipeCategories)
+                                {
+                                    if (category.Value == Model.RecipeCategoryID.ToString())
+                                    {
+                                        <option value="@category.Value" selected>@category.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.Value">@category.Text</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="Servings" class="form-label fw-bold">
-                        <i class="bi bi-people-fill"></i> Servings
-                    </label>
-                    <input asp-for="Servings" class="form-control" />
-                    <span asp-validation-for="Servings" class="text-danger"></span>
-                </div>
+                        <!-- Servings -->
+                        <div class="mb-4">
+                            <label asp-for="Servings" class="form-label fw-bold">
+                                <i class="bi bi-people me-1"></i> Servings
+                            </label>
+                            <input asp-for="Servings" class="form-control" type="number" min="1" />
+                            <span asp-validation-for="Servings" class="text-danger"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label fw-bold">
-                        <i class="bi bi-info-circle"></i> Description
-                    </label>
-                    <textarea asp-for="Description" class="form-control"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                        <!-- Author -->
+                        <div class="mb-4">
+                            <label asp-for="AuthorNM" class="form-label fw-bold">
+                                <i class="bi bi-person me-1"></i> Author
+                            </label>
+                            <input asp-for="AuthorNM" class="form-control" />
+                            <span asp-validation-for="AuthorNM" class="text-danger"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="AuthorNM" class="form-label fw-bold">
-                        <i class="bi bi-person-circle"></i> Author
-                    </label>
-                    <textarea asp-for="AuthorNM" class="form-control"></textarea>
-                    <span asp-validation-for="AuthorNM" class="text-danger"></span>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Ingredients" class="form-label fw-bold">
-                            <i class="bi bi-list-ul"></i> Ingredients
-                        </label>
-                        <textarea asp-for="Ingredients" class="form-control" rows="10"></textarea>
-                        <span asp-validation-for="Ingredients" class="text-danger"></span>
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="bi bi-info-circle me-1"></i> Description
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <small class="form-text text-muted">Markdown formatting supported</small>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Instructions" class="form-label fw-bold">
-                            <i class="bi bi-list-ol"></i> Instructions
-                        </label>
-                        <textarea asp-for="Instructions" class="form-control" rows="10"></textarea>
-                        <span asp-validation-for="Instructions" class="text-danger"></span>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Ingredients -->
+                        <div class="mb-4">
+                            <label asp-for="Ingredients" class="form-label fw-bold">
+                                <i class="bi bi-list-ul me-1"></i> Ingredients <span class="text-danger">*</span>
+                            </label>
+                            <textarea asp-for="Ingredients" class="form-control" rows="10" required></textarea>
+                            <span asp-validation-for="Ingredients" class="text-danger"></span>
+                            <small class="form-text text-muted">Use markdown list format (e.g., * item or - item)</small>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mb-4">
+                            <label asp-for="Instructions" class="form-label fw-bold">
+                                <i class="bi bi-list-ol me-1"></i> Instructions <span class="text-danger">*</span>
+                            </label>
+                            <textarea asp-for="Instructions" class="form-control" rows="12" required></textarea>
+                            <span asp-validation-for="Instructions" class="text-danger"></span>
+                            <small class="form-text text-muted">Use markdown numbered list format (e.g., 1. step)</small>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Form Actions -->
                 <div class="d-flex justify-content-between mt-4">
+                    <div>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-left me-1"></i> Cancel
+                        </a>
+                        <form asp-action="Delete" method="post" asp-route-id="@Model.Id" class="d-inline"
+                              onsubmit="return confirm('Are you sure you want to delete this recipe? This action cannot be undone.');">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        </form>
+                    </div>
                     <button type="submit" class="btn btn-success">
-                        <i class="bi bi-save"></i> Save
+                        <i class="bi bi-save me-1"></i> Save Changes
                     </button>
-                    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Back to List
-                    </a>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="mt-4">
-        <form asp-action="Delete" method="post" asp-route-id="@Model.Id" class="d-inline">
-            <input type="hidden" asp-for="Id" />
-            <button type="submit" class="btn btn-danger">
-                <i class="bi bi-trash"></i> Delete
-            </button>
-        </form>
+    <!-- Last Modified Information -->
+    <div class="text-center text-muted small mt-3">
+        <p>
+            <i class="bi bi-clock-history me-1"></i> Last modified: @Model.ModifiedDT.ToString("MMMM d, yyyy 'at' h:mm tt")
+        </p>
     </div>
 </div>
 
@@ -98,4 +155,29 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add confirmation for leaving page with unsaved changes
+            let formChanged = false;
+            const form = document.querySelector('form');
+
+            if (form) {
+                form.addEventListener('change', function() {
+                    formChanged = true;
+                });
+
+                // Don't show warning when submitting the form
+                form.addEventListener('submit', function() {
+                    formChanged = false;
+                });
+            }
+
+            window.addEventListener('beforeunload', function(e) {
+                if (formChanged) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                }
+            });
+        });
+    </script>
 }

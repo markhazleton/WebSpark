@@ -1,152 +1,220 @@
+using Microsoft.AspNetCore.Mvc;
 using PromptSpark.Domain.Service;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
+using WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
-namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
-
-
-/// <summary>
-/// HomeController 
-/// </summary>
-public class HomeController(
-    ILogger<HomeController> _logger,
-    Core.Interfaces.IRecipeService _RecipeService,
-    IRecipeGPTService recipeGPTService) : RecipeBaseController
+namespace WebSpark.Portal.Areas.RecipeSpark.Controllers
 {
-
-    // GET: RecipeListController
-    public ActionResult Index()
-    {
-        _logger.LogInformation("RecipeSpark Home Controller Index");
-        var recipes = _RecipeService.Get().ToList();
-        return View(recipes);
-    }
-
-    // GET: RecipeListController/Details/5
-    public async Task<ActionResult> Details(int id)
-    {
-        return View(_RecipeService.Get(id));
-    }
-    public ActionResult MomCreate()
-    {
-        var model = _RecipeService.Get(0);
-        return View(model);
-    }
-
     /// <summary>
-    /// POST: RecipeListController/Create
+    /// Controller for Recipe management functionality
     /// </summary>
-    /// <param name="recipeModel"></param>
-    /// <returns></returns>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<ActionResult> MomCreate(RecipeModel recipeModel)
+    public class HomeController : RecipeBaseController
     {
-        try
+        private readonly ILogger<HomeController> _logger;
+        private readonly IRecipeService _recipeService;
+        private readonly IRecipeGPTService _recipeGPTService;
+
+        public HomeController(
+            ILogger<HomeController> logger,
+            IRecipeService recipeService,
+            IRecipeGPTService recipeGPTService)
         {
-            var model = _RecipeService.Get(0);
-            var categoryList = _RecipeService.GetRecipeCategoryList();
-            var category = categoryList.Where(w => w.Id == recipeModel.RecipeCategoryID).FirstOrDefault();
-            var genRecipe = await recipeGPTService.CreateMomGPTRecipe(model, recipeModel.Name, category?.Name ?? "Main Course");
-            genRecipe.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
-            category = categoryList.Where(w => w.Name == genRecipe.RecipeCategoryNM).FirstOrDefault();
-            if (category != null)
+            _logger = logger;
+            _recipeService = recipeService;
+            _recipeGPTService = recipeGPTService;
+        }
+
+        /// <summary>
+        /// Displays the list of recipes
+        /// </summary>
+        public ActionResult Index()
+        {
+            _logger.LogInformation("RecipeSpark Home Controller Index");
+            var recipes = _recipeService.Get().ToList();
+            return View(recipes);
+        }
+
+        /// <summary>
+        /// Gets recipe detail by ID
+        /// </summary>
+        /// <param name="id">Recipe ID</param>
+        public async Task<ActionResult> Details(int id)
+        {
+            var recipe = _recipeService.Get(id);
+            if (recipe == null)
             {
-                genRecipe.RecipeCategoryID = category.Id;
+                return RedirectToAction(nameof(Index));
             }
-            else
+            return View(recipe);
+        }
+
+        /// <summary>
+        /// Opens AI recipe generation form
+        /// </summary>
+        public ActionResult MomCreate()
+        {
+            var model = _recipeService.Get(0);
+            return View(model);
+        }
+
+        /// <summary>
+        /// Generates a recipe using AI
+        /// </summary>
+        /// <param name="recipeModel">Recipe input model</param>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> MomCreate(RecipeModel recipeModel)
+        {
+            try
             {
-                category = categoryList.Where(w => w.Name == "Main Course").FirstOrDefault();
-                genRecipe.RecipeCategoryID = category.Id;
-                genRecipe.RecipeCategoryNM = category.Name;
-                genRecipe.RecipeCategory = category;
+                var model = _recipeService.Get(0);
+                var categoryList = _recipeService.GetRecipeCategoryList();
+                var category = categoryList.FirstOrDefault(w => w.Id == recipeModel.RecipeCategoryID);
+
+                var genRecipe = await _recipeGPTService.CreateMomGPTRecipe(
+                    model,
+                    recipeModel.Name,
+                    category?.Name ?? "Main Course");
+
+                genRecipe.DomainID = 2; // Mechanics of Motherhood - TODO: Pull from Config
+
+                // Handle recipe category
+                category = categoryList.FirstOrDefault(w => w.Name == genRecipe.RecipeCategoryNM);
+                if (category != null)
+                {
+                    genRecipe.RecipeCategoryID = category.Id;
+                }
+                else
+                {
+                    category = categoryList.FirstOrDefault(w => w.Name == "Main Course");
+                    genRecipe.RecipeCategoryID = category.Id;
+                    genRecipe.RecipeCategoryNM = category.Name;
+                    genRecipe.RecipeCategory = category;
+                }
+
+                var saveResult = _recipeService.Save(genRecipe);
+
+                // Redirect to Edit with the new Recipe ID
+                return RedirectToAction("Edit", new { id = saveResult.Id });
             }
-            var saveResult = _RecipeService.Save(genRecipe);
-            // Redirect to Edit with the new Recipe
-            return RedirectToAction("Edit", new { id = saveResult.Id });
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error Saving Recipe with Create Method");
-        }
-        return RedirectToAction(nameof(Index));
-    }
-    public ActionResult Create()
-    {
-        var model = _RecipeService.Get(0);
-        return View(model);
-    }
-
-    /// <summary>
-    /// POST: RecipeListController/Create
-    /// </summary>
-    /// <param name="recipeModel"></param>
-    /// <returns></returns>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Create(RecipeModel recipeModel)
-    {
-        recipeModel.DomainID = 2; // Mechanics of Motherhood Need to Pull from Config
-        try
-        {
-            var saveResult = _RecipeService.Save(recipeModel);
-
-            return RedirectToAction(nameof(Index));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error Saving Recipe with Create Method");
-            return View();
-        }
-    }
-
-    // GET: RecipeListController/Edit/5
-    public async Task<ActionResult> Edit(int id)
-    {
-        var rec = _RecipeService.Get(id);
-        return View(rec);
-    }
-
-    // POST: RecipeListController/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, RecipeModel item)
-    {
-        try
-        {
-            var RecipeToUpdate = _RecipeService.Get().Where(w => w.Id == id).FirstOrDefault();
-            if (RecipeToUpdate != null)
+            catch (Exception ex)
             {
-                RecipeToUpdate.RecipeCategoryID = item.RecipeCategoryID;
-                RecipeToUpdate.AuthorNM = item.AuthorNM;
-                RecipeToUpdate.Description = item.Description;
-                RecipeToUpdate.Name = item.Name;
-                RecipeToUpdate.Servings = item.Servings;
-                RecipeToUpdate.Ingredients = item.Ingredients;
-                RecipeToUpdate.Instructions = item.Instructions;
-                var saveResult = _RecipeService.Save(RecipeToUpdate);
+                _logger.LogError(ex, "Error generating AI recipe");
+                TempData["ErrorMessage"] = "Failed to generate recipe. Please try again.";
+                return View(recipeModel);
             }
-            return RedirectToAction("Details", "RecipeCategory", new { id = RecipeToUpdate.RecipeCategoryID });
         }
-        catch
-        {
-            return View();
-        }
-    }
 
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Delete(int id)
-    {
-        try
+        /// <summary>
+        /// Opens create recipe form
+        /// </summary>
+        public ActionResult Create()
         {
-            _RecipeService.Delete(id);
-            return RedirectToAction(nameof(Index));
+            var model = _recipeService.Get(0);
+            return View(model);
         }
-        catch
+
+        /// <summary>
+        /// Creates a new recipe
+        /// </summary>
+        /// <param name="recipeModel">Recipe model</param>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(RecipeModel recipeModel)
         {
-            return View();
+            recipeModel.DomainID = 2; // TODO: Pull from Config
+
+            try
+            {
+                var saveResult = _recipeService.Save(recipeModel);
+                TempData["SuccessMessage"] = "Recipe created successfully!";
+                return RedirectToAction(nameof(Details), new { id = saveResult.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating recipe");
+                TempData["ErrorMessage"] = "Failed to create recipe. Please try again.";
+                return View(recipeModel);
+            }
+        }
+
+        /// <summary>
+        /// Opens edit recipe form
+        /// </summary>
+        /// <param name="id">Recipe ID</param>
+        public async Task<ActionResult> Edit(int id)
+        {
+            var recipe = _recipeService.Get(id);
+            if (recipe == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View(recipe);
+        }
+
+        /// <summary>
+        /// Updates an existing recipe
+        /// </summary>
+        /// <param name="id">Recipe ID</param>
+        /// <param name="item">Updated recipe model</param>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, RecipeModel item)
+        {
+            try
+            {
+                var recipeToUpdate = _recipeService.Get().FirstOrDefault(w => w.Id == id);
+                if (recipeToUpdate == null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Update recipe properties
+                recipeToUpdate.RecipeCategoryID = item.RecipeCategoryID;
+                recipeToUpdate.AuthorNM = item.AuthorNM;
+                recipeToUpdate.Description = item.Description;
+                recipeToUpdate.Name = item.Name;
+                recipeToUpdate.Servings = item.Servings;
+                recipeToUpdate.Ingredients = item.Ingredients;
+                recipeToUpdate.Instructions = item.Instructions;
+
+                var saveResult = _recipeService.Save(recipeToUpdate);
+                TempData["SuccessMessage"] = "Recipe updated successfully!";
+
+                return RedirectToAction("Details", "RecipeCategory", new { id = recipeToUpdate.RecipeCategoryID });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating recipe");
+                TempData["ErrorMessage"] = "Failed to update recipe. Please try again.";
+                return View(item);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a recipe
+        /// </summary>
+        /// <param name="id">Recipe ID</param>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                _recipeService.Delete(id);
+                TempData["SuccessMessage"] = "Recipe deleted successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting recipe");
+                TempData["ErrorMessage"] = "Failed to delete recipe. Please try again.";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

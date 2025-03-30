@@ -1,52 +1,161 @@
 @model RecipeModel
 @{
-    ViewData["Title"] = "Mom Create";
+    ViewData["Title"] = "AI Recipe Generator";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="display-6 mb-4">
-        <i class="bi bi-magic"></i> Mom AI Recipe Generator
-    </h1>
-    <p class="text-muted mb-4">Describe your desired recipe below, and let AI create the perfect recipe for you!</p>
-    <hr />
+<div class="container py-4">
+    <!-- Success/Error Messages -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="row">
-        <div class="col-md-12">
-            <form asp-action="MomCreate">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <!-- Back Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-house"></i> Recipes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">AI Recipe Generator</li>
+        </ol>
+    </nav>
 
-                <div class="mb-4">
-                    <label for="RecipeDescription" class="form-label fw-bold">
-                        <i class="bi bi-pencil"></i> Describe Your Recipe
-                    </label>
-                    <textarea asp-for="Name" class="form-control" id="RecipeDescription" rows="5" placeholder="E.g., 'A quick pasta dish with garlic and herbs'"></textarea>
-                    <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow mb-4 border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h1 class="h3 mb-0 text-center">
+                        <i class="bi bi-magic me-2"></i> AI Recipe Generator
+                    </h1>
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="RecipeCategoryID" class="form-label fw-bold">
-                        <i class="bi bi-tags"></i> Recipe Category
-                    </label>
-                    @Html.DropDownListFor(x => Model.RecipeCategoryID, new SelectList(Model.RecipeCategories, "Value", "Text"), htmlAttributes: new { @class = "form-select", id = "RecipeCategoryID" })
-                    <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
-                </div>
+                <div class="card-body p-md-5">
+                    <div class="text-center mb-4">
+                        <p class="lead">Describe your desired recipe and let AI create it for you!</p>
+                        <div class="badge bg-light text-dark p-2 mb-4">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i>
+                            Powered by AI technology
+                        </div>
+                    </div>
 
-                <div class="d-flex justify-content-start">
-                    <button type="submit" class="btn btn-success me-3">
-                        <i class="bi bi-save"></i> Generate Recipe
-                    </button>
-                    <a class="btn btn-secondary" asp-action="Index" asp-controller="Home">
-                        <i class="bi bi-arrow-left"></i> Back to List
-                    </a>
+                    <form asp-action="MomCreate" method="post" id="recipeForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-4">
+                            <label for="RecipeDescription" class="form-label fw-bold">
+                                <i class="bi bi-chat-text me-1"></i> Describe Your Recipe
+                            </label>
+                            <textarea asp-for="Name" class="form-control form-control-lg" id="RecipeDescription" rows="6"
+                                      placeholder="Be as specific as possible, for example:&#10;&#10;A healthy vegetarian pasta dish with spinach, garlic, and feta cheese that's quick to make for weeknight dinners.&#10;&#10;A spicy Thai-inspired soup with coconut milk, shrimp, and lemongrass." required></textarea>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <div class="form-text">
+                                The more detailed your description, the better the result.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="RecipeCategoryID" class="form-label fw-bold">
+                                <i class="bi bi-tag me-1"></i> Recipe Category
+                            </label>
+                            <select asp-for="RecipeCategoryID" class="form-select" required>
+                                <option value="">-- Select Category --</option>
+                                @foreach (var category in Model.RecipeCategories)
+                                {
+                                    <option value="@category.Value">@category.Text</option>
+                                }
+                            </select>
+                            <span asp-validation-for="RecipeCategoryID" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg" id="generateBtn">
+                                <i class="bi bi-magic me-2"></i> Generate Recipe
+                            </button>
+                            <a class="btn btn-outline-secondary" asp-action="Index">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Recipes
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+
+            <!-- Recipe Generation Tips Card -->
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2 text-warning"></i> Tips for Better Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item border-0 ps-0">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Include dietary requirements (vegetarian, vegan, gluten-free)
+                                </li>
+                                <li class="list-group-item border-0 ps-0">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Specify cooking methods (baked, grilled, slow-cooked)
+                                </li>
+                                <li class="list-group-item border-0 ps-0">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Mention key ingredients you want to include
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item border-0 ps-0">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Indicate difficulty level or time constraints
+                                </li>
+                                <li class="list-group-item border-0 ps-0">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Note cultural influences or cuisine types
+                                </li>
+                                <li class="list-group-item border-0 ps-0">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Mention serving occasion (weeknight dinner, party appetizer)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
+@section PageScripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('recipeForm');
+            const generateBtn = document.getElementById('generateBtn');
+            const originalBtnText = generateBtn.innerHTML;
+
+            // Focus on description field automatically
+            document.getElementById('RecipeDescription').focus();
+
+            // Show loading state when generating
+            form.addEventListener('submit', function(e) {
+                if (form.checkValidity()) {
+                    generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Generating Recipe...';
+                    generateBtn.disabled = true;
+                }
+            });
+
+            // Character counter for description field (optional)
+            const descriptionField = document.getElementById('RecipeDescription');
+            descriptionField.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                // You could add a counter display here if desired
+            });
+        });
+    </script>
 }
