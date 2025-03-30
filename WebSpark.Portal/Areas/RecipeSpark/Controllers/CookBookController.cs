@@ -1,4 +1,5 @@
-﻿using WebSpark.RecipeCookbook;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebSpark.RecipeCookbook;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
@@ -30,25 +31,91 @@ public class CookBookController : RecipeBaseController
         }
     }
 
+    [HttpGet]
     public IActionResult Index()
     {
-        // Use the CsvOutputFolder from configuration as the output folder.
-        string outputPath = Path.Combine(_csvOutputFolder, "Mechanics_of_Motherhood.pdf");
-
-        // Call the MakeCookbook method with the title and description.
-        string? path = _cookbook.MakeCookbook(outputPath, "Mechanics of Motherhood", "Recipes from MOM");
-
+        // Initialize the form model with default values
         var model = new CookbookViewModel
         {
-            // Return a relative path (or you may choose to return the absolute path)
-            PdfPath = path != null ? "Mechanics_of_Motherhood.pdf" : null
+            Title = "Mechanics of Motherhood",
+            Description = "Recipes from MOM",
+            Filename = "Mechanics_of_Motherhood.pdf"
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult Index(CookbookViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        // Sanitize filename to avoid invalid characters
+        string sanitizedFilename = SanitizeFilename(model.Filename);
+        if (!sanitizedFilename.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            sanitizedFilename += ".pdf";
+        }
+
+        // Create the output path
+        string outputPath = Path.Combine(_csvOutputFolder, sanitizedFilename);
+
+        // Call the MakeCookbook method with the title and description from the form
+        string? generatedPath = _cookbook.MakeCookbook(outputPath, model.Title, model.Description);
+
+        // Update the model to indicate success or failure
+        model.PdfPath = generatedPath != null ? sanitizedFilename : null;
+        model.IsGenerated = generatedPath != null;
+
+        // Return to the view with the updated model
+        return View(model);
+    }
+
+    /// <summary>
+    /// Sanitizes a filename by removing invalid characters
+    /// </summary>
+    private string SanitizeFilename(string filename)
+    {
+        if (string.IsNullOrEmpty(filename))
+            return "cookbook.pdf";
+
+        // Remove invalid characters
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        string sanitized = new string(filename.Where(c => !invalidChars.Contains(c)).ToArray());
+
+        // Replace spaces with underscores
+        sanitized = sanitized.Replace(' ', '_');
+
+        return sanitized;
+    }
+
+    [HttpGet]
+    public IActionResult Download(string filename)
+    {
+        if (string.IsNullOrEmpty(filename))
+        {
+            return BadRequest("Filename is required");
+        }
+
+        string filePath = Path.Combine(_csvOutputFolder, filename);
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound("File not found");
+        }
+
+        // Return the file for download
+        return PhysicalFile(filePath, "application/pdf", filename);
     }
 }
 
 public class CookbookViewModel
 {
-    public string PdfPath { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Filename { get; set; } = string.Empty;
+    public string? PdfPath { get; set; }
+    public bool IsGenerated { get; set; }
 }

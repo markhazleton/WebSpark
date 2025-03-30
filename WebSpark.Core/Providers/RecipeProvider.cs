@@ -315,6 +315,17 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
         }
         return false;
     }
+    public bool Delete(RecipeCategoryModel saveItem)
+    {
+        var deleteItem = webDomainContext.RecipeCategory.Where(w => w.Id == saveItem.Id).FirstOrDefault();
+        if (deleteItem != null)
+        {
+            webDomainContext.RecipeCategory.Remove(deleteItem);
+            webDomainContext.SaveChanges();
+            return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// Gets the recipe list.

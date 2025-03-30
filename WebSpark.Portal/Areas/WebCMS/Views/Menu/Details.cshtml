@@ -1,132 +1,283 @@
-@model             MenuEditModel
+@model MenuEditModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Menu Item Details";
 }
 
-<h1>Details</h1>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Menu Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">View Details</li>
+                </ol>
+            </nav>
+            <h1 class="h2 mb-0">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                Menu Item Details
+            </h1>
+        </div>
+    </div>
 
-<div>
-    <h4>MenuModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Action)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Action)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Argument)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Argument)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ApiUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ApiUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Controller)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Controller)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DisplayInNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DisplayInNavigation)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DisplayOrder)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DisplayOrder)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DomainID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DomainID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DomainUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DomainUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Icon)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Icon)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastModified)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastModified)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PageContent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PageContent)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParentController)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParentController)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParentId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParentId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParentTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParentTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Url)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Url)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VirtualPath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VirtualPath)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Basic Information Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Basic Information</h5>
+                    @if (!string.IsNullOrEmpty(Model.Icon))
+                    {
+                        <i class="bi bi-@Model.Icon fs-4 text-primary"></i>
+                    }
+                </div>
+                <div class="card-body">
+                    <h3 class="mb-3">@Model.Title</h3>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">Description</h6>
+                            <p>@Model.Description</p>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">Domain</h6>
+                            <p class="mb-0">@Model.DomainName</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">Display Order</h6>
+                            <p class="mb-0">@Model.DisplayOrder</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">Parent Menu</h6>
+                            <p class="mb-0">@(string.IsNullOrEmpty(Model.ParentTitle) ? "None (Top Level)" : Model.ParentTitle)</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">Display in Navigation</h6>
+                            <p class="mb-0">
+                                @if (Model.DisplayInNavigation)
+                                {
+                                    <span class="badge bg-success">Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">No</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">Last Modified</h6>
+                            <p class="mb-0">@(Model.LastModified.HasValue ? Model.LastModified.Value.ToString("g") : "Not available")</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">ID</h6>
+                            <p class="mb-0">@Model.Id</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content Preview -->
+            @if (!string.IsNullOrEmpty(Model.PageContent))
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Page Content (Markdown)</h5>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="viewSourceToggle">
+                            <i class="bi bi-code-slash me-1"></i> View Source
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="markdown-rendered" class="content-preview p-3" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Markdown content will be rendered here -->
+                        </div>
+                        <div id="markdown-source" class="border rounded p-3 bg-light" style="display: none; max-height: 400px; overflow-y: auto;">
+                            <pre><code id="source-code">@Model.PageContent</code></pre>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <!-- URL and Routing Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">URL & Routing Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">URL</h6>
+                        @if (!string.IsNullOrEmpty(Model.Url))
+                        {
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="@Model.Url" readonly />
+                                <button class="btn btn-outline-secondary" type="button" id="copyUrlBtn">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No URL specified</p>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Controller</h6>
+                        <p>@(string.IsNullOrEmpty(Model.Controller) ? "Not specified" : Model.Controller)</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Action</h6>
+                        <p>@(string.IsNullOrEmpty(Model.Action) ? "Not specified" : Model.Action)</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Argument</h6>
+                        <p>@(string.IsNullOrEmpty(Model.Argument) ? "None" : Model.Argument)</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.VirtualPath))
+                    {
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2">Virtual Path</h6>
+                            <p>@Model.VirtualPath</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ApiUrl))
+                    {
+                        <div class="mb-0">
+                            <h6 class="text-muted mb-2">API URL</h6>
+                            <p class="mb-0">@Model.ApiUrl</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Actions Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil-square me-1"></i> Edit Menu Item
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                            <i class="bi bi-trash me-1"></i> Delete Menu Item
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the menu item "<strong>@Model.Title</strong>"?</p>
+                    <p class="mb-0 text-danger">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section PageScripts {
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Copy URL functionality
+            $('#copyUrlBtn').click(function() {
+                var urlInput = $(this).prev('input');
+                urlInput.select();
+                document.execCommand('copy');
+
+                // Show tooltip feedback
+                var originalTitle = $(this).attr('title');
+                $(this).attr('title', 'Copied!').tooltip('show');
+
+                setTimeout(function() {
+                    $('#copyUrlBtn').attr('title', originalTitle).tooltip('hide');
+                }, 1000);
+            });
+
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Toggle between rendered markdown and source view
+            $('#viewSourceToggle').click(function() {
+                const renderedView = $('#markdown-rendered');
+                const sourceView = $('#markdown-source');
+
+                if (renderedView.is(':visible')) {
+                    renderedView.hide();
+                    sourceView.show();
+                    $(this).html('<i class="bi bi-eye me-1"></i> View Rendered');
+                } else {
+                    sourceView.hide();
+                    renderedView.show();
+                    $(this).html('<i class="bi bi-code-slash me-1"></i> View Source');
+                }
+            });
+
+            // Render Markdown content
+            if ($('#markdown-rendered').length) {
+                // Configure Marked.js with safe options
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true,
+                    headerIds: false,
+                    sanitize: false // We'll use DOMPurify for sanitization
+                });
+
+                // Get the Markdown content
+                const markdownContent = $('#source-code').text();
+
+                // Convert to HTML and sanitize
+                if (markdownContent) {
+                    const html = DOMPurify.sanitize(marked.parse(markdownContent));
+                    $('#markdown-rendered').html(html);
+                } else {
+                    $('#markdown-rendered').html('<em class="text-muted">No content to display</em>');
+                }
+            }
+        });
+    </script>
+}

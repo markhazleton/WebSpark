@@ -1,0 +1,115 @@
+﻿@model WebSpark.Core.Models.EditModels.WebsiteEditModel
+@{
+    ViewData["Title"] = "Delete Website";
+    var menuItemCount = ViewData["MenuItemCount"] as int? ?? 0;
+}
+
+<div class="container-fluid py-4">
+    <!-- Alert Notifications -->
+    @await Html.PartialAsync("_AlertNotifications")
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Website Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Delete Website</li>
+                </ol>
+            </nav>
+            <h1 class="h2 mb-0">
+                <i class="bi bi-trash text-danger me-2"></i>
+                Delete Website
+            </h1>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="text-danger mb-0">Warning: You are about to delete a website</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger mb-4" role="alert">
+                <h5 class="alert-heading">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Confirm Deletion
+                </h5>
+                <p>Are you sure you want to delete the website "<strong>@Model.Name</strong>"?</p>
+                <hr>
+                <p class="mb-0">This action cannot be undone. All associated menu items and content will be deleted.</p>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Website Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Name</dt>
+                                <dd class="col-sm-8">@Model.Name</dd>
+
+                                <dt class="col-sm-4">Display Name</dt>
+                                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.SiteName) ? "-" : Model.SiteName)</dd>
+
+                                <dt class="col-sm-4">Website URL</dt>
+                                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.WebsiteUrl) ? "-" : Model.WebsiteUrl)</dd>
+
+                                <dt class="col-sm-4">Template</dt>
+                                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.SiteTemplate) ? "Default" : Model.SiteTemplate)</dd>
+
+                                <dt class="col-sm-4">Style</dt>
+                                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.SiteStyle) ? "Default" : Model.SiteStyle)</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Potential Impact</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <i class="bi bi-list-nested text-warning me-2"></i>
+                                    <strong>@menuItemCount</strong> menu item@(menuItemCount != 1 ? "s" : "") will be deleted
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-link-45deg text-warning me-2"></i>
+                                    Any links pointing to @Model.Name will no longer work
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-globe text-warning me-2"></i>
+                                    The website will no longer be accessible
+                                </li>
+                                @if (!string.IsNullOrEmpty(Model.WebsiteUrl))
+                                {
+                                    <li class="list-group-item">
+                                        <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                                        The URL <strong>@Model.WebsiteUrl</strong> may become available to others
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Details
+                </a>
+
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Confirm Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

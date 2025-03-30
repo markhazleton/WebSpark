@@ -1,7 +1,7 @@
 @model RecipeModel
 
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] = Model?.Name ?? "Recipe Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -27,117 +27,167 @@
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-house"></i> Recipes</a></li>
-            <li class="breadcrumb-item">
-                <a asp-action="Details" asp-controller="RecipeCategory" asp-route-id="@Model.RecipeCategoryID" class="text-decoration-none">
-                    @(Model.RecipeCategory?.Name ?? "Category")
-                </a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+            @if (Model?.RecipeCategoryID > 0)
+            {
+                <li class="breadcrumb-item">
+                    <a asp-action="Details" asp-controller="RecipeCategory" asp-route-id="@Model.RecipeCategoryID" class="text-decoration-none">
+                        @(Model.RecipeCategory?.Name ?? "Category")
+                    </a>
+                </li>
+            }
+            <li class="breadcrumb-item active" aria-current="page">@(Model?.Name ?? "Recipe")</li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <!-- Recipe Header -->
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
-                <div>
-                    <h1 class="display-5 mb-2">@Model.Name</h1>
-                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted">
-                        @if (Model.RecipeCategory != null)
-                        {
+    @if (Model != null)
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <!-- Recipe Header -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
+                    <div>
+                        <h1 class="display-5 mb-2">@Model.Name</h1>
+                        <div class="d-flex flex-wrap align-items-center gap-3 text-muted">
+                            @if (Model.RecipeCategory != null)
+                            {
+                                <span>
+                                    <i class="bi bi-tag-fill me-1"></i> @Model.RecipeCategory.Name
+                                </span>
+                            }
                             <span>
-                                <i class="bi bi-tag-fill me-1"></i> @Model.RecipeCategory.Name
+                                <i class="bi bi-people-fill me-1"></i> @Model.Servings servings
                             </span>
-                        }
-                        <span>
-                            <i class="bi bi-people-fill me-1"></i> @Model.Servings servings
-                        </span>
-                        @if (!string.IsNullOrEmpty(Model.AuthorNM))
-                        {
+                            @if (!string.IsNullOrEmpty(Model.AuthorNM))
+                            {
+                                <span>
+                                    <i class="bi bi-person-fill me-1"></i> By @Model.AuthorNM
+                                </span>
+                            }
                             <span>
-                                <i class="bi bi-person-fill me-1"></i> By @Model.AuthorNM
+                                <i class="bi bi-calendar3 me-1"></i> Updated @Model.ModifiedDT.ToString("MMM d, yyyy")
                             </span>
-                        }
-                        <span>
-                            <i class="bi bi-calendar3 me-1"></i> Updated @Model.ModifiedDT.ToString("MMM d, yyyy")
-                        </span>
-                    </div>
-                </div>
-                <div class="d-flex gap-2 mt-3 mt-md-0">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
-                        <i class="bi bi-pencil-square me-1"></i> Edit
-                    </a>
-                    <form asp-action="Delete" method="post" asp-route-id="@Model.Id" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
-                        <button type="submit" class="btn btn-outline-danger">
-                            <i class="bi bi-trash me-1"></i> Delete
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Description -->
-            @if (!string.IsNullOrEmpty(Model.Description))
-            {
-                <div class="mb-4">
-                    <h4 class="border-bottom pb-2">
-                        <i class="bi bi-info-circle-fill text-primary me-2"></i>Description
-                    </h4>
-                    <div class="mt-3 recipe-content">
-                        @Html.Raw(Model.Description.ToHtmlFromMarkdown())
-                    </div>
-                </div>
-            }
-
-            <div class="row g-4">
-                <!-- Ingredients -->
-                <div class="col-md-5">
-                    <div class="card h-100 bg-light border-0">
-                        <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">
-                                <i class="bi bi-list-ul me-2"></i>Ingredients
-                            </h4>
                         </div>
-                        <div class="card-body">
-                            <div class="recipe-content">
-                                @Html.Raw(Model.Ingredients.ToHtmlFromMarkdown())
+                    </div>
+                    <div class="d-flex gap-2 mt-3 mt-md-0">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-1"></i> Edit
+                        </a>
+                        <form asp-action="Delete" method="post" asp-route-id="@Model.Id" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="mb-4">
+                        <h4 class="border-bottom pb-2">
+                            <i class="bi bi-info-circle-fill text-primary me-2"></i>Description
+                        </h4>
+                        <div class="mt-3 recipe-content">
+                            @try
+                            {
+                                @Html.Raw(Model.Description.ToHtmlFromMarkdown())
+                            }
+                            catch
+                            {
+                                @Model.Description
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="row g-4">
+                    <!-- Ingredients -->
+                    <div class="col-md-5">
+                        <div class="card h-100 bg-light border-0">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-list-ul me-2"></i>Ingredients
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="recipe-content">
+                                    @if (!string.IsNullOrEmpty(Model.Ingredients))
+                                    {
+                                        try
+                                        {
+                                            @Html.Raw(Model.Ingredients.ToHtmlFromMarkdown())
+                                        }
+                                        catch
+                                        {
+                                            <pre>@Model.Ingredients</pre>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">No ingredients listed</p>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Instructions -->
-                <div class="col-md-7">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">
-                                <i class="bi bi-list-ol me-2"></i>Instructions
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="recipe-content">
-                                @Html.Raw(Model.Instructions.ToHtmlFromMarkdown())
+                    <!-- Instructions -->
+                    <div class="col-md-7">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-list-ol me-2"></i>Instructions
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="recipe-content">
+                                    @if (!string.IsNullOrEmpty(Model.Instructions))
+                                    {
+                                        try
+                                        {
+                                            @Html.Raw(Model.Instructions.ToHtmlFromMarkdown())
+                                        }
+                                        catch
+                                        {
+                                            <pre>@Model.Instructions</pre>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">No instructions listed</p>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-between">
-        <a asp-action="Index" class="btn btn-outline-secondary">
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Back to Recipes
+            </a>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-success" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Print Recipe
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="shareButton">
+                    <i class="bi bi-share me-1"></i> Share
+                </button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Recipe not found
+        </div>
+        <a asp-action="Index" class="btn btn-primary">
             <i class="bi bi-arrow-left me-1"></i> Back to Recipes
         </a>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-success" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i> Print Recipe
-            </button>
-            <button type="button" class="btn btn-outline-primary" id="shareButton">
-                <i class="bi bi-share me-1"></i> Share
-            </button>
-        </div>
-    </div>
+    }
 </div>
 
 @section Styles {
@@ -160,9 +210,7 @@
             background-color: #f8f9fa !important;
             border-bottom: 1px solid #dee2e6 !important;
         }
-
-}
-</style>
+    </style>
 }
 
 @section PageScripts {
@@ -172,26 +220,43 @@
             const shareButton = document.getElementById('shareButton');
             if (shareButton) {
                 shareButton.addEventListener('click', function() {
-                    if (navigator.share) {
-                        navigator.share({
-                            title: '@Model.Name',
-                            text: 'Check out this recipe: @Model.Name',
-                            url: window.location.href
-                        })
-                        .catch(console.error);
-                    } else {
-                        // Fallback for browsers that don't support navigator.share
-                        const dummy = document.createElement('input');
-                        document.body.appendChild(dummy);
-                        dummy.value = window.location.href;
-                        dummy.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(dummy);
-
-                        // Show copied message
-                        alert('Link copied to clipboard!');
+                    try {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: '@(Model?.Name ?? "Recipe")',
+                                text: 'Check out this recipe: @(Model?.Name ?? "Recipe")',
+                                url: window.location.href
+                            })
+                            .catch(function(error) {
+                                console.error('Error sharing:', error);
+                                fallbackCopyToClipboard();
+                            });
+                        } else {
+                            fallbackCopyToClipboard();
+                        }
+                    } catch (error) {
+                        console.error('Share error:', error);
+                        fallbackCopyToClipboard();
                     }
                 });
+            }
+
+            function fallbackCopyToClipboard() {
+                try {
+                    // Fallback for browsers that don't support navigator.share
+                    const dummy = document.createElement('input');
+                    document.body.appendChild(dummy);
+                    dummy.value = window.location.href;
+                    dummy.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+
+                    // Show copied message
+                    alert('Link copied to clipboard!');
+                } catch (error) {
+                    console.error('Clipboard error:', error);
+                    alert('Could not copy link. Please copy the URL manually.');
+                }
             }
         });
     </script>

@@ -13,7 +13,7 @@ public interface IRecipeService
     /// <param name="Id">The identifier.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     bool Delete(int Id);
-
+    bool Delete(Models.RecipeCategoryModel saveItem);
     /// <summary>
     /// Gets the by identifier.
     /// </summary>

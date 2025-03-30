@@ -1,82 +1,270 @@
-@model WebsiteEditModel
+@model WebSpark.Core.Models.EditModels.WebsiteEditModel
 @{
-    ViewData["Title"] = "Create";
+    var isCreateMode = ViewData["IsCreateMode"] as bool? ?? false;
+    var title = isCreateMode ? "Create New Website" : "Edit Website";
+    var submitButtonText = isCreateMode ? "Create" : "Save Changes";
+    var submitAction = isCreateMode ? "Create" : "Edit";
 }
-<h1>Create Website</h1>
-<hr />
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="row">
-        <div class="col-md-4 col-sm-12">
-            <h2>Site Look and Feel</h2>
-            <div class="form-group">
-                <label asp-for="SiteStyle" class="control-label"></label>
-                <input asp-for="SiteStyle" class="form-control" />
-                <span asp-validation-for="SiteStyle" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteTemplate" class="control-label"></label>
-                <input asp-for="SiteTemplate" class="form-control" />
-                <span asp-validation-for="SiteTemplate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteName" class="control-label"></label>
-                <input asp-for="SiteName" class="form-control" />
-                <span asp-validation-for="SiteName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IsRecipeSite" class="control-label"></label>
-                <input asp-for="IsRecipeSite" class="form-control" />
-                <span asp-validation-for="IsRecipeSite" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="col-md-8 col-sm-12">
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="WebsiteUrl" class="control-label"></label>
-                <input asp-for="WebsiteUrl" class="form-control" />
-                <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="WebsiteTitle" class="control-label"></label>
-                <input asp-for="WebsiteTitle" class="form-control" />
-                <span asp-validation-for="WebsiteTitle" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="UseBreadCrumbURL" /> @Html.DisplayNameFor(model => model.UseBreadCrumbURL)
-                </label>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 col-sm-12">
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </div>
-    </div>
-</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="container-fluid py-4">
+    <!-- Alert Notifications -->
+    @await Html.PartialAsync("_AlertNotifications")
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Website Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@title</li>
+                </ol>
+            </nav>
+            <h1 class="h2 mb-0">
+                <i class="bi bi-@(isCreateMode ? "plus-circle" : "pencil-square") text-primary me-2"></i>
+                @title
+            </h1>
+        </div>
+    </div>
+
+    <form asp-action="@submitAction" method="post" class="needs-validation" novalidate>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Basic Information Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Website Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                                <input asp-for="Name" class="form-control" required />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="Enter a brief description of this website"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="WebsiteTitle" class="form-label">Website Title</label>
+                                    <input asp-for="WebsiteTitle" class="form-control"
+                                           placeholder="Title shown in browser tab" />
+                                    <span asp-validation-for="WebsiteTitle" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="SiteName" class="form-label">Display Name</label>
+                                    <input asp-for="SiteName" class="form-control"
+                                           placeholder="Name displayed in website header" />
+                                    <span asp-validation-for="SiteName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="WebsiteUrl" class="form-label">Website URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                                <input asp-for="WebsiteUrl" class="form-control" placeholder="https://example.com" />
+                            </div>
+                            <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Welcome Message (Markdown)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div id="message-editor-container">
+                                <div id="markdown-message-wrapper" class="mb-3">
+                                    <textarea asp-for="Message" id="markdownMessageEditor" class="form-control"
+                                              rows="8" style="font-family: monospace;"></textarea>
+                                </div>
+                                <div id="markdown-message-preview" class="border p-3 rounded bg-light markdown-body"
+                                     style="display: none; min-height: 200px; overflow-y: auto;">
+                                </div>
+                            </div>
+                            <span asp-validation-for="Message" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Message is stored as Markdown.
+                                <a href="#" id="toggleMessagePreview">Toggle preview</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Display Options Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Display Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="SiteTemplate" class="form-label">Site Template</label>
+                            <select asp-for="SiteTemplate" class="form-select">
+                                <option value="">Default Template</option>
+                                <option value="Modern">Modern</option>
+                                <option value="Classic">Classic</option>
+                                <option value="Minimal">Minimal</option>
+                                <option value="Business">Business</option>
+                                <option value="Blog">Blog</option>
+                            </select>
+                            <span asp-validation-for="SiteTemplate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SiteStyle" class="form-label">Site Style/Theme</label>
+                            <select asp-for="SiteStyle" class="form-select">
+                                <option value="">Default Style</option>
+                                <option value="Light">Light</option>
+                                <option value="Dark">Dark</option>
+                                <option value="Colorful">Colorful</option>
+                                <option value="Professional">Professional</option>
+                                <option value="Creative">Creative</option>
+                            </select>
+                            <span asp-validation-for="SiteStyle" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="UseBreadCrumbURL"
+                                   id="useBreadCrumbSwitch">
+                            <label class="form-check-label" for="useBreadCrumbSwitch">
+                                <i class="bi bi-signpost-2 me-1"></i> Use Breadcrumb URLs
+                            </label>
+                            <div class="form-text">
+                                Display full path in URLs (e.g., /parent/child)
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="IsRecipeSite"
+                                   id="isRecipeSiteSwitch">
+                            <label class="form-check-label" for="isRecipeSiteSwitch">
+                                <i class="bi bi-journal-richtext me-1"></i> Recipe Site
+                            </label>
+                            <div class="form-text">
+                                Enable recipe-specific features and schema
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                        <div>
+                            @if (!isCreateMode)
+                            {
+                                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger me-2">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </a>
+                            }
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-@(isCreateMode ? "plus-circle" : "save") me-1"></i> @submitButtonText
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
-@section Scripts {
+@section PageScripts {
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize Markdown preview functionality
+            const markdownEditor = $('#markdownMessageEditor');
+            const markdownPreview = $('#markdown-message-preview');
+
+            // Configure Marked.js with safe options
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                headerIds: false,
+                sanitize: false // We'll use DOMPurify for sanitization
+            });
+
+            // Update preview function
+            function updatePreview() {
+                const content = markdownEditor.val();
+                if (content) {
+                    // Convert markdown to HTML and sanitize
+                    const html = DOMPurify.sanitize(marked.parse(content));
+                    markdownPreview.html(html);
+                } else {
+                    markdownPreview.html('<em class="text-muted">No content to preview</em>');
+                }
+            }
+
+            // Toggle preview
+            $('#toggleMessagePreview').on('click', function(e) {
+                e.preventDefault();
+                if (markdownPreview.is(':visible')) {
+                    markdownPreview.hide();
+                    markdownEditor.show();
+                    $(this).text('Toggle preview');
+                } else {
+                    updatePreview();
+                    markdownEditor.hide();
+                    markdownPreview.show();
+                    $(this).text('Back to editor');
+                }
+            });
+
+            // Update preview on typing (debounced)
+            let previewTimer;
+            markdownEditor.on('input', function() {
+                clearTimeout(previewTimer);
+                if (markdownPreview.is(':visible')) {
+                    previewTimer = setTimeout(updatePreview, 300);
+                }
+            });
+
+            // Initialize form validation
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })();
+        });
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

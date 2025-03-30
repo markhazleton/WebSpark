@@ -1,81 +1,310 @@
 ﻿@model WebSpark.Core.Models.RecipeCategoryModel
 
 @{
-    ViewData["Title"] = "Edit Recipe Category";
+    ViewData["Title"] = Model.Id > 0 ? $"Edit {Model.Name}" : "Create Category";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var isEdit = Model.Id > 0;
 }
 
-<div class="container mt-4">
-    <h4 class="display-6">
-        <i class="bi bi-pencil-square"></i> Edit Recipe Category
-    </h4>
-    <hr />
+<div class="container-fluid py-4">
+    <!-- Toast Notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i> Category saved successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Edit">
+    <!-- Error Alert -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Header & Navigation -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-tags"></i> Categories</a></li>
+                @if (isEdit)
+                {
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none text-truncate" style="max-width: 200px;">@Model.Name</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                }
+            </ol>
+        </nav>
+        @if (isEdit)
+        {
+            <span class="badge bg-secondary fs-6">ID: @Model.Id</span>
+        }
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="categoryForm" class="needs-validation" novalidate>
+                @if (isEdit)
+                {
+                    <input type="hidden" asp-for="Id" />
+                }
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Id" class="form-label fw-bold"></label>
-                    <input asp-for="Id" class="form-control" />
-                    <span asp-validation-for="Id" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label fw-bold">
-                        <i class="bi bi-tag"></i> Name
-                    </label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label fw-bold">
-                        <i class="bi bi-card-text"></i> Description
-                    </label>
-                    <textarea asp-for="Description" class="form-control"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="DisplayOrder" class="form-label fw-bold">
-                        <i class="bi bi-sort-numeric-down"></i> Display Order
-                    </label>
-                    <input asp-for="DisplayOrder" class="form-control" />
-                    <span asp-validation-for="DisplayOrder" class="text-danger"></span>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" asp-for="IsActive" id="IsActiveCheck" />
-                    <label class="form-check-label fw-bold" for="IsActiveCheck">
-                        <i class="bi bi-check-circle"></i> @Html.DisplayNameFor(model => model.IsActive)
-                    </label>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Url" class="form-label fw-bold">
-                        <i class="bi bi-link-45deg"></i> URL
-                    </label>
-                    <input asp-for="Url" class="form-control" />
-                    <span asp-validation-for="Url" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Save
+                <!-- Floating Action Button for Mobile -->
+                <div class="d-block d-md-none position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 1030;">
+                    <button type="submit" class="btn btn-success btn-lg rounded-circle shadow" style="width: 60px; height: 60px;" id="mobileSaveBtn">
+                        <i class="bi bi-check-lg fs-3"></i>
                     </button>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Back to List
-                    </a>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                        <h2 class="fs-4 mb-0">
+                            @if (isEdit)
+                            {
+                                <i class="bi bi-pencil-square me-2"></i> <span>Edit Category</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-plus-circle me-2"></i> <span>Create Category</span>
+                            }
+                        </h2>
+                        <div class="d-none d-md-block">
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="bi bi-save me-2"></i> Save
+                            </button>
+                            <a asp-action="@(isEdit ? "Details" : "Index")" asp-route-id="@(isEdit ? Model.Id.ToString() : null)" class="btn btn-outline-light">
+                                <i class="bi bi-x-lg me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <!-- Basic Information Section -->
+                            <div class="col-12">
+                                <h3 class="fs-5 border-bottom pb-2 mb-3">
+                                    <i class="bi bi-info-circle me-2"></i> Basic Information
+                                </h3>
+
+                                <div class="mb-4">
+                                    <label asp-for="Name" class="form-label">
+                                        <i class="bi bi-tag me-1"></i> Category Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="Name" class="form-control form-control-lg" placeholder="Enter category name" required />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="Description" class="form-label">
+                                        <i class="bi bi-card-text me-1"></i> Description
+                                    </label>
+                                    <textarea asp-for="Description" class="form-control" rows="3"
+                                              placeholder="Enter a description of this category"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Display Settings Section -->
+                            <div class="col-12">
+                                <h3 class="fs-5 border-bottom pb-2 mb-3">
+                                    <i class="bi bi-sliders me-2"></i> Display Settings
+                                </h3>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label asp-for="DisplayOrder" class="form-label">
+                                            <i class="bi bi-sort-numeric-down me-1"></i> Display Order <span class="text-danger">*</span>
+                                        </label>
+                                        <input asp-for="DisplayOrder" type="number" class="form-control" min="1" required
+                                               placeholder="Lower numbers appear first" />
+                                        <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                                        <div class="form-text">Categories are sorted by this number</div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-4">
+                                        <label asp-for="Url" class="form-label">
+                                            <i class="bi bi-link-45deg me-1"></i> URL Slug
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text text-muted">/category/</span>
+                                            <input asp-for="Url" class="form-control" placeholder="category-name" />
+                                        </div>
+                                        <span asp-validation-for="Url" class="text-danger"></span>
+                                        <div class="form-text">Leave empty to generate automatically</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" asp-for="IsActive" role="switch" />
+                                    <label class="form-check-label" asp-for="IsActive">
+                                        <i class="bi bi-toggle-on me-1"></i> Active
+                                    </label>
+                                    <div class="form-text ms-4">Inactive categories won't appear in menus</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Footer Actions -->
+                <div class="d-none d-md-flex justify-content-between mb-5">
+                    <div>
+                        <a asp-action="@(isEdit ? "Details" : "Index")" asp-route-id="@(isEdit ? Model.Id.ToString() : null)" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-left me-1"></i> Cancel
+                        </a>
+                        @if (isEdit)
+                        {
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        }
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-save me-2"></i> Save Category
+                    </button>
+                </div>
+
+                <!-- Mobile Footer Actions -->
+                <div class="d-md-none fixed-bottom bg-light border-top p-3">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="@(isEdit ? "Details" : "Index")" asp-route-id="@(isEdit ? Model.Id.ToString() : null)" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                        @if (isEdit)
+                        {
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        }
+                    </div>
                 </div>
             </form>
+
+            <!-- Last Modified Information -->
+            @if (isEdit)
+            {
+                <div class="text-center text-muted small mt-3 mb-5 d-none d-md-block">
+                    <p>
+                        <i class="bi bi-clock-history me-1"></i> Last modified: @DateTime.Now.ToString("MMMM d, yyyy 'at' h:mm tt")
+                    </p>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+@if (isEdit)
+{
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                    <p class="text-danger">This will also delete all recipes in this category or make them uncategorized.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-action="Delete" method="post" asp-route-id="@Model.Id" class="d-inline">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i> Delete Category
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form validation
+            const form = document.querySelector('#categoryForm');
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // Show saving indicator
+                    const submitBtn = document.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving...';
+                    submitBtn.disabled = true;
+
+                    // If on mobile, also update the mobile save button
+                    const mobileSaveBtn = document.querySelector('#mobileSaveBtn');
+                    if (mobileSaveBtn) {
+                        mobileSaveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                        mobileSaveBtn.disabled = true;
+                    }
+                }
+
+                form.classList.add('was-validated');
+            });
+
+            // Auto-generate URL slug from name
+            const nameInput = document.getElementById('Name');
+            const urlInput = document.getElementById('Url');
+
+            if (nameInput && urlInput) {
+                nameInput.addEventListener('input', function() {
+                    // Only auto-generate if URL field is empty or user hasn't edited it
+                    if (!urlInput.value || !urlInput.dataset.userEdited) {
+                        urlInput.value = slugify(nameInput.value);
+                    }
+                });
+
+                urlInput.addEventListener('input', function() {
+                    // Mark that user has edited the URL field manually
+                    urlInput.dataset.userEdited = 'true';
+                });
+
+                // Simple slugify function
+                function slugify(text) {
+                    return text.toString().toLowerCase()
+                        .replace(/\s+/g, '-')           // Replace spaces with -
+                        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                        .replace(/^-+/, '')             // Trim - from start of text
+                        .replace(/-+$/, '');            // Trim - from end of text
+                }
+            }
+
+            // Unsaved changes warning
+            let formChanged = false;
+
+            form.addEventListener('change', function() {
+                formChanged = true;
+            });
+
+            form.addEventListener('submit', function() {
+                formChanged = false;
+            });
+
+            window.addEventListener('beforeunload', function(e) {
+                if (formChanged) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                }
+            });
+        });
+    </script>
 }

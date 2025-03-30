@@ -1,6 +1,428 @@
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+    ViewData["Title"] = "Web Content Management System";
+
+    var websiteCount = ViewData["WebsiteCount"] as int? ?? 0;
+    var menuItemCount = ViewData["MenuItemCount"] as int? ?? 0;
+    var recentWebsites = ViewData["RecentWebsites"] as IEnumerable<WebSpark.Core.Models.WebsiteModel> ?? Enumerable.Empty<WebSpark.Core.Models.WebsiteModel>();
+    var recentMenuItems = ViewData["RecentMenuItems"] as IEnumerable<WebSpark.Core.Models.MenuModel> ?? Enumerable.Empty<WebSpark.Core.Models.MenuModel>();
 }
-<h1>WebCMS - Home</h1>
+
+<div class="container-fluid py-4">
+    <!-- Alert Notifications -->
+    @await Html.PartialAsync("_AlertNotifications")
+
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">
+                <i class="bi bi-gear-wide-connected text-primary"></i>
+                Web Content Management System
+            </h1>
+            <p class="lead">
+                Welcome to the WebSpark CMS - Your central hub for managing website content across multiple domains
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <div class="card h-100 shadow-sm border-0 bg-gradient" style="background-color: #f8f9fa;">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-primary text-white mb-3">
+                        <i class="bi bi-globe fs-3"></i>
+                    </div>
+                    <h3 class="fs-2 fw-bold">@websiteCount</h3>
+                    <p class="card-text text-muted mb-0">Websites</p>
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <a asp-controller="Website" asp-action="Index" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-list me-1"></i> Manage Websites
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <div class="card h-100 shadow-sm border-0 bg-gradient" style="background-color: #f8f9fa;">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-success text-white mb-3">
+                        <i class="bi bi-list-nested fs-3"></i>
+                    </div>
+                    <h3 class="fs-2 fw-bold">@menuItemCount</h3>
+                    <p class="card-text text-muted mb-0">Menu Items</p>
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-success w-100">
+                        <i class="bi bi-list-check me-1"></i> Manage Menus
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <div class="card h-100 shadow-sm border-0 bg-gradient" style="background-color: #f8f9fa;">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-info text-white mb-3">
+                        <i class="bi bi-plus-circle fs-3"></i>
+                    </div>
+                    <h3 class="fs-2 fw-bold">Create New</h3>
+                    <p class="card-text text-muted mb-0">Add content to your site</p>
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-info dropdown-toggle w-100" type="button" id="createNewDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-plus-square me-1"></i> Create New
+                        </button>
+                        <ul class="dropdown-menu w-100" aria-labelledby="createNewDropdown">
+                            <li>
+                                <a class="dropdown-item" href="@Url.Action("Create", "Website")">
+                                    <i class="bi bi-globe me-2"></i> New Website
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="@Url.Action("Create", "Menu")">
+                                    <i class="bi bi-list-nested me-2"></i> New Menu Item
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0 bg-gradient" style="background-color: #f8f9fa;">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-warning text-white mb-3">
+                        <i class="bi bi-question-circle fs-3"></i>
+                    </div>
+                    <h3 class="fs-2 fw-bold">Help</h3>
+                    <p class="card-text text-muted mb-0">Need assistance?</p>
+                </div>
+                <div class="card-footer border-0 bg-transparent">
+                    <a asp-action="Help" class="btn btn-outline-warning w-100">
+                        <i class="bi bi-info-circle me-1"></i> View Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clock-history text-primary me-2"></i>
+                            Recently Updated Websites
+                        </h5>
+                        <a asp-controller="Website" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                            View All
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if (recentWebsites.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var website in recentWebsites)
+                            {
+                                <a asp-controller="Website" asp-action="Details" asp-route-id="@website.Id"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@website.Name</h6>
+                                        <small class="text-muted">
+                                            @(website.ModifiedDT.ToString("g") )
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </span>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center p-4">
+                            <i class="bi bi-exclamation-circle text-muted fs-1"></i>
+                            <p class="text-muted mt-2">No websites found</p>
+                            <a asp-controller="Website" asp-action="Create" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-1"></i> Create a Website
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clock-history text-success me-2"></i>
+                            Recently Updated Menu Items
+                        </h5>
+                        <a asp-controller="Menu" asp-action="Index" class="btn btn-sm btn-outline-success">
+                            View All
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if (recentMenuItems.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var menuItem in recentMenuItems)
+                            {
+                                <a asp-controller="Menu" asp-action="Details" asp-route-id="@menuItem.Id"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@menuItem.Title</h6>
+                                        <small class="text-muted">
+                                            @(menuItem.LastModified.HasValue ? menuItem.LastModified.Value.ToString("g") : "Date unknown")
+                                            @(!string.IsNullOrEmpty(menuItem.DomainName) ? $" | {menuItem.DomainName}" : "")
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-success rounded-pill">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </span>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center p-4">
+                            <i class="bi bi-exclamation-circle text-muted fs-1"></i>
+                            <p class="text-muted mt-2">No menu items found</p>
+                            <a asp-controller="Menu" asp-action="Create" class="btn btn-success">
+                                <i class="bi bi-plus-circle me-1"></i> Create a Menu Item
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Guide Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-book text-primary me-2"></i>
+                        WebCMS User Guide
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-circle bg-primary text-white me-3">
+                                            <i class="bi bi-globe"></i>
+                                        </div>
+                                        <h5 class="mb-0">Website Management</h5>
+                                    </div>
+                                    <p>Websites are the foundation of your content. Each website represents a domain or subdomain with its own unique settings and menu structure.</p>
+                                    <h6 class="fw-bold">Key Features:</h6>
+                                    <ul class="feature-list">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Create and manage multiple websites</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Customize templates and styles</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Configure domain-specific settings</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Add welcome messages with Markdown support</li>
+                                    </ul>
+                                    <a asp-controller="Website" asp-action="Index" class="btn btn-outline-primary mt-2">
+                                        <i class="bi bi-arrow-right me-1"></i> Manage Websites
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-circle bg-success text-white me-3">
+                                            <i class="bi bi-list-nested"></i>
+                                        </div>
+                                        <h5 class="mb-0">Menu Management</h5>
+                                    </div>
+                                    <p>Menu items define the navigation structure and content of your websites. They can be organized hierarchically with parent-child relationships.</p>
+                                    <h6 class="fw-bold">Key Features:</h6>
+                                    <ul class="feature-list">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Create nested menu structures</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Add page content with Markdown support</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Configure visibility and display order</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Link to internal and external resources</li>
+                                    </ul>
+                                    <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-success mt-2">
+                                        <i class="bi bi-arrow-right me-1"></i> Manage Menus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-circle bg-info text-white me-3">
+                                            <i class="bi bi-signpost-2"></i>
+                                        </div>
+                                        <h5 class="mb-0">Content Organization</h5>
+                                    </div>
+                                    <p>Organize your content effectively with these best practices:</p>
+                                    <ul class="feature-list">
+                                        <li><i class="bi bi-arrow-right-circle text-info me-2"></i> <strong>Plan Your Structure:</strong> Design a logical hierarchy for your navigation</li>
+                                        <li><i class="bi bi-arrow-right-circle text-info me-2"></i> <strong>Use Meaningful Names:</strong> Create clear, descriptive titles for menu items</li>
+                                        <li><i class="bi bi-arrow-right-circle text-info me-2"></i> <strong>Organize by Topic:</strong> Group related content under parent menu items</li>
+                                        <li><i class="bi bi-arrow-right-circle text-info me-2"></i> <strong>Set Display Orders:</strong> Control the sequence of menu items</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-circle bg-warning text-white me-3">
+                                            <i class="bi bi-lightbulb"></i>
+                                        </div>
+                                        <h5 class="mb-0">Quick Tips</h5>
+                                    </div>
+                                    <ul class="feature-list">
+                                        <li><i class="bi bi-info-circle-fill text-warning me-2"></i> <strong>Markdown Support:</strong> Use Markdown formatting for rich text content without HTML complexity</li>
+                                        <li><i class="bi bi-info-circle-fill text-warning me-2"></i> <strong>Preview Changes:</strong> Use the preview feature to see how your content will look</li>
+                                        <li><i class="bi bi-info-circle-fill text-warning me-2"></i> <strong>Mobile First:</strong> Consider how your navigation appears on mobile devices</li>
+                                        <li><i class="bi bi-info-circle-fill text-warning me-2"></i> <strong>Menu Organization:</strong> Keep your navigation clean with a maximum of 7 top-level items</li>
+                                        <li><i class="bi bi-info-circle-fill text-warning me-2"></i> <strong>Regular Updates:</strong> Keep your content fresh and relevant with regular updates</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Getting Started Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-rocket-takeoff text-primary me-2"></i>
+                        Getting Started
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 mb-4">
+                            <div class="card card-hover border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="step-circle bg-primary text-white">1</div>
+                                    <h5 class="mt-3">Create a Website</h5>
+                                    <p class="text-muted">Start by creating a website for your domain with basic settings and template</p>
+                                    <a asp-controller="Website" asp-action="Create" class="btn btn-sm btn-outline-primary mt-2">
+                                        Create Website
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 mb-4">
+                            <div class="card card-hover border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="step-circle bg-primary text-white">2</div>
+                                    <h5 class="mt-3">Add Menu Structure</h5>
+                                    <p class="text-muted">Create top-level menu items to define your main navigation structure</p>
+                                    <a asp-controller="Menu" asp-action="Create" class="btn btn-sm btn-outline-primary mt-2">
+                                        Add Menu Items
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 mb-4">
+                            <div class="card card-hover border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="step-circle bg-primary text-white">3</div>
+                                    <h5 class="mt-3">Add Content</h5>
+                                    <p class="text-muted">Create page content using Markdown for each of your menu items</p>
+                                    <a asp-controller="Menu" asp-action="Index" class="btn btn-sm btn-outline-primary mt-2">
+                                        Manage Content
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 mb-4">
+                            <div class="card card-hover border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="step-circle bg-primary text-white">4</div>
+                                    <h5 class="mt-3">Publish & Review</h5>
+                                    <p class="text-muted">Review your website structure and content before going live</p>
+                                    <a asp-controller="Website" asp-action="Index" class="btn btn-sm btn-outline-primary mt-2">
+                                        View Websites
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .feature-list {
+            padding-left: 0;
+            list-style: none;
+        }
+
+            .feature-list li {
+                padding: 6px 0;
+            }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease;
+        }
+
+            .card-hover:hover {
+                transform: translateY(-5px);
+            }
+    </style>
+}

@@ -1,65 +1,293 @@
 ﻿@model IEnumerable<WebSpark.Core.Models.RecipeCategoryModel>
 @{
+    ViewData["Title"] = "Recipe Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table" id="displayTable">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DisplayOrder)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Url)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Name,"Details",  new { id=item.Id })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DisplayOrder)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Url)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="container-fluid py-4">
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Page Header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h1 class="display-5 mb-0">
+                <i class="bi bi-tags text-primary me-2"></i>Recipe Categories
+            </h1>
+            <p class="text-muted mt-2">Manage recipe categories and organization</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> New Category
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="row g-2">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search categories...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch ms-2 mt-2">
+                        <input class="form-check-input" type="checkbox" id="showInactiveSwitch" checked>
+                        <label class="form-check-label" for="showInactiveSwitch">Show inactive categories</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Grid/Cards for Mobile -->
+    <div class="d-md-none mb-4">
+        <div class="row row-cols-1 g-3" id="categoryCardContainer">
+            @foreach (var item in Model)
+            {
+                <div class="col category-card" data-active="@item.IsActive.ToString().ToLower()">
+                    <div class="card h-100 shadow-sm @(item.IsActive ? "" : "bg-light")">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title mb-0">
+                                    @if (!item.IsActive)
+                                    {
+                                        <i class="bi bi-slash-circle text-muted me-1" title="Inactive"></i>
+                                    }
+                                    @item.Name
+                                </h5>
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-sort-numeric-down me-1"></i> @item.DisplayOrder
+                                </span>
+                            </div>
+                            <p class="card-text small text-truncate mb-1">@item.Description</p>
+                            @if (!string.IsNullOrEmpty(item.Url))
+                            {
+                                <p class="card-text small text-muted text-truncate">
+                                    <i class="bi bi-link-45deg me-1"></i> @item.Url
+                                </p>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i> View
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil me-1"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Data Table for Larger Screens -->
+    <div class="d-none d-md-block">
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="categoryTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%">
+                                    <i class="bi bi-tag me-1"></i> @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th style="width: 35%">
+                                    <i class="bi bi-card-text me-1"></i> @Html.DisplayNameFor(model => model.Description)
+                                </th>
+                                <th style="width: 10%" class="text-center">
+                                    <i class="bi bi-sort-numeric-down me-1"></i> Order
+                                </th>
+                                <th style="width: 10%" class="text-center">
+                                    <i class="bi bi-check-circle me-1"></i> Status
+                                </th>
+                                <th style="width: 20%" class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="@(item.IsActive ? "" : "table-light")" data-active="@item.IsActive.ToString().ToLower()">
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none fw-medium text-primary">
+                                            @item.Name
+                                        </a>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <div class="text-truncate" style="max-width: 300px;">@item.Description</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-dark">@item.DisplayOrder</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary"><i class="bi bi-slash-circle me-1"></i> Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary" title="Edit Category">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Delete Category"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    data-category-id="@item.Id" data-category-name="@item.Name">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="categoryNameToDelete"></strong>?</p>
+                <p class="text-danger">This will also delete all recipes in this category or make them uncategorized.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" id="categoryIdToDelete" name="id" value="" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Delete Category
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section PageScripts {
     <script>
-        $(document).ready(function ()
-        {
-            var table = $('#displayTable').DataTable(
-                {
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DataTable for larger screens
+            const table = $('#categoryTable').DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthChange: false,
+                info: false,
+                autoWidth: false,
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search categories..."
+                },
+                dom: '<"row"<"col-md-6"l><"col-md-6"f>>rtip',
+                responsive: true,
+                order: [[2, 'asc']] // Sort by display order column
+            });
+
+            // Connect the external search box to DataTable
+            $('#searchInput').on('keyup', function() {
+                table.search(this.value).draw();
+
+                // Also filter cards for mobile view
+                filterMobileCards(this.value);
+            });
+
+            // Handle active/inactive filter
+            $('#showInactiveSwitch').on('change', function() {
+                const showInactive = $(this).prop('checked');
+
+                // Filter the DataTable
+                $.fn.dataTable.ext.search.pop(); // Remove previous filter if any
+                if (!showInactive) {
+                    $.fn.dataTable.ext.search.push(
+                        function(settings, data, dataIndex) {
+                            return $(table.row(dataIndex).node()).data('active') === 'true';
+                        }
+                    );
+                }
+                table.draw();
+
+                // Filter the mobile cards
+                if (showInactive) {
+                    $('.category-card').show();
+                } else {
+                    $('.category-card').each(function() {
+                        if ($(this).data('active') === 'false') {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        }
+                    });
+                }
+            });
+
+            // Function to filter mobile cards
+            function filterMobileCards(term) {
+                const searchTerm = term.toLowerCase();
+                $('.category-card').each(function() {
+                    const cardText = $(this).text().toLowerCase();
+                    const isVisible = cardText.includes(searchTerm);
+                    const showInactive = $('#showInactiveSwitch').prop('checked');
+                    const isActive = $(this).data('active') === 'true';
+
+                    if (!showInactive && !isActive) {
+                        $(this).hide();
+                    } else {
+                        $(this).toggle(isVisible);
+                    }
                 });
+            }
+
+            // Set up delete modal
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                const button = $(event.relatedTarget);
+                const categoryId = button.data('category-id');
+                const categoryName = button.data('category-name');
+
+                $('#categoryIdToDelete').val(categoryId);
+                $('#categoryNameToDelete').text(categoryName);
+            });
+
+            // Add hover effect for table rows
+            $('#categoryTable tbody').on('mouseenter', 'tr', function() {
+                $(this).addClass('bg-light');
+            }).on('mouseleave', 'tr', function() {
+                $(this).removeClass('bg-light');
+            });
         });
     </script>
 }

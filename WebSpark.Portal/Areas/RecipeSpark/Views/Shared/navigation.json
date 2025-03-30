@@ -1,10 +1,6 @@
 ﻿{
   "menuItems": [
     {
-      "text": "Recipes",
-      "url": "/RecipeSpark/"
-    },
-    {
       "text": "Images",
       "url": "/RecipeSpark/RecipeImage"
     },

@@ -1,129 +1,390 @@
-@model WebsiteEditModel
-
+@model WebSpark.Core.Models.EditModels.WebsiteEditModel
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Website Details";
+    var menuItems = ViewData["MenuItems"] as List<WebSpark.Core.Models.MenuModel> ?? new List<WebSpark.Core.Models.MenuModel>();
+
+    // Group menu items by parent
+    var topLevelItems = menuItems.Where(m => m.ParentId == null || m.ParentId == 0).OrderBy(m => m.DisplayOrder).ToList();
+    var childItems = menuItems.Where(m => m.ParentId != null && m.ParentId > 0).ToList();
 }
 
-<h1>@Model.Name Details</h1>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="container-fluid py-4">
+    <!-- Alert Notifications -->
+    @await Html.PartialAsync("_AlertNotifications")
 
-<div>
-    <div class="row">
-        <div class="col-6">
-            <dl class="row">
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Description)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Description)
-                </dd>
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.SiteStyle)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.SiteStyle)
-                </dd>
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.SiteTemplate)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.SiteTemplate)
-                </dd>
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.IsRecipeSite)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.IsRecipeSite)
-                </dd>
-            </dl>
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Website Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Website Details</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-globe text-primary me-2"></i>
+                    @Model.Name
+                </h1>
+                <div class="mt-2 mt-md-0">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Website
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="col-6">
-            <dl class="row">
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.SiteName)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.SiteName)
-                </dd>
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.WebsiteTitle)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.WebsiteTitle)
-                </dd>
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.WebsiteUrl)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.WebsiteUrl)
-                </dd>
-            </dl>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Website Information Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Website Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Display Name / Title</h6>
+                        <p class="mb-0">
+                            <strong>@(string.IsNullOrEmpty(Model.SiteName) ? Model.Name : Model.SiteName)</strong>
+                            @if (!string.IsNullOrEmpty(Model.WebsiteTitle) && Model.WebsiteTitle != Model.SiteName)
+                            {
+                                <span class="text-muted">(@Model.WebsiteTitle)</span>
+                            }
+                        </p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-1">Description</h6>
+                            <p class="mb-0">@Model.Description</p>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Website URL</h6>
+                        @if (!string.IsNullOrEmpty(Model.WebsiteUrl))
+                        {
+                            <p class="mb-0">
+                                <a href="@Model.WebsiteUrl" target="_blank" class="d-inline-flex align-items-center">
+                                    @Model.WebsiteUrl
+                                    <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                </a>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">No URL specified</p>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Template & Style</h6>
+                        <p class="mb-0">
+                            @if (!string.IsNullOrEmpty(Model.SiteTemplate))
+                            {
+                                <span class="badge bg-primary me-2">@Model.SiteTemplate</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary me-2">Default Template</span>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.SiteStyle))
+                            {
+                                <span class="badge bg-info text-dark">@Model.SiteStyle</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Default Style</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="d-flex mb-0">
+                        <div class="me-4">
+                            <h6 class="text-muted mb-1">Breadcrumb URLs</h6>
+                            <p class="mb-0">
+                                @if (Model.UseBreadCrumbURL)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span class="ms-1">Enabled</span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-secondary"></i>
+                                    <span class="ms-1">Disabled</span>
+                                }
+                            </p>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Recipe Site</h6>
+                            <p class="mb-0">
+                                @if (Model.IsRecipeSite)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span class="ms-1">Yes</span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-secondary"></i>
+                                    <span class="ms-1">No</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Message Card -->
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Welcome Message</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="welcome-message-preview">
+                            <!-- Markdown content will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Menu Structure Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-nested me-2"></i>
+                        Menu Structure
+                    </h5>
+                    <a asp-controller="Menu" asp-action="Create" asp-route-domainId="@Model.Id" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-plus-circle me-1"></i> Add Menu Item
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (menuItems.Any())
+                    {
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" id="menu-search" class="form-control" placeholder="Search menu items...">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="menuItemsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Parent</th>
+                                        <th class="text-center">Order</th>
+                                        <th>Visibility</th>
+                                        <th>URL</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in menuItems)
+                                    {
+                                        <tr>
+                                            <td class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(item.Icon))
+                                                    {
+                                                        <i class="bi bi-@item.Icon me-2 text-primary"></i>
+                                                    }
+                                                    <span>@item.Title</span>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                @if (!string.IsNullOrEmpty(item.ParentTitle))
+                                                {
+                                                    <span>@item.ParentTitle</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Top Level</span>
+                                                }
+                                            </td>
+                                            <td class="align-middle text-center">@item.DisplayOrder</td>
+                                            <td class="align-middle">
+                                                @if (item.DisplayInNavigation)
+                                                {
+                                                    <span class="badge bg-success">Visible</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Hidden</span>
+                                                }
+                                            </td>
+                                            <td class="align-middle text-truncate" style="max-width: 150px;">
+                                                @if (!string.IsNullOrEmpty(item.Url))
+                                                {
+                                                    <code class="small">@item.Url</code>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <div class="btn-group">
+                                                    <a asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <a asp-controller="Menu" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                                        <i class="bi bi-info-circle"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                No Menu Items Found
+                            </h5>
+                            <p>This website doesn't have any menu items yet.</p>
+                            <hr>
+                            <p class="mb-0">
+                                <a asp-controller="Menu" asp-action="Create" asp-route-domainId="@Model.Id" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i> Create First Menu Item
+                                </a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Menu Visualization Card (Tree View) -->
+            @if (topLevelItems.Any())
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-diagram-3 me-2"></i>
+                            Menu Hierarchy
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="menu-tree">
+                            <ul class="list-unstyled">
+                                @foreach (var item in topLevelItems)
+                                {
+                                    <li class="mb-2">
+                                        <div class="d-flex align-items-center p-2 border rounded @(item.DisplayInNavigation ? "border-primary" : "border-secondary")">
+                                            @if (!string.IsNullOrEmpty(item.Icon))
+                                            {
+                                                <i class="bi bi-@item.Icon me-2 @(item.DisplayInNavigation ? "text-primary" : "text-secondary")"></i>
+                                            }
+                                            <span class="me-auto @(!item.DisplayInNavigation ? "text-muted" : "")">@item.Title</span>
+                                            <a asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary ms-2">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </div>
+
+                                        @{
+                                            var children = childItems.Where(c => c.ParentId == item.Id).OrderBy(c => c.DisplayOrder).ToList();
+                                            if (children.Any())
+                                            {
+                                                <ul class="list-unstyled ms-4 mt-2">
+                                                    @foreach (var child in children)
+                                                    {
+                                                        <li class="mb-2">
+                                                            <div class="d-flex align-items-center p-2 border rounded @(child.DisplayInNavigation ? "border-info" : "border-secondary")">
+                                                                @if (!string.IsNullOrEmpty(child.Icon))
+                                                                {
+                                                                    <i class="bi bi-@child.Icon me-2 @(child.DisplayInNavigation ? "text-info" : "text-secondary")"></i>
+                                                                }
+                                                                <span class="me-auto @(!child.DisplayInNavigation ? "text-muted" : "")">@child.Title</span>
+                                                                <a asp-controller="Menu" asp-action="Edit" asp-route-id="@child.Id" class="btn btn-sm btn-outline-secondary ms-2">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                </a>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
-<table class="table" id="displayTable">
-    <thead>
-        <tr>
-            <th>
-                Title
-            </th>
-            <th>
-                DisplayOrder
-            </th>
-            <th>
-                Icon
-            </th>
-            <th>
-                Parent Title
-            </th>
-            <th>
-                Url
-            </th>
-            <th>
-                Virtual Path
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Menu.OrderBy(o => o.DisplayOrder).ThenBy(t => t.Title))
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Title, "Edit", "Menu", new { id = item.Id })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DisplayOrder)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Icon)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ParentTitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Url)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VirtualPath)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
 @section PageScripts {
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
     <script>
         $(document).ready(function() {
-            var table = $('#displayTable').DataTable(
-                {
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
+            // Initialize DataTable for menu items
+            if ($('#menuItemsTable').length) {
+                var table = $('#menuItemsTable').DataTable({
+                    responsive: true,
+                    dom: '<"row"<"col-md-12"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search menu items..."
+                    },
+                    order: [[2, 'asc']], // Sort by DisplayOrder
+                    columnDefs: [
+                        { orderable: false, targets: 5 } // Disable sorting on Actions column
+                    ]
                 });
+
+                // Connect custom search box to DataTable
+                $('#menu-search').on('keyup', function() {
+                    table.search($(this).val()).draw();
+                });
+
+                // Responsive breakpoints handling
+                $(window).on('resize', function() {
+                    if ($(window).width() < 768) {
+                        // Hide less important columns on mobile
+                        table.column(1).visible(false); // Parent
+                        table.column(4).visible(false); // URL
+                    } else {
+                        table.column(1).visible(true);
+                        table.column(4).visible(true);
+                    }
+                }).trigger('resize');
+            }
+
+            // Render Markdown content for Welcome Message
+            if ($('#welcome-message-preview').length) {
+                // Configure Marked.js with safe options
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true,
+                    headerIds: false,
+                    sanitize: false // We'll use DOMPurify for sanitization
+                });
+
+                // Get the Markdown content
+                const markdownContent = @Json.Serialize(Model.Message);
+
+                // Convert to HTML and sanitize
+                if (markdownContent) {
+                    const html = DOMPurify.sanitize(marked.parse(markdownContent));
+                    $('#welcome-message-preview').html(html);
+                } else {
+                    $('#welcome-message-preview').html('<em class="text-muted">No content to display</em>');
+                }
+            }
         });
     </script>
 }

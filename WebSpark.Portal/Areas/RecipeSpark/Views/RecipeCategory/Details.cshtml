@@ -1,86 +1,284 @@
 ﻿@model RecipeCategoryModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1 class="display-6 mb-3">
-        <i class="bi bi-info-circle-fill"></i> @Model.Name Details
-    </h1>
-    <div class="mb-3">
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2">
-            <i class="bi bi-pencil-square"></i> Edit
-        </a>
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to List
-        </a>
-    </div>
+<div class="container-fluid py-4">
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="row">
-        <div class="col-md-6">
-            <dl class="row">
-                <dt class="col-sm-4 fw-bold">
-                    @Html.DisplayNameFor(model => model.Description)
-                </dt>
-                <dd class="col-sm-8">
-                    @Html.DisplayFor(model => model.Description)
-                </dd>
-            </dl>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Back Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-tags"></i> Categories</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <!-- Category Info Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <!-- Category Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
+                <div>
+                    <div class="d-flex align-items-center">
+                        <h1 class="display-5 mb-2">
+                            @Model.Name
+                            @if (!Model.IsActive)
+                            {
+                                <span class="badge bg-secondary ms-2 align-middle fs-6">
+                                    <i class="bi bi-slash-circle me-1"></i> Inactive
+                                </span>
+                            }
+                        </h1>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted">
+                        <span>
+                            <i class="bi bi-sort-numeric-down me-1"></i> Display Order: @Model.DisplayOrder
+                        </span>
+                        @if (!string.IsNullOrEmpty(Model.Url))
+                        {
+                            <span>
+                                <i class="bi bi-link-45deg me-1"></i> URL: @Model.Url
+                            </span>
+                        }
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mt-3 mt-md-0">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil-square me-1"></i> Edit
+                    </a>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="bi bi-trash me-1"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="mb-4">
+                    <h4 class="border-bottom pb-2">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>Description
+                    </h4>
+                    <div class="mt-3">
+                        @Model.Description
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
-    <h2 class="mt-4">Recipes</h2>
-    <table class="table table-hover table-striped" id="displayTable">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">
-                    <i class="bi bi-book"></i> Title
-                </th>
-                <th scope="col">
-                    <i class="bi bi-sort-numeric-down"></i> Author
-                </th>
-                <th scope="col">
-                    <i class="bi bi-star"></i> Average Rating
-                </th>
-                <th scope="col">
-                    <i class="bi bi-bookmark-star"></i> Is Approved
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Recipes.OrderBy(o => o.Name))
+    <!-- Recipes in Category Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+            <h2 class="fs-4 mb-0">
+                <i class="bi bi-journal-richtext text-primary me-2"></i> Recipes in this Category
+            </h2>
+            <a asp-controller="Home" asp-action="Create" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-plus-circle me-1"></i> Add Recipe
+            </a>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Recipes != null && Model.Recipes.Any())
             {
-                <tr>
-                    <td>
-                        @Html.ActionLink(item.Name, "Details", "Home", new { id = item.Id }, new { @class = "text-decoration-none" })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AuthorNM)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AverageRating)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IsApproved)
-                    </td>
-                </tr>
+                <!-- Mobile Recipe Cards -->
+                <div class="d-md-none">
+                    <div class="list-group list-group-flush">
+                        @foreach (var recipe in Model.Recipes.OrderBy(r => r.Name))
+                        {
+                            <a asp-controller="Home" asp-action="Details" asp-route-id="@recipe.Id"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">@recipe.Name</h5>
+                                    <small class="text-muted">
+                                        @if (!string.IsNullOrEmpty(recipe.AuthorNM))
+                                        {
+                                            <span><i class="bi bi-person me-1"></i> @recipe.AuthorNM</span>
+                                        }
+                                    </small>
+                                </div>
+                                <div class="d-flex flex-column align-items-end">
+                                    @if (recipe.IsApproved)
+                                    {
+                                        <span class="badge bg-success mb-1"><i class="bi bi-check-circle"></i></span>
+                                    }
+                                    <small class="text-muted">@(recipe.AverageRating > 0 ? $"{recipe.AverageRating:F1}★" : "")</small>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- Desktop Recipe Table -->
+                <div class="d-none d-md-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="recipesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40%">
+                                        <i class="bi bi-book me-1"></i> Recipe Name
+                                    </th>
+                                    <th style="width: 25%">
+                                        <i class="bi bi-person me-1"></i> Author
+                                    </th>
+                                    <th style="width: 15%" class="text-center">
+                                        <i class="bi bi-star me-1"></i> Rating
+                                    </th>
+                                    <th style="width: 10%" class="text-center">
+                                        <i class="bi bi-check-circle me-1"></i> Status
+                                    </th>
+                                    <th style="width: 10%" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var recipe in Model.Recipes.OrderBy(r => r.Name))
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Home" asp-action="Details" asp-route-id="@recipe.Id"
+                                               class="text-decoration-none fw-medium text-primary">
+                                                @recipe.Name
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @(string.IsNullOrEmpty(recipe.AuthorNM) ? "-" : recipe.AuthorNM)
+                                        </td>
+                                        <td class="text-center">
+                                            @if (recipe.AverageRating > 0)
+                                            {
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <span class="me-1">@recipe.AverageRating.ToString("F1")</span>
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not rated</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (recipe.IsApproved)
+                                            {
+                                                <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i> Approved</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary"><i class="bi bi-clock me-1"></i> Pending</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center">
+                                                <a asp-controller="Home" asp-action="Edit" asp-route-id="@recipe.Id"
+                                                   class="btn btn-sm btn-outline-secondary me-1" title="Edit Recipe">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a asp-controller="Home" asp-action="Details" asp-route-id="@recipe.Id"
+                                                   class="btn btn-sm btn-outline-primary" title="View Recipe">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="display-1 text-muted mb-3">
+                        <i class="bi bi-journal-x"></i>
+                    </div>
+                    <h3>No Recipes Found</h3>
+                    <p class="text-muted mb-4">This category doesn't have any recipes yet.</p>
+                    <a asp-controller="Home" asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i> Add First Recipe
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Categories
+        </a>
+        <div class="d-flex gap-2">
+            <a asp-controller="Home" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Add Recipe
+            </a>
+        </div>
+    </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                <p class="text-danger">This will also delete all recipes in this category or make them uncategorized.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" method="post" asp-route-id="@Model.Id">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Delete Category
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section PageScripts {
     <script>
-        $(document).ready(function() {
-            var table = $('#displayTable').DataTable(
-                {
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
-                });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DataTable for recipes
+            const table = $('#recipesTable').DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthChange: false,
+                info: false,
+                autoWidth: false,
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search recipes..."
+                },
+                dom: '<"row"<"col-md-6"l><"col-md-6"f>>rtip',
+                responsive: true
+            });
+
+            // Add hover effect for table rows
+            $('#recipesTable tbody').on('mouseenter', 'tr', function() {
+                $(this).addClass('bg-light');
+            }).on('mouseleave', 'tr', function() {
+                $(this).removeClass('bg-light');
+            });
         });
     </script>
 }

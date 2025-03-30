@@ -1,0 +1,710 @@
+﻿@{
+    ViewData["Title"] = "WebCMS Help & Documentation";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2">
+                <i class="bi bi-question-circle text-primary me-2"></i>
+                WebCMS Help & Documentation
+            </h1>
+            <p class="lead">Comprehensive guide to managing your website content</p>
+        </div>
+    </div>
+
+    <!-- Help Navigation and Content -->
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm sticky-lg-top" style="top: 20px; z-index: 1000;">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list"></i> Documentation
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <nav id="help-nav" class="nav flex-column">
+                        <a class="nav-link active" href="#overview">System Overview</a>
+                        <a class="nav-link" href="#websites">Managing Websites</a>
+                        <a class="nav-link" href="#menus">Managing Menus</a>
+                        <a class="nav-link" href="#content">Working with Content</a>
+                        <a class="nav-link" href="#markdown">Markdown Guide</a>
+                        <a class="nav-link" href="#faq">FAQ</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <!-- Section: Overview -->
+            <div id="overview" class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        <i class="bi bi-info-circle text-primary me-2"></i>
+                        System Overview
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>The WebSpark Content Management System (WebCMS) is designed to help you easily manage content across multiple websites and domains. The system is built around two core concepts:</p>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-globe text-primary me-2"></i>
+                                        Websites
+                                    </h5>
+                                    <p class="card-text">Websites represent individual domains or subdomains. Each website has its own settings, template, and menu structure.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-list-nested text-primary me-2"></i>
+                                        Menu Items
+                                    </h5>
+                                    <p class="card-text">Menu items define your navigation structure and hold the content for your pages. They can be organized hierarchically.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>System Architecture</h5>
+                    <p>WebCMS follows a structured approach to content management:</p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Description</th>
+                                    <th>Key Features</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Websites</td>
+                                    <td>Domain-specific configurations that define the overall structure of your site</td>
+                                    <td>
+                                        <ul class="mb-0">
+                                            <li>Templates and styles</li>
+                                            <li>Welcome messages</li>
+                                            <li>URL configuration</li>
+                                            <li>Special features (breadcrumbs, recipes)</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Menu Structure</td>
+                                    <td>Hierarchical organization of your content</td>
+                                    <td>
+                                        <ul class="mb-0">
+                                            <li>Parent-child relationships</li>
+                                            <li>Display ordering</li>
+                                            <li>Visibility controls</li>
+                                            <li>Navigation icons</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Content</td>
+                                    <td>Page content authored using Markdown</td>
+                                    <td>
+                                        <ul class="mb-0">
+                                            <li>Rich text formatting</li>
+                                            <li>Live preview</li>
+                                            <li>Embedded media support</li>
+                                            <li>Tables and lists</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>URL Routing</td>
+                                    <td>Configuration for how pages are accessed</td>
+                                    <td>
+                                        <ul class="mb-0">
+                                            <li>Custom URLs</li>
+                                            <li>Breadcrumb paths</li>
+                                            <li>Controller/action mappings</li>
+                                            <li>Arguments and parameters</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Websites -->
+            <div id="websites" class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        <i class="bi bi-globe text-primary me-2"></i>
+                        Managing Websites
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>Websites are the foundation of your content management strategy. Each website can represent a domain, subdomain, or a distinct section of your web presence.</p>
+
+                    <h5 class="mt-4">Creating a New Website</h5>
+                    <p>To create a new website:</p>
+                    <ol>
+                        <li>Click on <a asp-controller="Website" asp-action="Create" class="text-decoration-none"><i class="bi bi-plus-circle"></i> Create New Website</a> from the dashboard or website listing</li>
+                        <li>Enter a unique <strong>Website Name</strong> - this is your internal identifier</li>
+                        <li>Set a <strong>Display Name</strong> that will be shown in the website header</li>
+                        <li>Enter the <strong>Website URL</strong> where your site will be accessible</li>
+                        <li>Optionally add a <strong>Welcome Message</strong> using Markdown formatting</li>
+                        <li>Choose a <strong>Template</strong> and <strong>Style</strong> for your website</li>
+                        <li>Configure additional options like breadcrumb URLs</li>
+                        <li>Click <strong>Create</strong> to save your new website</li>
+                    </ol>
+
+                    <div class="alert alert-info mt-3" role="alert">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-info-circle-fill fs-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Tip: Plan Before You Create</h5>
+                                <p class="mb-0">Before creating a website, plan your content structure. Consider how many menu items you'll need, what your URL pattern should be, and what template best fits your content.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4">Website Settings</h5>
+                    <p>Key settings for your website include:</p>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="bi bi-brush me-2"></i>Templates & Styles</h6>
+                                    <p class="card-text small">Choose from predefined templates and styles to control the visual appearance of your website. Templates define the overall layout, while styles control colors and typography.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="bi bi-signpost-2 me-2"></i>Breadcrumb URLs</h6>
+                                    <p class="card-text small">When enabled, URLs will reflect the hierarchical structure of your menu items (e.g., /parent/child). This helps with SEO and user navigation.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="bi bi-journal-richtext me-2"></i>Recipe Site</h6>
+                                    <p class="card-text small">Enable this option for food/recipe websites to activate specialized schema markup and features optimized for recipe content.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="bi bi-broadcast me-2"></i>Welcome Message</h6>
+                                    <p class="card-text small">Create a customized welcome message that appears on your homepage. This supports Markdown formatting for rich text presentation.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Menus -->
+            <div id="menus" class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        <i class="bi bi-list-nested text-primary me-2"></i>
+                        Managing Menus
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>Menu items define both the navigation structure and content of your website. Each menu item can contain page content and can be organized hierarchically.</p>
+
+                    <h5 class="mt-4">Creating Menu Items</h5>
+                    <p>To create a new menu item:</p>
+                    <ol>
+                        <li>Go to <a asp-controller="Menu" asp-action="Create" class="text-decoration-none">Menu Management</a> and click <strong>Create New</strong></li>
+                        <li>Enter a <strong>Title</strong> for your menu item</li>
+                        <li>Select the <strong>Domain</strong> (website) this menu item belongs to</li>
+                        <li>If this is a child item, select a <strong>Parent Menu</strong></li>
+                        <li>Set the <strong>Display Order</strong> to control position in the menu</li>
+                        <li>Optionally choose an <strong>Icon</strong> from the Bootstrap Icons library</li>
+                        <li>Add your page <strong>Content</strong> using Markdown formatting</li>
+                        <li>Configure <strong>URL</strong> settings or use auto-generated URLs</li>
+                        <li>Click <strong>Save</strong> to create your menu item</li>
+                    </ol>
+
+                    <h5 class="mt-4">Menu Hierarchy</h5>
+                    <p>Menu items can be organized in a hierarchical structure:</p>
+
+                    <div class="card mb-4">
+                        <div class="card-body bg-light">
+                            <div class="menu-demo">
+                                <ul class="mb-0">
+                                    <li class="mb-2">
+                                        <strong>About Us</strong> (Top-level item)
+                                        <ul>
+                                            <li class="mb-1">Our Team (Child item)</li>
+                                            <li class="mb-1">Our History (Child item)</li>
+                                            <li class="mb-1">Mission & Vision (Child item)</li>
+                                        </ul>
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Products</strong> (Top-level item)
+                                        <ul>
+                                            <li class="mb-1">Category 1 (Child item)</li>
+                                            <li class="mb-1">Category 2 (Child item)</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Contact</strong> (Top-level item)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mt-3" role="alert">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Important: Menu Depth</h5>
+                                <p class="mb-0">For optimal user experience, avoid creating menu structures deeper than 3 levels. Deep hierarchies can confuse users and make navigation difficult, especially on mobile devices.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4">Key Menu Item Settings</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Setting</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Display In Navigation</td>
+                                    <td>Controls whether this item appears in the navigation menu. You can create "hidden" pages that don't appear in navigation but are still accessible via URL.</td>
+                                </tr>
+                                <tr>
+                                    <td>Display Order</td>
+                                    <td>Determines the sequence of items in the menu. Lower numbers appear first.</td>
+                                </tr>
+                                <tr>
+                                    <td>Parent Item</td>
+                                    <td>If selected, this menu item will be nested under the parent in the navigation hierarchy.</td>
+                                </tr>
+                                <tr>
+                                    <td>Icon</td>
+                                    <td>Bootstrap Icon to display next to the menu item for visual enhancement.</td>
+                                </tr>
+                                <tr>
+                                    <td>Controller/Action</td>
+                                    <td>For advanced users: specify custom controller and action for routing.</td>
+                                </tr>
+                                <tr>
+                                    <td>URL</td>
+                                    <td>Custom URL path for this menu item. If left empty, a URL will be auto-generated based on the title.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Content -->
+            <div id="content" class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                        Working with Content
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>WebCMS uses Markdown for content creation, providing a simple yet powerful way to format your text without HTML.</p>
+
+                    <h5 class="mt-4">Content Editor</h5>
+                    <p>The content editor includes these key features:</p>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-eye me-2"></i>Live Preview</h6>
+                                    <p class="small mb-0">Toggle between editing mode and preview mode to see how your content will appear to visitors.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-arrows-angle-expand me-2"></i>Fullscreen Mode</h6>
+                                    <p class="small mb-0">Expand the editor to fullscreen for distraction-free content creation on longer pages.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Best Practices for Content</h5>
+                    <ul>
+                        <li>Use headings (# and ##) to organize your content hierarchically</li>
+                        <li>Keep paragraphs concise for better readability</li>
+                        <li>Use lists and tables to present structured information</li>
+                        <li>Include links to related content when relevant</li>
+                        <li>Use emphasis (bold and italic) sparingly to highlight key points</li>
+                        <li>Preview your content to ensure formatting appears as expected</li>
+                    </ul>
+
+                    <div class="alert alert-success mt-3" role="alert">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-lightbulb-fill fs-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Pro Tip: Content Structure</h5>
+                                <p class="mb-0">Start each page with a clear H1 heading (# Title) and use H2 (## Subtitle) for sections. This improves both readability and SEO. Make sure your content follows a logical flow from introduction to conclusion.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Markdown Guide -->
+            <div id="markdown" class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        <i class="bi bi-markdown text-primary me-2"></i>
+                        Markdown Guide
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>Markdown is a lightweight markup language that allows you to format text using simple syntax. Here's a quick reference guide to common Markdown elements:</p>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Heading Syntax</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-3 mb-0">
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Emphasis</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-3 mb-0">
+*Italic text*
+_Also italic text_
+
+**Bold text**
+__Also bold text__
+
+***Bold and italic***
+___Also bold and italic___</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Lists</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-3 mb-0">
+Unordered list:
+- Item 1
+- Item 2
+  - Subitem 2.1
+  - Subitem 2.2
+- Item 3
+
+Ordered list:
+1. First item
+2. Second item
+3. Third item</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Links & Images</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-3 mb-0">
+[Link text](https://example.com)
+
+[Link with title](https://example.com "Title")
+
+![Alt text for image](image.jpg)
+
+![Alt text with title](image.jpg "Title")</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Blockquotes & Code</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-3 mb-0">
+> This is a blockquote
+> It can span multiple lines
+
+Inline `code` with backticks
+
+```
+// Code block
+function example() {
+  return "Hello World";
+}
+```</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Tables</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-3 mb-0">
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
+
+Simple Tables:
+Header 1 | Header 2
+-------- | --------
+Cell 1   | Cell 2
+Cell 3   | Cell 4</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Additional Markdown Elements</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">Horizontal Rule</h6>
+                                    <pre class="bg-light p-2 mb-0">
+---
+or
+***
+or
+___</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">Task Lists</h6>
+                                    <pre class="bg-light p-2 mb-0">
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Another task</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: FAQ -->
+            <div id="faq" class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        <i class="bi bi-question-circle text-primary me-2"></i>
+                        Frequently Asked Questions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                                    How many websites can I create?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    There is no built-in limit to the number of websites you can create in WebCMS. However, for performance and management reasons, we recommend limiting your instance to 10-20 actively maintained websites.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                                    Can I use HTML in my content?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    While WebCMS primarily uses Markdown for content, basic HTML is supported within your Markdown content. However, we recommend using Markdown syntax whenever possible for consistency and security reasons.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                                    How do I reorder menu items?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faq3" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Each menu item has a "Display Order" field that controls its position in the navigation. Lower numbers appear higher in the list. To reorder items, simply edit the Display Order value for each item.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                                    Can I move a menu item to a different website?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faq4" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Currently, menu items are tied to a specific website/domain. To move content between websites, you'll need to create a new menu item on the target website and copy your content across.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                                    How do I create a link to an external website?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faq5" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    When creating or editing a menu item, you can enter an external URL in the "URL" field. Make sure to include the full URL with https:// prefix. This will create a menu item that links directly to the external site.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Update active section based on scroll position
+        $(document).ready(function() {
+            // Get all sections
+            const sections = $('div[id]');
+            const navItems = $('#help-nav a.nav-link');
+
+            // Add smooth scrolling for navigation links
+            $('#help-nav a').on('click', function(e) {
+                // Prevent default anchor behavior
+                e.preventDefault();
+
+                // Get the target section
+                const target = $(this).attr('href');
+
+                // Smooth scroll to target
+                $('html, body').animate({
+                    scrollTop: $(target).offset().top - 20
+                }, 300);
+            });
+
+            // Update active link based on scroll position
+            $(window).on('scroll', function() {
+                let currentSection = '';
+
+                sections.each(function() {
+                    const sectionTop = $(this).offset().top - 100;
+                    if ($(window).scrollTop() >= sectionTop) {
+                        currentSection = '#' + $(this).attr('id');
+                    }
+                });
+
+                navItems.removeClass('active');
+                $('#help-nav a[href="' + currentSection + '"]').addClass('active');
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .nav-link {
+            color: #495057;
+            border-left: 3px solid transparent;
+            padding-left: 1rem;
+        }
+
+            .nav-link.active {
+                color: #0d6efd;
+                border-left: 3px solid #0d6efd;
+                background-color: rgba(13, 110, 253, 0.1);
+            }
+
+            .nav-link:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+
+        pre {
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .card-hover:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .sticky-lg-top {
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+    </style>
+}

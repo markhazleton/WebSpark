@@ -1,77 +1,164 @@
 @model IEnumerable<WebSpark.Core.Models.WebsiteModel>
 
 @{
-    ViewData["Title"] = "Websites";
+    ViewData["Title"] = "Website Management";
 }
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table" id="displayTable">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SiteStyle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SiteTemplate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SiteName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WebsiteUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UseBreadCrumbURL)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsRecipeSite)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Name, "Details", "Website", new { id = item.Id })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SiteStyle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SiteTemplate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SiteName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.WebsiteUrl)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UseBreadCrumbURL)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsRecipeSite)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<div class="container-fluid py-4">
+    <!-- Alert Notifications -->
+    @await Html.PartialAsync("_AlertNotifications")
+
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h1 class="h2 mb-0">
+                <i class="bi bi-globe text-primary me-2"></i> Website Management
+            </h1>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Create New Website
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">Websites</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="website-search" class="form-control" placeholder="Search websites...">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover" id="websiteTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Name)</th>
+                            <th>@Html.DisplayNameFor(model => model.SiteName)</th>
+                            <th>Website URL</th>
+                            <th>Template</th>
+                            <th class="text-center">Features</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="align-middle">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="fw-bold text-decoration-none">
+                                        @item.Name
+                                    </a>
+                                </td>
+                                <td class="align-middle">@item.SiteName</td>
+                                <td class="align-middle">
+                                    @if (!string.IsNullOrEmpty(item.WebsiteUrl))
+                                    {
+                                        <a href="@item.WebsiteUrl" target="_blank" class="text-decoration-none">
+                                            @item.WebsiteUrl <i class="bi bi-box-arrow-up-right small"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    @if (!string.IsNullOrEmpty(item.SiteTemplate))
+                                    {
+                                        <span class="badge bg-light text-dark">@item.SiteTemplate</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Default</span>
+                                    }
+                                </td>
+                                <td class="align-middle text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        @if (item.UseBreadCrumbURL)
+                                        {
+                                            <span class="badge bg-primary" data-bs-toggle="tooltip" title="Uses Breadcrumb URLs">
+                                                <i class="bi bi-signpost-2"></i>
+                                            </span>
+                                        }
+                                        @if (item.IsRecipeSite)
+                                        {
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" title="Recipe Site">
+                                                <i class="bi bi-journal-richtext"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <div class="btn-group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section PageScripts {
     <script>
-        $(document).ready(function() {
-            var table = $('#displayTable').DataTable(
-                {
-                    paging: false,
-                    scrollY: '40vh',
-                    scrollCollapse: true,
-                    stateSave: false,
-                    colReorder: true
-                });
+        $(document).ready(function () {
+            // Initialize DataTable with responsive features
+            var table = $('#websiteTable').DataTable({
+                responsive: true,
+                dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search websites..."
+                },
+                order: [[0, 'asc']], // Sort by Name
+                columnDefs: [
+                    { orderable: false, targets: [4, 5] } // Disable sorting on Features and Actions columns
+                ]
+            });
+
+            // Connect custom search box to DataTable
+            $('#website-search').on('keyup', function() {
+                table.search($(this).val()).draw();
+            });
+
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Responsive breakpoints handling
+            $(window).on('resize', function() {
+                if ($(window).width() < 768) {
+                    // Hide less important columns on mobile
+                    table.column(3).visible(false); // Template
+                    table.column(4).visible(false); // Features
+                } else {
+                    table.column(3).visible(true);
+                    table.column(4).visible(true);
+                }
+            }).trigger('resize');
         });
     </script>
 }

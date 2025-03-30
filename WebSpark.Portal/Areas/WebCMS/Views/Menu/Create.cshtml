@@ -1,103 +1,504 @@
 @model MenuEditModel
 @{
-    ViewData["Title"] = "Create";
+    var isCreate = ViewContext.RouteData.Values["action"].ToString().Equals("Create", StringComparison.OrdinalIgnoreCase);
+    var formTitle = isCreate ? "Create New Menu Item" : "Edit Menu Item";
+    var submitText = isCreate ? "Create" : "Save Changes";
 }
-<h1>Create Menu Item</h1>
-<hr />
 
-<form asp-action="Create">
-    <div class="row">
-        <div class="col-md-12">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Menu Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@formTitle</li>
+                </ol>
+            </nav>
+            <h1 class="h2 mb-0">
+                <i class="bi bi-@(isCreate ? "plus-circle" : "pencil-square") text-primary me-2"></i>
+                @formTitle
+            </h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PageContent" class="control-label"></label>
-                <textarea asp-for="PageContent" class="form-control" rows="30" cols="150">
 
-                </textarea>
-                <span asp-validation-for="PageContent" class="text-danger"></span>
+    <form asp-action="@ViewContext.RouteData.Values["action"]" method="post" class="needs-validation" novalidate>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Main content card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Title <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-type"></i></span>
+                                <input asp-for="Title" class="form-control" required />
+                            </div>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="Enter a brief description of this menu item"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Page Content (Markdown)</h5>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="previewToggle">
+                                <i class="bi bi-eye me-1"></i> Toggle Preview
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="toggleEditor">
+                                <i class="bi bi-arrows-angle-expand"></i> Toggle Fullscreen
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span asp-validation-for="PageContent" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Content is stored as Markdown. <a href="#" data-bs-toggle="modal" data-bs-target="#markdownHelpModal">Markdown syntax help</a>
+                            </div>
+                            <div id="editor-container">
+                                <div id="markdown-editor-wrapper" class="mb-3">
+                                    <textarea asp-for="PageContent" id="markdownEditor" class="form-control"
+                                              rows="15" style="font-family: monospace;"></textarea>
+                                </div>
+                                <div id="markdown-preview" class="border p-3 rounded bg-light markdown-body" style="display: none; min-height: 300px; overflow-y: auto;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="col-lg-4">
+                <!-- Navigation & Display Options -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Navigation & Display Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="DisplayInNavigation"
+                                   id="displayInNavigationSwitch">
+                            <label class="form-check-label" for="displayInNavigationSwitch">
+                                Display in Navigation Menu
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DomainID" class="form-label">Domain <span class="text-danger">*</span></label>
+                            <select asp-for="DomainID" asp-items="@(new SelectList(Model.Domains, "Value", "Text"))"
+                                    class="form-select" required>
+                            </select>
+                            <span asp-validation-for="DomainID" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ParentId" class="form-label">Parent Menu</label>
+                            <select asp-for="ParentId" asp-items="@(new SelectList(Model.Parents, "Value", "Text"))"
+                                    class="form-select">
+                                <option value="">None (Top Level Item)</option>
+                            </select>
+                            <span asp-validation-for="ParentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DisplayOrder" class="form-label">Display Order</label>
+                            <input asp-for="DisplayOrder" class="form-control" type="number" min="0" />
+                            <div class="form-text">Lower numbers appear first</div>
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Icon" class="form-label">Icon</label>
+                            <div class="input-group">
+                                <select asp-for="Icon" asp-items="@(new SelectList(Model.Icons, "Value", "Text"))"
+                                        class="form-select" id="iconSelect">
+                                    <option value="">No Icon</option>
+                                </select>
+                                <span class="input-group-text" id="iconPreview">
+                                    <i class="bi" id="selectedIconPreview"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="Icon" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Routing & URL Options -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Routing & URL Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Controller" class="form-label">Controller</label>
+                            <select asp-for="Controller" asp-items="@(new SelectList(Model.Controllers, "Value", "Text"))"
+                                    class="form-select">
+                            </select>
+                            <span asp-validation-for="Controller" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Action" class="form-label">Action</label>
+                            <select asp-for="Action" asp-items="@(new SelectList(Model.Actions, "Value", "Text"))"
+                                    class="form-select">
+                            </select>
+                            <span asp-validation-for="Action" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Argument" class="form-label">Argument</label>
+                            <input asp-for="Argument" class="form-control" />
+                            <span asp-validation-for="Argument" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Url" class="form-label">URL Path</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                                <input asp-for="Url" class="form-control" id="urlField" />
+                            </div>
+                            <div class="form-text">URL path will be auto-generated if left empty</div>
+                            <span asp-validation-for="Url" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                        <div>
+                            @if (!isCreate)
+                            {
+                                <button type="button" class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </button>
+                            }
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-@(isCreate ? "plus-circle" : "save") me-1"></i> @submitText
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @if (!isCreate)
+    {
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="deleteConfirmModalLabel">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Deletion
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the menu item "<strong>@Model.Title</strong>"?</p>
+                        <p class="mb-0 text-danger">This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Markdown Help Modal -->
+<div class="modal fade" id="markdownHelpModal" tabindex="-1" aria-labelledby="markdownHelpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="markdownHelpModalLabel">
+                    <i class="bi bi-markdown me-2"></i> Markdown Syntax Guide
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Basic Syntax</h6>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Element</th>
+                                    <th>Markdown Syntax</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Heading 1</td>
+                                    <td><code># Heading 1</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Heading 2</td>
+                                    <td><code>## Heading 2</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Heading 3</td>
+                                    <td><code>### Heading 3</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Bold</td>
+                                    <td><code>**bold text**</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Italic</td>
+                                    <td><code>*italicized text*</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Blockquote</td>
+                                    <td><code>> blockquote</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Extended Syntax</h6>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Element</th>
+                                    <th>Markdown Syntax</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ordered List</td>
+                                    <td><code>1. First item<br>2. Second item</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Unordered List</td>
+                                    <td><code>- First item<br>- Second item</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Link</td>
+                                    <td><code>[title](https://example.com)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Image</td>
+                                    <td><code>![alt text](image.jpg)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Table</td>
+                                    <td><code>| Header | Header |<br>| ------ | ------ |<br>| Cell | Cell |</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Code</td>
+                                    <td><code>`code`</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-4">
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="DisplayInNavigation" /> @Html.DisplayNameFor(model => model.DisplayInNavigation)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="DomainID" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.DomainID, new SelectList(Model.Domains, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "DomainID"})
-                <span asp-validation-for="DomainID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DisplayOrder" class="control-label"></label>
-                <input asp-for="DisplayOrder" class="form-control" />
-                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ParentId" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.ParentId, new SelectList(Model.Parents, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "ParentId"})
-                <span asp-validation-for="ParentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Icon" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.Icon, new SelectList(Model.Icons, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Icon"})
-                <span asp-validation-for="Icon" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="form-group">
-                <label asp-for="Controller" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.Controller, new SelectList(Model.Controllers, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Controller"})
-                <span asp-validation-for="Controller" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Action" class="control-label"></label>
-                @Html.DropDownListFor(x => Model.Action, new SelectList(Model.Actions, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "Action"})
-                <span asp-validation-for="Action" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Argument" class="control-label"></label>
-                <input asp-for="Argument" class="form-control" />
-                <span asp-validation-for="Argument" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VirtualPath" class="control-label"></label>
-                <input asp-for="VirtualPath" class="form-control" />
-                <span asp-validation-for="VirtualPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
-                <span asp-validation-for="Url" class="text-danger"></span>
-            </div>
-        </div>
-    </div>
-</form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+</div>
 </div>
 
 @section PageScripts {
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize Markdown preview functionality
+            const markdownEditor = $('#markdownEditor');
+            const markdownPreview = $('#markdown-preview');
+
+            // Configure Marked.js with safe options
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                headerIds: false,
+                sanitize: false // We'll use DOMPurify for sanitization
+            });
+
+            // Update preview function
+            function updatePreview() {
+                const content = markdownEditor.val();
+                if (content) {
+                    // Convert markdown to HTML and sanitize
+                    const html = DOMPurify.sanitize(marked.parse(content));
+                    markdownPreview.html(html);
+                } else {
+                    markdownPreview.html('<em class="text-muted">No content to preview</em>');
+                }
+            }
+
+            // Toggle preview
+            $('#previewToggle').on('click', function() {
+                if (markdownPreview.is(':visible')) {
+                    markdownPreview.hide();
+                    markdownEditor.show();
+                    $(this).html('<i class="bi bi-eye me-1"></i> Toggle Preview');
+                } else {
+                    updatePreview();
+                    markdownEditor.hide();
+                    markdownPreview.show();
+                    $(this).html('<i class="bi bi-pencil me-1"></i> Toggle Editor');
+                }
+            });
+
+            // Update preview on typing (debounced)
+            let previewTimer;
+            markdownEditor.on('input', function() {
+                clearTimeout(previewTimer);
+                if (markdownPreview.is(':visible')) {
+                    previewTimer = setTimeout(updatePreview, 300);
+                }
+            });
+
+            // Fullscreen toggle functionality
+            let isFullScreen = false;
+            $('#toggleEditor').on('click', function() {
+                const container = $('#editor-container');
+
+                if (!isFullScreen) {
+                    // Store current position/dimensions
+                    container.data({
+                        'oldPosition': container.css('position'),
+                        'oldTop': container.css('top'),
+                        'oldLeft': container.css('left'),
+                        'oldWidth': container.css('width'),
+                        'oldHeight': container.css('height'),
+                        'oldZIndex': container.css('z-index')
+                    });
+
+                    // Make fullscreen
+                    container.css({
+                        'position': 'fixed',
+                        'top': 0,
+                        'left': 0,
+                        'width': '100%',
+                        'height': '100%',
+                        'background': '#fff',
+                        'z-index': 9999,
+                        'padding': '20px',
+                        'box-sizing': 'border-box'
+                    });
+
+                    // Create exit button that's always visible
+                    $('<button>')
+                        .attr('id', 'exitFullscreenBtn')
+                        .addClass('btn btn-danger position-fixed')
+                        .css({
+                            'top': '10px',
+                            'right': '10px',
+                            'z-index': 10000
+                        })
+                        .html('<i class="bi bi-x-circle-fill"></i> Exit Fullscreen')
+                        .appendTo('body')
+                        .on('click', function() {
+                            $('#toggleEditor').trigger('click');
+                            $(this).remove();
+                        });
+
+                    // Expand editor
+                    markdownEditor.css('height', 'calc(100% - 40px)');
+                    markdownPreview.css('height', 'calc(100% - 40px)');
+
+                    $(this).html('<i class="bi bi-arrows-angle-contract"></i> Exit Fullscreen');
+                } else {
+                    // Restore original position/dimensions
+                    container.css({
+                        'position': container.data('oldPosition'),
+                        'top': container.data('oldTop'),
+                        'left': container.data('oldLeft'),
+                        'width': container.data('oldWidth'),
+                        'height': container.data('oldHeight'),
+                        'background': '',
+                        'z-index': container.data('oldZIndex'),
+                        'padding': ''
+                    });
+
+                    // Remove exit button if it exists
+                    $('#exitFullscreenBtn').remove();
+
+                    // Restore editor size
+                    markdownEditor.css('height', '');
+                    markdownPreview.css('height', '');
+
+                    $(this).html('<i class="bi bi-arrows-angle-expand"></i> Toggle Fullscreen');
+                }
+
+                isFullScreen = !isFullScreen;
+            });
+
+            // Icon preview functionality
+            $('#iconSelect').on('change', function() {
+                var selectedIcon = $(this).val();
+                if (selectedIcon) {
+                    $('#selectedIconPreview').attr('class', 'bi bi-' + selectedIcon);
+                } else {
+                    $('#selectedIconPreview').attr('class', '');
+                }
+            }).trigger('change');
+
+            // Auto-slug generation for URLs based on title
+            $('#Title').on('blur', function() {
+                var urlField = $('#urlField');
+                if (!urlField.val()) {
+                    var slug = $(this).val()
+                        .toLowerCase()
+                        .replace(/[^\w\s-]/g, '')
+                        .replace(/\s+/g, '-');
+                    urlField.val(slug);
+                }
+            });
+
+            // Initialize form validation
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })();
+        });
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

@@ -1,21 +1,84 @@
 ﻿@model CookbookViewModel
 @{
-    ViewData["Title"] = "Recipe Cookbook";
+    ViewData["Title"] = "Recipe Cookbook Generator";
 }
 
 <div class="container">
-    <h1>Your Cookbook PDF is Ready!</h1>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Recipe Cookbook Generator</h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.IsGenerated && !string.IsNullOrEmpty(Model.PdfPath))
+                    {
+                        <div class="alert alert-success mb-4">
+                            <h4 class="alert-heading">Success!</h4>
+                            <p>Your cookbook PDF has been successfully generated.</p>
+                            <hr>
+                            <a href="@Url.Action("Download", "CookBook", new { filename = Model.PdfPath })" class="btn btn-success btn-lg">
+                                <i class="fas fa-download"></i> Download Cookbook
+                            </a>
+                        </div>
+                    }
+                    else if (Model.IsGenerated)
+                    {
+                        <div class="alert alert-danger mb-4">
+                            <h4 class="alert-heading">Error</h4>
+                            <p>An error occurred while generating your cookbook. Please try again with different settings.</p>
+                        </div>
+                    }
 
-    @if (!string.IsNullOrEmpty(Model.PdfPath))
-    {
-        <p>
-            <a href="@Url.Content("~/" + Model.PdfPath)" target="_blank" class="btn btn-primary">
-                Download Cookbook
-            </a>
-        </p>
-    }
-    else
-    {
-        <p>An error occurred while generating your cookbook. Please try again later.</p>
-    }
+                    <form asp-action="Index" asp-controller="CookBook" method="post">
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label">Cookbook Title</label>
+                            <input asp-for="Title" class="form-control" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <small class="form-text text-muted">Enter a title for your cookbook (e.g. "Family Favorites")</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label">Cookbook Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <small class="form-text text-muted">A short description about your cookbook</small>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Filename" class="form-label">Filename</label>
+                            <input asp-for="Filename" class="form-control" required />
+                            <span asp-validation-for="Filename" class="text-danger"></span>
+                            <small class="form-text text-muted">The filename for your PDF (e.g. "MyCookbook.pdf")</small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-book"></i> Generate Cookbook
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">About This Generator</h4>
+                </div>
+                <div class="card-body">
+                    <p>This tool creates a beautifully formatted cookbook PDF from your recipe collection. The cookbook includes:</p>
+                    <ul>
+                        <li>Table of contents organized by recipe categories</li>
+                        <li>Professional formatting for ingredients and instructions</li>
+                        <li>Recipe index for easy reference</li>
+                        <li>Custom title and description from your input</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
