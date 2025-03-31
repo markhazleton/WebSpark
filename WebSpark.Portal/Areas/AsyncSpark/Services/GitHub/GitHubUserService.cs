@@ -84,7 +84,7 @@ public class GitHubUserService
         {
             AddLookupLimitError(fetchedData);
         }
-        _memoryCacheManager.Set(_userLookupListCacheKey, userList, 60);
+        _memoryCacheManager.Set(_userLookupListCacheKey, userList, 360);
         return fetchedData;
     }
 }
