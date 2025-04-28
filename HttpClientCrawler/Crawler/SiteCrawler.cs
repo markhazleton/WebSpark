@@ -85,6 +85,11 @@ public class SiteCrawler : ISiteCrawler
     /// <summary>
     /// Crawls a single page and returns the result.
     /// </summary>
+    /// <param name="url">The URL to crawl</param>
+    /// <param name="depth">Current depth in the crawl hierarchy</param>
+    /// <param name="userAgent">User agent string to use for the request</param>
+    /// <param name="ct">Cancellation token to stop the operation</param>
+    /// <returns>A CrawlResult containing information about the crawled page</returns>
     private async Task<CrawlResult> CrawlPageAsync(string url, int depth, string userAgent, CancellationToken ct = default)
     {
         var crawlRequest = new CrawlResult
@@ -238,8 +243,11 @@ public class SiteCrawler : ISiteCrawler
     }
 
     /// <summary>
-    /// Sends real-time updates to connected clients.
+    /// Sends real-time updates to connected clients via SignalR.
     /// </summary>
+    /// <param name="message">The message to send to clients</param>
+    /// <param name="ct">Cancellation token to stop the operation</param>
+    /// <returns>A task representing the asynchronous operation</returns>
     private async Task NotifyClientsAsync(string message, CancellationToken ct)
     {
         try
@@ -255,6 +263,9 @@ public class SiteCrawler : ISiteCrawler
     /// <summary>
     /// Adds a delay between requests to avoid overloading the server
     /// </summary>
+    /// <param name="requestDelayMs">Delay duration in milliseconds</param>
+    /// <param name="ct">Cancellation token to stop the operation</param>
+    /// <returns>A task representing the asynchronous operation</returns>
     private static async Task DelayRequestAsync(int requestDelayMs, CancellationToken ct)
     {
         if (requestDelayMs > 0)
@@ -266,6 +277,12 @@ public class SiteCrawler : ISiteCrawler
     /// <summary>
     /// Crawls a website starting from the given URL and returns the CrawlDomainViewModel.
     /// </summary>
+    /// <param name="startUrl">The URL to start crawling from</param>
+    /// <param name="options">Options that control the crawling behavior</param>
+    /// <param name="ct">Cancellation token to stop the crawling process</param>
+    /// <returns>A view model containing the crawl results and sitemap</returns>
+    /// <exception cref="ArgumentException">Thrown when the start URL is null or empty</exception>
+    /// <exception cref="OperationCanceledException">Thrown when the operation is cancelled</exception>
     public async Task<CrawlDomainViewModel> CrawlAsync(string startUrl, CrawlerOptions options, CancellationToken ct = default)
     {
         if (string.IsNullOrEmpty(startUrl))
@@ -289,7 +306,7 @@ public class SiteCrawler : ISiteCrawler
             // Process robots.txt first if enabled
             if (options.RespectRobotsTxt)
             {
-                await _robotsTxtParser.ProcessRobotsTxtAsync(startUrl, ct);
+                await _robotsTxtParser.ProcessRobotsTxtAsync(startUrl, ct).ConfigureAwait(false);
             }
 
             // Add the start URL to the queue
@@ -315,10 +332,10 @@ public class SiteCrawler : ISiteCrawler
                 }
 
                 // Add delay between requests
-                await DelayRequestAsync(options.RequestDelayMs, ct);
+                await DelayRequestAsync(options.RequestDelayMs, ct).ConfigureAwait(false);
 
                 // Crawl the page
-                var crawlResult = await CrawlPageAsync(link, depth, options.UserAgent, ct);
+                var crawlResult = await CrawlPageAsync(link, depth, options.UserAgent, ct).ConfigureAwait(false);
                 crawlResults.TryAdd(link, crawlResult);
 
                 // Add new links to the queue
@@ -327,7 +344,7 @@ public class SiteCrawler : ISiteCrawler
                 // Notify clients periodically
                 if (crawlResults.Count % 10 == 0)
                 {
-                    await NotifyClientsAsync($"Links to parse: {linksToCrawl.Count} Crawled: {crawlResults.Count}", ct);
+                    await NotifyClientsAsync($"Links to parse: {linksToCrawl.Count} Crawled: {crawlResults.Count}", ct).ConfigureAwait(false);
                 }
             }
         }
@@ -344,7 +361,7 @@ public class SiteCrawler : ISiteCrawler
         finally
         {
             viewModel.IsCrawling = false;
-            await NotifyClientsAsync($"Crawl Complete: Crawled {crawlResults.Count} links", ct);
+            await NotifyClientsAsync($"Crawl Complete: Crawled {crawlResults.Count} links", ct).ConfigureAwait(false);
         }
 
         viewModel.CrawlResults = crawlResults.Values.ToList();

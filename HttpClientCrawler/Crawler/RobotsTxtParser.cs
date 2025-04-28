@@ -1,11 +1,10 @@
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace HttpClientCrawler.Crawler;
 
 /// <summary>
-/// Provides functionality to parse and respect robots.txt files
+/// Provides functionality to parse and respect robots.txt files for web crawlers
 /// </summary>
 public class RobotsTxtParser
 {
@@ -18,6 +17,9 @@ public class RobotsTxtParser
     /// <summary>
     /// Creates a new instance of the RobotsTxtParser
     /// </summary>
+    /// <param name="httpClientFactory">Factory to create HTTP clients</param>
+    /// <param name="userAgent">User agent string to use when making requests</param>
+    /// <param name="logger">Logger for diagnostic information</param>
     public RobotsTxtParser(IHttpClientFactory httpClientFactory, string userAgent, ILogger logger)
     {
         _httpClient = httpClientFactory.CreateClient("RobotsTxtParser");
@@ -28,6 +30,9 @@ public class RobotsTxtParser
     /// <summary>
     /// Processes the robots.txt file for the specified domain
     /// </summary>
+    /// <param name="url">The URL of the site to process robots.txt for</param>
+    /// <param name="cancellationToken">Cancellation token to stop the operation</param>
+    /// <returns>A task representing the asynchronous operation</returns>
     public async Task ProcessRobotsTxtAsync(string url, CancellationToken cancellationToken = default)
     {
         try
@@ -41,11 +46,11 @@ public class RobotsTxtParser
             }
 
             string robotsUrl = $"{uri.Scheme}://{domain}/robots.txt";
-            var response = await _httpClient.GetAsync(robotsUrl, cancellationToken);
+            var response = await _httpClient.GetAsync(robotsUrl, cancellationToken).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
-                string content = await response.Content.ReadAsStringAsync(cancellationToken);
+                string content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 ParseRobotsTxt(domain, content);
             }
 
@@ -57,6 +62,11 @@ public class RobotsTxtParser
         }
     }
 
+    /// <summary>
+    /// Parses the content of a robots.txt file and extracts disallowed paths
+    /// </summary>
+    /// <param name="domain">The domain the robots.txt belongs to</param>
+    /// <param name="content">The content of the robots.txt file</param>
     private void ParseRobotsTxt(string domain, string content)
     {
         var disallowedPaths = new List<string>();
@@ -116,6 +126,8 @@ public class RobotsTxtParser
     /// <summary>
     /// Checks if a URL is allowed to be crawled according to the robots.txt rules
     /// </summary>
+    /// <param name="url">The URL to check against robots.txt rules</param>
+    /// <returns>True if the URL is allowed to be crawled, false otherwise</returns>
     public bool IsAllowed(string url)
     {
         try
