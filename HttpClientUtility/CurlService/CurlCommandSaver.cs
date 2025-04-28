@@ -7,6 +7,9 @@ using System.Text;
 
 namespace HttpClientUtility.CurlService;
 
+/// <summary>
+/// Provides functionality to generate and save cURL commands from HTTP requests for debugging and logging purposes.
+/// </summary>
 public class CurlCommandSaver
 {
     // SemaphoreSlim is used to enforce exclusive access during file writes.
@@ -14,12 +17,18 @@ public class CurlCommandSaver
     private readonly string _csvFilePath;
     private readonly ILogger _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CurlCommandSaver"/> class.
+    /// </summary>
+    /// <param name="logger">The logger instance to use for logging operations</param>
+    /// <param name="configuration">The configuration containing settings for the command saver</param>
+    /// <exception cref="ArgumentException">Thrown when the CsvOutputFolder configuration setting is not properly configured</exception>
     public CurlCommandSaver(ILogger logger, IConfiguration configuration)
     {
         _logger = logger;
 
         // Retrieve the CSV output folder setting from _configuration.
-        string csvOutputFolder = configuration["CsvOutputFolder"];
+        string? csvOutputFolder = configuration["CsvOutputFolder"];
         if (string.IsNullOrWhiteSpace(csvOutputFolder))
         {
             throw new ArgumentException("CsvOutputFolder is not configured properly.");
@@ -32,6 +41,14 @@ public class CurlCommandSaver
         _csvFilePath = Path.Combine(csvOutputFolder, "curl_commands.csv");
     }
 
+    /// <summary>
+    /// Saves an HTTP request as a cURL command to a CSV file.
+    /// </summary>
+    /// <param name="request">The HTTP request message to convert and save</param>
+    /// <param name="memberName">Name of the calling member (automatically populated)</param>
+    /// <param name="filePath">File path of the calling code (automatically populated)</param>
+    /// <param name="lineNumber">Line number of the calling code (automatically populated)</param>
+    /// <returns>A task representing the asynchronous operation</returns>
     public async Task SaveCurlCommandAsync(HttpRequestMessage request,
         [CallerMemberName] string memberName = "",
         [CallerFilePath] string filePath = "",
@@ -99,14 +116,44 @@ public class CurlCommandSaver
         }
     }
 
+    /// <summary>
+    /// Represents a record of a cURL command with metadata about where it was generated.
+    /// </summary>
     private class CurlCommandRecord
     {
-        public string CallingFile { get; set; }
+        /// <summary>
+        /// Gets or sets the file path where the request was initiated.
+        /// </summary>
+        public string CallingFile { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the line number in the file where the request was initiated.
+        /// </summary>
         public int CallingLineNumber { get; set; }
-        public string CallingMethod { get; set; }
-        public string CurlCommand { get; set; }
-        public string RequestMethod { get; set; }
-        public string RequestPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the method name where the request was initiated.
+        /// </summary>
+        public string CallingMethod { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the generated cURL command string.
+        /// </summary>
+        public string CurlCommand { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the HTTP method used in the request.
+        /// </summary>
+        public string RequestMethod { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the URL or path of the request.
+        /// </summary>
+        public string RequestPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the timestamp when the record was created.
+        /// </summary>
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

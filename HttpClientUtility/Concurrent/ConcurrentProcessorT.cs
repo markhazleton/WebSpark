@@ -31,7 +31,7 @@ public abstract class ConcurrentProcessor<T>(Func<int, T> taskDataFactory) where
     protected async Task<long> AwaitSemaphoreAsync(SemaphoreSlim semaphore, CancellationToken ct = default)
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
-        await semaphore.WaitAsync(ct);
+        await semaphore.WaitAsync(ct).ConfigureAwait(false);
         stopwatch.Stop();
         return stopwatch.ElapsedTicks;
     }
@@ -75,7 +75,7 @@ public abstract class ConcurrentProcessor<T>(Func<int, T> taskDataFactory) where
             taskData.SemaphoreCount = semaphore.CurrentCount;
             taskData.SemaphoreWaitTicks = semaphoreWait;
 
-            var result = await ProcessAsync(taskData, ct);
+            var result = await ProcessAsync(taskData, ct).ConfigureAwait(false);
             return result;
         }
         finally
@@ -109,23 +109,23 @@ public abstract class ConcurrentProcessor<T>(Func<int, T> taskDataFactory) where
         List<T> results = [];
         while (taskData is not null)
         {
-            long semaphoreWait = await AwaitSemaphoreAsync(semaphore, ct);
-            Task<T> task = ManageProcessAsync(taskData.TaskId, tasks.Count, semaphoreWait, semaphore);
+            long semaphoreWait = await AwaitSemaphoreAsync(semaphore, ct).ConfigureAwait(false);
+            Task<T> task = ManageProcessAsync(taskData.TaskId, tasks.Count, semaphoreWait, semaphore, ct);
             tasks.Add(task);
 
             taskData = GetNextTaskData(taskDataFactory(taskData.TaskId));
 
             if (tasks.Count >= MaxConcurrency)
             {
-                Task<T> finishedTask = await Task.WhenAny(tasks);
-                results.Add(await finishedTask);
+                Task<T> finishedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
+                results.Add(await finishedTask.ConfigureAwait(false));
                 tasks.Remove(finishedTask);
             }
         }
-        await Task.WhenAll(tasks);
+        await Task.WhenAll(tasks).ConfigureAwait(false);
         foreach (var task in tasks)
         {
-            results.Add(await task);
+            results.Add(await task.ConfigureAwait(false));
         }
         return results;
     }

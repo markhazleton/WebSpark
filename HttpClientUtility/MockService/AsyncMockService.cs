@@ -1,5 +1,4 @@
-﻿
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace HttpClientUtility.MockService;
 
@@ -11,16 +10,21 @@ namespace HttpClientUtility.MockService;
 /// </summary>
 public class AsyncMockService : IAsyncMockService
 {
-
+    /// <summary>
+    /// Example method demonstrating a simple asynchronous operation with cancellation support.
+    /// </summary>
+    /// <param name="ct">Cancellation token to cancel the operation</param>
+    /// <returns>A task representing the asynchronous operation</returns>
     public static async Task ExampleMethodAsync(CancellationToken ct)
     {
         while (true)
         {
             ct.ThrowIfCancellationRequested();
             // Simulate work
-            await Task.Delay(1000, ct);
+            await Task.Delay(1000, ct).ConfigureAwait(false);
         }
     }
+
     /// <summary>
     /// Compute a value for a long time.
     /// </summary>
@@ -77,6 +81,13 @@ public class AsyncMockService : IAsyncMockService
             return result;
         });
     }
+
+    /// <summary>
+    /// Performs a long-running operation with cancellation support using a TaskCompletionSource.
+    /// </summary>
+    /// <param name="loop">Number of iterations to perform</param>
+    /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+    /// <returns>A task representing the asynchronous operation with a decimal result</returns>
     public async Task<decimal> LongRunningOperationWithCancellationTokenAsync(int loop,
                                                                               CancellationToken cancellationToken)
     {
@@ -99,14 +110,26 @@ public class AsyncMockService : IAsyncMockService
         if (completedTask == task)
         {
             // Extract the result, the task is finished and the await will return immediately
-            var result = await task;
+            var result = await task.ConfigureAwait(false);
 
             // Set the taskCompletionSource result
             taskCompletionSource.TrySetResult(result);
         }
         // Return the result of the TaskCompletionSource.Task
-        return await taskCompletionSource.Task;
+        return await taskCompletionSource.Task.ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Executes a long-running task with support for cancellation, logging, and error handling.
+    /// </summary>
+    /// <param name="name">Name of the task for logging purposes</param>
+    /// <param name="delay">Delay in milliseconds between iterations</param>
+    /// <param name="iterations">Number of iterations to perform</param>
+    /// <param name="throwEx">Whether to throw an exception during execution</param>
+    /// <param name="logger">Logger to record events and exceptions</param>
+    /// <param name="ct">Cancellation token to cancel the operation</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    /// <exception cref="TimeoutException">Thrown when the task is cancelled</exception>
     public static async Task LongRunningTask(
         string name,
         int delay,
@@ -125,7 +148,7 @@ public class AsyncMockService : IAsyncMockService
                 try
                 {
                     ct.ThrowIfCancellationRequested();
-                    await PerformTaskAsync(name, delay, throwEx, ct);
+                    await PerformTaskAsync(name, delay, throwEx, ct).ConfigureAwait(false);
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -156,9 +179,19 @@ public class AsyncMockService : IAsyncMockService
             return;
         }
     }
+
+    /// <summary>
+    /// Performs a simple task with configurable delay and exception throwing.
+    /// </summary>
+    /// <param name="name">Name of the task for error reporting</param>
+    /// <param name="delay">Delay in milliseconds</param>
+    /// <param name="throwEx">Whether to throw an exception after the delay</param>
+    /// <param name="ct">Cancellation token to cancel the operation</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    /// <exception cref="Exception">Thrown when throwEx is true</exception>
     public static async Task PerformTaskAsync(string name, int delay, bool throwEx, CancellationToken ct = default)
     {
-        await Task.Delay(delay, ct);
+        await Task.Delay(delay, ct).ConfigureAwait(false);
         ct.ThrowIfCancellationRequested();
 
         if (throwEx)

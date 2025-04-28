@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
@@ -7,46 +8,79 @@ using System.Xml.Linq;
 
 namespace HttpClientCrawler.Crawler;
 
-public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
+/// <summary>
+/// A simplified implementation of ISiteCrawler with local page saving capabilities
+/// </summary>
+public class SimpleSiteCrawler : ISiteCrawler
 {
-    private static readonly HashSet<string> crawledURLs = [];
-    private static readonly ConcurrentQueue<CrawlResult> crawlQueue = new();
-    private static readonly Lock lockObj = new();
-    private static readonly ConcurrentDictionary<string, CrawlResult> resultsDict = new();
-    private static readonly ConcurrentBag<string> notInSitemapLinks = [];
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<SimpleSiteCrawler> _logger;
+    private readonly RobotsTxtParser _robotsTxtParser;
 
-    public async Task InitializeDomainAsync(string domainUrl, CancellationToken ct = default)
+    /// <summary>
+    /// Initializes a new instance of the SimpleSiteCrawler
+    /// </summary>
+    public SimpleSiteCrawler(IHttpClientFactory httpClientFactory, ILogger<SimpleSiteCrawler> logger)
+    {
+        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _robotsTxtParser = new RobotsTxtParser(httpClientFactory, "HttpClientCrawler/1.0", logger);
+    }
+
+    /// <summary>
+    /// Initializes domain-specific data before crawling
+    /// </summary>
+    private async Task InitializeDomainAsync(string domainUrl, CrawlerOptions options, CancellationToken ct = default)
+    {
+        try
+        {
+            // Process robots.txt if enabled
+            if (options.RespectRobotsTxt)
+            {
+                await _robotsTxtParser.ProcessRobotsTxtAsync(domainUrl, ct);
+            }
+
+            // Process sitemap.xml if available
+            await ProcessSitemapAsync(domainUrl, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error initializing domain {Domain}", domainUrl);
+        }
+    }
+
+    /// <summary>
+    /// Attempts to fetch and process the site's sitemap.xml
+    /// </summary>
+    private async Task ProcessSitemapAsync(string domainUrl, CancellationToken ct = default)
     {
         var sitemapUrl = new Uri(new Uri(domainUrl), "sitemap.xml").ToString();
         try
         {
-            var response = await factory.CreateClient("SimpleSiteCrawler").GetAsync(sitemapUrl, ct);
+            using var httpClient = _httpClientFactory.CreateClient("SimpleSiteCrawler");
+            using var response = await httpClient.GetAsync(sitemapUrl, ct);
+
             if (response.IsSuccessStatusCode)
             {
                 var sitemapContent = await response.Content.ReadAsStringAsync(ct);
                 var sitemapLinks = ParseSitemap(sitemapContent);
-                foreach (var link in sitemapLinks)
-                {
-                    var normalizedLink = NormalizeUrl(link);
-                    if (!crawledURLs.Contains(normalizedLink) && !resultsDict.ContainsKey(normalizedLink))
-                    {
-                        crawlQueue.Enqueue(new CrawlResult(normalizedLink, domainUrl, 1, 1));
-                    }
-                }
-                Console.WriteLine($"Sitemap found and {sitemapLinks.Count} links added to the crawl queue.");
+
+                _logger.LogInformation("Sitemap found at {Url} with {Count} links", sitemapUrl, sitemapLinks.Count);
+                return;
             }
-            else
-            {
-                Console.WriteLine("Sitemap not found or inaccessible.");
-            }
+
+            _logger.LogInformation("Sitemap not found at {Url}", sitemapUrl);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error accessing sitemap: {ex.Message}");
+            _logger.LogWarning(ex, "Error accessing sitemap at {Url}", sitemapUrl);
         }
     }
 
-    private static List<string> ParseSitemap(string sitemapContent)
+    /// <summary>
+    /// Parses sitemap.xml content and extracts URLs
+    /// </summary>
+    private List<string> ParseSitemap(string sitemapContent)
     {
         // Return an empty list if the input is null or whitespace
         if (string.IsNullOrWhiteSpace(sitemapContent))
@@ -63,7 +97,7 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
             // Ensure xdoc.Root is not null before proceeding
             if (xdoc.Root == null)
             {
-                Console.WriteLine("The XML document root is null.");
+                _logger.LogWarning("The XML document root is null");
                 return links;
             }
 
@@ -71,109 +105,100 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
             XNamespace ns = xdoc.Root.GetDefaultNamespace();
 
             // Safely parse URLs with null checks
-            links = xdoc.Root.Elements(ns + "url")
-                             .Select(urlElement => urlElement.Element(ns + "loc")?.Value)
-                             .Where(loc => !string.IsNullOrWhiteSpace(loc)) // Filter out null or empty values
-                             .ToList();
+            var urlElements = xdoc.Root.Elements(ns + "url");
+            foreach (var urlElement in urlElements)
+            {
+                var locElement = urlElement.Element(ns + "loc");
+                if (locElement != null && !string.IsNullOrWhiteSpace(locElement.Value))
+                {
+                    links.Add(locElement.Value);
+                }
+            }
         }
         catch (XmlException ex)
         {
             // Handle specific XML parsing errors
-            Console.WriteLine($"XML error parsing sitemap: {ex.Message}");
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Handle other potential errors related to invalid operations
-            Console.WriteLine($"Invalid operation: {ex.Message}");
+            _logger.LogWarning(ex, "XML error parsing sitemap");
         }
         catch (Exception ex)
         {
             // Generic exception handler for other unexpected errors
-            Console.WriteLine($"Unexpected error parsing sitemap: {ex.Message}");
+            _logger.LogWarning(ex, "Unexpected error parsing sitemap");
         }
 
         return links;
     }
 
-
-    private static bool AddCrawlResult(CrawlResult? result)
+    /// <summary>
+    /// Adds a delay between requests to avoid overloading the server
+    /// </summary>
+    private static async Task DelayRequestAsync(int requestDelayMs, CancellationToken ct)
     {
-        if (result is null)
+        if (requestDelayMs > 0)
         {
-            return false;
-        }
-        lock (lockObj)
-        {
-            var normalizedUrl = NormalizeUrl(result.RequestPath);
-            if (resultsDict.ContainsKey(normalizedUrl))
-            {
-                return false;
-            }
-            result.RequestPath = normalizedUrl;
-            resultsDict[normalizedUrl] = result;
-            SavePageFireAndForget(result);
-
-            foreach (var foundUrl in result.CrawlLinks.ToArray())
-            {
-                var normalizedFoundUrl = NormalizeUrl(foundUrl);
-                if (crawledURLs.Contains(normalizedFoundUrl))
-                {
-                    continue;
-                }
-                if (resultsDict.ContainsKey(normalizedFoundUrl))
-                {
-                    continue;
-                }
-                if (crawlQueue.Any(w => w.RequestPath == normalizedFoundUrl))
-                {
-                    continue;
-                }
-
-                notInSitemapLinks.Add(normalizedFoundUrl); // Track links not in sitemap
-
-                var newCrawl = new CrawlResult(normalizedFoundUrl, result.RequestPath, result.Depth + 1, crawledURLs.Count + 1);
-                crawlQueue.Enqueue(newCrawl);
-            }
-            Console.WriteLine($"ID:{result.Id} CRAWLED:{resultsDict.Count:D5} QUEUE:{crawlQueue.Count:D5}  DEPTH:{result.Depth} TIME:{result.ElapsedMilliseconds:0,000} +++ Added Result: {result.RequestPath}");
-            return true;
+            await Task.Delay(requestDelayMs, ct).ConfigureAwait(false);
         }
     }
 
-    private static async Task DelayRequestAsync()
+    /// <summary>
+    /// Crawls a single page and returns the result
+    /// </summary>
+    private async Task<CrawlResult?> CrawlPageAsync(string url, int depth, string userAgent, CancellationToken ct = default)
     {
-        await Task.Delay(TimeSpan.FromMilliseconds(200)); // Adjust delay as needed
-    }
-
-    private async Task<CrawlResult?> CrawlPage(CrawlResult? crawlResult, CancellationToken ct = default)
-    {
-        if (crawlResult is null)
+        if (string.IsNullOrWhiteSpace(url))
         {
             return null;
         }
-        await DelayRequestAsync(); // Add delay before each request
+
         var stopwatch = Stopwatch.StartNew();
+        var crawlResult = new CrawlResult
+        {
+            RequestPath = url,
+            Depth = depth,
+            FoundUrl = url,
+            Id = Guid.NewGuid().GetHashCode()
+        };
 
         try
         {
-            var normalizedUrl = NormalizeUrl(crawlResult.RequestPath);
-            crawledURLs.Add(normalizedUrl);
-            var response = await factory.CreateClient("SimpleSiteCrawler").GetAsync(normalizedUrl, ct);
+            var httpClient = _httpClientFactory.CreateClient("SimpleSiteCrawler");
+
+            // Set user agent if provided
+            if (!string.IsNullOrEmpty(userAgent))
+            {
+                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+            }
+
+            var response = await httpClient.GetAsync(url, ct);
             crawlResult.StatusCode = response.StatusCode;
 
             if (response.IsSuccessStatusCode)
             {
                 crawlResult.ResponseResults = await response.Content.ReadAsStringAsync(ct);
+                _logger.LogDebug("Successfully crawled {Url}", url);
+            }
+            else
+            {
+                _logger.LogInformation("HTTP {StatusCode} from {Url}", response.StatusCode, url);
             }
         }
         catch (HttpRequestException ex)
         {
             crawlResult.StatusCode = ex.StatusCode ?? HttpStatusCode.InternalServerError;
             crawlResult.Errors.Add($"HTTP error: {ex.Message}");
+            _logger.LogWarning(ex, "HTTP error crawling {Url}", url);
+        }
+        catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+        {
+            crawlResult.StatusCode = HttpStatusCode.RequestTimeout;
+            crawlResult.Errors.Add($"Timeout error: {ex.Message}");
+            _logger.LogWarning(ex, "Timeout crawling {Url}", url);
         }
         catch (Exception ex)
         {
             crawlResult.StatusCode = HttpStatusCode.InternalServerError;
             crawlResult.Errors.Add($"General error: {ex.Message}");
+            _logger.LogError(ex, "Error crawling {Url}", url);
         }
         finally
         {
@@ -181,165 +206,87 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
             crawlResult.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
             crawlResult.CompletionDate = DateTime.Now;
         }
+
         return crawlResult;
     }
 
-    public async Task<CrawlDomainViewModel> CrawlAsync(int maxCrawlDepth, string link, CancellationToken ct = default)
-    {
-        await InitializeDomainAsync(link, ct);
-
-        var firstCrawlResult = await StartInitialCrawlAsync(link, ct);
-        if (firstCrawlResult != null)
-        {
-            int id = 1;
-            id = await CrawlFoundLinks(firstCrawlResult, id, ct);
-            id = await CrawlAllFoundLinks(id, ct);
-            id = await ProcessCrawlQueue(id, ct);
-        }
-
-        // Output links found but not in the sitemap
-        Console.WriteLine("Links found but not in the sitemap:");
-        foreach (var url in notInSitemapLinks)
-        {
-            Console.WriteLine(url);
-        }
-
-        var result = new CrawlDomainViewModel
-        {
-            CrawlResults = resultsDict.Values.ToList()
-        };
-        return result;
-    }
-
-    private async Task<CrawlResult?> StartInitialCrawlAsync(string link, CancellationToken ct)
-    {
-        var firstCrawl = new CrawlResult(link, link, 1, 1);
-        var firstCrawlResult = await CrawlPage(firstCrawl, ct);
-        if (firstCrawlResult != null)
-        {
-            AddCrawlResult(firstCrawlResult);
-            Console.WriteLine($"--First CrawlAsync Completed--{firstCrawlResult.RequestPath} -- found {firstCrawlResult.CrawlLinks.Count} links");
-        }
-        return firstCrawlResult;
-    }
-
-    private async Task<int> ProcessCrawlQueue(int id, CancellationToken ct)
-    {
-        var tasks = new List<Task>();
-        while (crawlQueue.TryDequeue(out CrawlResult? crawlNext))
-        {
-            if (crawlNext is null || crawledURLs.Contains(NormalizeUrl(crawlNext.RequestPath)))
-            {
-                continue;
-            }
-
-            crawlNext.Id = id++;
-            tasks.Add(Task.Run(async () =>
-            {
-                var queueCrawlResult = await CrawlPage(crawlNext, ct);
-                if (queueCrawlResult is not null)
-                {
-                    AddCrawlResult(queueCrawlResult);
-                }
-            }));
-        }
-        await Task.WhenAll(tasks);
-        return id;
-    }
-
-    private async Task<int> CrawlAllFoundLinks(int id, CancellationToken ct)
-    {
-        foreach (var item in resultsDict.Values)
-        {
-            foreach (var childLink in item.CrawlLinks.ToArray())
-            {
-                var normalizedChildLink = NormalizeUrl(childLink);
-                if (crawledURLs.Contains(normalizedChildLink))
-                {
-                    continue;
-                }
-                var childCrawl = new CrawlResult(normalizedChildLink, item.RequestPath, 3, id++);
-                var childCrawlResult = await CrawlPage(childCrawl, ct);
-                if (childCrawlResult is not null)
-                {
-                    AddCrawlResult(childCrawlResult);
-                }
-            }
-        }
-        return id;
-    }
-
-    private async Task<int> CrawlFoundLinks(CrawlResult? crawlResult, int id, CancellationToken ct)
-    {
-        if (crawlResult is null) { return id; }
-        foreach (var childLink in crawlResult.CrawlLinks.ToArray())
-        {
-            var normalizedChildLink = NormalizeUrl(childLink);
-            if (crawledURLs.Contains(normalizedChildLink)) { continue; }
-            var childCrawl = new CrawlResult(normalizedChildLink, crawlResult.RequestPath, 2, id++);
-            var childCrawlResult = await CrawlPage(childCrawl, ct);
-            if (childCrawlResult is not null)
-            {
-                AddCrawlResult(childCrawlResult);
-            }
-        }
-        return id;
-    }
-
+    /// <summary>
+    /// Normalizes URLs to avoid duplicates caused by case sensitivity or trailing slashes
+    /// </summary>
     private static string NormalizeUrl(string url)
     {
-        var uri = new Uri(url);
-        return uri.GetLeftPart(UriPartial.Path).TrimEnd('/') + uri.Query;
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return string.Empty;
+        }
+
+        try
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                return uri.GetLeftPart(UriPartial.Path).TrimEnd('/').ToLowerInvariant() + uri.Query;
+            }
+
+            return url.Trim().TrimEnd('/').ToLowerInvariant();
+        }
+        catch
+        {
+            return url.Trim().TrimEnd('/').ToLowerInvariant();
+        }
     }
 
-    public static async Task SavePageAsync(CrawlResult result)
+    /// <summary>
+    /// Saves HTML content to disk
+    /// </summary>
+    private async Task SavePageToDiskAsync(CrawlResult result, string? outputDirectory)
     {
         if (result == null || string.IsNullOrWhiteSpace(result.ResponseResults))
         {
-            Console.WriteLine("No content to save or result is null.");
+            _logger.LogDebug("No content to save or result is null");
             return;
         }
 
-        string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "pages");
-        Directory.CreateDirectory(directoryPath);
-
-        string safeFileName = GetSafeFileName(result.RequestPath, directoryPath);
-        string filePath = Path.Combine(directoryPath, safeFileName);
-
-        string updatedHtmlContent = ResolveRelativeLinks(result.ResponseResults, result.RequestPath);
-
-        var validationMessages = ValidateHtml(updatedHtmlContent);
-        if (validationMessages != null)
-        {
-            Console.WriteLine($"Validation errors found for {result.RequestPath}:");
-            foreach (var message in validationMessages)
-            {
-                Console.WriteLine(message);
-            }
-        }
-
-        EnsureDirectoryExists(filePath);
-        await File.WriteAllTextAsync(filePath, updatedHtmlContent);
-        Console.WriteLine($"Saved {result.RequestPath} to {filePath}");
-    }
-
-    public static void EnsureDirectoryExists(string filePath)
-    {
         try
         {
-            string? directoryPath = Path.GetDirectoryName(filePath);
-            if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+            string directoryPath = string.IsNullOrWhiteSpace(outputDirectory)
+                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "pages")
+                : outputDirectory;
+
+            Directory.CreateDirectory(directoryPath);
+
+            string safeFileName = GetSafeFileName(result.RequestPath, directoryPath);
+            string filePath = Path.Combine(directoryPath, safeFileName);
+
+            string updatedHtmlContent = ResolveRelativeLinks(result.ResponseResults, result.RequestPath);
+
+            // Validate HTML if required
+            var validationMessages = ValidateHtml(updatedHtmlContent);
+            if (validationMessages != null && validationMessages.Any())
             {
-                Directory.CreateDirectory(directoryPath);
+                _logger.LogInformation("Validation issues found for {Url}: {Issues}",
+                    result.RequestPath, string.Join("; ", validationMessages));
             }
+
+            // Ensure directory exists
+            string? directory = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            await File.WriteAllTextAsync(filePath, updatedHtmlContent);
+            _logger.LogDebug("Saved {Url} to {FilePath}", result.RequestPath, filePath);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error ensuring directory exists: {ex.Message}");
+            _logger.LogError(ex, "Error saving page {Url} to disk", result.RequestPath);
         }
     }
 
-    public static string GetSafeFileName(string url, string outputDir)
+    /// <summary>
+    /// Converts a URL to a safe filename for saving on disk
+    /// </summary>
+    private static string GetSafeFileName(string url, string outputDir)
     {
         try
         {
@@ -352,85 +299,277 @@ public class SimpleSiteCrawler(IHttpClientFactory factory) : ISiteCrawler
                 path = path.TrimEnd('/') + ".html";
             }
 
-            path = path.Replace('/', '\\').TrimStart(Path.DirectorySeparatorChar);
-            path = path.Length <= 150 ? path : path.Substring(0, 150);
+            // Replace invalid characters and limit length
+            path = path.Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);
+            path = path.Length <= 150 ? path : path[..150];
 
-            return Path.Combine(outputDir, path);
+            return path;
         }
         catch
         {
-            return Path.Combine(outputDir, "default_safe_name.html");
+            return $"page_{Guid.NewGuid().ToString("N")}.html";
         }
     }
 
+    /// <summary>
+    /// Resolves relative links in HTML content to absolute URLs
+    /// </summary>
     private static string ResolveRelativeLinks(string htmlContent, string baseUrl)
     {
-        var baseUri = new Uri(baseUrl);
-        var htmlDoc = new HtmlDocument();
-        htmlDoc.LoadHtml(htmlContent);
-
-        var nodes = htmlDoc.DocumentNode.SelectNodes("//a[@href]|//img[@src]|//link[@href]|//script[@src]|//iframe[@src]|//embed[@src]|//object[@data]|//source[@src]|//track[@src]|//form[@action]|//area[@href]|//blockquote[@cite]|//q[@cite]|//ins[@cite]|//del[@cite]");
-        if (nodes != null)
+        try
         {
-            foreach (var node in nodes)
+            var baseUri = new Uri(baseUrl);
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(htmlContent);
+
+            var nodes = htmlDoc.DocumentNode.SelectNodes("//a[@href]|//img[@src]|//link[@href]|//script[@src]|//iframe[@src]");
+            if (nodes != null)
             {
-                string attributeName = node.Name switch
+                foreach (var node in nodes)
                 {
-                    "a" or "link" or "area" or "blockquote" or "q" or "ins" or "del" => "href",
-                    "form" => "action",
-                    "object" => "data",
-                    "track" or "source" => "src",
-                    _ => "src"
-                };
+                    string attributeName = node.Name switch
+                    {
+                        "a" or "link" => "href",
+                        _ => "src"
+                    };
 
-                string originalValue = node.Attributes[attributeName]?.Value;
+                    string originalValue = node.GetAttributeValue(attributeName, string.Empty);
 
-                if (!string.IsNullOrEmpty(originalValue) && Uri.TryCreate(originalValue, UriKind.Relative, out Uri relativeUri))
+                    if (!string.IsNullOrEmpty(originalValue) && Uri.TryCreate(originalValue, UriKind.RelativeOrAbsolute, out var relativeUri))
+                    {
+                        if (!relativeUri.IsAbsoluteUri)
+                        {
+                            var absoluteUri = new Uri(baseUri, relativeUri);
+                            node.SetAttributeValue(attributeName, absoluteUri.AbsoluteUri);
+                        }
+                    }
+                }
+            }
+            return htmlDoc.DocumentNode.OuterHtml;
+        }
+        catch (Exception)
+        {
+            return htmlContent; // Return original content if transformation fails
+        }
+    }
+
+    /// <summary>
+    /// Validates HTML content for basic issues
+    /// </summary>
+    private static List<string>? ValidateHtml(string htmlContent)
+    {
+        if (string.IsNullOrWhiteSpace(htmlContent))
+        {
+            return null;
+        }
+
+        List<string> messages = [];
+
+        try
+        {
+            var htmlDoc = new HtmlDocument
+            {
+                OptionCheckSyntax = true
+            };
+            htmlDoc.LoadHtml(htmlContent);
+
+            if (htmlDoc.ParseErrors != null && htmlDoc.ParseErrors.Any())
+            {
+                messages.AddRange(htmlDoc.ParseErrors
+                    .Select(error => $"Line {error.Line}: {error.Reason}")
+                    .Take(10)); // Limit to first 10 errors
+            }
+
+            // Check for images without alt attributes
+            var imgNodes = htmlDoc.DocumentNode.SelectNodes("//img[not(@alt)]");
+            if (imgNodes != null)
+            {
+                messages.Add($"Found {imgNodes.Count} image tags without alt attributes");
+            }
+
+            return messages.Count == 0 ? null : messages;
+        }
+        catch
+        {
+            return ["Unable to parse HTML content"];
+        }
+    }
+
+    /// <summary>
+    /// Crawls a website starting from the given URL with the specified options
+    /// </summary>
+    public async Task<CrawlDomainViewModel> CrawlAsync(string startUrl, CrawlerOptions options, CancellationToken ct = default)
+    {
+        if (string.IsNullOrEmpty(startUrl))
+        {
+            throw new ArgumentException("Start URL cannot be null or empty", nameof(startUrl));
+        }
+
+        // Use default options if none provided
+        options ??= new CrawlerOptions();
+
+        var crawledURLs = new HashSet<string>();
+        var linksToCrawl = new ConcurrentQueue<(string Url, int Depth)>();
+        var crawlResults = new ConcurrentDictionary<string, CrawlResult>();
+
+        var viewModel = new CrawlDomainViewModel
+        {
+            StartPath = startUrl,
+            MaxPagesCrawled = options.MaxPages,
+            IsCrawling = true
+        };
+
+        try
+        {
+            // Initialize domain data
+            await InitializeDomainAsync(startUrl, options, ct);
+
+            // Add start URL to queue
+            string normalizedStartUrl = NormalizeUrl(startUrl);
+            linksToCrawl.Enqueue((normalizedStartUrl, 1));
+
+            // Process the queue
+            while (linksToCrawl.TryDequeue(out var item) &&
+                   crawlResults.Count < options.MaxPages &&
+                   !ct.IsCancellationRequested)
+            {
+                var (url, depth) = item;
+
+                // Skip if already crawled
+                if (crawledURLs.Contains(url))
                 {
-                    var absoluteUri = new Uri(baseUri, relativeUri);
-                    node.Attributes[attributeName].Value = absoluteUri.AbsoluteUri;
+                    continue;
+                }
+
+                // Skip if depth exceeds max
+                if (depth > options.MaxDepth)
+                {
+                    continue;
+                }
+
+                // Mark as crawled
+                crawledURLs.Add(url);
+
+                // Add delay between requests
+                await DelayRequestAsync(options.RequestDelayMs, ct);
+
+                // Crawl the page
+                var result = await CrawlPageAsync(url, depth, options.UserAgent, ct);
+                if (result != null)
+                {
+                    // Add to results
+                    crawlResults.TryAdd(url, result);
+
+                    // Process links if status code is OK
+                    if (result.StatusCode == HttpStatusCode.OK)
+                    {
+                        // Process found links
+                        foreach (var foundUrl in result.CrawlLinks)
+                        {
+                            try
+                            {
+                                var normalizedUrl = NormalizeUrl(foundUrl);
+
+                                // Skip if empty or already processed
+                                if (string.IsNullOrEmpty(normalizedUrl) ||
+                                    crawledURLs.Contains(normalizedUrl) ||
+                                    crawlResults.ContainsKey(normalizedUrl))
+                                {
+                                    continue;
+                                }
+
+                                // Check robots.txt if enabled
+                                if (options.RespectRobotsTxt && !_robotsTxtParser.IsAllowed(normalizedUrl))
+                                {
+                                    _logger.LogDebug("Skipping {Url} - disallowed by robots.txt", normalizedUrl);
+                                    continue;
+                                }
+
+                                // Add to queue
+                                linksToCrawl.Enqueue((normalizedUrl, depth + 1));
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogWarning(ex, "Error processing link: {Link}", foundUrl);
+                            }
+                        }
+                    }
+
+                    // Save page to disk if enabled
+                    if (options.SavePagesToDisk && result.StatusCode == HttpStatusCode.OK)
+                    {
+                        await SavePageToDiskAsync(result, options.OutputDirectory);
+                    }
+
+                    // Log progress
+                    if (crawlResults.Count % 10 == 0)
+                    {
+                        _logger.LogInformation("Crawled: {CrawledCount} Queue: {QueueCount} Current depth: {Depth}",
+                            crawlResults.Count, linksToCrawl.Count, depth);
+                    }
                 }
             }
         }
-        return htmlDoc.DocumentNode.OuterHtml;
-    }
-
-    public static List<string>? ValidateHtml(string htmlContent)
-    {
-        List<string> messages = [];
-
-        var htmlDoc = new HtmlDocument
+        catch (OperationCanceledException)
         {
-            OptionCheckSyntax = true
-        };
-        htmlDoc.LoadHtml(htmlContent);
-
-        if (htmlDoc.ParseErrors != null && htmlDoc.ParseErrors.Any())
+            _logger.LogInformation("Crawl operation was cancelled");
+            throw; // Re-throw to allow proper cancellation handling
+        }
+        catch (Exception ex)
         {
-            messages.AddRange(htmlDoc.ParseErrors.Select(error => $"Line {error.Line}: {error.Reason}"));
+            _logger.LogError(ex, "Error occurred during crawling");
+            throw; // Re-throw to allow proper exception handling
+        }
+        finally
+        {
+            viewModel.IsCrawling = false;
+            _logger.LogInformation("Crawl complete, processed {Count} pages", crawlResults.Count);
         }
 
-        var imgNodes = htmlDoc.DocumentNode.SelectNodes("//img[not(@alt)]");
-        if (imgNodes != null)
+        // Populate view model
+        viewModel.CrawlResults = crawlResults.Values.ToList();
+
+        // Generate sitemap
+        if (crawlResults.Any())
         {
-            messages.AddRange(imgNodes.Select(node => $"Image tag without alt attribute found. Line: {node.Line}"));
+            viewModel.Sitemap = GenerateSitemapXml(crawlResults.Values
+                .Where(r => r.StatusCode == HttpStatusCode.OK)
+                .Select(r => r.RequestPath));
         }
 
-        return messages.Count == 0 ? null : messages;
+        return viewModel;
     }
 
-    public static void SavePageFireAndForget(CrawlResult result)
+    /// <summary>
+    /// Generates a sitemap XML string from the given URLs
+    /// </summary>
+    private static string GenerateSitemapXml(IEnumerable<string> urls)
     {
-        Task.Run(async () =>
+        if (urls == null || !urls.Any())
         {
-            try
-            {
-                await SavePageAsync(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred while saving the page: {ex.Message}");
-            }
-        }).ConfigureAwait(false);
+            return string.Empty;
+        }
+
+        try
+        {
+            // Define the namespace for the sitemap
+            XNamespace ns = "http://www.sitemaps.org/schemas/sitemap/0.9";
+
+            // Create the sitemap document with the namespace
+            var sitemap = new XDocument(
+                new XDeclaration("1.0", "utf-8", "yes"),
+                new XElement(ns + "urlset",
+                    urls.Select(url => new XElement(ns + "url",
+                        new XElement(ns + "loc", url),
+                        new XElement(ns + "lastmod", DateTime.UtcNow.ToString("yyyy-MM-dd")),
+                        new XElement(ns + "changefreq", "weekly"),
+                        new XElement(ns + "priority", "0.5")))));
+
+            return sitemap.ToString();
+        }
+        catch (Exception)
+        {
+            return string.Empty;
+        }
     }
 }

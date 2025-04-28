@@ -6,7 +6,7 @@ namespace HttpClientUtility.MemoryCache;
 /// <summary>
 /// Memory cache manager
 /// </summary>
-/// <param name="cache"></param>
+/// <param name="cache">The memory cache implementation</param>
 public class MemoryCacheManager(IMemoryCache cache) : IMemoryCacheManager, IDisposable
 {
     /// <summary>
@@ -38,7 +38,7 @@ public class MemoryCacheManager(IMemoryCache cache) : IMemoryCacheManager, IDisp
     /// <param name="value">Value of cached item</param>
     /// <param name="reason">Eviction reason</param>
     /// <param name="state">State</param>
-    private void PostEviction(object key, object value, EvictionReason reason, object state)
+    private void PostEviction(object key, object? value, EvictionReason reason, object? state)
     {
         // if cached item just changed, then do nothing
         if (reason == EvictionReason.Replaced)
@@ -140,14 +140,14 @@ public class MemoryCacheManager(IMemoryCache cache) : IMemoryCacheManager, IDisp
     public virtual T Get<T>(string key, Func<T> acquire, int? cacheTime = null)
     {
         // item already is in cache, so return it
-        if (cache.TryGetValue(key, out T value))
+        if (cache.TryGetValue(key, out T? value) && value is not null)
             return value;
 
         // or create it using passed function
         var result = acquire();
 
         // and set in cache (if cache time is defined)
-        if ((cacheTime ?? 30) > 0)
+        if ((cacheTime ?? 30) > 0 && result is not null)
             Set(key, result, cacheTime ?? 30);
 
         return result;
@@ -215,7 +215,7 @@ public class MemoryCacheManager(IMemoryCache cache) : IMemoryCacheManager, IDisp
     /// <param name="cacheTimeMinutes">Cache time in minutes</param>
     public virtual void Set(string key, object data, int cacheTimeMinutes)
     {
-        if (data != null)
+        if (data is not null)
         {
             cache.Set(AddKey(key), data, GetMemoryCacheEntryOptions(TimeSpan.FromMinutes(cacheTimeMinutes)));
         }

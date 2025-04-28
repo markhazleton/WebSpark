@@ -1,15 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using HttpClientUtility.Utilities.Logging;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace HttpClientUtility.RequestResult;
 
-
 /// <summary>
 /// Represents a HttpRequestResultService implementation that uses Polly for retry and circuit breaker policies.
 /// </summary>
+/// <remarks>
+/// This service adds resilience patterns (retry and circuit breaker) with standardized logging
+/// and error handling to HTTP requests.
+/// </remarks>
 public class HttpRequestResultServicePolly : IHttpRequestResultService
 {
     private readonly ILogger<HttpRequestResultServicePolly> _logger;
@@ -34,30 +39,93 @@ public class HttpRequestResultServicePolly : IHttpRequestResultService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _options = options ?? throw new ArgumentNullException(nameof(options));
 
-        // Configure the retry policy
+        // Configure the retry policy with enhanced logging
         _retryPolicy = Policy
             .Handle<Exception>()
-            .WaitAndRetryAsync(options.MaxRetryAttempts, retryAttempt => options.RetryDelay,
+            .WaitAndRetryAsync(
+                options.MaxRetryAttempts,
+                retryAttempt => options.RetryDelay,
                 (exception, timespan, retryCount, context) =>
                 {
-                    // Optionally, you can log or handle the retry attempt here
-                    _errorList.Add($"Polly.RetryPolicy Retries:{retryCount}, exception:{exception.Message}");
+                    string correlationId = context.ContainsKey("correlationId")
+                        ? context["correlationId"]?.ToString() ?? Guid.NewGuid().ToString()
+                        : Guid.NewGuid().ToString();
+
+                    // Create rich logging context
+                    var contextData = new Dictionary<string, object>
+                    {
+                        ["RetryCount"] = retryCount,
+                        ["RetryDelay"] = timespan.TotalMilliseconds,
+                        ["MaxRetries"] = options.MaxRetryAttempts
+                    };
+
+                    // Log the retry with detailed information
+                    _logger.LogWarning(
+                        exception,
+                        "Retry {RetryCount}/{MaxRetries} after {RetryDelay}ms due to: {ErrorMessage} [CorrelationId: {CorrelationId}]",
+                        retryCount,
+                        options.MaxRetryAttempts,
+                        timespan.TotalMilliseconds,
+                        exception.Message,
+                        correlationId);
+
+                    _errorList.Add($"Retry {retryCount}/{options.MaxRetryAttempts}: {exception.Message} [CorrelationId: {correlationId}]");
                 });
 
-        // Configure the circuit breaker policy
+        // Configure the circuit breaker policy with enhanced logging
         _circuitBreakerPolicy = Policy
             .Handle<Exception>()
-            .CircuitBreakerAsync(options.CircuitBreakerThreshold, options.CircuitBreakerDuration,
-                (exception, duration) =>
-                {
-                    // Optionally, you can log or handle the circuit breaker state change here
-                    _errorList.Add($"Polly.CircuitBreaker: duration{duration.TotalSeconds} exception:{exception.Message}");
-                },
-                () =>
-                {
-                    // Optionally, you can handle the circuit breaker being reset here
-                    _errorList.Add($"Polly.CircuitBreaker: RESET");
-                });
+            .CircuitBreakerAsync(
+                options.CircuitBreakerThreshold,
+                options.CircuitBreakerDuration,
+                OnCircuitBreak,
+                OnCircuitReset);
+    }
+
+    /// <summary>
+    /// Handles circuit breaking events with standardized logging.
+    /// </summary>
+    private void OnCircuitBreak(Exception exception, TimeSpan duration)
+    {
+        var correlationId = Guid.NewGuid().ToString();
+
+        // Create rich logging context
+        var contextData = new Dictionary<string, object>
+        {
+            ["CircuitBreakDuration"] = duration.TotalSeconds,
+            ["Threshold"] = _options.CircuitBreakerThreshold,
+            ["ExceptionType"] = exception.GetType().Name
+        };
+
+        // Log with rich context using our standardized approach
+        ErrorHandlingUtility.LogException(
+            exception,
+            _logger,
+            "Circuit Breaker Opened",
+            correlationId,
+            contextData);
+
+        _logger.LogError(
+            "Circuit breaker opened for {DurationSeconds}s due to: {ErrorMessage} [CorrelationId: {CorrelationId}]",
+            duration.TotalSeconds,
+            exception.Message,
+            correlationId);
+
+        _errorList.Add($"Circuit breaker opened for {duration.TotalSeconds}s: {exception.Message} [CorrelationId: {correlationId}]");
+    }
+
+    /// <summary>
+    /// Handles circuit reset events with standardized logging.
+    /// </summary>
+    private void OnCircuitReset()
+    {
+        var correlationId = Guid.NewGuid().ToString();
+
+        _logger.LogInformation(
+            "Circuit breaker reset - service recovered [CorrelationId: {CorrelationId}]",
+            correlationId);
+
+        _errorList.Add($"Circuit breaker reset [CorrelationId: {correlationId}]");
     }
 
     /// <summary>
@@ -65,8 +133,17 @@ public class HttpRequestResultServicePolly : IHttpRequestResultService
     /// </summary>
     /// <typeparam name="T">The type of the response content.</typeparam>
     /// <param name="statusCall">The HttpRequestResult object representing the request.</param>
+    /// <param name="memberName">Name of the calling member (automatically populated)</param>
+    /// <param name="filePath">File path of the calling code (automatically populated)</param>
+    /// <param name="lineNumber">Line number of the calling code (automatically populated)</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The HttpRequestResult object with the response content.</returns>
+    /// <remarks>
+    /// This method implements resilience patterns with standardized error handling:
+    /// 1. Circuit breaker pattern prevents cascading failures when a service is unavailable
+    /// 2. Retry pattern handles transient failures with exponential backoff
+    /// 3. All exceptions and policy events are logged with correlation IDs for traceability
+    /// </remarks>
     public async Task<HttpRequestResult<T>> HttpSendRequestResultAsync<T>(
         HttpRequestResult<T> statusCall,
         [CallerMemberName] string memberName = "",
@@ -74,25 +151,84 @@ public class HttpRequestResultServicePolly : IHttpRequestResultService
         [CallerLineNumber] int lineNumber = 0,
         CancellationToken ct = default)
     {
-        // Wrap the GetAsync call with the circuit breaker policies
+        var stopwatch = Stopwatch.StartNew();
+        string correlationId = statusCall.CorrelationId;
+        string requestPath = statusCall.SafeRequestPath;
+
+        // Create context data to share with policies
+        var pollyContext = new Context
+        {
+            ["correlationId"] = correlationId,
+            ["requestPath"] = requestPath,
+            ["requestMethod"] = statusCall.RequestMethod.Method
+        };
+
+        // Log the beginning of the resilient request
+        _logger.LogInformation(
+            "Beginning resilient HTTP {Method} request to {Path} with circuit state: {CircuitState} [CorrelationId: {CorrelationId}]",
+            statusCall.RequestMethod.Method,
+            requestPath,
+            _circuitBreakerPolicy.CircuitState,
+            correlationId);
+
+        statusCall.RequestContext["CircuitState"] = _circuitBreakerPolicy.CircuitState.ToString();
+        statusCall.RequestContext["MaxRetries"] = _options.MaxRetryAttempts;
+
         try
         {
-            statusCall = await _circuitBreakerPolicy.ExecuteAsync(() => _service.HttpSendRequestResultAsync(
-                statusCall,
-                memberName, 
-                filePath, 
-                lineNumber, 
-                ct));
+            // Execute the request with the circuit breaker and retry policies
+            statusCall = await _circuitBreakerPolicy
+                .ExecuteAsync(ctx => _service.HttpSendRequestResultAsync(
+                    statusCall,
+                    memberName,
+                    filePath,
+                    lineNumber,
+                    ct),
+                pollyContext)
+                .ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "Polly:CircuitBreaker:Exception");
-            _errorList.Add($"Polly:GetAsync:Exception:{ex.Message}");
+            // Create rich context data for logging
+            var contextData = new Dictionary<string, object>
+            {
+                ["CircuitState"] = _circuitBreakerPolicy.CircuitState.ToString(),
+                ["RequestPath"] = requestPath,
+                ["RequestMethod"] = statusCall.RequestMethod.Method
+            };
+
+            // Log the exception with rich context
+            ErrorHandlingUtility.LogException(
+                ex,
+                _logger,
+                "Resilience Policy",
+                correlationId,
+                contextData);
+
+            statusCall.ProcessException(ex, "Resilience policy error");
         }
+        finally
+        {
+            // Stop timing and record metrics
+            stopwatch.Stop();
 
-        statusCall.ErrorList.AddRange(_errorList);
+            // Add all error messages from retries and circuit breaker events
+            statusCall.ErrorList.AddRange(_errorList);
+            _errorList.Clear();
 
-        _errorList.Clear();
+            // Add context information
+            statusCall.RequestContext["ResilienceLayerDurationMs"] = stopwatch.ElapsedMilliseconds;
+            statusCall.RequestContext["FinalCircuitState"] = _circuitBreakerPolicy.CircuitState.ToString();
+
+            // Log completion
+            _logger.LogInformation(
+                "Completed resilient HTTP {Method} request to {Path} in {DurationMs}ms with status {Status} [CorrelationId: {CorrelationId}]",
+                statusCall.RequestMethod.Method,
+                requestPath,
+                stopwatch.ElapsedMilliseconds,
+                statusCall.StatusCode,
+                correlationId);
+        }
 
         return statusCall;
     }

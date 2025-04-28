@@ -1,22 +1,31 @@
-﻿
-namespace HttpClientUtility.MockService;
+﻿namespace HttpClientUtility.MockService;
 /// <summary>
 /// Mock Results
 /// </summary>
 public class MockResults
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MockResults"/> class with specified parameters.
+    /// </summary>
+    /// <param name="loopCount">The number of iterations to perform</param>
+    /// <param name="maxTimeMS">The maximum time in milliseconds allowed for execution</param>
     public MockResults(int loopCount, int maxTimeMS)
     {
         LoopCount = loopCount;
         MaxTimeMS = maxTimeMS;
 
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MockResults"/> class with default values.
+    /// </summary>
     public MockResults()
     {
         LoopCount = 0;
         MaxTimeMS = 0;
 
     }
+
     /// <summary>
     /// Loop Count (number of iterations of work to perform)
     /// </summary>

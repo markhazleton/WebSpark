@@ -165,6 +165,8 @@ builder.Services.AddScoped<IJShowService>(serviceProvider =>
     return service;
 });
 
+builder.Services.AddScoped<SiteCrawler, SiteCrawler>();
+
 
 // Transient Services
 builder.Services.AddTransient<CsvProcessingService>();
