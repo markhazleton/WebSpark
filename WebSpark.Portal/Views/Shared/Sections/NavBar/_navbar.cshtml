@@ -1,14 +1,63 @@
-﻿<nav class="navbar navbar-marketing navbar-expand-lg navbar-light fixed-top">
-    <div class="container px-5">
-        <a class="navbar-brand text-white" href="/">WebSpark</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i data-feather="menu"></i></button>
+﻿<nav class="navbar navbar-expand-lg fixed-top shadow-sm" aria-label="Main navigation">
+    <div class="container">
+        <a class="navbar-brand" href="/">WebSpark</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto me-lg-5 nav-pills">
-                <li class="nav-item "><a class="nav-link custom-pill" href="/PromptSpark">PromptSpark</a></li>
-                <li class="nav-item "><a class="nav-link custom-pill" href="/AsyncSpark">AsyncSpark</a></li>
-                <li class="nav-item "><a class="nav-link custom-pill" href="/DataSpark">DataSpark</a></li>
-                <li class="nav-item "><a class="nav-link custom-pill" href="/TriviaSpark">TriviaSpark</a></li>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3 theme-nav-link" href="/PromptSpark">PromptSpark</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3 theme-nav-link" href="/AsyncSpark">AsyncSpark</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3 theme-nav-link" href="/DataSpark">DataSpark</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3 theme-nav-link" href="/TriviaSpark">TriviaSpark</a>
+                </li>
+                <li class="nav-item ms-lg-2">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill theme-toggle" aria-label="Toggle theme"
+                        title="Toggle light/dark mode">
+                        <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
+                        <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
+                    </button>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<!-- Styles for theme-nav-link to ensure visibility in both themes -->
+<style>
+    /* Light theme (default) */
+    .theme-nav-link {
+        color: rgba(0, 0, 0, 0.7);
+    }
+
+    .theme-nav-link:hover {
+        color: rgba(0, 0, 0, 0.9);
+    }
+
+    /* Dark theme */
+    [data-bs-theme="dark"] .theme-nav-link {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    [data-bs-theme="dark"] .theme-nav-link:hover {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Override Bootstrap's default navbar color in dark mode */
+    [data-bs-theme="dark"] .navbar {
+        background-color: #212529;
+    }
+</style>
+
+<!-- Spacer to prevent content from being hidden under fixed navbar -->
+<div class="mb-5 pt-5"></div>

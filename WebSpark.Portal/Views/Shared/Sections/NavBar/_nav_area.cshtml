@@ -3,11 +3,12 @@
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
 @{
     var areaName1 = ViewContext.RouteData.Values["area"]?.ToString();
-    var currentPath = $"/{ViewContext.RouteData.Values["area"]}/{ViewContext.RouteData.Values["controller"]}/{ViewContext.RouteData.Values["action"]}";
+    var currentPath =
+    $"/{ViewContext.RouteData.Values["area"]}/{ViewContext.RouteData.Values["controller"]}/{ViewContext.RouteData.Values["action"]}";
     var currentArea = $"/{ViewContext.RouteData.Values["area"]}";
     var jsonFile = areaName1 != null
-        ? System.IO.Path.Combine(Environment.ContentRootPath, "Areas", areaName1, "Views", "Shared", "navigation.json")
-        : System.IO.Path.Combine(Environment.ContentRootPath, "Views", "Shared", "navigation.json");
+    ? System.IO.Path.Combine(Environment.ContentRootPath, "Areas", areaName1, "Views", "Shared", "navigation.json")
+    : System.IO.Path.Combine(Environment.ContentRootPath, "Views", "Shared", "navigation.json");
 
     JsonDocument menuItems = null;
     if (File.Exists(jsonFile))
@@ -19,65 +20,42 @@
 
 @if (menuItems != null)
 {
-    <section>
-        <!-- Example 5: Navbar with Secondary Background and Pills -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary mb-4">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="@currentArea">@areaName1</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav5" aria-controls="navbarNav5" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav5">
-                    <ul class="navbar-nav nav-pills">
-                        @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
+    <nav class="navbar navbar-expand-lg bg-secondary mb-4 shadow-sm" aria-label="Area navigation">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="@currentArea">
+                <i class="bi bi-folder me-1"></i>@areaName1
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#areaNavbar"
+                aria-controls="areaNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="areaNavbar">
+                <ul class="navbar-nav ms-auto">
+                    @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
+                    {
+                        string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() : "anonymous";
+                        var url = item.GetProperty("url").GetString().ToLower();
+                        var text = item.GetProperty("text").GetString();
+                        var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
+
+                        if ((role == "admin" && User.Identity.IsAuthenticated) || role == "anonymous")
                         {
-                            // Attempt to get the "role" property
-                            string role = "anonymous"; // Default value
-                            if (item.TryGetProperty("role", out var roleElement))
-                            {
-                                role = roleElement.GetString();
-                            }
-                            var url = item.GetProperty("url").GetString().ToLower();
-                            var text = item.GetProperty("text").GetString();
-                            var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
-
-                            if (role == "admin" && User.Identity.IsAuthenticated)
-                            {
-                                @if (isActive)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="@url">@text</a>
-                                    </li>
-
-                                }
-                                else
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="@url">@text</a>
-                                    </li>
-
-                                }
-                            }
-                            if (role == "anonymous")
-                            {
-                                @if (isActive)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="@url">@text</a>
-                                    </li>
-
-                                }
-                                else
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link " href="@url">@text</a>
-                                    </li>
-                                }
-                            }
+                            <li class="nav-item">
+                                <a class="nav-link text-white @(isActive ? "active" : "")" href="@url">@text</a>
+                            </li>
                         }
-                    </ul>
-                </div>
+                    }
+                    <li class="nav-item ms-lg-2">
+                        <button class="btn btn-sm btn-outline-light rounded-pill theme-toggle" aria-label="Toggle theme"
+                            title="Toggle light/dark mode">
+                            <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
+                            <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
+                        </button>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </section>
+        </div>
+    </nav>
 }

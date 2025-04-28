@@ -539,7 +539,7 @@ public class GitHubRepositoryService
         }
         var fetchedData = await AnalyzeRepositoryAsync(userName, repoName, ct);
         repoList[key] = fetchedData;
-        _memoryCacheManager.Set(_repoLookupListCacheKey, repoList, 60);
+        _memoryCacheManager.Set(_repoLookupListCacheKey, repoList, 600);
         return fetchedData;
     }
 }

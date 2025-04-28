@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     @await Html.PartialAsync("Sections/Meta/_metatags")
 
@@ -9,18 +10,58 @@
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("PageStyles", required: false)
     @await RenderSectionAsync("HeadScripts", required: false)
+
+    <!-- Bootstrap 5 theme colors customization -->
+    <style>
+        /* Custom theme colors */
+        :root {
+            --bs-primary: #0d6efd;
+            --bs-secondary: #6c757d;
+            --bs-body-color: #212529;
+            --bs-body-bg: #fff;
+            --bs-navbar-color: rgba(0, 0, 0, 0.7);
+            --bs-navbar-hover-color: rgba(0, 0, 0, 0.9);
+            --bs-nav-link-color: rgba(0, 0, 0, 0.7);
+            --bs-nav-link-hover-color: rgba(0, 0, 0, 0.9);
+        }
+
+        [data-bs-theme="dark"] {
+            --bs-body-color: #dee2e6;
+            --bs-body-bg: #212529;
+            --bs-navbar-color: rgba(255, 255, 255, 0.7);
+            --bs-navbar-hover-color: rgba(255, 255, 255, 0.9);
+            --bs-nav-link-color: rgba(255, 255, 255, 0.7);
+            --bs-nav-link-hover-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Fix for footer in dark mode */
+        [data-bs-theme="dark"] .footer.bg-light {
+            background-color: #343a40 !important;
+            border-color: #495057 !important;
+            color: #dee2e6;
+        }
+    </style>
 </head>
-<body>
-    <main>
+
+<body class="d-flex flex-column min-vh-100">
+    <header>
         @await Html.PartialAsync("Sections/Navigation")
-        @RenderBody()
-        <hr class="m-0" />
+    </header>
+
+    <main class="flex-shrink-0">
+        <div class="container-fluid py-4">
+            @RenderBody()
+        </div>
     </main>
 
-    @await Html.PartialAsync("Sections/Footer/_footer")
-    @await Html.PartialAsync("Sections/Footer/_footer_scripts")
+    <footer class="footer mt-auto py-3 bg-light border-top">
+        @await Html.PartialAsync("Sections/Footer/_footer")
+    </footer>
 
+    @await Html.PartialAsync("Sections/Footer/_footer_scripts")
     @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("PageScripts", required: false)
 </body>
+
 </html>
+
