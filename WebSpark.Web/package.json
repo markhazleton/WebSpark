@@ -1,0 +1,25 @@
+{
+  "name": "webspark-web",
+  "version": "1.0.0",
+  "description": "WebSpark Web Application",
+  "private": true,
+  "scripts": {
+    "update-libs": "npm run clean-libs && npm run copy-libs",
+    "clean-libs": "rimraf \"wwwroot/lib/bootstrap\" \"wwwroot/lib/font-awesome\" \"wwwroot/lib/jquery\" \"wwwroot/lib/popper.js\"",
+    "copy-libs": "npm run copy-bootstrap && npm run copy-fontawesome && npm run copy-jquery && npm run copy-popper",
+    "copy-bootstrap": "copyfiles -u 3 \"node_modules/bootstrap/dist/**/*\" \"wwwroot/lib/bootstrap\"",
+    "copy-fontawesome": "copyfiles -u 3 \"node_modules/@fortawesome/fontawesome-free/**/*\" \"wwwroot/lib/font-awesome\"",
+    "copy-jquery": "copyfiles -u 2 \"node_modules/jquery/dist/**/*\" \"wwwroot/lib/jquery\"",
+    "copy-popper": "copyfiles -u 2 \"node_modules/@popperjs/core/dist/**/*\" \"wwwroot/lib/popper.js\""
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "rimraf": "^6.0.1"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.5",
+    "jquery": "^3.7.1"
+  }
+}

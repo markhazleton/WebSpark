@@ -7,24 +7,34 @@
   <PropertyGroup>
     <Deterministic>false</Deterministic>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
-    <AssemblyVersion>9.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
+    <AssemblyVersion>
+      9.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddHH)).$([System.DateTime]::UtcNow.ToString(mmss))</AssemblyVersion>
     <UserSecretsId>efeb8dc1-482a-48ce-b6c3-0ed2a1211314</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.23.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-    <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.4" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
     <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
   </ItemGroup>
+  <!-- Add MSBuild target to ensure npm packages are installed during build -->
+  <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('node_modules')">
+    <Exec Command="npm install" />
+  </Target>
+
+  <!-- Add MSBuild target to copy libraries to wwwroot during build -->
+  <Target Name="NpmRunUpdateLibs" AfterTargets="NpmInstall" BeforeTargets="Build">
+    <Exec Command="npm run update-libs" />
+  </Target>
+
   <ItemGroup>
     <Content Update="wwwroot\site\mom\img\background.jpg">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
