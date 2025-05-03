@@ -66,11 +66,11 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
+    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.2" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.23.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HttpClientCrawler\HttpClientCrawler.csproj" />
-    <ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
     <ProjectReference Include="..\OpenWeatherMapClient\OpenWeatherMapClient.csproj" />
     <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
     <ProjectReference Include="..\TriviaSpark.Domain\TriviaSpark.Domain.csproj" />

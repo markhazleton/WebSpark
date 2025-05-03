@@ -1,5 +1,5 @@
-﻿using HttpClientUtility.MemoryCache;
-using TriviaSpark.JShow.Service;
+﻿using TriviaSpark.JShow.Service;
+using WebSpark.HttpClientUtility.MemoryCache;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 

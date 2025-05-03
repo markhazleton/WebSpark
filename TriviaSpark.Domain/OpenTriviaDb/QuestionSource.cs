@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.RequestResult;
+﻿using WebSpark.HttpClientUtility.RequestResult;
 using Microsoft.Extensions.Logging;
 using TriviaSpark.Domain.Extensions;
 using TriviaSpark.Domain.Models;

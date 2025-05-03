@@ -19,7 +19,7 @@ public static class GitHubSparkServiceExtensions
         // Configure GitHubServiceOptions from appsettings.json or user secrets
         services.Configure<GitHubServiceOptions>(options =>
         {
-            options.PersonalAccessToken = configuration["GitHubSpark:GitHubPAT"] ?? configuration["GitHubPAT"] ?? "";
+            options.PersonalAccessToken = configuration["GitHubSpark:GitHubPAT"] ?? configuration["GitHubPAT"] ?? string.Empty;
             if (string.IsNullOrEmpty(options.PersonalAccessToken))
             {
                 options.PersonalAccessToken = configuration["GitHubPAT"] ?? string.Empty;

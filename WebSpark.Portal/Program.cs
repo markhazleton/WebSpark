@@ -1,7 +1,5 @@
 using HttpClientCrawler.Crawler;
 using HttpClientUtility.MemoryCache;
-using HttpClientUtility.RequestResult;
-using HttpClientUtility.StringConverter;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.SemanticKernel;
 using OpenWeatherMapClient.Interfaces;
@@ -23,6 +21,9 @@ using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
+using WebSpark.HttpClientUtility.MemoryCache;
+using WebSpark.HttpClientUtility.RequestResult;
+using WebSpark.HttpClientUtility.StringConverter;
 using WebSpark.Portal.Areas.DataSpark.Services;
 using WebSpark.Portal.Areas.GitHubSpark.Extensions;
 using WebSpark.RecipeCookbook;

@@ -1,9 +1,9 @@
-﻿using HttpClientUtility.MockService;
-using Polly;
+﻿using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
 using System.Diagnostics;
 using System.Net;
+using WebSpark.HttpClientUtility.MockService;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 

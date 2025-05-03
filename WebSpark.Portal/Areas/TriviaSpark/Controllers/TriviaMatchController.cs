@@ -1,7 +1,7 @@
-﻿using HttpClientUtility.MemoryCache;
-using TriviaSpark.Domain.Models;
+﻿using TriviaSpark.Domain.Models;
 using TriviaSpark.Domain.Services;
 using TriviaSpark.JShow.Service;
+using WebSpark.HttpClientUtility.MemoryCache;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 [Authorize]

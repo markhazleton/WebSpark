@@ -50,7 +50,7 @@ namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub
 
                 try
                 {
-                    byte[] data = Convert.FromBase64String(Content.Replace("\n", ""));
+                    byte[] data = Convert.FromBase64String(Content.Replace("\n", string.Empty));
                     return System.Text.Encoding.UTF8.GetString(data);
                 }
                 catch

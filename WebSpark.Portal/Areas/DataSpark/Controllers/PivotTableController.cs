@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.MemoryCache;
+﻿using WebSpark.HttpClientUtility.MemoryCache;
 using WebSpark.Portal.Areas.DataSpark.Models;
 using WebSpark.Portal.Areas.DataSpark.Services;
 

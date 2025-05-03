@@ -1,7 +1,7 @@
-﻿using HttpClientUtility.MemoryCache;
-using global::TriviaSpark.JShow.Models;
+﻿using global::TriviaSpark.JShow.Models;
 using global::TriviaSpark.JShow.Service;
 using System.Text.Json;
+using WebSpark.HttpClientUtility.MemoryCache;
 using WebSpark.Portal.Areas.TriviaSpark.Models.JShow;
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers;
 
@@ -210,7 +210,7 @@ public class JShowAdminController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(JShowVM showToDelete)
     {
-        if(showToDelete == null)
+        if (showToDelete == null)
         {
             return NotFound();
         }

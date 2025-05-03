@@ -27,9 +27,9 @@
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
 		<PackageReference Include="System.Text.Json" Version="9.0.4" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+		<PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.2" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\HttpClientUtility\HttpClientUtility.csproj" />
 		<ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
 		<ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
 	</ItemGroup>

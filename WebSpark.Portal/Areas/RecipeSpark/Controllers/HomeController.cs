@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using PromptSpark.Domain.Service;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
-using WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers
 {

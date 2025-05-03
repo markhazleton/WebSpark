@@ -1,5 +1,4 @@
 ﻿using HttpClientCrawler.Crawler;
-using HttpClientUtility.RequestResult;
 using Microsoft.AspNetCore.SignalR;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
@@ -28,7 +27,7 @@ public class CrawlDomainController(
 
         // Notify clients that crawling has started
         model.IsCrawling = true;
-        await hubContext.Clients.All.SendAsync("UrlFound", $"CrawlAsync Is Started",ct).ConfigureAwait(false);
+        await hubContext.Clients.All.SendAsync("UrlFound", $"CrawlAsync Is Started", ct).ConfigureAwait(false);
 
         try
         {
@@ -46,7 +45,7 @@ public class CrawlDomainController(
 
 
             // Start the crawling process
-            model = await _siteCrawler.CrawlAsync(model.StartPath,crawlerOptions).ConfigureAwait(true);
+            model = await _siteCrawler.CrawlAsync(model.StartPath, crawlerOptions).ConfigureAwait(true);
 
             model.Sitemap = System.Net.WebUtility.HtmlEncode(model.Sitemap);
         }

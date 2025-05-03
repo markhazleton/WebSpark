@@ -1,6 +1,6 @@
-﻿using HttpClientUtility.MockService;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
+using WebSpark.HttpClientUtility.MockService;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
 

@@ -24,5 +24,6 @@
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="System.Runtime.Caching" Version="9.0.4" />
     <PackageReference Include="System.Text.Json" Version="9.0.4" />
+    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.2" />
   </ItemGroup>
 </Project>

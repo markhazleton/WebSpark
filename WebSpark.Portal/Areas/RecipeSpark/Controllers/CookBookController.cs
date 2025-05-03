@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebSpark.RecipeCookbook;
+﻿using WebSpark.RecipeCookbook;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers;
 

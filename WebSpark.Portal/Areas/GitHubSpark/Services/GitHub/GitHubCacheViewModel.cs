@@ -1,4 +1,4 @@
-using HttpClientUtility.RequestResult;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 

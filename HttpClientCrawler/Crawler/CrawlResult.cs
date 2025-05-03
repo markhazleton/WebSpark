@@ -1,5 +1,5 @@
 ﻿using HtmlAgilityPack;
-using HttpClientUtility.RequestResult;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace HttpClientCrawler.Crawler;
 

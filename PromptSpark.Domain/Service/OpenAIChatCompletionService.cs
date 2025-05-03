@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.RequestResult;
+﻿using WebSpark.HttpClientUtility.RequestResult;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -332,7 +332,7 @@ public class OpenAIChatCompletionService(
             }
         }
     }
-    public async Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse,CancellationToken ct = default)
+    public async Task<GPTDefinitionResponse> UpdateGPTResponseJson<T>(GPTDefinitionResponse gptResponse, CancellationToken ct = default)
     {
         Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
         string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
@@ -359,7 +359,7 @@ public class OpenAIChatCompletionService(
         // Log serialized JSON for debugging if needed
         Console.WriteLine("Serialized Request JSON: " + serializedRequest);
 
-        var response = await httpClientService.HttpSendRequestResultAsync(serviceResponse,ct:ct);
+        var response = await httpClientService.HttpSendRequestResultAsync(serviceResponse, ct: ct);
         try
         {
 
@@ -380,7 +380,7 @@ public class OpenAIChatCompletionService(
         return gptResponse;
     }
 
-    public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse,CancellationToken ct=default)
+    public async Task<GPTDefinitionResponse> UpdateGPTResponse(GPTDefinitionResponse gptResponse, CancellationToken ct = default)
     {
         Dictionary<string, string> headers = new() { { "Authorization", $"Bearer {configuration.GetValue<string>("OPENAI_API_KEY") ?? "not found"}" } };
         string openAiUrl = configuration.GetValue<string>("OPENAI_URL") ?? "https://api.openai.com/v1/chat/completions";
@@ -407,7 +407,7 @@ public class OpenAIChatCompletionService(
         // Log serialized JSON for debugging if needed
         Console.WriteLine("Serialized Request JSON: " + serializedRequest);
 
-        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse,ct:ct);
+        var response = await httpClientService.HttpSendRequestResultAsync<OpenAiApiResponse>(serviceResponse, ct: ct);
         try
         {
 

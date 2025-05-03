@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 /// <summary>

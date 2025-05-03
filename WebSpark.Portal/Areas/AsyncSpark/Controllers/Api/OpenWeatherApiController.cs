@@ -1,5 +1,5 @@
-﻿using HttpClientUtility.MemoryCache;
-using OpenWeatherMapClient.Interfaces;
+﻿using OpenWeatherMapClient.Interfaces;
+using WebSpark.HttpClientUtility.MemoryCache;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers.Api;
 

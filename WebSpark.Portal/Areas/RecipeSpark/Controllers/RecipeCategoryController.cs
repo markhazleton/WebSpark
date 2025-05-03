@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
-using WebSpark.Portal.Areas.RecipeSpark.Controllers;
 
 namespace WebSpark.Portal.Areas.RecipeSpark.Controllers
 {

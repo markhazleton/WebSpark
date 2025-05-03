@@ -1,10 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Models.EditModels;
@@ -152,7 +147,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
                 var saveResult = _service.Save(websiteToCreate);
                 if (saveResult == null)
                 {
-                    ModelState.AddModelError("", "Failed to save the website");
+                    ModelState.AddModelError(string.Empty, "Failed to save the website");
                     return View("Edit", model);
                 }
 
@@ -162,7 +157,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating new website");
-                ModelState.AddModelError("", "An error occurred while creating the website");
+                ModelState.AddModelError(string.Empty, "An error occurred while creating the website");
                 return View("Edit", model);
             }
         }
@@ -245,7 +240,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
                 var saveResult = _service.Save(websiteToUpdate);
                 if (saveResult == null)
                 {
-                    ModelState.AddModelError("", "Failed to update the website");
+                    ModelState.AddModelError(string.Empty, "Failed to update the website");
                     return View(model);
                 }
 
@@ -255,7 +250,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating website ID: {WebsiteId}", id);
-                ModelState.AddModelError("", "An error occurred while updating the website");
+                ModelState.AddModelError(string.Empty, "An error occurred while updating the website");
                 return View(model);
             }
         }

@@ -1,6 +1,3 @@
-using HttpClientUtility.MemoryCache;
-using HttpClientUtility.RequestResult;
-
 namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 /// <summary>

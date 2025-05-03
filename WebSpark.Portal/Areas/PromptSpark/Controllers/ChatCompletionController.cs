@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using PromptSpark.Domain.Models;
 using PromptSpark.Domain.Service;
 using System.Globalization;
-using WebSpark.Core.Providers;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
 [Area("PromptSpark")]
@@ -79,7 +78,7 @@ public class ChatCompletionController(
 
 
     [HttpGet("{id}/{slug}")]
-    public async Task<IActionResult> Variant(int id =0, string? slug = null)
+    public async Task<IActionResult> Variant(int id = 0, string? slug = null)
     {
         logger.LogInformation("Entering Index method with id: {Id}", id);
         if (id == 0)

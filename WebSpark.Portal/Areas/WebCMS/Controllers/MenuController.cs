@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
@@ -145,7 +140,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
                 var saveResult = _menuService.Save(menuToCreate);
                 if (saveResult == null)
                 {
-                    ModelState.AddModelError("", "Failed to save the menu item");
+                    ModelState.AddModelError(string.Empty, "Failed to save the menu item");
                     return View(item);
                 }
 
@@ -155,7 +150,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating new menu item");
-                ModelState.AddModelError("", "An error occurred while creating the menu item");
+                ModelState.AddModelError(string.Empty, "An error occurred while creating the menu item");
                 return View(item);
             }
         }
@@ -253,7 +248,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
                 var saveResult = _menuService.Save(menuToUpdate);
                 if (saveResult == null)
                 {
-                    ModelState.AddModelError("", "Failed to update the menu item");
+                    ModelState.AddModelError(string.Empty, "Failed to update the menu item");
                     return View(item);
                 }
 
@@ -263,7 +258,7 @@ namespace WebSpark.Portal.Areas.WebCMS.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating menu item ID: {MenuItemId}", id);
-                ModelState.AddModelError("", "An error occurred while updating the menu item");
+                ModelState.AddModelError(string.Empty, "An error occurred while updating the menu item");
                 return View(item);
             }
         }

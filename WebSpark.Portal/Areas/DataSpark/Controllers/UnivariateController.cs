@@ -1,5 +1,5 @@
-﻿using HttpClientUtility.MemoryCache;
-using System.Data;
+﻿using System.Data;
+using WebSpark.HttpClientUtility.MemoryCache;
 using WebSpark.Portal.Areas.DataSpark.Models;
 using WebSpark.Portal.Areas.DataSpark.Services;
 

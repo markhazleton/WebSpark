@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.RequestResult;
+﻿using WebSpark.HttpClientUtility.RequestResult;
 using WebSpark.Portal.Areas.AsyncSpark.Controllers;
 using WebSpark.Portal.Areas.AsyncSpark.Models.Art;
 

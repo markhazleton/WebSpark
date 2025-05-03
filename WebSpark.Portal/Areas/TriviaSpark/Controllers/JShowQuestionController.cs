@@ -1,8 +1,8 @@
-﻿using HttpClientUtility.MemoryCache;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using TriviaSpark.JShow.Data;
 using TriviaSpark.JShow.Models;
 using TriviaSpark.JShow.Service;
+using WebSpark.HttpClientUtility.MemoryCache;
 
 namespace WebSpark.Portal.Areas.TriviaSpark.Controllers
 {

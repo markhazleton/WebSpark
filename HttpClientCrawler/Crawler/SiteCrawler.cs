@@ -1,4 +1,4 @@
-﻿using HttpClientUtility.RequestResult;
+﻿using WebSpark.HttpClientUtility.RequestResult;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;

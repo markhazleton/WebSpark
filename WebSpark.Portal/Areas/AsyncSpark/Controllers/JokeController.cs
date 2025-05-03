@@ -1,6 +1,6 @@
-﻿using HttpClientUtility.RequestResult;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json.Serialization;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 

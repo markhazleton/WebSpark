@@ -1,12 +1,12 @@
-﻿using HttpClientUtility.MemoryCache;
-using HttpClientUtility.RequestResult;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 using System.Net;
+using WebSpark.HttpClientUtility.MemoryCache;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
