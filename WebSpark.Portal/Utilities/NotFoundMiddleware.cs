@@ -46,14 +46,14 @@ public class NotFoundMiddleware(RequestDelegate next, ILogger<NotFoundMiddleware
 
             var redirects = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                { "github", "/AsyncSpark/github" },
+                { "asyncspark/github", "/GitHubSpark" },
+                { "GitHub", "/GitHubSpark" },
                 { "PromptSpark", "/PromptSpark" },
                 { "AsyncSpark", "/AsyncSpark" },
                 { "DataSpark", "/DataSpark" },
                 { "prompt", "/PromptSpark" },
                 { "async", "/AsyncSpark" },
             };
-
             foreach (var redirect in redirects)
             {
                 if (requestPath.Contains(redirect.Key))
@@ -63,11 +63,7 @@ public class NotFoundMiddleware(RequestDelegate next, ILogger<NotFoundMiddleware
                 }
             }
             _logger.LogWarning("No redirect found for {RequestPath}", requestPath);
-
             RedirectWithProtection(context, "/Error/404");
-
-
-
         }
     }
 

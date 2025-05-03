@@ -1,0 +1,222 @@
+﻿@model GitHubRepositoryAnalysisViewModel
+@{
+    ViewData["Title"] = $"Repository Analysis: {Model.RepositoryName}";
+}
+
+<div class="container my-4">
+    <!-- Search Form -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary">
+                    <h4 class="card-title mb-0"><i class="bi bi-search me-1"></i> Analyze Repository</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="RepositoryAnalysis" method="get" class="row g-3">
+                        <div class="col-md-5">
+                            <label for="userName" class="form-label">GitHub Username</label>
+                            <input type="text" class="form-control" id="userName" name="userName" 
+                                   value="@Model.UserName" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="repoName" class="form-label">Repository Name</label>
+                            <input type="text" class="form-control" id="repoName" name="repoName" 
+                                   value="@Model.RepositoryName" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-1"></i> Analyze
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Freshness Indicator -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-clock-history me-1"></i> Data last updated: @Model.LastUpdated.ToString("yyyy-MM-dd HH:mm:ss UTC")
+                @if ((DateTime.UtcNow - Model.LastUpdated).TotalHours > 1)
+                {
+                    <span class="ms-2 badge bg-warning">Cached data</span>
+                }
+                else
+                {
+                    <span class="ms-2 badge bg-success">Fresh data</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>Repository Analysis: @Model.RepositoryName</h1>
+            <h3>Repository Owner: @Model.UserName</h3>
+        </div>
+    </div>
+
+    <!-- Error messages display -->
+    @if (Model.ErrorList != null && Model.ErrorList.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <h5><i class="bi bi-exclamation-triangle-fill me-1"></i> Errors occurred during analysis</h5>
+                    <ul class="mb-0 mt-2">
+                        @foreach (var error in Model.ErrorList)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary">
+                    <h4 class="card-title mb-0">Repository Information</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Repository.Name</h5>
+                    <p class="card-text">@Model.Repository.Description</p>
+                    <div class="row mb-3">
+                        <div class="col-md-3 col-sm-6 mb-2">
+                            <span class="badge bg-secondary rounded-pill p-2">
+                                <i class="bi bi-star-fill me-1"></i> @Model.Repository.StargazersCount Stars
+                            </span>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-2">
+                            <span class="badge bg-secondary rounded-pill p-2">
+                                <i class="bi bi-diagram-3-fill me-1"></i> @Model.Repository.ForksCount Forks
+                            </span>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-2">
+                            <span class="badge bg-secondary rounded-pill p-2">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i> @Model.TotalIssues Issues
+                            </span>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-2">
+                            <span class="badge bg-secondary rounded-pill p-2">
+                                <i class="bi bi-code-slash me-1"></i> @Model.PrimaryLanguage
+                            </span>
+                        </div>
+                    </div>
+                    <a href="@Model.Repository.HtmlUrl" target="_blank" class="btn btn-primary">
+                        <i class="bi bi-github me-1"></i> View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary">
+                    <h4 class="card-title mb-0"><i class="bi bi-people-fill me-1"></i> Contributors
+                        (@Model.TotalContributors)</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Contributors != null && Model.Contributors.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var contributor in Model.Contributors)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-person-fill me-1"></i> @contributor.Login</span>
+                                    <span class="badge bg-primary rounded-pill">@contributor.Contributions</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle-fill me-1"></i> No contributors found for this repository.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary">
+                    <h4 class="card-title mb-0"><i class="bi bi-code-square me-1"></i> Languages Used</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Languages != null && Model.Languages.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var language in Model.Languages.OrderByDescending(l => l.Value))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-code me-1"></i> @language.Key</span>
+                                    <span class="badge bg-secondary rounded-pill">@language.Value bytes</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle-fill me-1"></i> No language data found for this repository.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary">
+                    <h4 class="card-title mb-0"><i class="bi bi-exclamation-circle me-1"></i> Open Issues</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Issues != null && Model.Issues.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var issue in Model.Issues)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="@issue.HtmlUrl" target="_blank" class="text-decoration-none">@issue.Title</a>
+                                    <span
+                                        class="badge bg-@(issue.State == "open" ? "danger" : "success") rounded-pill">@issue.State</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle-fill me-1"></i> No open issues found for this repository.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary">
+                    <h4 class="card-title mb-0"><i class="bi bi-folder-fill me-1"></i> File System Tree</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        @await Html.PartialAsync("_FileSystemNodePartial", Model.FileSystemTree)
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

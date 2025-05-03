@@ -1,0 +1,30 @@
+﻿@model FileSystemNode
+
+<li class="list-group-item">
+    <i class="bi
+        @(Model.IsDirectory ? "bi-folder" :
+        Model.FileType == FileType.Image ? "bi-file-image" :
+        Model.FileType == FileType.Text ? "bi-file-text" :
+        Model.FileType == FileType.Code ? "bi-file-code" :
+        "bi-file-earmark") me-2"></i>
+
+    @if (Model.IsDirectory)
+    {
+        <span>@Model.Path</span>
+    }
+    else
+    {
+        <a href="@Model.Url" target="_blank" class="text-decoration-none">@Model.Name</a>
+    }
+
+    
+    @if (Model.IsDirectory && Model.Children != null && Model.Children.Any())
+    {
+        <ul class="list-group ms-3 mt-2">
+            @foreach (var child in Model.Children)
+            {
+                @await Html.PartialAsync("_FileSystemNodePartial", child)
+            }
+        </ul>
+    }
+</li>

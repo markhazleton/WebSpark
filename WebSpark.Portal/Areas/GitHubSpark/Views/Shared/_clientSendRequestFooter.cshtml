@@ -1,0 +1,19 @@
+﻿@model dynamic
+
+<div class="container ">
+    <div class="row g-1 justify-content-between align-items-center small text-nowrap py-2 bg-light border-top">
+        <div class="col d-flex align-items-center">
+            <i class="bi bi-speedometer2 text-primary me-1"></i>
+            <span>API Duration: <strong>@Model.ElapsedMilliseconds ms</strong></span>
+        </div>
+        <div class="col text-end d-flex align-items-center justify-content-end">
+            <i class="bi bi-clock-history text-success me-1"></i>
+            <span>Data Age: <strong>@Model.ResultAge</strong></span>
+        </div>
+    </div>
+    <div class="row g-1 justify-content-between align-items-center small text-nowrap py-2 bg-light border-top">
+        <div class="col text-muted small" style="font-size: 0.7rem;">
+            <i class="bi bi-link-45deg text-secondary me-1"></i> Source: @Model.RequestPath
+        </div>
+    </div>
+</div>

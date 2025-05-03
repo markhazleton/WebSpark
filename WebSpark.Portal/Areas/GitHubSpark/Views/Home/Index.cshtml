@@ -1,0 +1,304 @@
+﻿@using System.Text.Json
+@using WebSpark.Portal.Areas.GitHubSpark.Services.GitHub
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@model GitHubCacheViewModel
+@{
+    ViewData["Title"] = "Integrating GitHub into WebSpark's GitHubSpark";
+    ViewData["Description"] = "Learn how to integrate GitHub user and repository data into the GitHubSpark section of WebSpark, using async programming in .NET and Bootstrap 5 for a polished UI.";
+    ViewData["Keywords"] = "GitHub API, async programming, WebSpark, Bootstrap 5, .NET async example";
+    
+    var apiSource = (string?)ViewData["ApiSource"] ?? "REST API";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Search Form -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-search"></i> Search GitHub User
+                        </h5>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Index" asp-route-username="@Model?.UserName" class="btn btn-sm @(apiSource == "REST API" ? "btn-light" : "btn-outline-light")">
+                                REST API
+                            </a>
+                            <a asp-action="GraphQL" asp-route-username="@Model?.UserName" class="btn btn-sm @(apiSource == "GraphQL API" ? "btn-light" : "btn-outline-light")">
+                                GraphQL API
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="@(apiSource == "GraphQL API" ? "GraphQL" : "Index")" method="get" class="d-flex">
+                        <input type="text" name="username" class="form-control me-2" placeholder="Enter GitHub username" 
+                               value="@(Model?.UserName ?? "markhazleton")" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Freshness Indicator -->
+        @if (Model?.LastUpdated != null)
+        {
+            <div class="col-md-12 mb-4">
+                <div class="alert alert-info">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-clock-history"></i> Data last updated: @Model.LastUpdated.ToString("yyyy-MM-dd HH:mm:ss UTC")
+                            @if ((DateTime.UtcNow - Model.LastUpdated).TotalHours > 1)
+                            {
+                                <span class="ms-2 badge bg-warning">Cached data</span>
+                            }
+                            else
+                            {
+                                <span class="ms-2 badge bg-success">Fresh data</span>
+                            }
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        <!-- Error Display -->
+        @if (Model?.ErrorList != null && Model.ErrorList.Any())
+        {
+            <div class="col-md-12 mb-4">
+                <div class="alert alert-danger">
+                    <h5><i class="bi bi-exclamation-triangle"></i> Error occurred while fetching data</h5>
+                    <ul class="mb-0 mt-2">
+                        @foreach (var error in Model.ErrorList)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+        
+        <!-- User Info Section -->
+        <div class="col-md-4">
+            @await Html.PartialAsync("_gitHubUserResponse", Model.User)
+            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Following, new ViewDataDictionary(ViewData) { { "SubTitle", "Following" } })
+            @await Html.PartialAsync("_gitHubFollowerResponse", Model.Followers, new ViewDataDictionary(ViewData) { { "SubTitle", "Followers" } })
+        </div>
+        <!-- Repo Info Section -->
+        <div class="col-md-8">
+            @await Html.PartialAsync("_gitHubRepoResponse", Model.RepoInfo)
+        </div>
+    </div>
+</div>
+
+<section class="py-5 bg-secondary bg-opacity-10">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Understanding GitHub and Its API</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-primary">
+                                <h5 class="mb-0"><i class="bi bi-github me-2"></i>GitHub Platform</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>
+                                    GitHub is the world's leading platform for software development and version control, 
+                                    enabling millions of developers to collaborate on projects. Its ecosystem includes:
+                                </p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-diagram-3 text-primary me-2"></i>Version control using Git
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-people text-primary me-2"></i>Team collaboration tools
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-code-square text-primary me-2"></i>Code management
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-terminal text-primary me-2"></i>CI/CD automation
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-primary">
+                                <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>GitHub API</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>
+                                    The GitHub API provides programmatic access to GitHub data and functionality,
+                                    enabling developers to:
+                                </p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-person-badge text-primary me-2"></i>Retrieve user profiles
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-folder text-primary me-2"></i>List repositories and their contents
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-exclamation-circle text-primary me-2"></i>Track issues and pull requests
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="bi bi-gear text-primary me-2"></i>Automate workflows and tasks
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-footer bg-transparent text-center">
+                                <a href="https://docs.github.com/en/rest" class="btn btn-outline-primary" target="_blank">
+                                    <i class="bi bi-book me-1"></i> API Documentation
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="alert alert-info">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-lightbulb fs-3 text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0">
+                                    By leveraging the GitHub API with asynchronous programming in .NET, you can create responsive applications 
+                                    that seamlessly integrate GitHub data while maintaining optimal performance and user experience.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1>Integrating GitHub User and Repo Data into WebSpark's GitHubSpark Section</h1>
+            <p>
+                In this tutorial, we'll walk through how to use GitHub's API and asynchronous programming in .NET to create a responsive and interactive interface for displaying GitHub user and repository data in the <strong>GitHubSpark</strong> section of WebSpark. We will also make use of Bootstrap 5 to design a polished and user-friendly interface.
+            </p>
+
+            <h2>Why Use Async Programming?</h2>
+
+            <p>
+                Asynchronous programming is crucial when working with external APIs, like GitHub's, because it ensures the web page remains responsive while waiting for the API responses. The async/await pattern in .NET helps make non-blocking API calls and ensures that the user experience is not interrupted, enhancing the smoothness and efficiency of your web application.
+            </p>
+
+            <h2>Fetching GitHub Data Asynchronously</h2>
+
+            <p>First, we will create a method that fetches GitHub user and repository data asynchronously using the <code>HttpClient</code> class. This allows us to make non-blocking HTTP requests to the GitHub API.</p>
+
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+public async Task&lt;GitHubCacheViewModel&gt; GetGitHubDataAsync(string username, string repoName)
+{
+    var user = await _httpClient.GetFromJsonAsync&lt;GitHubUser&gt;($"https://api.github.com/users/{username}");
+    var repo = await _httpClient.GetFromJsonAsync&lt;GitHubRepo&gt;($"https://api.github.com/repos/{username}/{repoName}");
+
+    return new GitHubCacheViewModel
+    {
+        User = user,
+        RepoInfo = repo
+    };
+}
+</code>
+</pre>
+
+            <p>
+                In the code above, we use the <code>await</code> keyword to make sure the API requests to GitHub are handled asynchronously, improving the efficiency of our application by not blocking the main thread.
+            </p>
+
+            <h2>Creating the View Model</h2>
+
+            <p>
+                Next, we define a view model, <code>GitHubCacheViewModel</code>, to store the user and repository data. This helps to separate the data fetching logic from the view.
+            </p>
+
+            <pre class="bg-light p-3 rounded">
+<code class="language-csharp">
+public class GitHubCacheViewModel
+{
+    public GitHubRepo? RepoInfo { get; set; }
+    public GitHubUser? User { get; set; }
+}
+</code>
+</pre>
+
+            <p>
+                With this model, we can easily pass data from our controller to the view and render it in the UI.
+            </p>
+
+            <h2>Building the Bootstrap-Powered View</h2>
+
+            <p>
+                We can now create a Bootstrap-powered view to display the GitHub user and repository data. Bootstrap 5's responsive components make it easy to create an attractive and functional UI that works across different screen sizes. Below is an example of how to display the GitHub user's information in a card component.
+            </p>
+
+            <pre class="bg-light p-3 rounded">
+<code class="language-html">
+&lt;div class="card shadow-sm"&gt;
+    &lt;div class="card-header bg-dark text-white"&gt;
+        &lt;h5 class="card-title mb-0"&gt;
+            &lt;i class="bi bi-person-circle"&gt;&lt;/i&gt; GitHub User
+        &lt;/h5&gt;
+    &lt;/div&gt;
+    &lt;div class="card-body text-center"&gt;
+        &lt;img src="@@Model.User?.ResponseResults?.AvatarUrl" alt="Avatar" class="rounded-circle img-thumbnail mb-3"&gt;
+        &lt;h5 class="card-title"&gt;@@Model.User?.ResponseResults?.Login&lt;/h5&gt;
+        &lt;p class="text-muted"&gt;@@Model.User?.ResponseResults?.Bio&lt;/p&gt;
+        &lt;a href="@@Model.User?.ResponseResults?.HtmlUrl" class="btn btn-primary" target="_blank"&gt;
+            &lt;i class="bi bi-github"&gt;&lt;/i&gt; View Profile
+        &lt;/a&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code>
+</pre>
+
+            <p>
+                In this example, we used Bootstrap's <code>card</code> component along with Bootstrap Icons to create a user-friendly and aesthetically pleasing UI for displaying GitHub user data.
+            </p>
+
+            <h2>Handling Asynchronous Fetching with Grace</h2>
+
+            <p>
+                When working with asynchronous data fetching, it's essential to provide feedback to the user. If the GitHub API request fails or data is unavailable, displaying an error message can enhance the user experience.
+            </p>
+
+            <div class="bg-light p-3 rounded">
+<pre><code class="language-html">
+@@if (Model.User == null)
+{
+    &lt;div class="alert alert-danger" role="alert"&gt;
+        Could not retrieve GitHub user data. Please try again later.
+    &lt;/div&gt;
+}
+</code></pre>
+            </div>
+
+            <p>
+                This ensures that the UI remains engaging, even if the external API call fails.
+            </p>
+
+            <h2>Conclusion</h2>
+
+            <p>
+                Integrating GitHub user and repository data into the GitHubSpark section of WebSpark demonstrates the power of asynchronous programming in .NET. Not only does it show how easily external APIs can be consumed, but it also highlights how to build a responsive, user-friendly interface using Bootstrap 5.
+            </p>
+
+            <p>
+                Asynchronous programming ensures that the page loads smoothly, even when waiting for external resources like GitHub's API. Combining clean async code with polished Bootstrap design, WebSpark illustrates how developers can benefit from both performance and aesthetics in real-world applications.
+            </p>
+        </div>
+    </div>
+</div>

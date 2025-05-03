@@ -58,7 +58,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.48.0" />
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.22.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     <PackageReference Include="ScottPlot" Version="5.0.55" />
@@ -80,5 +80,9 @@
     <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
     <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />
     <ProjectReference Include="..\WebSpark.UserIdentity\WebSpark.UserIdentity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\AsyncSpark\Services\" />
+    <Folder Include="Areas\GitHubSpark\Models\" />
   </ItemGroup>
 </Project>

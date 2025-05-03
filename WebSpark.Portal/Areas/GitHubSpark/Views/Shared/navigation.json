@@ -1,0 +1,12 @@
+{
+  "menuItems": [
+    {
+      "text": "GitHub",
+      "url": "/GitHubSpark"
+    },
+    {
+      "text": "Repository Analysis",
+      "url": "/GitHubSpark/Home/RepositoryAnalysis?userName=markhazleton&repoName=markhazleton"
+    }
+  ]
+}

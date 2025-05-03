@@ -24,6 +24,7 @@ using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
 using WebSpark.Portal.Areas.DataSpark.Services;
+using WebSpark.Portal.Areas.GitHubSpark.Extensions;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
 
@@ -115,7 +116,7 @@ builder.Services.AddEndpointsApiExplorer();
 // ========================
 // OpenWeatherMap Client
 // ========================
-builder.Services.AddScoped<IOpenWeatherMapClient>(serviceProvider =>
+builder.Services.AddScoped(serviceProvider =>
 {
     string apiKey = builder.Configuration["OpenWeatherMapApiKey"] ?? "KEYMISSING";
     var logger = serviceProvider.GetRequiredService<ILogger<WeatherServiceClient>>();
@@ -138,6 +139,9 @@ builder.Services.AddSingleton<IStringConverter, NewtonsoftJsonStringConverter>()
 builder.Services.AddSingleton(new ApplicationStatus(Assembly.GetExecutingAssembly()));
 builder.Services.AddSingleton<ChatHistoryStore>();
 builder.Services.AddSingleton<IScopeInformation, ScopeInformation>();
+
+// GitHubSpark Services
+builder.Services.AddGitHubSparkServices(builder.Configuration);
 
 // Scoped Services
 builder.Services.AddScoped<IUserPromptService, UserPromptService>();
@@ -304,6 +308,8 @@ static void RegisterHttpClientUtilities(WebApplicationBuilder builder)
         client.DefaultRequestHeaders.Add("X-Request-Source", "HttpClientService");
     });
 
+    // Register IHttpClientMemoryCache implementation
+    builder.Services.AddSingleton<IHttpClientMemoryCache, HttpClientMemoryCache>();
 
     // HTTP Send Service with Decorator Pattern
     builder.Services.AddSingleton(serviceProvider =>
