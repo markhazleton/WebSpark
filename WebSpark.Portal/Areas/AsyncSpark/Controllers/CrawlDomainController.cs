@@ -1,5 +1,5 @@
-﻿using HttpClientCrawler.Crawler;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
+using WebSpark.HttpClientUtility.Crawler;
 
 namespace WebSpark.Portal.Areas.AsyncSpark.Controllers;
 

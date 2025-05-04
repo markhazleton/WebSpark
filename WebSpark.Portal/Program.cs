@@ -1,4 +1,3 @@
-using HttpClientCrawler.Crawler;
 using HttpClientUtility.MemoryCache;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.SemanticKernel;
@@ -21,6 +20,7 @@ using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Models;
 using WebSpark.Core.Providers;
+using WebSpark.HttpClientUtility.Crawler;
 using WebSpark.HttpClientUtility.MemoryCache;
 using WebSpark.HttpClientUtility.RequestResult;
 using WebSpark.HttpClientUtility.StringConverter;
