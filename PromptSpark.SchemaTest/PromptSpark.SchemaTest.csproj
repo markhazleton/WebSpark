@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
-    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.4" />
+    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup>

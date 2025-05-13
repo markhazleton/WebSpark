@@ -41,6 +41,18 @@ public class GitHubApiException : Exception
     }
 
     /// <summary>
+    /// Initializes a new instance of the GitHubApiException class with a specified error message, inner exception, and status code
+    /// </summary>
+    /// <param name="message">Error message that explains the reason for the exception</param>
+    /// <param name="innerException">Exception that is the cause of the current exception</param>
+    /// <param name="statusCode">HTTP status code returned by the GitHub API</param>
+    public GitHubApiException(string message, Exception? innerException, int statusCode)
+        : base(message, innerException)
+    {
+        StatusCode = statusCode;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the GitHubApiException class with serialized data
     /// </summary>
     /// <param name="info">SerializationInfo that holds the serialized object data</param>

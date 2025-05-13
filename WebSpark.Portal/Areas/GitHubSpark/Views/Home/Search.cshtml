@@ -1,0 +1,111 @@
+@model List<WebSpark.Portal.Areas.GitHubSpark.Services.GitHub.GitHubSearchUserResult>
+@{
+    ViewData["Title"] = "GitHub User Search";
+    var searchQuery = ViewData["SearchQuery"] as string ?? string.Empty;
+    var apiSource = ViewData["ApiSource"] as string ?? "GraphQL API";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Search Form -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-search"></i> Search GitHub Users
+                        </h5>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Search" class="btn btn-sm btn-light">
+                                GraphQL API
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Search" method="get" class="d-flex">
+                        <input type="text" name="query" class="form-control me-2" placeholder="Search GitHub users..."
+                            value="@searchQuery" required>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list"></i> Search Results
+                        @if (!string.IsNullOrEmpty(searchQuery))
+                        {
+                            <span class="small">for "@searchQuery"</span>
+                        }
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Count == 0)
+                    {
+                        if (string.IsNullOrEmpty(searchQuery))
+                        {
+                            <div class="alert alert-info mb-0">
+                                Enter a search term to find GitHub users.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning mb-0">
+                                No users found matching "@searchQuery".
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="row">
+                            @foreach (var user in Model)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex">
+                                                <img src="@user.AvatarUrl" class="rounded-circle me-3" alt="@user.Login"
+                                                    width="64" height="64">
+                                                <div>
+                                                    <h5 class="card-title mb-1">
+                                                        <a href="@user.Url" target="_blank" class="text-decoration-none">
+                                                            @user.Login
+                                                        </a>
+                                                    </h5>
+                                                    @if (!string.IsNullOrEmpty(user.Name))
+                                                    {
+                                                        <h6 class="card-subtitle mb-2 text-muted">@user.Name</h6>
+                                                    }
+                                                    <p class="card-text">
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-code-square"></i> @user.RepositoryCount repositories
+                                                        </small>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(user.Bio))
+                                            {
+                                                <p class="card-text mt-2 small">@user.Bio</p>
+                                            }
+                                            <div class="mt-2">
+                                                <a asp-action="Index" asp-route-username="@user.Login"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                    View Profile
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

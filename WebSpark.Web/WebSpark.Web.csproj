@@ -17,8 +17,8 @@
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.23.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.4" />
-    <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.5" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
