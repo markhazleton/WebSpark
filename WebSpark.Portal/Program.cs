@@ -28,6 +28,7 @@ using WebSpark.Portal.Areas.DataSpark.Services;
 using WebSpark.Portal.Areas.GitHubSpark.Extensions;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
+using WebSpark.Bootswatch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -182,6 +183,11 @@ builder.Services.AddTransient<CsvProcessingService>();
 builder.Services.AddMarkdown();
 
 // ========================
+// Bootswatch Theme Switcher
+// ========================
+builder.Services.AddBootswatchThemeSwitcher();
+
+// ========================
 // MVC and Razor Pages
 // ========================
 builder.Services.AddControllersWithViews();
@@ -260,6 +266,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+// Use all Bootswatch features (includes StyleCache and static files)
+app.UseBootswatchAll();
 
 app.Use(async (context, next) =>
 {

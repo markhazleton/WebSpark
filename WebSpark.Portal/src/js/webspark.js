@@ -40,21 +40,12 @@ window.addEventListener('DOMContentLoaded', event => {
     document.addEventListener('scroll', navbarCollapse);
 
     // Theme switcher functionality
+    // Remove localStorage usage for theme persistence
     const initTheme = () => {
-        // Check for saved theme preference or use system preference
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        // If a theme was previously saved, use that
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-bs-theme', savedTheme);
-            updateThemeToggle(savedTheme);
-        } 
-        // Otherwise use system preference
-        else if (systemPrefersDark) {
-            document.documentElement.setAttribute('data-bs-theme', 'dark');
-            updateThemeToggle('dark');
-        }
+        // The server will set the theme on page load via BootswatchThemeHelper
+        // Just update the toggle UI to match the current theme
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+        updateThemeToggle(currentTheme);
     };
 
     const updateThemeToggle = (theme) => {
@@ -82,10 +73,23 @@ window.addEventListener('DOMContentLoaded', event => {
         toggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
             document.documentElement.setAttribute('data-bs-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
             updateThemeToggle(newTheme);
+            // Persist theme to server session
+            fetch('/Home/SetTheme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': getAntiForgeryToken()
+                },
+                body: `theme=${encodeURIComponent(newTheme)}`
+            });
         });
     });
+
+    // Helper to get anti-forgery token from the page (if present)
+    function getAntiForgeryToken() {
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        return tokenInput ? tokenInput.value : '';
+    }
 });

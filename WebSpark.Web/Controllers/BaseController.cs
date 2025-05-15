@@ -1,6 +1,8 @@
+using Polly;
 using System.Text.Json;
 using WebSpark.Bootswatch.Model;
 using WebSpark.Bootswatch.Provider;
+using WebSpark.HttpClientUtility.RequestResult;
 using WebSpark.Web.Extensions;
 
 namespace WebSpark.Web.Controllers;
@@ -67,13 +69,17 @@ public class BaseController(ILogger logger, IConfiguration configuration, Core.I
             if (_baseView == null)
             {
                 var _DefaultSiteId = _config.GetSection("WebSpark").GetValue<string>("DefaultSiteId");
-
-                _baseView = _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId).GetAwaiter().GetResult();
-
-                var styleService = new BootswatchStyleProvider();
-                _baseView.StyleList = Create(styleService.Get());
-
-                var RequestScheme = "https"; // HttpContext.Request.Scheme;
+                using (var scope = HttpContext.RequestServices.CreateScope())
+                {
+                    var _websiteService = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IWebsiteService>();
+                    _baseView = _websiteService.GetBaseViewByHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId).Result;
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<BootswatchStyleProvider>>();
+                    var service = scope.ServiceProvider.GetRequiredService<IHttpRequestResultService>();
+                    var styleService = new BootswatchStyleProvider(logger, service);
+                    var bootswatchModels = styleService.GetAsync().Result;
+                    _baseView.StyleList = Create(bootswatchModels);
+                }
+                var RequestScheme = HttpContext.Request.Scheme; // Changed to use actual request scheme
 
                 var curSiteRoot = ($"{RequestScheme}://{HttpContext.Request.Host.Host}:{HttpContext.Request.Host.Port}/");
                 _baseView.SiteUrl = new Uri(curSiteRoot);
@@ -83,27 +89,24 @@ public class BaseController(ILogger logger, IConfiguration configuration, Core.I
             return _baseView;
         }
     }
-
-    private static IEnumerable<StyleModel> Create(IEnumerable<BootswatchStyleModel> enumerable)
+    private IEnumerable<Core.Models.StyleModel> Create(IEnumerable<Bootswatch.Model.StyleModel> bootswatchModels)
     {
-        var list = new List<StyleModel>();
-        foreach (var item in enumerable)
+        foreach (var item in bootswatchModels)
         {
-            list.Add(new StyleModel
+            yield return new Core.Models.StyleModel
             {
                 name = item.name,
+                cssCdn = item.cssCdn,
                 css = item.css,
-                description = item.description,
-                preview = item.preview,
                 scss = item.scss,
                 scssVariables = item.scssVariables,
-                cssCdn = item.cssCdn,
                 cssMin = item.cssMin,
+                description = item.description,
                 less = item.less,
                 lessVariables = item.lessVariables,
+                preview = item.preview,
                 thumbnail = item.thumbnail
-            });
+            };
         }
-        return list;
     }
 }

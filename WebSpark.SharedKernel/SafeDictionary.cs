@@ -1,99 +1,67 @@
 ﻿namespace WebSpark.SharedKernel;
 
 /// <summary>
-/// Safe Dictionary
+/// Provides a type-safe, null-safe dictionary wrapper with convenience methods for safe access and mutation.
 /// </summary>
-/// <typeparam name="TKey"></typeparam>
-/// <typeparam name="TValue"></typeparam>
+/// <typeparam name="TKey">The type of the dictionary key.</typeparam>
+/// <typeparam name="TValue">The type of the dictionary value.</typeparam>
 public sealed class SafeDictionary<TKey, TValue> where TKey : notnull
 {
-    private Dictionary<TKey, TValue> _Dictionary;
+    private Dictionary<TKey, TValue> _dictionary;
 
     /// <summary>
-    ///
+    /// Initializes a new instance of the <see cref="SafeDictionary{TKey, TValue}"/> class.
     /// </summary>
     public SafeDictionary()
     {
-        _Dictionary = [];
+        _dictionary = new();
     }
 
     /// <summary>
-    ///
+    /// Returns a list of string representations of all key-value pairs.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A list of key-value pairs as strings.</returns>
     public List<string> GetList()
     {
         var list = new List<string>();
-        if (_Dictionary is not null)
+        foreach (var item in _dictionary)
         {
-            foreach (var item in _Dictionary)
-            {
-                list.Add($"{item.Key} - {item.Value}");
-            }
+            list.Add($"{item.Key} - {item.Value}");
         }
         return list;
     }
 
     /// <summary>
-    /// Get Value
+    /// Gets the value associated with the specified key, or default if not found.
     /// </summary>
-    /// <param name="key"></param>
+    /// <param name="key">The key whose value to get.</param>
+    /// <returns>The value if found; otherwise, default.</returns>
     public TValue? GetValue(TKey key)
     {
-        if (_Dictionary is null)
-        {
+        if (key is null)
             return default;
-        }
-
-        if (key is not null)
-        {
-            _Dictionary.TryGetValue(key, out var vOut);
-            if (vOut == null)
-            {
-                return default;
-            }
-            else
-            {
-                return vOut;
-            }
-        }
-        return default;
+        _dictionary.TryGetValue(key, out var vOut);
+        return vOut;
     }
 
     /// <summary>
-    ///
+    /// Replaces the entire dictionary with the provided value.
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="value">The new dictionary value.</param>
     public void SetValue(Dictionary<TKey, TValue> value)
     {
-        if (_Dictionary is null) { return; }
         if (value is null) { return; }
-
-        _Dictionary = value;
+        _dictionary = value;
     }
 
     /// <summary>
-    ///
+    /// Sets the value for the specified key. Adds if not present, updates if exists.
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
+    /// <param name="key">The key to set.</param>
+    /// <param name="value">The value to set.</param>
     public void SetValue(TKey key, TValue? value)
     {
-        if (_Dictionary is null) { return; }
-        if (key is null) { return; }
-        if (value is null) { return; }
-
-        if (key is not null)
-        {
-            _Dictionary.TryGetValue(key, out var vOut);
-            if (vOut == null)
-            {
-                _Dictionary.Add(key, value);
-            }
-            else
-            {
-                _Dictionary[key] = value;
-            }
-        }
+        if (key is null || value is null) { return; }
+        _dictionary[key] = value;
     }
 }

@@ -57,7 +57,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.49.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.50.0" />
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.22.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     <PackageReference Include="ScottPlot" Version="5.0.55" />
@@ -65,15 +65,16 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.5" />
     <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.5" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.23.0" />
+    <PackageReference Include="WebSpark.Bootswatch" Version="1.0.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenWeatherMapClient\OpenWeatherMapClient.csproj" />
     <ProjectReference Include="..\PromptSpark.Domain\PromptSpark.Domain.csproj" />
     <ProjectReference Include="..\TriviaSpark.Domain\TriviaSpark.Domain.csproj" />
     <ProjectReference Include="..\TriviaSpark.JShow\TriviaSpark.JShow.csproj" />
-    <ProjectReference Include="..\WebSpark.Bootswatch\WebSpark.Bootswatch.csproj" />
     <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
     <ProjectReference Include="..\WebSpark.RecipeCoookbook\WebSpark.RecipeCookbook.csproj" />
     <ProjectReference Include="..\WebSpark.SharedKernel\WebSpark.SharedKernel.csproj" />

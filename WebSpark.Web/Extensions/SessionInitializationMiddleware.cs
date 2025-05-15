@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using WebSpark.Bootswatch.Provider;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace WebSpark.Web.Extensions;
 
@@ -30,9 +31,12 @@ public class SessionInitializationMiddleware(
             {
                 var _websiteService = scope.ServiceProvider.GetRequiredService<Core.Interfaces.IWebsiteService>();
                 var _baseView = await _websiteService.GetBaseViewByHostAsync(context.Request.Host.Host, _DefaultSiteId);
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<BootswatchStyleProvider>>();
+                var service = scope.ServiceProvider.GetRequiredService<IHttpRequestResultService>();
+                var styleService = new BootswatchStyleProvider(logger,service);
+                var bootswatchModels = await styleService.GetAsync();
 
-                var styleService = new BootswatchStyleProvider();
-                _baseView.StyleList = Create(styleService.Get());
+               _baseView.StyleList = Create(bootswatchModels);
 
                 var RequestScheme = "https";
                 var curSiteRoot = $"{RequestScheme}://{context.Request.Host.Host}:{context.Request.Host.Port}/";
@@ -49,12 +53,11 @@ public class SessionInitializationMiddleware(
         await _next(context);
     }
 
-    private static IEnumerable<Core.Models.StyleModel> Create(IEnumerable<Bootswatch.Model.BootswatchStyleModel> enumerable)
+    private IEnumerable<Core.Models.StyleModel> Create(IEnumerable<Bootswatch.Model.StyleModel> bootswatchModels)
     {
-        var list = new List<Core.Models.StyleModel>();
-        foreach (var item in enumerable)
+        foreach (var item in bootswatchModels)
         {
-            list.Add(new Core.Models.StyleModel
+            yield return new Core.Models.StyleModel
             {
                 name = item.name,
                 cssCdn = item.cssCdn,
@@ -67,9 +70,8 @@ public class SessionInitializationMiddleware(
                 lessVariables = item.lessVariables,
                 preview = item.preview,
                 thumbnail = item.thumbnail
-            });
+            };
         }
-        return list;
     }
 }
 

@@ -1,7 +1,12 @@
 ﻿@using System.IO
 @using System.Text.Json
+@using WebSpark.Bootswatch.Services
+@using WebSpark.Bootswatch.Helpers
+@inject WebSpark.Bootswatch.Services.StyleCache StyleCache
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
 @{
+    var themeName = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetCurrentThemeName(ViewContext.HttpContext);
+    var themeUrl = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetThemeUrl(StyleCache, themeName);
     var areaName = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
     var currentPath =
     $"/{ViewContext.RouteData.Values["area"]}/{ViewContext.RouteData.Values["controller"]}/{ViewContext.RouteData.Values["action"]}";
@@ -12,7 +17,7 @@
     ? System.IO.Path.Combine(Environment.ContentRootPath, "Areas", areaName, "Views", "Shared", "navigation.json")
     : System.IO.Path.Combine(Environment.ContentRootPath, "Views", "Shared", "navigation.json");
 
-    JsonDocument menuItems = null;
+    JsonDocument? menuItems = null;
     if (File.Exists(jsonFile))
     {
         try
@@ -30,40 +35,52 @@
 <!-- Top Navigation (When NOT in an Area) -->
 @if (string.IsNullOrEmpty(areaName))
 {
-    <nav class="navbar navbar-expand-lg shadow-sm fixed-top mb-4">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm fixed-top mb-4" data-bs-theme="auto">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">WebSpark</a>
-
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <i class="bi bi-lightning-charge-fill fs-4 text-primary"></i>
+                <span class="fw-bold">WebSpark</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"
-                aria-controls="mobileNav" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="mobileNav" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link @(currentPath.StartsWith("/PromptSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                            href="/PromptSpark">PromptSpark</a>
+                        <a class="nav-link @(currentPath.StartsWith("/PromptSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                            href="/PromptSpark">
+                            <i class="bi bi-lightbulb"></i>PromptSpark
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(currentPath.StartsWith("/AsyncSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                            href="/AsyncSpark">AsyncSpark</a>
+                        <a class="nav-link @(currentPath.StartsWith("/AsyncSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                            href="/AsyncSpark">
+                            <i class="bi bi-arrow-repeat"></i>AsyncSpark
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(currentPath.StartsWith("/GitHubSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                            href="/GitHubSpark">GitHubSpark</a>
+                        <a class="nav-link @(currentPath.StartsWith("/GitHubSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                            href="/GitHubSpark">
+                            <i class="bi bi-github"></i>GitHubSpark
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(currentPath.StartsWith("/DataSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                            href="/DataSpark">DataSpark</a>
+                        <a class="nav-link @(currentPath.StartsWith("/DataSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                            href="/DataSpark">
+                            <i class="bi bi-bar-chart"></i>DataSpark
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(currentPath.StartsWith("/TriviaSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                            href="/TriviaSpark">TriviaSpark</a>
+                        <a class="nav-link @(currentPath.StartsWith("/TriviaSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                            href="/TriviaSpark">
+                            <i class="bi bi-question-circle"></i>TriviaSpark
+                        </a>
                     </li>
                     <li class="nav-item ms-lg-2">
-                        <button class="btn btn-sm btn-outline-secondary rounded-pill theme-toggle" aria-label="Toggle theme"
-                            title="Toggle light/dark mode">
+                        <button
+                            class="btn btn-sm btn-outline-primary rounded-pill theme-toggle d-flex align-items-center gap-2"
+                            aria-label="Toggle theme" title="Toggle light/dark mode">
                             <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
                             <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
                         </button>
@@ -72,48 +89,50 @@
             </div>
         </div>
     </nav>
-
-    <!-- Spacer for fixed navbar -->
     <div class="pt-5 mt-4"></div>
 }
 
 <!-- Area Navigation (When Inside an Area) -->
 @if (!string.IsNullOrEmpty(areaName) && menuItems != null)
 {
-    <nav class="navbar navbar-expand-lg bg-secondary sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg bg-secondary sticky-top shadow-sm" data-bs-theme="auto">
         <div class="container-fluid">
-            <a class="navbar-brand me-2 text-light" href="/">
-                <i class="bi bi-house-door"></i><span class="d-none d-sm-inline ms-1">Home</span>
+            <a class="navbar-brand me-2 d-flex align-items-center gap-2 text-light" href="/">
+                <i class="bi bi-house-door"></i><span class="d-none d-sm-inline">Home</span>
             </a>
-
-            <a class="navbar-brand text-light" href="@currentArea">
-                <i class="bi bi-folder"></i><span class="ms-1">@areaName</span>
+            <a class="navbar-brand d-flex align-items-center gap-2 text-light" href="@currentArea">
+                <i class="bi bi-folder"></i><span>@areaName</span>
             </a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#areaNavCanvas"
-                aria-controls="areaNavCanvas" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="areaNavCanvas" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="areaNav">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
                     {
-                        string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() : "anonymous";
-                        var url = item.GetProperty("url").GetString().ToLower();
-                        var text = item.GetProperty("text").GetString();
-                        var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
-
-                        if ((role == "admin" && User.Identity.IsAuthenticated) || role == "anonymous")
+                        string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() ?? "anonymous"
+                        : "anonymous";
+                        string url = item.TryGetProperty("url", out var urlElement) ? urlElement.GetString() ?? string.Empty :
+                        string.Empty;
+                        string text = item.TryGetProperty("text", out var textElement) ? textElement.GetString() ?? string.Empty
+                        : string.Empty;
+                        var isActive = !string.IsNullOrEmpty(url) && currentPath.StartsWith(url,
+                        StringComparison.OrdinalIgnoreCase);
+                        if ((role == "admin" && User?.Identity != null && User.Identity.IsAuthenticated) || role == "anonymous")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light @(isActive ? "active" : "")" href="@url">@text</a>
+                                <a class="nav-link d-flex align-items-center gap-1 text-light @(isActive ? "active" : "")"
+                                    href="@url">
+                                    <i class="bi bi-dot"></i>@text
+                                </a>
                             </li>
                         }
                     }
                     <li class="nav-item ms-lg-2">
-                        <button class="btn btn-sm btn-outline-light rounded-pill theme-toggle" aria-label="Toggle theme"
-                            title="Toggle light/dark mode">
+                        <button
+                            class="btn btn-sm btn-outline-light rounded-pill theme-toggle d-flex align-items-center gap-2"
+                            aria-label="Toggle theme" title="Toggle light/dark mode">
                             <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
                             <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
                         </button>
@@ -125,7 +144,8 @@
 }
 
 <!-- Mobile Offcanvas Navigation -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel"
+    data-bs-theme="auto">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="mobileNavLabel">Navigation</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -133,26 +153,41 @@
     <div class="offcanvas-body">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link @(currentPath.StartsWith("/PromptSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                    href="/PromptSpark">PromptSpark</a>
+                <a class="nav-link @(currentPath.StartsWith("/PromptSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                    href="/PromptSpark">
+                    <i class="bi bi-lightbulb"></i>PromptSpark
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @(currentPath.StartsWith("/AsyncSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                    href="/AsyncSpark">AsyncSpark</a>
+                <a class="nav-link @(currentPath.StartsWith("/AsyncSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                    href="/AsyncSpark">
+                    <i class="bi bi-arrow-repeat"></i>AsyncSpark
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @(currentPath.StartsWith("/DataSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                    href="/DataSpark">DataSpark</a>
+                <a class="nav-link @(currentPath.StartsWith("/GitHubSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                    href="/GitHubSpark">
+                    <i class="bi bi-github"></i>GitHubSpark
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @(currentPath.StartsWith("/TriviaSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
-                    href="/TriviaSpark">TriviaSpark</a>
+                <a class="nav-link @(currentPath.StartsWith("/DataSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                    href="/DataSpark">
+                    <i class="bi bi-bar-chart"></i>DataSpark
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentPath.StartsWith("/TriviaSpark", StringComparison.OrdinalIgnoreCase) ? "active" : "") d-flex align-items-center gap-1"
+                    href="/TriviaSpark">
+                    <i class="bi bi-question-circle"></i>TriviaSpark
+                </a>
             </li>
             <li class="nav-item mt-3">
                 <div class="d-grid">
-                    <button class="btn btn-outline-secondary theme-toggle" aria-label="Toggle theme">
-                        <i class="bi bi-moon-fill theme-toggle-dark-icon me-2"></i>
-                        <i class="bi bi-sun-fill theme-toggle-light-icon me-2 d-none"></i>
+                    <button class="btn btn-outline-primary theme-toggle d-flex align-items-center gap-2"
+                        aria-label="Toggle theme">
+                        <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
+                        <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
                         Toggle light/dark mode
                     </button>
                 </div>
@@ -164,7 +199,8 @@
 <!-- Area Navigation Offcanvas (For Mobile) -->
 @if (!string.IsNullOrEmpty(areaName) && menuItems != null)
 {
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="areaNavCanvas" aria-labelledby="areaNavCanvasLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="areaNavCanvas" aria-labelledby="areaNavCanvasLabel"
+        data-bs-theme="auto">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="areaNavCanvasLabel">@areaName Navigation</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -173,23 +209,29 @@
             <ul class="navbar-nav">
                 @foreach (var item in menuItems.RootElement.GetProperty("menuItems").EnumerateArray())
                 {
-                    string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() : "anonymous";
-                    var url = item.GetProperty("url").GetString().ToLower();
-                    var text = item.GetProperty("text").GetString();
-                    var isActive = currentPath.StartsWith(url, StringComparison.OrdinalIgnoreCase);
-
-                    if ((role == "admin" && User.Identity.IsAuthenticated) || role == "anonymous")
+                    string role = item.TryGetProperty("role", out var roleElement) ? roleElement.GetString() ?? "anonymous" :
+                    "anonymous";
+                    string url = item.TryGetProperty("url", out var urlElement) ? urlElement.GetString() ?? string.Empty :
+                    string.Empty;
+                    string text = item.TryGetProperty("text", out var textElement) ? textElement.GetString() ?? string.Empty :
+                    string.Empty;
+                    var isActive = !string.IsNullOrEmpty(url) && currentPath.StartsWith(url,
+                    StringComparison.OrdinalIgnoreCase);
+                    if ((role == "admin" && User?.Identity != null && User.Identity.IsAuthenticated) || role == "anonymous")
                     {
                         <li class="nav-item">
-                            <a class="nav-link @(isActive ? "active" : "")" href="@url">@text</a>
+                            <a class="nav-link d-flex align-items-center gap-1 @(isActive ? "active" : "")" href="@url">
+                                <i class="bi bi-dot"></i>@text
+                            </a>
                         </li>
                     }
                 }
                 <li class="nav-item mt-3">
                     <div class="d-grid">
-                        <button class="btn btn-outline-secondary theme-toggle" aria-label="Toggle theme">
-                            <i class="bi bi-moon-fill theme-toggle-dark-icon me-2"></i>
-                            <i class="bi bi-sun-fill theme-toggle-light-icon me-2 d-none"></i>
+                        <button class="btn btn-outline-light theme-toggle d-flex align-items-center gap-2"
+                            aria-label="Toggle theme">
+                            <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
+                            <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
                             Toggle light/dark mode
                         </button>
                     </div>
@@ -227,4 +269,21 @@
         color: #fff !important;
         font-weight: 500;
     }
+
+    /* Icon color adjustments for dark mode */
+    [data-bs-theme="dark"] .navbar .bi,
+    [data-bs-theme="dark"] .offcanvas .bi {
+        color: #f8f9fa;
+    }
+
+    [data-bs-theme="light"] .navbar .bi,
+    [data-bs-theme="light"] .offcanvas .bi {
+        color: #212529;
+    }
 </style>
+
+
+
+
+
+

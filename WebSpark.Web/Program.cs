@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using WebSpark.Bootswatch;
 using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
 using WebSpark.Core.Providers;
+using WebSpark.HttpClientUtility.RequestResult;
 using WebSpark.Web.Extensions;
 using Westwind.AspNetCore.Markdown;
 
@@ -37,6 +39,12 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddCookie();
+
+// Use our custom implementation instead of the default one for HTTP requests
+builder.Services.AddScoped<IHttpRequestResultService, HttpRequestResultService>();
+// Use the extension method to register Bootswatch theme switcher (includes StyleCache)
+builder.Services.AddBootswatchThemeSwitcher();
+builder.Services.AddLogging();
 
 builder.Services.AddCors(o => o.AddPolicy("WebSparkPolicy", builder =>
 {

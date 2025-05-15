@@ -29,6 +29,16 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpPost]
+    public IActionResult SetTheme(string theme)
+    {
+        if (!string.IsNullOrEmpty(theme))
+        {
+            HttpContext.Session.SetString("BootswatchTheme", theme);
+        }
+        return Ok();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

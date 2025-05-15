@@ -2,48 +2,29 @@
 <html lang="en">
 
 <head>
+    @using WebSpark.Bootswatch.Services
+    @using WebSpark.Bootswatch.Helpers
+    @inject WebSpark.Bootswatch.Services.StyleCache StyleCache
+    @{
+        var themeName = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetCurrentThemeName(ViewContext.HttpContext);
+        var themeUrl = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetThemeUrl(StyleCache, themeName);
+    }
     @await Html.PartialAsync("Sections/Meta/_metatags")
+
 
     <link href="/dist/css/webspark.min.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link id="bootswatch-theme-stylesheet" rel="stylesheet" href="@themeUrl" />
+    <script src="/_content/WebSpark.Bootswatch/js/bootswatch-theme-switcher.js"></script>
 
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("PageStyles", required: false)
     @await RenderSectionAsync("HeadScripts", required: false)
 
-    <!-- Bootstrap 5 theme colors customization -->
-    <style>
-        /* Custom theme colors */
-        :root {
-            --bs-primary: #0d6efd;
-            --bs-secondary: #6c757d;
-            --bs-body-color: #212529;
-            --bs-body-bg: #fff;
-            --bs-navbar-color: rgba(0, 0, 0, 0.7);
-            --bs-navbar-hover-color: rgba(0, 0, 0, 0.9);
-            --bs-nav-link-color: rgba(0, 0, 0, 0.7);
-            --bs-nav-link-hover-color: rgba(0, 0, 0, 0.9);
-        }
-
-        [data-bs-theme="dark"] {
-            --bs-body-color: #dee2e6;
-            --bs-body-bg: #212529;
-            --bs-navbar-color: rgba(255, 255, 255, 0.7);
-            --bs-navbar-hover-color: rgba(255, 255, 255, 0.9);
-            --bs-nav-link-color: rgba(255, 255, 255, 0.7);
-            --bs-nav-link-hover-color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* Fix for footer in dark mode */
-        [data-bs-theme="dark"] .footer.bg-light {
-            background-color: #343a40 !important;
-            border-color: #495057 !important;
-            color: #dee2e6;
-        }
-    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
+    @Html.AntiForgeryToken()
     <header>
         @await Html.PartialAsync("Sections/Navigation")
     </header>
@@ -61,7 +42,13 @@
     @await Html.PartialAsync("Sections/Footer/_footer_scripts")
     @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("PageScripts", required: false)
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/js-cookie/js.cookie.min.js"></script>
+    <script src="/lib/WebSpark.Bootswatch/bootswatch-switcher.js"></script>
 </body>
 
 </html>
 
+
+               
