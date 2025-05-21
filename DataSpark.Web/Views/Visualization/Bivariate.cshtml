@@ -1,0 +1,179 @@
+@{
+    ViewData["Title"] = "Bivariate Analysis";
+}
+<h2>Bivariate Analysis</h2>
+<div class="mb-3">
+    <label for="fileSelect" class="form-label">Select CSV File</label>
+    <select id="fileSelect" class="form-select"></select>
+</div>
+<div class="mb-3">
+    <label for="col1Select" class="form-label">Select First Column</label>
+    <select id="col1Select" class="form-select"></select>
+</div>
+<div class="mb-3">
+    <label for="col2Select" class="form-label">Select Second Column</label>
+    <select id="col2Select" class="form-select"></select>
+</div>
+<button id="analyzeBtn" class="btn btn-primary mb-3">Run Bivariate Analysis</button>
+<div id="resultArea" class="mt-4"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Helper to fetch files and populate file dropdown
+    async function loadFiles()
+    {
+        const resp = await fetch('/api/files/list');
+        const data = await resp.json();
+        const fileSelect = document.getElementById('fileSelect');
+        fileSelect.innerHTML = '<option value="">-- Select File --</option>';
+        (data.files || []).forEach(f =>
+        {
+            // Always expect object with FileName property (API never returns strings)
+            let name = f?.FileName || f?.fileName || "";
+            if (name)
+            {
+                fileSelect.innerHTML += `<option value="${name}">${name}</option>`;
+            }
+        });
+    }
+    // Helper to fetch columns for a file
+    async function loadColumns(fileName)
+    {
+        if (!fileName) return [];
+        const resp = await fetch(`/api/files/analyze?fileName=${encodeURIComponent(fileName)}`);
+        const data = await resp.json();
+        return data;
+    }
+    // Populate column dropdowns
+    async function updateColumns()
+    {
+        const fileName = document.getElementById('fileSelect').value;
+        const cols = await loadColumns(fileName);
+        const col1 = document.getElementById('col1Select');
+        const col2 = document.getElementById('col2Select');
+        col1.innerHTML = '<option value="">-- Select Column --</option>';
+        col2.innerHTML = '<option value="">-- Select Column --</option>';
+        (cols || []).forEach(c =>
+        {
+            col1.innerHTML += `<option value="${c}">${c}</option>`;
+            col2.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+    }
+    // Handle file/column selection
+    window.addEventListener('DOMContentLoaded', () =>
+    {
+        loadFiles();
+        // Defer event binding until after files are loaded
+        setTimeout(() =>
+        {
+            document.getElementById('fileSelect').addEventListener('change', updateColumns);
+        }, 200);
+    });
+    // Handle analysis
+    async function runAnalysis()
+    {
+        const fileName = document.getElementById('fileSelect').value;
+        const col1 = document.getElementById('col1Select').value;
+        const col2 = document.getElementById('col2Select').value;
+        if (!fileName || !col1 || !col2)
+        {
+            alert('Please select file and both columns.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('fileName', fileName);
+        formData.append('column1', col1);
+        formData.append('column2', col2);
+        const resp = await fetch('/api/files/bivariate', { method: 'POST', body: formData });
+        const data = await resp.json();
+        renderResult(data);
+    }
+    document.getElementById('analyzeBtn').addEventListener('click', runAnalysis);
+    // Render result
+    function renderResult(data)
+    {
+        const area = document.getElementById('resultArea');
+        area.innerHTML = '';
+        if (data.error)
+        {
+            area.innerHTML = `<div class='alert alert-danger'>${data.error}</div>`;
+            return;
+        }
+        area.innerHTML += `<div><b>File:</b> ${data.fileName}</div>`;
+        area.innerHTML += `<div><b>Column 1:</b> ${data.column1} (${data.col1Type})</div>`;
+        area.innerHTML += `<div><b>Column 2:</b> ${data.column2} (${data.col2Type})</div>`;
+        // Numeric-Numeric
+        if (data.scatter)
+        {
+            area.innerHTML += '<h5 class="mt-3">Scatter Plot</h5><canvas id="scatterChart" height="300"></canvas>';
+            setTimeout(() =>
+            {
+                const ctx = document.getElementById('scatterChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: `${data.column1} vs ${data.column2}`,
+                            data: data.scatter.map(xy => ({ x: xy[0], y: xy[1] })),
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                        }]
+                    },
+                    options: { scales: { x: { title: { display: true, text: data.column1 } }, y: { title: { display: true, text: data.column2 } } } }
+                });
+            }, 100);
+            area.innerHTML += `<div class="mt-2"><b>Correlation:</b> ${data.correlation?.toFixed(3)}</div>`;
+            if (data.regression)
+            {
+                area.innerHTML += `<div><b>Regression:</b> y = ${data.regression.intercept.toFixed(2)} + ${data.regression.slope.toFixed(2)}x</div>`;
+            }
+        }
+        // Categorical-Categorical
+        if (data.contingencyTable)
+        {
+            area.innerHTML += '<h5 class="mt-3">Contingency Table</h5>';
+            const cats1 = Object.keys(data.contingencyTable);
+            const cats2 = Array.from(new Set(cats1.flatMap(k => Object.keys(data.contingencyTable[k]))));
+            let table = '<table class="table table-bordered"><thead><tr><th></th>';
+            cats2.forEach(c2 => { table += `<th>${c2}</th>`; });
+            table += '</tr></thead><tbody>';
+            cats1.forEach(c1 =>
+            {
+                table += `<tr><th>${c1}</th>`;
+                cats2.forEach(c2 =>
+                {
+                    table += `<td>${data.contingencyTable[c1][c2] || 0}</td>`;
+                });
+                table += '</tr>';
+            });
+            table += '</tbody></table>';
+            area.innerHTML += table;
+        }
+        // Numeric-Categorical
+        if (data.groupStats)
+        {
+            area.innerHTML += '<h5 class="mt-3">Group Statistics</h5>';
+            let table = '<table class="table table-bordered"><thead><tr><th>Group</th><th>Count</th><th>Mean</th><th>Std</th><th>Min</th><th>Max</th></tr></thead><tbody>';
+            Object.entries(data.groupStats).forEach(([group, stats]) =>
+            {
+                table += `<tr><td>${group}</td><td>${stats.count}</td><td>${stats.mean?.toFixed(2) ?? ''}</td><td>${stats.std?.toFixed(2) ?? ''}</td><td>${stats.min?.toFixed(2) ?? ''}</td><td>${stats.max?.toFixed(2) ?? ''}</td></tr>`;
+            });
+            table += '</tbody></table>';
+            // Boxplot (using scatter for now)
+            area.innerHTML += '<h6>Boxplot (per group, simulated as scatter)</h6><canvas id="boxplotChart" height="300"></canvas>';
+            setTimeout(() =>
+            {
+                const ctx = document.getElementById('boxplotChart').getContext('2d');
+                const datasets = Object.entries(data.groupStats).map(([group, stats], i) => ({
+                    label: group,
+                    data: stats.values.map(v => ({ x: group, y: v })),
+                    backgroundColor: `hsl(${i * 60},70%,60%)`
+                }));
+                new Chart(ctx, {
+                    type: 'scatter',
+                    data: { datasets },
+                    options: { scales: { x: { type: 'category', title: { display: true, text: 'Group' } }, y: { title: { display: true, text: 'Value' } } } }
+                });
+            }, 100);
+        }
+    }
+</script>

@@ -1,0 +1,122 @@
+@model List<string>
+@{
+    ViewData["Title"] = "Visualize CSV Data";
+}
+<h2 class="mb-4">Visualize CSV Data</h2>
+<div class="mb-3">
+    <label for="fileSelector" class="form-label">Select a CSV file:</label>
+    <select id="fileSelector" class="form-select">
+        <option value="">-- Choose a file --</option>
+        @foreach (var file in Model)
+        {
+            <option value="@file">@file</option>
+        }
+    </select>
+</div>
+<div id="columnChartControls" class="mb-3 d-none">
+    <label for="columnSelector" class="form-label">Select a column:</label>
+    <select id="columnSelector" class="form-select mb-2"></select>
+    <label for="chartTypeSelector" class="form-label">Select chart type:</label>
+    <select id="chartTypeSelector" class="form-select mb-2">
+        <option value="auto">Auto</option>
+        <option value="histogram">Histogram (numeric)</option>
+        <option value="barchart">Bar Chart (categorical)</option>
+    </select>
+    <button id="renderChartBtn" class="btn btn-primary">Render Chart</button>
+</div>
+<div id="visualizationArea" class="mt-4"></div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let currentData = null;
+        let chartInstance = null;
+        document.getElementById('fileSelector').addEventListener('change', async function ()
+        {
+            const fileName = this.value;
+            document.getElementById('visualizationArea').innerHTML = '';
+            document.getElementById('columnChartControls').classList.add('d-none');
+            if (!fileName) return;
+            const response = await fetch(`/Visualization/Data?fileName=${encodeURIComponent(fileName)}`);
+            const data = await response.json();
+            currentData = data;
+            const columnSelector = document.getElementById('columnSelector');
+            columnSelector.innerHTML = '';
+            if (!data || !data.headers || data.headers.length === 0) return;
+            data.headers.forEach(header =>
+            {
+                const opt = document.createElement('option');
+                opt.value = header;
+                opt.textContent = header;
+                columnSelector.appendChild(opt);
+            });
+            document.getElementById('columnChartControls').classList.remove('d-none');
+        });
+        document.getElementById('renderChartBtn').addEventListener('click', function ()
+        {
+            const col = document.getElementById('columnSelector').value;
+            const chartType = document.getElementById('chartTypeSelector').value;
+            if (!col || !currentData) return;
+            renderSingleChart(col, chartType);
+        });
+        function renderSingleChart(header, chartType)
+        {
+            const area = document.getElementById('visualizationArea');
+            area.innerHTML = `<div class='mb-5'><h5>${header}</h5><canvas id='chart_canvas' height='200'></canvas></div>`;
+            if (chartInstance) { chartInstance.destroy(); }
+            const values = currentData.columns[header];
+            const numericValues = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+            const isNumeric = numericValues.length > values.length * 0.7;
+            let typeToRender = chartType;
+            if (chartType === 'auto') typeToRender = isNumeric ? 'histogram' : 'barchart';
+            setTimeout(() =>
+            {
+                if (typeToRender === 'histogram')
+                {
+                    // Histogram
+                    const bins = 20;
+                    const min = Math.min(...numericValues);
+                    const max = Math.max(...numericValues);
+                    const binWidth = (max - min) / bins;
+                    const histogram = Array(bins).fill(0);
+                    numericValues.forEach(v =>
+                    {
+                        let idx = Math.floor((v - min) / binWidth);
+                        if (idx === bins) idx--;
+                        histogram[idx]++;
+                    });
+                    const labels = Array.from({ length: bins }, (_, i) => (min + i * binWidth).toFixed(2));
+                    chartInstance = new Chart(document.getElementById('chart_canvas'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Count',
+                                data: histogram,
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                            }]
+                        },
+                        options: { scales: { x: { title: { display: true, text: header } }, y: { title: { display: true, text: 'Count' } } } }
+                    });
+                } else
+                {
+                    // Bar chart for value counts
+                    const counts = {};
+                    values.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+                    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 20);
+                    chartInstance = new Chart(document.getElementById('chart_canvas'), {
+                        type: 'bar',
+                        data: {
+                            labels: sorted.map(x => x[0]),
+                            datasets: [{
+                                label: 'Count',
+                                data: sorted.map(x => x[1]),
+                                backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                            }]
+                        },
+                        options: { scales: { x: { title: { display: true, text: header } }, y: { title: { display: true, text: 'Count' } } } }
+                    });
+                }
+            }, 0);
+        }
+    </script>
+}

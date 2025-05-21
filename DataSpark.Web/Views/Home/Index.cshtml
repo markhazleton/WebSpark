@@ -2,52 +2,119 @@
     ViewData["Title"] = "Upload CSV File";
 }
 
-<h2>Upload CSV File</h2>
-
-@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-{
-    <div class="alert alert-danger">
-        @ViewBag.ErrorMessage
+<div class="container py-4">
+    <h1 class="mb-4">Welcome to DataSpark.Web</h1>
+    <div class="alert alert-info mb-4" role="alert">
+        <strong>DataSpark.Web</strong> is your all-in-one platform for interactive data exploration, visualization, and
+        automated machine learning (AutoML) modeling. Upload CSV files, analyze your data, visualize insights, and build
+        models—all in your browser!
     </div>
-}
-
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <div class="alert alert-success">
-        @ViewBag.Message
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2 class="h4">Key Features</h2>
+            <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item"><strong>CSV File Upload:</strong> Securely upload and manage your CSV
+                    datasets.</li>
+                <li class="list-group-item"><strong>Exploratory Data Analysis (EDA):</strong> Instantly view summary
+                    statistics, data types, unique values, missing values, and more.</li>
+                <li class="list-group-item"><strong>Data Visualization:</strong> Create interactive histograms and bar
+                    charts for any column in your data.</li>
+                <li class="list-group-item"><strong>Bivariate Analysis:</strong> Explore relationships between two
+                    columns with scatter plots, correlation, regression, and contingency tables.</li>
+                <li class="list-group-item"><strong>Pivot Table:</strong> Use a drag-and-drop interface to build pivot
+                    tables and charts with <a href="https://pivottable.js.org/" target="_blank"
+                        rel="noopener">PivotTable.js</a>.</li>
+                <li class="list-group-item"><strong>AutoML Modeling:</strong> Train regression or classification models
+                    using Microsoft ML.NET and view model metrics.</li>
+                <li class="list-group-item"><strong>RESTful API:</strong> Integrate with your own tools or scripts for
+                    automation and advanced workflows.</li>
+                <li class="list-group-item"><strong>Bootswatch Theme Switcher:</strong> Instantly change the UI theme
+                    from the navbar for a personalized experience.</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2 class="h4">How to Get Started</h2>
+            <ol class="mb-3">
+                <li><strong>Upload a CSV file</strong> using the form below.</li>
+                <li>Browse <strong>Files</strong> to view EDA and summary statistics.</li>
+                <li>Use <strong>Visualize</strong> to create charts for any column.</li>
+                <li>Try <strong>Bivariate Analysis</strong> to explore relationships between columns.</li>
+                <li>Open <strong>Pivot Table</strong> for advanced data summarization and charting.</li>
+                <li>Switch themes anytime using the theme switcher in the navbar.</li>
+            </ol>
+            <div class="alert alert-secondary" role="alert">
+                <strong>Tip:</strong> All features are accessible from the navigation bar above.
+            </div>
+        </div>
     </div>
-}
-
-<form method="post" enctype="multipart/form-data" asp-action="UploadCSV" asp-controller="Home">
-    <div class="form-group">
-        <label for="csvFile">Choose a CSV file:</label>
-        <input type="file" name="file" id="csvFile" class="form-control" accept=".csv" required />
-    </div>
-    <button type="submit" class="btn btn-primary mt-3">Upload</button>
-</form>
-
-@if (ViewBag.Records != null)
-{
-    <h3>Sample Records</h3>
-    <table class="table table-bordered mt-3">
-        <thead>
-            <tr>
-                @foreach (var key in ((IDictionary<string, object>)ViewBag.Records[0]).Keys)
-                {
-                    <th>@key</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var record in ViewBag.Records)
+    <div class="card mb-4">
+        <div class="card-header">Upload CSV File</div>
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
             {
-                <tr>
-                    @foreach (var value in ((IDictionary<string, object>)record).Values)
-                    {
-                        <td>@value</td>
-                    }
-                </tr>
+                <div class="alert alert-danger" role="alert">
+                    @ViewBag.ErrorMessage
+                </div>
             }
-        </tbody>
-    </table>
-}
+            @if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                <div class="alert alert-success" role="alert">
+                    @ViewBag.Message
+                </div>
+            }
+            <form method="post" enctype="multipart/form-data" asp-action="UploadCSV" asp-controller="Home">
+                <div class="mb-3">
+                    <label for="csvFile" class="form-label">Choose a CSV file:</label>
+                    <input type="file" name="file" id="csvFile" class="form-control" accept=".csv" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+    @if (ViewBag.Records != null)
+    {
+        <div class="card mt-4">
+            <div class="card-header">Sample Records</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                @foreach (var key in ((IDictionary<string, object>)ViewBag.Records[0]).Keys)
+                                {
+                                    <th>@key</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in ViewBag.Records)
+                            {
+                                <tr>
+                                    @foreach (var value in ((IDictionary<string, object>)record).Values)
+                                    {
+                                        <td>@value</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="mt-5">
+        <h2 class="h5">Why DataSpark.Web?</h2>
+        <ul>
+            <li>Modern, mobile-friendly UI built with Bootstrap 5 and Bootswatch.</li>
+            <li>Open-source, extensible, and easy to integrate with your data science workflow.</li>
+            <li>Designed for both beginners and advanced users—no coding required for most features.</li>
+        </ul>
+        <p class="text-muted">For more details, see the <a href="/README.md" target="_blank" rel="noopener">project
+                documentation</a> or explore the navigation bar above.</p>
+    </div>
+</div>
+
+   
+   
+   
+           

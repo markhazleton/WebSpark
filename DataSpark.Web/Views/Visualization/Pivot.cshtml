@@ -1,0 +1,134 @@
+@{
+    ViewData["Title"] = "Pivot Table";
+}
+<h2>Pivot Table</h2>
+<div class="mb-3">
+    <label for="fileSelect" class="form-label">Select CSV File</label>
+    <select id="fileSelect" class="form-select"></select>
+</div>
+<div class="mb-3">
+    <button id="loadBtn" class="btn btn-primary mb-3">Load Pivot Table</button>
+</div>
+<div id="output" class="mt-4"></div>
+<div class="card mt-5 mb-4">
+    <div class="card-header bg-primary text-white">
+        About PivotTable.js
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">What is PivotTable.js?</h5>
+        <p class="card-text">
+            <a href="https://pivottable.js.org/" target="_blank">PivotTable.js</a> is a powerful open-source JavaScript
+            library for interactive data analysis and summarization. It enables users to create pivot tables and charts
+            directly in the browser, allowing for dynamic exploration of tabular data without the need for coding.
+        </p>
+        <h6>Key Features</h6>
+        <ul>
+            <li>Drag-and-drop interface for building pivot tables</li>
+            <li>Support for a wide range of aggregations and calculations</li>
+            <li>Multiple built-in renderers: Table, Heatmap, Bar Chart, and more</li>
+            <li>Integration with charting libraries like Plotly, C3, and Google Charts</li>
+            <li>Export options for data and visualizations</li>
+        </ul>
+        <h6>How to Use on This Page</h6>
+        <ol>
+            <li><strong>Select a CSV file</strong> from the dropdown above.</li>
+            <li>Click <strong>Load Pivot Table</strong> to load your data.</li>
+            <li>Use the drag-and-drop UI to arrange rows, columns, and values as needed.</li>
+            <li>Choose different renderers (Table, Bar Chart, Heatmap, etc.) from the dropdown in the pivot UI.</li>
+            <li>Export your results or charts using the export options.</li>
+        </ol>
+        <p class="mb-0">
+            For more details, visit the <a href="https://github.com/nicolaskruchten/pivottable"
+                target="_blank">PivotTable.js GitHub repository</a> or the <a href="https://pivottable.js.org/examples/"
+                target="_blank">official examples page</a>.
+        </p>
+    </div>
+</div>
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/c3@0.7.20/c3.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.13.3/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.fr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/export_renderers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/gchart_renderers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/c3@0.7.20/c3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.32.0/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/c3_renderers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/plotly_renderers.min.js"></script>
+    <script>
+        async function loadFiles()
+        {
+            const resp = await fetch('/api/files/list');
+            const data = await resp.json();
+            const fileSelect = document.getElementById('fileSelect');
+            fileSelect.innerHTML = '<option value="">-- Select File --</option>';
+            (data.files || []).forEach(f =>
+            {
+                let name = f?.FileName || f?.fileName || "";
+                if (name)
+                {
+                    fileSelect.innerHTML += `<option value="${name}">${name}</option>`;
+                }
+            });
+        }
+        async function fetchCsv(fileName)
+        {
+            if (!fileName) return null;
+            const resp = await fetch(`/files/${encodeURIComponent(fileName)}`);
+            if (!resp.ok) return null;
+            return await resp.text();
+        }
+        async function loadPivot()
+        {
+            const fileName = document.getElementById('fileSelect').value;
+            if (!fileName)
+            {
+                alert('Please select a file.');
+                return;
+            }
+            const csv = await fetchCsv(fileName);
+            if (!csv)
+            {
+                alert('Could not load file.');
+                return;
+            }
+            Papa.parse(csv, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results)
+                {
+                    if (!window.$ || !window.$.pivotUtilities || !window.$.pivotUtilities.renderers)
+                    {
+                        document.getElementById('output').innerHTML = '<div class="alert alert-danger">PivotTable.js failed to load. Please check your network connection and script order.</div>';
+                        return;
+                    }
+                    $("#output").pivotUI(results.data, {
+                        renderers: $.extend(
+                            {},
+                            $.pivotUtilities.renderers,
+                            $.pivotUtilities.export_renderers,
+                            $.pivotUtilities.gchart_renderers,
+                            $.pivotUtilities.c3_renderers,
+                            $.pivotUtilities.plotly_renderers
+                        ),
+                        rows: [],
+                        cols: [],
+                        aggregatorName: "Count",
+                        rendererName: "Table",
+                        unusedAttrsVertical: true
+                    });
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', () =>
+        {
+            loadFiles();
+            document.getElementById('loadBtn').addEventListener('click', loadPivot);
+        });
+    </script>
+}
+
+   

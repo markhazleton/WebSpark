@@ -13,7 +13,7 @@
     <PackageReference Include="itext.bouncy-castle-adapter" Version="9.2.0" />
     <PackageReference Include="itext7" Version="9.2.0" />
     <PackageReference Include="itext7.commons" Version="9.2.0" />
-    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.5" />
+    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />

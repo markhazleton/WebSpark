@@ -1,9 +1,9 @@
-using System.Diagnostics;
-using CsvHelper.Configuration;
 using CsvHelper;
-using System.Globalization;
+using CsvHelper.Configuration;
 using DataSpark.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace DataSpark.Web.Controllers
 {
@@ -11,6 +11,7 @@ namespace DataSpark.Web.Controllers
     {
         public IActionResult Index()
         {
+            logger.LogInformation("Index page accessed.");
             return View();
         }
 
@@ -19,6 +20,7 @@ namespace DataSpark.Web.Controllers
         {
             if (file == null || file.Length == 0)
             {
+                logger.LogWarning("No file uploaded.");
                 ViewBag.ErrorMessage = "Please upload a valid CSV file.";
                 return View("Index");
             }
@@ -26,6 +28,7 @@ namespace DataSpark.Web.Controllers
             try
             {
                 // Save the file to wwwroot/files
+                logger.LogInformation("Saving file to server.");
                 var uploadPath = Path.Combine(env.WebRootPath, "files");
                 if (!Directory.Exists(uploadPath))
                 {
@@ -56,6 +59,7 @@ namespace DataSpark.Web.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Error processing the file.");
                 ViewBag.ErrorMessage = $"An error occurred while processing the file: {ex.Message}";
                 return View("Index");
             }

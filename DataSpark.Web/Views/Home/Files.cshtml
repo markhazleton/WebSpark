@@ -2,174 +2,161 @@
     ViewData["Title"] = "CSV Files with EDA";
 }
 
-<h2>CSV Files with Exploratory Data Analysis</h2>
-
-<div id="fileList"></div>
-
-<div id="modelSelector" style="display: none; margin-top: 20px;">
-    <h3>Select File and Target Column for Modeling</h3>
-    <form id="modelForm">
-        <div class="form-group">
-            <label for="fileSelector">Choose a file:</label>
-            <select id="fileSelector" class="form-control" required></select>
-        </div>
-        <div class="form-group mt-3">
-            <label for="columnSelector">Choose a target column:</label>
-            <select id="columnSelector" class="form-control" required></select>
-        </div>
-        <button type="button" class="btn btn-primary mt-3" onclick="startModeling()">Start Modeling</button>
-    </form>
-</div>
-
-<div id="trainingResults" style="display: none; margin-top: 20px;">
-    <h3>Modeling Results</h3>
-    <pre id="resultsOutput"></pre>
+<div class="container py-4">
+    <h2 class="mb-4">CSV Files with Exploratory Data Analysis</h2>
+    <div class="mb-3">
+        <label for="fileSelector" class="form-label">Choose a file:</label>
+        <select id="fileSelector" class="form-select"></select>
+    </div>
+    <div id="edaResults"></div>
 </div>
 
 <script>
-    let filesData = [];
-
-    async function fetchFiles() {
+    async function fetchFileList()
+    {
         const response = await fetch('/api/files/list');
         const data = await response.json();
-
-        console.log(data); // Debugging: Log the response
-
-        const fileListDiv = document.getElementById('fileList');
-        fileListDiv.innerHTML = "";
-
-        if (!data.files || data.files.length === 0) {
-            fileListDiv.innerHTML = `<p>${data.message || "No files found."}</p>`;
+        const fileSelector = document.getElementById('fileSelector');
+        fileSelector.innerHTML = '';
+        if (!data.files || data.files.length === 0)
+        {
+            fileSelector.innerHTML = '<option value="">No files found</option>';
+            document.getElementById('edaResults').innerHTML = '';
             return;
         }
-
-        filesData = data.files;
-
-        const ul = document.createElement("ul");
-        data.files.forEach(file => {
-            const fileName = file.fileName || "N/A";
-            const numberOfRows = file.numberOfRows !== undefined ? file.numberOfRows : "N/A";
-            const numberOfColumns = file.numberOfColumns !== undefined ? file.numberOfColumns : "N/A";
-            const fileSizeKB = file.fileSizeKB !== undefined ? file.fileSizeKB.toFixed(2) : "N/A";
-            const nullPercentage = file.nullPercentage !== undefined ? file.nullPercentage.toFixed(2) : "N/A";
-            const duplicateRows = file.duplicateRows !== undefined ? file.duplicateRows : "N/A";
-
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <strong>${fileName}</strong>
-                (Rows: ${numberOfRows}, Columns: ${numberOfColumns}, File Size: ${fileSizeKB} KB, Null %: ${nullPercentage}, Duplicate Rows: ${duplicateRows})
-            `;
-
-            const columnDetails = document.createElement("ul");
-
-            if (Array.isArray(file.columns)) {
-                file.columns.forEach(column => {
-                    const columnName = column.columnName || "N/A";
-                    const dataType = column.dataType || "N/A";
-                    const uniqueCount = column.uniqueCount !== undefined ? column.uniqueCount : "N/A";
-                    const mostCommonValue = column.mostCommonValue !== null ? column.mostCommonValue : "N/A";
-                    const nullCount = column.nullCount !== undefined ? column.nullCount : "N/A";
-
-                    let numericDetails = "";
-                    if (dataType === "Numeric") {
-                        const minValue = column.minValue !== null ? column.minValue : "N/A";
-                        const maxValue = column.maxValue !== null ? column.maxValue : "N/A";
-                        const mean = column.mean !== null ? column.mean.toFixed(2) : "N/A";
-                        const stdDev = column.stdDev !== null ? column.stdDev.toFixed(2) : "N/A";
-
-                        numericDetails = `
-                            <li>Min Value: ${minValue}</li>
-                            <li>Max Value: ${maxValue}</li>
-                            <li>Mean: ${mean}</li>
-                            <li>Std Dev: ${stdDev}</li>
-                        `;
-                    }
-
-                    const columnLi = document.createElement("li");
-                    columnLi.innerHTML = `
-                        <strong>${columnName}</strong>
-                        <ul>
-                            <li>Data Type: ${dataType}</li>
-                            <li>Unique Count: ${uniqueCount}</li>
-                            <li>Most Common Value: ${mostCommonValue}</li>
-                            <li>Null Count: ${nullCount}</li>
-                            ${numericDetails}
-                        </ul>
-                    `;
-                    columnDetails.appendChild(columnLi);
-                });
-            }
-
-            li.appendChild(columnDetails);
-            ul.appendChild(li);
-        });
-
-        fileListDiv.appendChild(ul);
-
-        populateFileSelector();
-    }
-
-    function populateFileSelector() {
-        const fileSelector = document.getElementById('fileSelector');
-        fileSelector.innerHTML = "";
-
-        filesData.forEach(file => {
+        data.files.forEach(file =>
+        {
             const option = document.createElement('option');
             option.value = file.fileName;
             option.textContent = file.fileName;
             fileSelector.appendChild(option);
         });
-
-        fileSelector.addEventListener('change', updateColumnSelector);
-        updateColumnSelector();
-        document.getElementById('modelSelector').style.display = 'block';
+        fileSelector.addEventListener('change', onFileSelected);
+        if (fileSelector.value) onFileSelected();
     }
 
-    function updateColumnSelector() {
-        const fileSelector = document.getElementById('fileSelector');
-        const selectedFile = fileSelector.value;
-
-        const columnSelector = document.getElementById('columnSelector');
-        columnSelector.innerHTML = "";
-
-        const file = filesData.find(f => f.fileName === selectedFile);
-        if (file && Array.isArray(file.columns)) {
-            file.columns.forEach(column => {
-                const option = document.createElement('option');
-                option.value = column.columnName;
-                option.textContent = column.columnName;
-                columnSelector.appendChild(option);
-            });
-        }
-    }
-
-    async function startModeling() {
-        const fileSelector = document.getElementById('fileSelector');
-        const columnSelector = document.getElementById('columnSelector');
-        const selectedFile = fileSelector.value;
-        const selectedColumn = columnSelector.value;
-
-        if (!selectedFile || !selectedColumn) {
-            alert('Please select both a file and a target column.');
+    async function onFileSelected()
+    {
+        const fileName = document.getElementById('fileSelector').value;
+        if (!fileName)
+        {
+            document.getElementById('edaResults').innerHTML = '';
             return;
         }
-
-        const trainingResults = document.getElementById('trainingResults');
-        const resultsOutput = document.getElementById('resultsOutput');
-        trainingResults.style.display = 'block';
-        resultsOutput.textContent = 'Training in progress...';
-
-        try {
-            const response = await fetch(`/api/files/train?fileName=${selectedFile}&targetColumn=${selectedColumn}`, {
-                method: 'GET'
-            });
-            const results = await response.json();
-
-            resultsOutput.textContent = JSON.stringify(results, null, 2);
-        } catch (error) {
-            resultsOutput.textContent = `An error occurred: ${error.message}`;
+        document.getElementById('edaResults').innerHTML = '<div class="text-muted">Loading EDA...</div>';
+        try
+        {
+            const response = await fetch(`/api/files/eda?fileName=${encodeURIComponent(fileName)}`);
+            const eda = await response.json();
+            if (eda.error)
+            {
+                document.getElementById('edaResults').innerHTML = `<div class='alert alert-danger'>${eda.error}</div>`;
+                return;
+            }
+            renderEDA(eda);
+        } catch (e)
+        {
+            document.getElementById('edaResults').innerHTML = `<div class='alert alert-danger'>Failed to load EDA: ${e.message}</div>`;
         }
     }
 
-    fetchFiles();
+    function renderTable(headers, rows)
+    {
+        let html = '<div class="table-responsive"><table class="table table-sm table-bordered mb-0"><thead><tr>';
+        headers.forEach(h => html += `<th>${h}</th>`);
+        html += '</tr></thead><tbody>';
+        rows.forEach(row =>
+        {
+            html += '<tr>' + row.map(cell => `<td>${cell ?? ''}</td>`).join('') + '</tr>';
+        });
+        html += '</tbody></table></div>';
+        return html;
+    }
+
+    function renderEDA(eda)
+    {
+        let html = '';
+        html += `<h4 class='mb-3'>File: <span class='text-primary'>${eda.fileName}</span></h4>`;
+        // Head
+        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaHead' role='button' aria-expanded='true'>Head (First 5 Rows)</a></div><div class='collapse show' id='edaHead'><div class='card-body'>`;
+        html += renderTable(eda.summary?.map(s => s.column), eda.head);
+        html += '</div></div></div>';
+        // Tail
+        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaTail' role='button' aria-expanded='false'>Tail (Last 5 Rows)</a></div><div class='collapse' id='edaTail'><div class='card-body'>`;
+        html += renderTable(eda.summary?.map(s => s.column), eda.tail);
+        html += '</div></div></div>';
+        // Summary
+        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaSummary' role='button' aria-expanded='false'>Summary Statistics</a></div><div class='collapse' id='edaSummary'><div class='card-body'>`;
+        html += '<div class="table-responsive"><table class="table table-bordered table-sm mb-0"><thead><tr>';
+        if (eda.summary && eda.summary.length > 0)
+        {
+            Object.keys(eda.summary[0]).forEach(k => html += `<th>${k}</th>`);
+            html += '</tr></thead><tbody>';
+            eda.summary.forEach(row =>
+            {
+                html += '<tr>';
+                Object.values(row).forEach(val => html += `<td>${val ?? ''}</td>`);
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+        } else
+        {
+            html += '<tr><td>No summary available.</td></tr></table></div>';
+        }
+        html += '</div></div></div>';
+        // Value Counts
+        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaValueCounts' role='button' aria-expanded='false'>Top Value Counts (per column)</a></div><div class='collapse' id='edaValueCounts'><div class='card-body'>`;
+        if (eda.valueCounts && eda.valueCounts.length > 0)
+        {
+            eda.valueCounts.forEach(vc =>
+            {
+                html += `<strong>${vc.column}</strong>`;
+                html += '<ul>';
+                vc.counts.forEach(c => html += `<li>${c.value}: <span class='text-info'>${c.count}</span></li>`);
+                html += '</ul>';
+            });
+        } else
+        {
+            html += '<div>No value counts available.</div>';
+        }
+        html += '</div></div></div>';
+        // Missing
+        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaMissing' role='button' aria-expanded='false'>Missing Values</a></div><div class='collapse' id='edaMissing'><div class='card-body'>`;
+        if (eda.missing && eda.missing.length > 0)
+        {
+            html += '<div class="table-responsive"><table class="table table-bordered table-sm mb-0"><thead><tr><th>Column</th><th>Missing</th><th>Percent</th></tr></thead><tbody>';
+            eda.missing.forEach(m =>
+            {
+                html += `<tr><td>${m.column}</td><td>${m.missing}</td><td>${m.percent.toFixed(2)}%</td></tr>`;
+            });
+            html += '</tbody></table></div>';
+        } else
+        {
+            html += '<div>No missing value info.</div>';
+        }
+        html += '</div></div></div>';
+        // Correlation
+        if (eda.correlation && eda.correlation.length > 0)
+        {
+            html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaCorr' role='button' aria-expanded='false'>Correlation Matrix (numeric columns)</a></div><div class='collapse' id='edaCorr'><div class='card-body'>`;
+            html += '<div class="table-responsive"><table class="table table-bordered table-sm mb-0"><thead><tr><th></th>';
+            const cols = eda.correlation.map(r => r.column);
+            cols.forEach(c => html += `<th>${c}</th>`);
+            html += '</tr></thead><tbody>';
+            eda.correlation.forEach(row =>
+            {
+                html += `<tr><th>${row.column}</th>`;
+                cols.forEach(c2 =>
+                {
+                    let val = row.values[c2];
+                    html += `<td>${val !== null && !isNaN(val) ? val.toFixed(3) : '-'}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div></div></div></div>';
+        }
+        document.getElementById('edaResults').innerHTML = html;
+    }
+
+    fetchFileList();
 </script>
