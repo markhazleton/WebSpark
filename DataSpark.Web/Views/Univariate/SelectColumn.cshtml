@@ -1,0 +1,53 @@
+﻿@model UnivariateViewModel
+
+<div class="container mt-5">
+    <h2 class="text-center">Univariate Analysis Results</h2>
+
+    <div class="accordion" id="analysisAccordion">
+        @foreach (var column in Model.AvailableColumns)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-@column">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@column" aria-expanded="false" aria-controls="collapse-@column">
+                        <i class="bi bi-bar-chart"></i> @column
+                    </button>
+                </h2>
+                <div id="collapse-@column" class="accordion-collapse collapse" aria-labelledby="heading-@column" data-bs-parent="#analysisAccordion">
+                    <div class="accordion-body text-center">
+                        <div id="svg-container-@column" class="chart-container">
+                            <p>Click to load analysis for @column...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                // Load the analysis when an accordion item is expanded
+                $('.accordion-collapse').on('shown.bs.collapse', function () {
+                    var column = $(this).attr('id').replace('collapse-', '');
+                    var svgContainer = $('#svg-container-' + column);
+
+                    if (!svgContainer.data('loaded')) {
+                        $.ajax({
+                            url: '@Url.Action("Analyze", "Univariate", new { area = "DataSpark" })',
+                            type: 'POST',
+                            data: { fileName: '@Model.FileName', columnName: column },
+                            success: function (data) {
+                                svgContainer.html(data);
+                                svgContainer.data('loaded', true); // Prevent reloading on collapse toggle
+                                console.log("Analysis loaded successfully for:", column);
+                            },
+                            error: function (xhr, status, error) {
+                                svgContainer.html('<p class="text-danger">Error loading analysis for ' + column + ': ' + error + '</p>');
+                                console.error("Error loading analysis for:", column, error);
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    }

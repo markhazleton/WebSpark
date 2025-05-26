@@ -1,0 +1,98 @@
+@model DataSpark.Web.Models.SanityCheckViewModel
+@{
+    ViewData["Title"] = "Sanity Check";
+}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold mb-3">CSV Sanity Check</h1>
+            <p class="lead text-muted mb-4">
+                Quickly validate your CSV file for common issues before deeper analysis. Sanity checks help ensure your
+                data is ready for EDA.
+            </p>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 mx-auto">
+            <form method="get" asp-action="Index" asp-controller="SanityCheck">
+                <div class="mb-3">
+                    <label for="fileName" class="form-label">Select CSV File</label>
+                    <select class="form-select" id="fileName" name="fileName" onchange="this.form.submit()">
+                        @foreach (var file in Model.AvailableFiles)
+                        {
+                            if (file == Model.FileName)
+                            {
+                                <option value="@file" selected="selected">@file</option>
+                            }
+                            else
+                            {
+                                <option value="@file">@file</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+    @if (Model.FileName != null)
+    {
+        <div class="row mb-4">
+            <div class="col-lg-8 mx-auto">
+                <div class="card mb-3">
+                    <div class="card-header">Sanity Check Results for <strong>@Model.FileName</strong></div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item">
+                                <strong>Header Columns:</strong> @string.Join(", ", Model.Headers)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Row Count:</strong> @Model.RowCount
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Missing Values:</strong> @(Model.HasMissingValues ? "Yes" : "No")
+                            </li>
+                        </ul>
+                        <h5 class="mt-4 mb-2">Sample Rows</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        @foreach (var header in Model.Headers)
+                                        {
+                                            <th>@header</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.SampleRows)
+                                    {
+                                        <tr>
+                                            @foreach (var header in Model.Headers)
+                                            {
+                                                <td>@(((IDictionary<string, object>)row)[header])</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info mt-4">
+                            <strong>What is a Sanity Check?</strong><br />
+                            A sanity check is a quick review of your data to catch obvious issues: missing headers, empty
+                            rows, or missing values. It helps prevent wasted time on deeper analysis of broken or incomplete
+                            data.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+               
+                           
+                           

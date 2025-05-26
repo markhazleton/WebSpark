@@ -1,80 +1,118 @@
-using CsvHelper;
-using CsvHelper.Configuration;
 using DataSpark.Web.Models;
+using DataSpark.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace DataSpark.Web.Controllers
 {
-    public class HomeController(IWebHostEnvironment env, ILogger<HomeController> logger) : Controller
+    public class HomeController : Controller
     {
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<HomeController> _logger;
+        private readonly CsvFileService _csvFileService;
+        private readonly CsvProcessingService _csvProcessingService;
+
+        public HomeController(IWebHostEnvironment env, ILogger<HomeController> logger, CsvFileService csvFileService, CsvProcessingService csvProcessingService)
+        {
+            _env = env;
+            _logger = logger;
+            _csvFileService = csvFileService;
+            _csvProcessingService = csvProcessingService;
+        }
         public IActionResult Index()
         {
-            logger.LogInformation("Index page accessed.");
-            return View();
+            _logger.LogInformation("Index page accessed.");
+            // Pass available CSV files to the view for dropdowns
+            var files = _csvFileService.GetCsvFileNames();
+            return View(files);
         }
 
         [HttpPost]
-        public IActionResult UploadCSV(IFormFile file)
+        public async Task<IActionResult> UploadCSV(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
-                logger.LogWarning("No file uploaded.");
+                _logger.LogWarning("No file uploaded.");
                 ViewBag.ErrorMessage = "Please upload a valid CSV file.";
-                return View("Index");
+                var files = _csvFileService.GetCsvFileNames();
+                return View("Index", files);
             }
 
             try
             {
-                // Save the file to wwwroot/files
-                logger.LogInformation("Saving file to server.");
-                var uploadPath = Path.Combine(env.WebRootPath, "files");
-                if (!Directory.Exists(uploadPath))
+                // Use the CSV file service to save the file
+                var savedFileName = await _csvFileService.SaveUploadedFileAsync(file);
+
+                if (savedFileName == null)
                 {
-                    Directory.CreateDirectory(uploadPath);
+                    ViewBag.ErrorMessage = "Failed to save the uploaded file.";
+                    var files = _csvFileService.GetCsvFileNames();
+                    return View("Index", files);
                 }
 
-                var filePath = Path.Combine(uploadPath, file.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
+                // Read and process the saved file using the service
+                var csvData = _csvFileService.ReadCsvForVisualization(savedFileName);
 
-                // Process the saved file
-                using var reader = new StreamReader(filePath);
-                using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));
-                var records = csv.GetRecords<dynamic>().ToList();
-
-                if (!records.Any())
+                if (!csvData.Records.Any())
                 {
                     ViewBag.ErrorMessage = "The CSV file is empty.";
-                    return View("Index");
+                    var files = _csvFileService.GetCsvFileNames();
+                    return View("Index", files);
                 }
 
-                // Example: Display the first 10 records (or any processing result)
+                // Display success message and sample records
                 ViewBag.Message = "CSV file uploaded and saved successfully!";
-                ViewBag.Records = records.Take(10).ToList(); // Display the first 10 records
-                ViewBag.FilePath = $"/files/{file.FileName}";
+                ViewBag.Records = csvData.Records.Take(10).ToList(); // Display the first 10 records
+                ViewBag.FilePath = $"/files/{savedFileName}";
+                var filesList = _csvFileService.GetCsvFileNames();
+                return View("Index", filesList);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing the file.");
+                _logger.LogError(ex, "Error processing the file.");
                 ViewBag.ErrorMessage = $"An error occurred while processing the file: {ex.Message}";
-                return View("Index");
+                var files = _csvFileService.GetCsvFileNames();
+                return View("Index", files);
             }
-
-            return View("Index");
         }
 
         public IActionResult Files()
         {
-            return View();
+            // Pass available CSV files to the view for dropdowns
+            var files = _csvFileService.GetCsvFileNames();
+            return View(files);
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult Dashboard()
+        {
+            // Pass available CSV files to the view for dashboard
+            var files = _csvFileService.GetCsvFileNames();
+            return View(files);
+        }
+
+        public async Task<IActionResult> Results(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                ViewBag.ErrorMessage = "No file specified.";
+                var files = _csvFileService.GetCsvFileNames();
+                return View("Index", files);
+            }
+
+            // Use the processing service to build a full analysis view model
+            var model = await _csvProcessingService.ProcessCsvWithFallbackAsync(fileName);
+            if (model == null || model.RowCount == 0)
+            {
+                ViewBag.ErrorMessage = "The selected CSV file is empty or could not be read.";
+                var files = _csvFileService.GetCsvFileNames();
+                return View("Index", files);
+            }
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

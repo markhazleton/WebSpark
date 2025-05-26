@@ -1,9 +1,11 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using System.Globalization;
+using DataSpark.Web.Services;
 
 namespace DataSpark.Web.Controllers.api;
 
@@ -12,10 +14,14 @@ namespace DataSpark.Web.Controllers.api;
 public class FilesController : Controller
 {
     private readonly IWebHostEnvironment _env;
+    private readonly CsvFileService _csvFileService;
+    private readonly CsvProcessingService _csvProcessingService;
 
-    public FilesController(IWebHostEnvironment env)
+    public FilesController(IWebHostEnvironment env, CsvFileService csvFileService, CsvProcessingService csvProcessingService)
     {
         _env = env;
+        _csvFileService = csvFileService;
+        _csvProcessingService = csvProcessingService;
     }
 
     // Endpoint to list all CSV files with detailed EDA
@@ -70,16 +76,13 @@ public class FilesController : Controller
             }
 
             var headers = ((IDictionary<string, object>)records[0]).Keys.ToList();
-            var columnDetails = PerformColumnLevelEDA(records, headers);
-
-            return new
+            var columnDetails = PerformColumnLevelEDA(records, headers); return new
             {
                 FileName = Path.GetFileName(filePath),
                 NumberOfRows = records.Count,
                 NumberOfColumns = headers.Count,
                 FileSizeKB = new FileInfo(filePath).Length / 1024.0,
                 Columns = columnDetails,
-                NullPercentage = columnDetails.Sum(c => ((dynamic)c).NullCount) / (double)(records.Count * headers.Count) * 100,
                 DuplicateRows = CountDuplicateRows(records)
             };
         }
@@ -637,9 +640,9 @@ public class FilesController : Controller
                 var table = col1Data.Zip(col2Data, (a, b) => new { a, b })
                     .GroupBy(x => x.a)
                     .ToDictionary(
-                        g => g.Key ?? "",
+                        g => g.Key ?? string.Empty,
                         g => g.GroupBy(x => x.b).ToDictionary(
-                            gg => gg.Key ?? "",
+                            gg => gg.Key ?? string.Empty,
                             gg => gg.Count()
                         )
                     );
@@ -652,7 +655,7 @@ public class FilesController : Controller
                 var categorical = col1Numeric ? col2Data : col1Data;
                 var groups = categorical.Zip(numeric, (cat, num) => new { cat, num })
                     .Where(x => !string.IsNullOrEmpty(x.num) && double.TryParse(x.num, out _))
-                    .GroupBy(x => x.cat ?? "")
+                    .GroupBy(x => x.cat ?? string.Empty)
                     .ToDictionary(
                         g => g.Key,
                         g =>
@@ -676,6 +679,342 @@ public class FilesController : Controller
         catch (Exception ex)
         {
             return StatusCode(500, new { error = $"Failed to perform bivariate analysis: {ex.Message}", details = ex.ToString(), fileName });
+        }
+    }
+
+    // NEW API ENDPOINTS TO EXPOSE CSV SERVICES FUNCTIONALITY
+
+    /// <summary>
+    /// Upload a new CSV file
+    /// </summary>
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadFile(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { error = "No file provided or file is empty." });
+        }
+
+        try
+        {
+            var savedFileName = await _csvFileService.SaveUploadedFileAsync(file);
+            if (savedFileName == null)
+            {
+                return StatusCode(500, new { error = "Failed to save the uploaded file." });
+            }
+
+            return Ok(new
+            {
+                message = "File uploaded successfully.",
+                fileName = savedFileName,
+                fileSize = file.Length,
+                contentType = file.ContentType
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Upload failed: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Get CSV file headers only
+    /// </summary>
+    [HttpGet("headers")]
+    public async Task<IActionResult> GetHeaders([FromQuery] string fileName, [FromQuery] char delimiter = ',')
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return BadRequest(new { error = "File name is required." });
+        }
+
+        try
+        {
+            var result = await _csvFileService.GetCsvHeadersAsync(fileName, delimiter);
+            if (!result.Success)
+            {
+                return NotFound(new { error = result.ErrorMessage });
+            }
+
+            return Ok(new { fileName, headers = result.Data });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to get headers: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Get CSV data as JSON with optional pagination
+    /// </summary>
+    [HttpGet("data")]
+    public async Task<IActionResult> GetCsvData([FromQuery] string fileName, [FromQuery] int skip = 0, [FromQuery] int take = 100, [FromQuery] char delimiter = ',')
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return BadRequest(new { error = "File name is required." });
+        }
+
+        try
+        {
+            var result = await _csvFileService.ReadCsvRecordsAsync(fileName, delimiter);
+            if (!result.Success)
+            {
+                return NotFound(new { error = result.ErrorMessage });
+            }
+
+            var paginatedData = result.Data.Skip(skip).Take(take).ToList();
+            var totalCount = result.Data.Count;
+
+            return Ok(new
+            {
+                fileName,
+                totalRecords = totalCount,
+                skip,
+                take,
+                records = paginatedData
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to get data: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Convert CSV to JSON format
+    /// </summary>
+    [HttpGet("json")]
+    public async Task<IActionResult> ConvertToJson([FromQuery] string fileName, [FromQuery] bool useSafeMethod = false, [FromQuery] char delimiter = ',')
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return BadRequest(new { error = "File name is required." });
+        }
+
+        try
+        {
+            var jsonResult = await _csvProcessingService.ProcessCsvToJsonAsync(fileName, useSafeMethod, delimiter);
+            return Content(jsonResult, "application/json");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to convert to JSON: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Get processed CSV view model with full analysis
+    /// </summary>
+    [HttpGet("processed")]
+    public async Task<IActionResult> GetProcessedCsv([FromQuery] string fileName, [FromQuery] char delimiter = ',')
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return BadRequest(new { error = "File name is required." });
+        }
+
+        try
+        {
+            var viewModel = await _csvProcessingService.ProcessCsvWithFallbackAsync(fileName, delimiter);
+            if (viewModel == null)
+            {
+                return NotFound(new { error = "Failed to process CSV file." });
+            }
+
+            return Ok(new
+            {
+                fileName = viewModel.FileName,
+                rowCount = viewModel.RowCount,
+                columnCount = viewModel.ColumnCount,
+                message = viewModel.Message,
+                columnDetails = viewModel.ColumnDetails?.Select(c => new
+                {
+                    name = c.Column,
+                    type = c.Type,
+                    isNumeric = c.IsNumeric,
+                    isCategory = c.IsCategory,
+                    nullCount = c.NullCount,
+                    uniqueCount = c.UniqueCount,
+                    mean = c.Mean,
+                    median = c.Median,
+                    standardDeviation = c.StandardDeviation,
+                    min = c.Min,
+                    max = c.Max,
+                    errors = c.Errors
+                }).ToList(),
+                bivariateAnalyses = viewModel.BivariateAnalyses?.Select(ba => new
+                {
+                    column1 = ba.Column1,
+                    column2 = ba.Column2,
+                    insightScore = ba.InsightScore,
+                    observations = ba.Observations,
+                    visualizationRecommendations = ba.VisualizationRecommendations
+                }).ToList()
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to process CSV: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Get visualization data for a specific column
+    /// </summary>
+    [HttpGet("visualization")]
+    public IActionResult GetVisualizationData([FromQuery] string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return BadRequest(new { error = "File name is required." });
+        }
+
+        try
+        {
+            if (!_csvFileService.FileExists(fileName))
+            {
+                return NotFound(new { error = "File not found." });
+            }
+
+            var csvData = _csvFileService.ReadCsvForVisualization(fileName);
+            return Ok(new
+            {
+                fileName,
+                headers = csvData.Headers,
+                columns = csvData.Columns,
+                sampleRecords = csvData.Records.Take(10).ToList()
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to get visualization data: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Check if a specific file exists
+    /// </summary>
+    [HttpGet("exists")]
+    public IActionResult CheckFileExists([FromQuery] string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return BadRequest(new { error = "File name is required." });
+        }
+
+        var exists = _csvFileService.FileExists(fileName);
+        var filePath = exists ? _csvFileService.GetFilePath(fileName) : null;
+
+        return Ok(new
+        {
+            fileName,
+            exists,
+            filePath = exists ? Path.GetFileName(filePath) : null
+        });
+    }
+
+    /// <summary>
+    /// Get summary statistics for all files
+    /// </summary>
+    [HttpGet("summary")]
+    public IActionResult GetFilesSummary()
+    {
+        try
+        {
+            var files = _csvFileService.GetCsvFileNames();
+            var summaries = files.Select(fileName =>
+            {
+                try
+                {
+                    var filePath = _csvFileService.GetFilePath(fileName);
+                    if (filePath == null) return null;
+
+                    var fileInfo = new FileInfo(filePath);
+                    var csvData = _csvFileService.ReadCsvForVisualization(fileName);
+
+                    return new
+                    {
+                        fileName,
+                        fileSize = fileInfo.Length,
+                        fileSizeKB = Math.Round(fileInfo.Length / 1024.0, 2),
+                        lastModified = fileInfo.LastWriteTime,
+                        rowCount = csvData.Records.Count,
+                        columnCount = csvData.Headers.Count,
+                        headers = csvData.Headers
+                    };
+                }
+                catch
+                {
+                    return null;
+                }
+            }).Where(s => s != null).ToList();
+
+            return Ok(new
+            {
+                totalFiles = files.Count,
+                files = summaries
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to get files summary: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Get column statistics for a specific column
+    /// </summary>
+    [HttpGet("column-stats")]
+    public async Task<IActionResult> GetColumnStatistics([FromQuery] string fileName, [FromQuery] string columnName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName) || string.IsNullOrWhiteSpace(columnName))
+        {
+            return BadRequest(new { error = "File name and column name are required." });
+        }
+
+        try
+        {
+            var viewModel = await _csvProcessingService.ProcessCsvWithFallbackAsync(fileName);
+            if (viewModel?.ColumnDetails == null)
+            {
+                return NotFound(new { error = "File not found or could not be processed." });
+            }
+            var columnDetail = viewModel.ColumnDetails.FirstOrDefault(c =>
+                string.Equals(c.Column, columnName, StringComparison.OrdinalIgnoreCase));
+
+            if (columnDetail == null)
+            {
+                return NotFound(new { error = $"Column '{columnName}' not found in file." });
+            }
+
+            return Ok(new
+            {
+                fileName,
+                columnName = columnDetail.Column,
+                statistics = new
+                {
+                    type = columnDetail.Type,
+                    isNumeric = columnDetail.IsNumeric,
+                    isCategory = columnDetail.IsCategory,
+                    nullCount = columnDetail.NullCount,
+                    uniqueCount = columnDetail.UniqueCount,
+                    mean = columnDetail.Mean,
+                    median = columnDetail.Median,
+                    standardDeviation = columnDetail.StandardDeviation,
+                    min = columnDetail.Min,
+                    max = columnDetail.Max,
+                    quartile1 = columnDetail.Q1,
+                    quartile3 = columnDetail.Q3,
+                    skewness = columnDetail.Skewness,
+                    iqr = columnDetail.IQR,
+                    errors = columnDetail.Errors
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to get column statistics: {ex.Message}" });
         }
     }
 }

@@ -1,0 +1,120 @@
+﻿@model DataSpark.Web.Models.CsvViewModel
+@{
+    ViewData["Title"] = "Univariate Analysis";
+    var numericColumns = Model.ColumnDetails.Where(c => c.Type == "Numeric").ToList();
+    var categoricalColumns = Model.ColumnDetails.Where(c => c.Type == "Categorical").ToList();
+    var files = ViewBag.Files as List<string> ?? new List<string>();
+}
+<div class="container py-4">
+    <h2 class="mb-4">Univariate Analysis</h2>
+    <form method="get" asp-action="Index" class="mb-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-6">
+                <label for="fileName" class="form-label">Select CSV File</label>
+                <select class="form-select" id="fileName" name="fileName" onchange="this.form.submit()">
+                    @foreach (var file in files)
+                    {
+                        if (file == Model.FileName)
+                        {
+                            <option value="@file" selected="selected">@file</option>
+                        }
+                        else
+                        {
+                            <option value="@file">@file</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </form>
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+    @if (Model != null && Model.FileName != null)
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <strong>File:</strong> @Model.FileName
+            </div>
+            <div class="card-body">
+                <h5 class="mb-3">Numeric Columns</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Column</th>
+                                <th>Type</th>
+                                <th>Non-Null</th>
+                                <th>Null</th>
+                                <th>Unique</th>
+                                <th>Most Common</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Mean</th>
+                                <th>Std Dev</th>
+                                <th>Skewness</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var col in numericColumns)
+                            {
+                                <tr>
+                                    <td>@col.Column</td>
+                                    <td>@col.Type</td>
+                                    <td>@col.NonNullCount</td>
+                                    <td>@col.NullCount</td>
+                                    <td>@col.UniqueCount</td>
+                                    <td>@col.MostCommonValue</td>
+                                    <td>@col.Min</td>
+                                    <td>@col.Max</td>
+                                    <td>@(double.IsNaN(col.Mean) ? "N/A" : col.Mean.ToString("F2"))</td>
+                                    <td>@(double.IsNaN(col.StandardDeviation) ? "N/A" : col.StandardDeviation.ToString("F2"))
+                                    </td>
+                                    <td>@(double.IsNaN(col.Skewness) ? "N/A" : col.Skewness.ToString("F2"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <h5 class="mb-3">Categorical Columns</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Column</th>
+                                <th>Type</th>
+                                <th>Non-Null</th>
+                                <th>Null</th>
+                                <th>Unique</th>
+                                <th>Most Common</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var col in categoricalColumns)
+                            {
+                                <tr>
+                                    <td>@col.Column</td>
+                                    <td>@col.Type</td>
+                                    <td>@col.NonNullCount</td>
+                                    <td>@col.NullCount</td>
+                                    <td>@col.UniqueCount</td>
+                                    <td>@col.MostCommonValue</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <h5 class="mb-3">Observations</h5>
+                <ul class="list-group mb-3">
+                    @foreach (var col in Model.ColumnDetails)
+                    {
+                        <li class="list-group-item">
+                            <strong>@col.Column:</strong> @string.Join("; ", col.Observations)
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+</div>

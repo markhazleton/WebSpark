@@ -1,120 +1,136 @@
-﻿@{
-    ViewData["Title"] = "Upload CSV File";
+﻿@model IEnumerable<string>
+@{
+    ViewData["Title"] = "Home";
 }
-
-<div class="container py-4">
-    <h1 class="mb-4">Welcome to DataSpark.Web</h1>
-    <div class="alert alert-info mb-4" role="alert">
-        <strong>DataSpark.Web</strong> is your all-in-one platform for interactive data exploration, visualization, and
-        automated machine learning (AutoML) modeling. Upload CSV files, analyze your data, visualize insights, and build
-        models—all in your browser!
-    </div>
+<div class="container mt-5">
     <div class="row mb-5">
-        <div class="col-md-6">
-            <h2 class="h4">Key Features</h2>
-            <ul class="list-group list-group-flush mb-3">
-                <li class="list-group-item"><strong>CSV File Upload:</strong> Securely upload and manage your CSV
-                    datasets.</li>
-                <li class="list-group-item"><strong>Exploratory Data Analysis (EDA):</strong> Instantly view summary
-                    statistics, data types, unique values, missing values, and more.</li>
-                <li class="list-group-item"><strong>Data Visualization:</strong> Create interactive histograms and bar
-                    charts for any column in your data.</li>
-                <li class="list-group-item"><strong>Bivariate Analysis:</strong> Explore relationships between two
-                    columns with scatter plots, correlation, regression, and contingency tables.</li>
-                <li class="list-group-item"><strong>Pivot Table:</strong> Use a drag-and-drop interface to build pivot
-                    tables and charts with <a href="https://pivottable.js.org/" target="_blank"
-                        rel="noopener">PivotTable.js</a>.</li>
-                <li class="list-group-item"><strong>AutoML Modeling:</strong> Train regression or classification models
-                    using Microsoft ML.NET and view model metrics.</li>
-                <li class="list-group-item"><strong>RESTful API:</strong> Integrate with your own tools or scripts for
-                    automation and advanced workflows.</li>
-                <li class="list-group-item"><strong>Bootswatch Theme Switcher:</strong> Instantly change the UI theme
-                    from the navbar for a personalized experience.</li>
-            </ul>
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3">Welcome to DataSpark</h1>
+            <p class="lead text-muted mb-4">
+                DataSpark guides you through the essential first steps of data analysis for your CSV files. Begin your
+                journey with a <strong>Sanity Check</strong>, then explore your data with <strong>Univariate</strong>
+                and <strong>Bivariate Analysis</strong>—the core of Exploratory Data Analysis (EDA).
+            </p>
         </div>
-        <div class="col-md-6">
-            <h2 class="h4">How to Get Started</h2>
-            <ol class="mb-3">
-                <li><strong>Upload a CSV file</strong> using the form below.</li>
-                <li>Browse <strong>Files</strong> to view EDA and summary statistics.</li>
-                <li>Use <strong>Visualize</strong> to create charts for any column.</li>
-                <li>Try <strong>Bivariate Analysis</strong> to explore relationships between columns.</li>
-                <li>Open <strong>Pivot Table</strong> for advanced data summarization and charting.</li>
-                <li>Switch themes anytime using the theme switcher in the navbar.</li>
-            </ol>
-            <div class="alert alert-secondary" role="alert">
-                <strong>Tip:</strong> All features are accessible from the navigation bar above.
+    </div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-3 text-primary">1. Sanity Check</h3>
+                    <p class="card-text">Upload your CSV file and perform a quick check for file integrity, missing
+                        values, and basic structure. This step ensures your data is ready for deeper analysis.</p>
+                    <a href="/SanityCheck/Index" class="btn btn-outline-primary">Start Sanity Check</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-3 text-success">2. Univariate Analysis</h3>
+                    <p class="card-text">Examine each column individually to understand distributions, outliers, and
+                        summary statistics. Univariate analysis reveals the story of each variable in your dataset.</p>
+                    <a href="/Univariate/Index" class="btn btn-outline-success">Explore Univariate</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-3 text-info">3. Bivariate Analysis</h3>
+                    <p class="card-text">Investigate relationships between pairs of columns. Bivariate analysis uncovers
+                        correlations, trends, and interactions that drive deeper insights.</p>
+                    <a href="/Visualization/Bivariate" class="btn btn-outline-info">Explore Bivariate</a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card mb-4">
-        <div class="card-header">Upload CSV File</div>
-        <div class="card-body">
-            @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-            {
-                <div class="alert alert-danger" role="alert">
-                    @ViewBag.ErrorMessage
-                </div>
-            }
-            @if (!string.IsNullOrEmpty(ViewBag.Message))
-            {
-                <div class="alert alert-success" role="alert">
-                    @ViewBag.Message
-                </div>
-            }
-            <form method="post" enctype="multipart/form-data" asp-action="UploadCSV" asp-controller="Home">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="alert alert-secondary">
+                <h5 class="mb-2">How to Get Started</h5>
+                <ol class="mb-0">
+                    <li><strong>Upload your CSV file</strong> using the form below.</li>
+                    <li>Begin with a <strong>Sanity Check</strong> to ensure your data is clean and structured.</li>
+                    <li>Proceed to <strong>Univariate</strong> and <strong>Bivariate Analysis</strong> for deeper
+                        exploration.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            <form asp-action="UploadCSV" asp-controller="Home" method="post" enctype="multipart/form-data" class="mb-4">
                 <div class="mb-3">
-                    <label for="csvFile" class="form-label">Choose a CSV file:</label>
-                    <input type="file" name="file" id="csvFile" class="form-control" accept=".csv" required />
+                    <label for="file" class="form-label">Upload CSV File</label>
+                    <input class="form-control" type="file" id="file" name="file" accept=".csv" required />
                 </div>
                 <button type="submit" class="btn btn-primary">Upload</button>
             </form>
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+            }
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success">@ViewBag.Message</div>
+            }
+            @if (ViewBag.Records != null && ((List<dynamic>)ViewBag.Records).Count > 0)
+            {
+                <div class="card mb-3">
+                    <div class="card-header">Sample Records</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        @foreach (var key in ((IDictionary<string,
+                                                                            object>)((List<dynamic>)ViewBag.Records)[0]).Keys)
+                                        {
+                                            <th>@key</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var record in (List<dynamic>)ViewBag.Records)
+                                    {
+                                        <tr>
+                                            @foreach (var value in ((IDictionary<string, object>)record).Values)
+                                            {
+                                                <td>@value</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
-    @if (ViewBag.Records != null)
-    {
-        <div class="card mt-4">
-            <div class="card-header">Sample Records</div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-bordered mb-0">
-                        <thead>
-                            <tr>
-                                @foreach (var key in ((IDictionary<string, object>)ViewBag.Records[0]).Keys)
-                                {
-                                    <th>@key</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var record in ViewBag.Records)
-                            {
-                                <tr>
-                                    @foreach (var value in ((IDictionary<string, object>)record).Values)
-                                    {
-                                        <td>@value</td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+    <div class="row mb-5">
+        <div class="col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header">Available CSV Files</div>
+                <ul class="list-group list-group-flush">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var file in Model)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @file
+                                <a href="/home/results?fileName=@file" class="btn btn-sm btn-outline-primary ms-2">Full
+                                    Analysis</a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="list-group-item">No CSV files found.</li>
+                    }
+                </ul>
             </div>
         </div>
-    }
-    <div class="mt-5">
-        <h2 class="h5">Why DataSpark.Web?</h2>
-        <ul>
-            <li>Modern, mobile-friendly UI built with Bootstrap 5 and Bootswatch.</li>
-            <li>Open-source, extensible, and easy to integrate with your data science workflow.</li>
-            <li>Designed for both beginners and advanced users—no coding required for most features.</li>
-        </ul>
-        <p class="text-muted">For more details, see the <a href="/README.md" target="_blank" rel="noopener">project
-                documentation</a> or explore the navigation bar above.</p>
     </div>
 </div>
-
-   
-   
-   
-           

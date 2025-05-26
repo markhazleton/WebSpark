@@ -1,0 +1,20 @@
+@model List<string>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="container py-4">
+    <h2 class="mb-4">Dashboard</h2>
+    <form method="get" asp-action="Data">
+        <div class="mb-3">
+            <label for="fileName" class="form-label">Select CSV File</label>
+            <select class="form-select" id="fileName" name="fileName" required>
+                <option value="">Choose...</option>
+                @foreach (var file in Model)
+                {
+                    <option value="@file">@file</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">View Dashboard</button>
+    </form>
+</div>

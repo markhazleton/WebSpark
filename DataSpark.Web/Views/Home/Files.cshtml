@@ -1,162 +1,39 @@
-﻿@{
-    ViewData["Title"] = "CSV Files with EDA";
+﻿@model IEnumerable<string>
+@{
+    ViewData["Title"] = "CSV Files";
 }
-
-<div class="container py-4">
-    <h2 class="mb-4">CSV Files with Exploratory Data Analysis</h2>
-    <div class="mb-3">
-        <label for="fileSelector" class="form-label">Choose a file:</label>
-        <select id="fileSelector" class="form-select"></select>
-    </div>
-    <div id="edaResults"></div>
-</div>
-
-<script>
-    async function fetchFileList()
-    {
-        const response = await fetch('/api/files/list');
-        const data = await response.json();
-        const fileSelector = document.getElementById('fileSelector');
-        fileSelector.innerHTML = '';
-        if (!data.files || data.files.length === 0)
-        {
-            fileSelector.innerHTML = '<option value="">No files found</option>';
-            document.getElementById('edaResults').innerHTML = '';
-            return;
-        }
-        data.files.forEach(file =>
-        {
-            const option = document.createElement('option');
-            option.value = file.fileName;
-            option.textContent = file.fileName;
-            fileSelector.appendChild(option);
-        });
-        fileSelector.addEventListener('change', onFileSelected);
-        if (fileSelector.value) onFileSelected();
-    }
-
-    async function onFileSelected()
-    {
-        const fileName = document.getElementById('fileSelector').value;
-        if (!fileName)
-        {
-            document.getElementById('edaResults').innerHTML = '';
-            return;
-        }
-        document.getElementById('edaResults').innerHTML = '<div class="text-muted">Loading EDA...</div>';
-        try
-        {
-            const response = await fetch(`/api/files/eda?fileName=${encodeURIComponent(fileName)}`);
-            const eda = await response.json();
-            if (eda.error)
+<div class="container mt-4">
+    <h2 class="mb-4">CSV Files</h2>
+    <div class="card mb-4">
+        <div class="card-header">Available Files</div>
+        <ul class="list-group list-group-flush">
+            @if (Model != null && Model.Any())
             {
-                document.getElementById('edaResults').innerHTML = `<div class='alert alert-danger'>${eda.error}</div>`;
-                return;
-            }
-            renderEDA(eda);
-        } catch (e)
-        {
-            document.getElementById('edaResults').innerHTML = `<div class='alert alert-danger'>Failed to load EDA: ${e.message}</div>`;
-        }
-    }
-
-    function renderTable(headers, rows)
-    {
-        let html = '<div class="table-responsive"><table class="table table-sm table-bordered mb-0"><thead><tr>';
-        headers.forEach(h => html += `<th>${h}</th>`);
-        html += '</tr></thead><tbody>';
-        rows.forEach(row =>
-        {
-            html += '<tr>' + row.map(cell => `<td>${cell ?? ''}</td>`).join('') + '</tr>';
-        });
-        html += '</tbody></table></div>';
-        return html;
-    }
-
-    function renderEDA(eda)
-    {
-        let html = '';
-        html += `<h4 class='mb-3'>File: <span class='text-primary'>${eda.fileName}</span></h4>`;
-        // Head
-        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaHead' role='button' aria-expanded='true'>Head (First 5 Rows)</a></div><div class='collapse show' id='edaHead'><div class='card-body'>`;
-        html += renderTable(eda.summary?.map(s => s.column), eda.head);
-        html += '</div></div></div>';
-        // Tail
-        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaTail' role='button' aria-expanded='false'>Tail (Last 5 Rows)</a></div><div class='collapse' id='edaTail'><div class='card-body'>`;
-        html += renderTable(eda.summary?.map(s => s.column), eda.tail);
-        html += '</div></div></div>';
-        // Summary
-        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaSummary' role='button' aria-expanded='false'>Summary Statistics</a></div><div class='collapse' id='edaSummary'><div class='card-body'>`;
-        html += '<div class="table-responsive"><table class="table table-bordered table-sm mb-0"><thead><tr>';
-        if (eda.summary && eda.summary.length > 0)
-        {
-            Object.keys(eda.summary[0]).forEach(k => html += `<th>${k}</th>`);
-            html += '</tr></thead><tbody>';
-            eda.summary.forEach(row =>
-            {
-                html += '<tr>';
-                Object.values(row).forEach(val => html += `<td>${val ?? ''}</td>`);
-                html += '</tr>';
-            });
-            html += '</tbody></table></div>';
-        } else
-        {
-            html += '<tr><td>No summary available.</td></tr></table></div>';
-        }
-        html += '</div></div></div>';
-        // Value Counts
-        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaValueCounts' role='button' aria-expanded='false'>Top Value Counts (per column)</a></div><div class='collapse' id='edaValueCounts'><div class='card-body'>`;
-        if (eda.valueCounts && eda.valueCounts.length > 0)
-        {
-            eda.valueCounts.forEach(vc =>
-            {
-                html += `<strong>${vc.column}</strong>`;
-                html += '<ul>';
-                vc.counts.forEach(c => html += `<li>${c.value}: <span class='text-info'>${c.count}</span></li>`);
-                html += '</ul>';
-            });
-        } else
-        {
-            html += '<div>No value counts available.</div>';
-        }
-        html += '</div></div></div>';
-        // Missing
-        html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaMissing' role='button' aria-expanded='false'>Missing Values</a></div><div class='collapse' id='edaMissing'><div class='card-body'>`;
-        if (eda.missing && eda.missing.length > 0)
-        {
-            html += '<div class="table-responsive"><table class="table table-bordered table-sm mb-0"><thead><tr><th>Column</th><th>Missing</th><th>Percent</th></tr></thead><tbody>';
-            eda.missing.forEach(m =>
-            {
-                html += `<tr><td>${m.column}</td><td>${m.missing}</td><td>${m.percent.toFixed(2)}%</td></tr>`;
-            });
-            html += '</tbody></table></div>';
-        } else
-        {
-            html += '<div>No missing value info.</div>';
-        }
-        html += '</div></div></div>';
-        // Correlation
-        if (eda.correlation && eda.correlation.length > 0)
-        {
-            html += `<div class='card mb-3'><div class='card-header'><a data-bs-toggle='collapse' href='#edaCorr' role='button' aria-expanded='false'>Correlation Matrix (numeric columns)</a></div><div class='collapse' id='edaCorr'><div class='card-body'>`;
-            html += '<div class="table-responsive"><table class="table table-bordered table-sm mb-0"><thead><tr><th></th>';
-            const cols = eda.correlation.map(r => r.column);
-            cols.forEach(c => html += `<th>${c}</th>`);
-            html += '</tr></thead><tbody>';
-            eda.correlation.forEach(row =>
-            {
-                html += `<tr><th>${row.column}</th>`;
-                cols.forEach(c2 =>
+                foreach (var file in Model)
                 {
-                    let val = row.values[c2];
-                    html += `<td>${val !== null && !isNaN(val) ? val.toFixed(3) : '-'}</td>`;
-                });
-                html += '</tr>';
-            });
-            html += '</tbody></table></div></div></div></div>';
-        }
-        document.getElementById('edaResults').innerHTML = html;
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @file
+                        <a href="/files/@file" class="btn btn-sm btn-outline-secondary ms-2">Download</a>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="list-group-item">No CSV files found.</li>
+            }
+        </ul>
+    </div>
+    @if (ViewBag.EdaResults != null)
+    {
+        <div class="card mb-4">
+            <div class="card-header">Exploratory Data Analysis</div>
+            <div class="card-body">
+                @Html.Raw(ViewBag.EdaResults)
+            </div>
+        </div>
     }
-
-    fetchFileList();
-</script>
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+</div>

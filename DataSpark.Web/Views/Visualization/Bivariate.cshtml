@@ -1,41 +1,35 @@
+@model List<string>
 @{
     ViewData["Title"] = "Bivariate Analysis";
 }
-<h2>Bivariate Analysis</h2>
-<div class="mb-3">
-    <label for="fileSelect" class="form-label">Select CSV File</label>
-    <select id="fileSelect" class="form-select"></select>
+<div class="container py-4">
+    <h2 class="mb-4">Bivariate Analysis</h2>
+    <form id="bivariateForm">
+        <div class="mb-3">
+            <label for="fileSelect" class="form-label">Select CSV File</label>
+            <select id="fileSelect" class="form-select" name="fileName" required>
+                <option value="">-- Select File --</option>
+                @foreach (var file in Model)
+                {
+                    <option value="@file">@file</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="col1Select" class="form-label">Select First Column</label>
+            <select id="col1Select" class="form-select" name="col1" required></select>
+        </div>
+        <div class="mb-3">
+            <label for="col2Select" class="form-label">Select Second Column</label>
+            <select id="col2Select" class="form-select" name="col2" required></select>
+        </div>
+        <button id="analyzeBtn" class="btn btn-primary mb-3" type="submit">Run Bivariate Analysis</button>
+    </form>
+    <div id="resultArea" class="mt-4"></div>
 </div>
-<div class="mb-3">
-    <label for="col1Select" class="form-label">Select First Column</label>
-    <select id="col1Select" class="form-select"></select>
-</div>
-<div class="mb-3">
-    <label for="col2Select" class="form-label">Select Second Column</label>
-    <select id="col2Select" class="form-select"></select>
-</div>
-<button id="analyzeBtn" class="btn btn-primary mb-3">Run Bivariate Analysis</button>
-<div id="resultArea" class="mt-4"></div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+@section Scripts {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-    // Helper to fetch files and populate file dropdown
-    async function loadFiles()
-    {
-        const resp = await fetch('/api/files/list');
-        const data = await resp.json();
-        const fileSelect = document.getElementById('fileSelect');
-        fileSelect.innerHTML = '<option value="">-- Select File --</option>';
-        (data.files || []).forEach(f =>
-        {
-            // Always expect object with FileName property (API never returns strings)
-            let name = f?.FileName || f?.fileName || "";
-            if (name)
-            {
-                fileSelect.innerHTML += `<option value="${name}">${name}</option>`;
-            }
-        });
-    }
     // Helper to fetch columns for a file
     async function loadColumns(fileName)
     {
@@ -62,7 +56,6 @@
     // Handle file/column selection
     window.addEventListener('DOMContentLoaded', () =>
     {
-        loadFiles();
         // Defer event binding until after files are loaded
         setTimeout(() =>
         {
@@ -70,8 +63,9 @@
         }, 200);
     });
     // Handle analysis
-    async function runAnalysis()
+    async function runAnalysis(event)
     {
+        event.preventDefault();
         const fileName = document.getElementById('fileSelect').value;
         const col1 = document.getElementById('col1Select').value;
         const col2 = document.getElementById('col2Select').value;
@@ -88,7 +82,7 @@
         const data = await resp.json();
         renderResult(data);
     }
-    document.getElementById('analyzeBtn').addEventListener('click', runAnalysis);
+    document.getElementById('bivariateForm').addEventListener('submit', runAnalysis);
     // Render result
     function renderResult(data)
     {
@@ -177,3 +171,4 @@
         }
     }
 </script>
+}

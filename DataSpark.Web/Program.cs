@@ -1,10 +1,18 @@
+using DataSpark.Web.Services;
 using WebSpark.Bootswatch;
-using WebSpark.HttpClientUtility;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register DataSpark services
+builder.Services.AddScoped<CsvFileService>();
+builder.Services.AddScoped<CsvProcessingService>();
+
+// Add memory cache services
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<WebSpark.HttpClientUtility.MemoryCache.IMemoryCacheManager, WebSpark.HttpClientUtility.MemoryCache.MemoryCacheManager>();
 
 // Add Bootswatch theme switcher services (includes StyleCache)
 builder.Services.AddBootswatchThemeSwitcher();

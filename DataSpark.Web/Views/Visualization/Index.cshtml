@@ -2,29 +2,31 @@
 @{
     ViewData["Title"] = "Visualize CSV Data";
 }
-<h2 class="mb-4">Visualize CSV Data</h2>
-<div class="mb-3">
-    <label for="fileSelector" class="form-label">Select a CSV file:</label>
-    <select id="fileSelector" class="form-select">
-        <option value="">-- Choose a file --</option>
-        @foreach (var file in Model)
-        {
-            <option value="@file">@file</option>
-        }
-    </select>
+<div class="container py-4">
+    <h2 class="mb-4">Visualize CSV Data</h2>
+    <div class="mb-3">
+        <label for="fileSelector" class="form-label">Select a CSV file:</label>
+        <select id="fileSelector" class="form-select">
+            <option value="">-- Choose a file --</option>
+            @foreach (var file in Model)
+            {
+                <option value="@file">@file</option>
+            }
+        </select>
+    </div>
+    <div id="columnChartControls" class="mb-3 d-none">
+        <label for="columnSelector" class="form-label">Select a column:</label>
+        <select id="columnSelector" class="form-select mb-2"></select>
+        <label for="chartTypeSelector" class="form-label">Select chart type:</label>
+        <select id="chartTypeSelector" class="form-select mb-2">
+            <option value="auto">Auto</option>
+            <option value="histogram">Histogram (numeric)</option>
+            <option value="barchart">Bar Chart (categorical)</option>
+        </select>
+        <button id="renderChartBtn" class="btn btn-primary">Render Chart</button>
+    </div>
+    <div id="visualizationArea" class="mt-4"></div>
 </div>
-<div id="columnChartControls" class="mb-3 d-none">
-    <label for="columnSelector" class="form-label">Select a column:</label>
-    <select id="columnSelector" class="form-select mb-2"></select>
-    <label for="chartTypeSelector" class="form-label">Select chart type:</label>
-    <select id="chartTypeSelector" class="form-select mb-2">
-        <option value="auto">Auto</option>
-        <option value="histogram">Histogram (numeric)</option>
-        <option value="barchart">Bar Chart (categorical)</option>
-    </select>
-    <button id="renderChartBtn" class="btn btn-primary">Render Chart</button>
-</div>
-<div id="visualizationArea" class="mt-4"></div>
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -120,3 +122,6 @@
         }
     </script>
 }
+// NOTE: The file dropdown below is populated from the controller using CsvFileService.GetCsvFileNames() for
+consistency.
+

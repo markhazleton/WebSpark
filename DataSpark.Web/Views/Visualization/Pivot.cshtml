@@ -1,47 +1,56 @@
+@model List<string>
 @{
     ViewData["Title"] = "Pivot Table";
 }
-<h2>Pivot Table</h2>
-<div class="mb-3">
-    <label for="fileSelect" class="form-label">Select CSV File</label>
-    <select id="fileSelect" class="form-select"></select>
-</div>
-<div class="mb-3">
-    <button id="loadBtn" class="btn btn-primary mb-3">Load Pivot Table</button>
-</div>
-<div id="output" class="mt-4"></div>
-<div class="card mt-5 mb-4">
-    <div class="card-header bg-primary text-white">
-        About PivotTable.js
-    </div>
-    <div class="card-body">
-        <h5 class="card-title">What is PivotTable.js?</h5>
-        <p class="card-text">
-            <a href="https://pivottable.js.org/" target="_blank">PivotTable.js</a> is a powerful open-source JavaScript
-            library for interactive data analysis and summarization. It enables users to create pivot tables and charts
-            directly in the browser, allowing for dynamic exploration of tabular data without the need for coding.
-        </p>
-        <h6>Key Features</h6>
-        <ul>
-            <li>Drag-and-drop interface for building pivot tables</li>
-            <li>Support for a wide range of aggregations and calculations</li>
-            <li>Multiple built-in renderers: Table, Heatmap, Bar Chart, and more</li>
-            <li>Integration with charting libraries like Plotly, C3, and Google Charts</li>
-            <li>Export options for data and visualizations</li>
-        </ul>
-        <h6>How to Use on This Page</h6>
-        <ol>
-            <li><strong>Select a CSV file</strong> from the dropdown above.</li>
-            <li>Click <strong>Load Pivot Table</strong> to load your data.</li>
-            <li>Use the drag-and-drop UI to arrange rows, columns, and values as needed.</li>
-            <li>Choose different renderers (Table, Bar Chart, Heatmap, etc.) from the dropdown in the pivot UI.</li>
-            <li>Export your results or charts using the export options.</li>
-        </ol>
-        <p class="mb-0">
-            For more details, visit the <a href="https://github.com/nicolaskruchten/pivottable"
-                target="_blank">PivotTable.js GitHub repository</a> or the <a href="https://pivottable.js.org/examples/"
-                target="_blank">official examples page</a>.
-        </p>
+<div class="container py-4">
+    <h2 class="mb-4">Pivot Table</h2>
+    <form id="pivotForm">
+        <div class="mb-3">
+            <label for="fileSelect" class="form-label">Select CSV File</label>
+            <select id="fileSelect" class="form-select" name="fileName" required>
+                <option value="">-- Select File --</option>
+                @foreach (var file in Model)
+                {
+                    <option value="@file">@file</option>
+                }
+            </select>
+        </div>
+        <button id="loadBtn" class="btn btn-primary mb-3" type="submit">Load Pivot Table</button>
+    </form>
+    <div id="output" class="mt-4"></div>
+    <div class="card mt-5 mb-4">
+        <div class="card-header bg-primary text-white">
+            About PivotTable.js
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">What is PivotTable.js?</h5>
+            <p class="card-text">
+                <a href="https://pivottable.js.org/" target="_blank">PivotTable.js</a> is a powerful open-source JavaScript
+                library for interactive data analysis and summarization. It enables users to create pivot tables and charts
+                directly in the browser, allowing for dynamic exploration of tabular data without the need for coding.
+            </p>
+            <h6>Key Features</h6>
+            <ul>
+                <li>Drag-and-drop interface for building pivot tables</li>
+                <li>Support for a wide range of aggregations and calculations</li>
+                <li>Multiple built-in renderers: Table, Heatmap, Bar Chart, and more</li>
+                <li>Integration with charting libraries like Plotly, C3, and Google Charts</li>
+                <li>Export options for data and visualizations</li>
+            </ul>
+            <h6>How to Use on This Page</h6>
+            <ol>
+                <li><strong>Select a CSV file</strong> from the dropdown above.</li>
+                <li>Click <strong>Load Pivot Table</strong> to load your data.</li>
+                <li>Use the drag-and-drop UI to arrange rows, columns, and values as needed.</li>
+                <li>Choose different renderers (Table, Bar Chart, Heatmap, etc.) from the dropdown in the pivot UI.</li>
+                <li>Export your results or charts using the export options.</li>
+            </ol>
+            <p class="mb-0">
+                For more details, visit the <a href="https://github.com/nicolaskruchten/pivottable"
+                    target="_blank">PivotTable.js GitHub repository</a> or the <a href="https://pivottable.js.org/examples/"
+                    target="_blank">official examples page</a>.
+            </p>
+        </div>
     </div>
 </div>
 @section Scripts {
@@ -131,4 +140,3 @@
     </script>
 }
 
-   

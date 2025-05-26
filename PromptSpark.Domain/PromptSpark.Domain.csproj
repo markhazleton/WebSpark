@@ -23,12 +23,12 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.50.0" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.54.0" />
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
 		<PackageReference Include="System.Text.Json" Version="9.0.5" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.8" />
+		<PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.10" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\WebSpark.Core\WebSpark.Core.csproj" />
