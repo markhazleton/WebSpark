@@ -4,9 +4,10 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>9b5caaaf-8a34-4aaf-8fc1-f967bbd70a53</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="CsvHelper" Version="33.0.1" />
+		<PackageReference Include="CsvHelper" Version="33.1.0" />
 		<PackageReference Include="Microsoft.ML" Version="4.0.2" />
 		<PackageReference Include="Microsoft.ML.AutoML" Version="0.22.2" />
 		<PackageReference Include="WebSpark.Bootswatch" Version="1.10.3" />

@@ -64,10 +64,10 @@ namespace DataSpark.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Dashboard()
+        public IActionResult CompleteAnalysis()
         {
-            var files = _csvFileService.GetCsvFileNames();
-            return View(files);
+            // ...existing code for dashboard can be migrated here if needed...
+            return View();
         }
     }
 }

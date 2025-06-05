@@ -10,11 +10,10 @@
         var themeUrl = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetThemeUrl(StyleCache, themeName);
     }
     @await Html.PartialAsync("Sections/Meta/_metatags")
-
-
     <link href="/dist/css/webspark.min.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link id="bootswatch-theme-stylesheet" rel="stylesheet" href="@themeUrl" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
     <script src="/_content/WebSpark.Bootswatch/js/bootswatch-theme-switcher.js"></script>
 
     @await RenderSectionAsync("Styles", required: false)
@@ -28,7 +27,7 @@
     <header>
         @await Html.PartialAsync("Sections/Navigation")
     </header>
-
+    <br /><br />
     <main class="flex-shrink-0">
         <div class="container-fluid py-4">
             @RenderBody()
@@ -49,6 +48,3 @@
 </body>
 
 </html>
-
-
-               

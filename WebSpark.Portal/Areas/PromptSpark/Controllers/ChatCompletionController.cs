@@ -9,6 +9,7 @@ using PromptSpark.Domain.Service;
 using System.Globalization;
 
 namespace WebSpark.Portal.Areas.PromptSpark.Controllers;
+
 [Area("PromptSpark")]
 [Route("PromptSpark/ChatCompletion")]
 public class ChatCompletionController(
@@ -216,25 +217,38 @@ public class ChatCompletionController(
                 await AppendToCsvLog(conversationId, "System", messages[i], definitionDto.Name); // Log system message
             }
         }
-
         try
         {
             var buffer = new StringBuilder();
+            var rawMarkdownBuffer = new StringBuilder();
+            var messageId = Guid.NewGuid().ToString();
+            var isFirstChunk = true;
+            var fullHtmlContent = new StringBuilder();
 
             await foreach (var response in _chatCompletionService.GetStreamingChatMessageContentsAsync(chatHistory))
             {
                 if (response?.Content != null)
                 {
                     buffer.Append(response.Content);
-                    if (response.Content.Contains('\n'))
+                    rawMarkdownBuffer.Append(response.Content);
+
+                    if (response.Content.Contains('\n') || buffer.Length > 100) // Send on newline or if buffer gets large
                     {
                         var contentToSend = buffer.ToString();
-                        var htmlContent = Markdown.ToHtml(contentToSend);
-                        await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent);
-                        logger.LogInformation("Sent message to client: {Message}", contentToSend);
+                        fullHtmlContent.Append(contentToSend);                        // Convert full content to HTML each time to ensure complete message is shown
+                        var htmlContent = Markdown.ToHtml(fullHtmlContent.ToString());
 
-                        // Append system message to CSV
-                        await AppendToCsvLog(conversationId, "System", contentToSend, definitionDto.Name);
+                        // Send to all clients in the conversation group using the conversation ID
+                        await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent, conversationId, messageId, !isFirstChunk);
+
+                        logger.LogInformation("Sent message chunk to client: {Message}", contentToSend);
+
+                        // Log only the first chunk to CSV to avoid duplicates
+                        if (isFirstChunk)
+                        {
+                            await AppendToCsvLog(conversationId, "System", "Streaming response started...", definitionDto.Name);
+                            isFirstChunk = false;
+                        }
 
                         buffer.Clear();
                     }
@@ -245,12 +259,20 @@ public class ChatCompletionController(
             if (buffer.Length > 0)
             {
                 var remainingContent = buffer.ToString();
-                var htmlContent = Markdown.ToHtml(remainingContent);
-                await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent);
-                logger.LogInformation("Sent remaining content to client: {RemainingContent}", remainingContent);
+                fullHtmlContent.Append(remainingContent);                // Convert full content to HTML
+                var htmlContent = Markdown.ToHtml(fullHtmlContent.ToString());
 
-                // Append remaining content to CSV
-                await AppendToCsvLog(conversationId, "System", remainingContent, definitionDto.Name);
+                // Send final chunk with messageId and continuation flag to all clients
+                await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent, conversationId, messageId, !isFirstChunk);
+
+                logger.LogInformation("Sent final message chunk to client: {RemainingContent}", remainingContent);
+            }
+
+            // Now that streaming is complete, log the full response to CSV
+            var fullResponse = rawMarkdownBuffer.ToString();
+            if (!string.IsNullOrEmpty(fullResponse))
+            {
+                await AppendToCsvLog(conversationId, "System", fullResponse, definitionDto.Name);
             }
         }
         catch (Exception ex)
@@ -262,14 +284,36 @@ public class ChatCompletionController(
         logger.LogInformation("SendMessage completed successfully.");
         return Ok();
     }
+    [HttpPost]
+    [Route("ResetConversation")]
+    public IActionResult ResetConversation()
+    {
+        logger.LogInformation("Resetting conversation in session");
+        try
+        {
+            // Clear the conversation ID from session
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                httpContext.Session.Remove("ConversationId");
+                return Ok(new { success = true, message = "Conversation reset successfully" });
+            }
 
-    // Define the class to represent a log entry
+            logger.LogWarning("HttpContext is null when attempting to reset conversation");
+            return BadRequest("Session not available");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error occurred while resetting conversation");
+            return StatusCode(500, "An error occurred while resetting the conversation");
+        }
+    }    // Define the class to represent a log entry
     public class LogEntry
     {
-        public string ConversationId { get; set; }
-        public string DefinitionName { get; set; }
-        public string Message { get; set; }
-        public string Sender { get; set; }
-        public string Timestamp { get; set; }
+        public required string ConversationId { get; set; }
+        public required string DefinitionName { get; set; }
+        public required string Message { get; set; }
+        public required string Sender { get; set; }
+        public required string Timestamp { get; set; }
     }
 }

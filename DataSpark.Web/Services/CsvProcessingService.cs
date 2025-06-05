@@ -261,7 +261,9 @@ public class CsvProcessingService
             for (int i = 0; i < dataFrame.Columns.Count; i++)
             {
                 var columnName = dataFrame.Columns[i].Name;
-                rowDict[columnName] = row[i]; // Add each column value to the dictionary
+                var value = row[i];
+                // Fault tolerance: if value is null or DBNull, return blank string
+                rowDict[columnName] = value == null || value is DBNull ? string.Empty : value;
             }
 
             rows.Add(rowDict);

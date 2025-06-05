@@ -1,136 +1,955 @@
 ﻿@model IEnumerable<string>
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Exploratory Data Analysis with .NET";
 }
 <div class="container mt-5">
     <div class="row mb-5">
-        <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-4 fw-bold mb-3">Welcome to DataSpark</h1>
+        <div class="col-lg-10 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3">Exploratory Data Analysis (EDA) with .NET</h1>
+            <h2 class="h4 text-primary mb-4">A Comprehensive Guide to Data Sanity Checks and EDA Using .NET</h2>
             <p class="lead text-muted mb-4">
-                DataSpark guides you through the essential first steps of data analysis for your CSV files. Begin your
-                journey with a <strong>Sanity Check</strong>, then explore your data with <strong>Univariate</strong>
-                and <strong>Bivariate Analysis</strong>—the core of Exploratory Data Analysis (EDA).
+                Exploratory Data Analysis (EDA) is a critical first step in understanding your dataset before venturing
+                into advanced data analysis or machine learning. This comprehensive guide outlines the process of
+                conducting Data Sanity checks and EDA using .NET technologies, specifically leveraging
+                Microsoft.Data.Analysis DataFrame and ScottPlot for visualizations.
             </p>
-        </div>
-    </div>
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title mb-3 text-primary">1. Sanity Check</h3>
-                    <p class="card-text">Upload your CSV file and perform a quick check for file integrity, missing
-                        values, and basic structure. This step ensures your data is ready for deeper analysis.</p>
-                    <a href="/SanityCheck/Index" class="btn btn-outline-primary">Start Sanity Check</a>
-                </div>
+            <div class="alert alert-info">
+                <strong>Note:</strong> While the initial stages don't involve modifying the data, these actions help
+                uncover potential issues such as missing values, duplicates, and outliers, while providing valuable
+                insights into the data's structure and relationships.
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title mb-3 text-success">2. Univariate Analysis</h3>
-                    <p class="card-text">Examine each column individually to understand distributions, outliers, and
-                        summary statistics. Univariate analysis reveals the story of each variable in your dataset.</p>
-                    <a href="/Univariate/Index" class="btn btn-outline-success">Explore Univariate</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title mb-3 text-info">3. Bivariate Analysis</h3>
-                    <p class="card-text">Investigate relationships between pairs of columns. Bivariate analysis uncovers
-                        correlations, trends, and interactions that drive deeper insights.</p>
-                    <a href="/Visualization/Bivariate" class="btn btn-outline-info">Explore Bivariate</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </div> <!-- Getting Started Section -->
     <div class="row mb-5">
-        <div class="col-lg-8 mx-auto">
-            <div class="alert alert-secondary">
-                <h5 class="mb-2">How to Get Started</h5>
-                <ol class="mb-0">
-                    <li><strong>Upload your CSV file</strong> using the form below.</li>
-                    <li>Begin with a <strong>Sanity Check</strong> to ensure your data is clean and structured.</li>
-                    <li>Proceed to <strong>Univariate</strong> and <strong>Bivariate Analysis</strong> for deeper
-                        exploration.</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-4">
-        <div class="col-lg-8 mx-auto">
-            <form asp-action="UploadCSV" asp-controller="Home" method="post" enctype="multipart/form-data" class="mb-4">
-                <div class="mb-3">
-                    <label for="file" class="form-label">Upload CSV File</label>
-                    <input class="form-control" type="file" id="file" name="file" accept=".csv" required />
-                </div>
-                <button type="submit" class="btn btn-primary">Upload</button>
-            </form>
-            @if (ViewBag.ErrorMessage != null)
-            {
-                <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
-            }
-            @if (ViewBag.Message != null)
-            {
-                <div class="alert alert-success">@ViewBag.Message</div>
-            }
-            @if (ViewBag.Records != null && ((List<dynamic>)ViewBag.Records).Count > 0)
-            {
-                <div class="card mb-3">
-                    <div class="card-header">Sample Records</div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered mb-0">
-                                <thead>
-                                    <tr>
-                                        @foreach (var key in ((IDictionary<string,
-                                                                            object>)((List<dynamic>)ViewBag.Records)[0]).Keys)
-                                        {
-                                            <th>@key</th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var record in (List<dynamic>)ViewBag.Records)
-                                    {
-                                        <tr>
-                                            @foreach (var value in ((IDictionary<string, object>)record).Values)
-                                            {
-                                                <td>@value</td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-    <div class="row mb-5">
-        <div class="col-lg-6 mx-auto">
-            <div class="card">
-                <div class="card-header">Available CSV Files</div>
-                <ul class="list-group list-group-flush">
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var file in Model)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                @file
-                                <a href="/home/results?fileName=@file" class="btn btn-sm btn-outline-primary ms-2">Full
-                                    Analysis</a>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li class="list-group-item">No CSV files found.</li>
-                    }
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-primary mb-4">Getting Started with EDA in .NET</h2>
+            <p class="mb-4">It's important to start by inspecting the dataset to familiarize yourself with its contents
+                and structure. Understanding the data is key to identifying any problems that might affect your
+                analysis. Once this preliminary examination is complete, you can decide whether data cleaning or
+                preprocessing is needed.</p>
+
+            <div class="alert alert-warning">
+                <h5 class="mb-2">Important Considerations</h5>
+                <ul class="mb-0">
+                    <li>For now, we're focused on gaining an understanding of the data, not making changes</li>
+                    <li>This helps better plan any necessary cleanup efforts</li>
+                    <li>EDA provides a foundation for more complex analyses like machine learning</li>
                 </ul>
             </div>
         </div>
     </div>
+
+    <!-- Section 1: Understanding the Dataset -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-success mb-4" id="understanding-dataset">Section 1: Understanding The Dataset</h2>
+            <p class="lead">Objective: Load the dataset into .NET and perform initial inspection.</p>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">1.1 Data Loading and Initial Exploration</h4>
+                <p>In .NET, we use the Microsoft.Data.Analysis library to load and manipulate CSV data. The DataFrame
+                    class provides powerful data analysis capabilities similar to pandas in Python.</p>
+
+                <div class="bg-light p-3 rounded">
+                    <h6 class="text-primary">Key Steps:</h6>
+                    <ul>
+                        <li>Use <code>DataFrame.LoadCsv()</code> or custom CSV reading methods</li>
+                        <li>Inspect the first few rows for a snapshot of the dataset</li>
+                        <li>Check dataset structure and basic metadata</li>
+                        <li>View basic statistics to understand the distribution of numerical columns</li>
+                    </ul>
+                </div>
+
+                <h6 class="mt-3">Example: Loading CSV Data</h6>
+                <pre class="bg-dark text-light p-3 rounded"><code>// Load CSV data using Microsoft.Data.Analysis
+var dataFrame = DataFrame.LoadCsv("path/to/your/file.csv");
+
+// Display basic information
+Console.WriteLine($"Shape: {dataFrame.Rows.Count} rows, {dataFrame.Columns.Count} columns");
+
+// View first few rows
+var head = dataFrame.Head(5);
+Console.WriteLine("First 5 rows:");
+Console.WriteLine(head);
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">1.2 Shape and Size of Data</h4>
+                <p>Understanding the dataset's dimensionality is the first step. The shape tells us how many rows
+                    (observations) and columns (features) we have.</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Using DataSpark's CsvProcessingService
+public async Task&lt;CsvViewModel&gt; ProcessCsvAsync(string fileName)
+{
+    var model = new CsvViewModel { FileName = fileName };
+    
+    var dataFrameResult = await _csvFileService.ReadCsvAsDataFrameAsync(fileName);
+    if (dataFrameResult.Success && dataFrameResult.Data[0] != null)
+    {
+        var dataFrame = dataFrameResult.Data[0];
+        model.RowCount = dataFrame.Rows.Count;
+        model.ColumnCount = dataFrame.Columns.Count;
+        
+        Console.WriteLine($"Dataset Shape: {model.RowCount} rows × {model.ColumnCount} columns");
+    }
+    
+    return model;
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">1.3 View Rows of Data</h4>
+                <p>Sometimes the best way to understand the data is to look at it. Viewing the first and last few rows
+                    gives us a glimpse of the data structure and format.</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Display first and last rows
+var head = dataFrame.Head(5);
+var tail = dataFrame.Tail(5);
+
+// In DataSpark, this is handled in PopulateCsvViewModel
+private static void PopulateCsvViewModel(CsvViewModel model, DataFrame dataFrame)
+{
+    model.Head = dataFrame.Head(5);  // First 5 rows
+    model.Info = dataFrame.Info();   // Data types and info
+    model.Description = dataFrame.Description(); // Statistical summary
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">1.4 View the Features (Columns)</h4>
+                <p>Understanding column data types is essential. We need to confirm if numerical data is represented
+                    correctly and if categorical data needs special handling.</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Inspect column information
+foreach (var column in dataFrame.Columns)
+{
+    Console.WriteLine($"Column: {column.Name}");
+    Console.WriteLine($"Data Type: {column.DataType}");
+    Console.WriteLine($"Length: {column.Length}");
+    Console.WriteLine($"Null Count: {column.NullCount}");
+    Console.WriteLine("---");
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">1.5 Identify Unique Values</h4>
+                <p>Understanding the cardinality (unique value count) of each column helps identify categorical vs.
+                    continuous variables.</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// From DataSpark's UnivariateAnalysisExtensions
+public static List&lt;ColumnInfo&gt; GetUnivariateAnalysis(this DataFrame dataFrame)
+{
+    var results = new List&lt;ColumnInfo&gt;();
+    
+    foreach (var column in dataFrame.Columns)
+    {
+        var values = column.Cast&lt;object&gt;().ToArray();
+        var nonNullValues = values.Where(v => v != null).ToArray();
+        var uniqueValues = nonNullValues.Distinct().ToArray();
+        
+        var columnInfo = new ColumnInfo
+        {
+            Column = column.Name,
+            UniqueCount = uniqueValues.Length,
+            NonNullCount = nonNullValues.Length,
+            NullCount = values.Length - nonNullValues.Length
+        };
+        
+        Console.WriteLine($"Column '{column.Name}': {uniqueValues.Length} unique values");
+        results.Add(columnInfo);
+    }
+    
+    return results;
+}
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Data Sanity Checks -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-warning mb-4" id="data-sanity-checks">Section 2: Data Sanity Checks</h2>
+            <p class="lead">Objective: Identify missing values, duplicates, and data integrity issues.</p>
+
+            <p>Before analyzing the dataset, it's essential to perform sanity checks to ensure data integrity. These
+                checks help identify missing values, duplicates, and inconsistent data types.</p>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">2.1 Missing Data Detection</h4>
+                <p>Missing values can affect the quality of our analysis and results. It's essential to check for
+                    missing values and decide how to handle them.</p>
+
+                <div class="bg-light p-3 rounded mb-3">
+                    <h6 class="text-primary">Common Strategies for Handling Missing Values:</h6>
+                    <ul>
+                        <li>Dropping rows or columns with too many missing values</li>
+                        <li>Imputation using mean, median, mode, or other statistical methods</li>
+                        <li>Forward/Backward filling for time-series data</li>
+                        <li>Using advanced imputation techniques</li>
+                    </ul>
+                </div>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Check for missing values in .NET DataFrame
+foreach (var column in dataFrame.Columns)
+{
+    long nullCount = column.NullCount;
+    double nullPercentage = (double)nullCount / column.Length * 100;
+    
+    Console.WriteLine($"Column '{column.Name}': {nullCount} missing values ({nullPercentage:F2}%)");
+}
+
+// In DataSpark's ColumnInfo calculation
+var missingPercentage = totalCount > 0 ? 
+    (double)values.Count(v => v == null) / totalCount * 100 : 0;
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">2.2 Duplicate Data Detection</h4>
+                <p>Duplicates can skew our analysis and lead to incorrect conclusions. It's crucial to identify and
+                    handle duplicate rows appropriately.</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Check for duplicates in .NET
+// Note: DataFrame doesn't have built-in duplicate detection,
+// but we can implement it
+public static int CountDuplicateRows(DataFrame dataFrame)
+{
+    var rowHashes = new HashSet&lt;string&gt;();
+    int duplicateCount = 0;
+    
+    foreach (var row in dataFrame.Rows)
+    {
+        var rowString = string.Join(",", row.Select(v => v?.ToString() ?? ""));
+        
+        if (!rowHashes.Add(rowString))
+        {
+            duplicateCount++;
+        }
+    }
+    
+    return duplicateCount;
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">2.3 Data Type Consistency</h4>
+                <p>Data types play a crucial role in data analysis. It's essential to ensure that data types are
+                    consistent with the values in the dataset.</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Check data types using DataSpark's utilities
+public static bool IsNumericType(Type type)
+{
+    return type == typeof(byte) || type == typeof(short) || type == typeof(int) ||
+           type == typeof(long) || type == typeof(float) || type == typeof(double) ||
+           type == typeof(decimal);
+}
+
+// Date detection utility
+public static bool IsDateColumn(DataFrameColumn column, out string? detectedFormat)
+{
+    var dateFormats = new[]
+    {
+        "dd-MM-yyyy HH:mm", "MM-dd-yyyy HH:mm", "yyyy-MM-dd HH:mm",
+        "dd/MM/yyyy HH:mm", "MM/dd/yyyy HH:mm", "yyyy/MM/dd HH:mm",
+        "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd"
+    };
+
+    detectedFormat = null;
+    int sampleSize = (int)Math.Min(column.Length, 5);
+    
+    for (int i = 0; i < sampleSize; i++)
+    {
+        if (column[i] is string dateStr)
+        {
+            foreach (var format in dateFormats)
+            {
+                if (DateTime.TryParseExact(dateStr, format, 
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                {
+                    detectedFormat = format;
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">2.4 Outlier Detection</h4>
+                <p>Outliers can skew our analysis, so detecting them is an important part of sanity checks. We can use
+                    statistical methods and visualizations to identify outliers.</p>
+
+                <div class="bg-light p-3 rounded mb-3">
+                    <h6 class="text-primary">Key Statistics for Outlier Detection:</h6>
+                    <ul>
+                        <li><strong>Mean:</strong> Average value in the dataset</li>
+                        <li><strong>Median:</strong> Middle value, helpful for skewed distributions</li>
+                        <li><strong>Standard Deviation:</strong> Shows the spread of the data</li>
+                        <li><strong>IQR (Interquartile Range):</strong> Captures the range of the middle 50%</li>
+                    </ul>
+                </div>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Outlier detection using IQR method in DataSpark
+private double CalculateQuantile(double[] data, double quantile)
+{
+    Array.Sort(data);
+    if (quantile < 0.0 || quantile > 1.0) 
+        throw new ArgumentOutOfRangeException(nameof(quantile));
+
+    double position = (data.Length - 1) * quantile;
+    int lowerIndex = (int)position;
+    double fraction = position - lowerIndex;
+
+    if (lowerIndex + 1 < data.Length)
+    {
+        return data[lowerIndex] + fraction * (data[lowerIndex + 1] - data[lowerIndex]);
+    }
+    return data[lowerIndex];
+}
+
+// Box plot generation for outlier visualization
+public string GetScottPlotSvg(string columnName, DataTable dataTable)
+{
+    var data = dataTable.AsEnumerable()
+        .Select(row => Convert.ToDouble(row[columnName]))
+        .ToArray();
+
+    double min = data.Min();
+    double max = data.Max();
+    double median = CalculateMedian(data);
+    double q1 = CalculateQuantile(data, 0.25);
+    double q3 = CalculateQuantile(data, 0.75);
+
+    var plt = new ScottPlot.Plot();
+    ScottPlot.Box box = new()
+    {
+        Position = 1,
+        BoxMin = q1,
+        BoxMax = q3,
+        WhiskerMin = min,
+        WhiskerMax = max,
+        BoxMiddle = median,
+    };
+
+    plt.Add.Box(box);
+    plt.Title($"Box Plot of {columnName}");
+    
+    return plt.GetSvgXml(600, 400);
+}
+</code></pre>
+            </div>
+        </div>
+    </div> <!-- Section 3: Exploratory Data Analysis (EDA) -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-info mb-4" id="exploratory-data-analysis">Section 3: Exploratory Data Analysis (EDA)</h2>
+            <p class="lead">Objective: Perform comprehensive analysis to uncover patterns and relationships.</p>
+
+            <p>Now that we've ensured the data is clean and consistent, we can begin exploring it to uncover patterns
+                and relationships. We'll start with univariate analysis before moving on to bivariate explorations.</p>
+
+            <div class="mb-5">
+                <h3 class="text-success mb-4">3.1 Univariate Data Analysis</h3>
+                <p>Univariate analysis focuses on analyzing individual variables in the dataset. It helps us understand
+                    the distribution of each feature and identify patterns or anomalies.</p>
+
+                <div class="bg-light p-3 rounded mb-4">
+                    <h6 class="text-primary">Key Aspects of Univariate Analysis:</h6>
+                    <ul>
+                        <li><strong>Distribution:</strong> How values are spread out</li>
+                        <li><strong>Central Tendency:</strong> Mean, median, and mode</li>
+                        <li><strong>Spread or Variability:</strong> Range, variance, and standard deviation</li>
+                        <li><strong>Shape:</strong> Skewness and kurtosis</li>
+                    </ul>
+                </div>
+
+                <h5 class="text-secondary">Techniques for Univariate Analysis</h5>
+
+                <div class="mb-4">
+                    <h6>Descriptive Statistics</h6>
+                    <p>DataSpark's UnivariateAnalysisExtensions provides comprehensive statistical analysis for each
+                        column:</p>
+
+                    <pre class="bg-dark text-light p-3 rounded"><code>// From UnivariateAnalysisExtensions.cs
+private static ColumnInfo GetColumnAnalysis(AnalysisConfig config, DataFrameColumn column)
+{
+    var values = column.Cast&lt;object&gt;().ToArray();
+    var nonNullValues = values.Where(value => value != null).ToArray();
+    var uniqueValues = nonNullValues.Distinct().ToArray();
+
+    // Calculate mode and frequency
+    var modeGroup = nonNullValues
+        .GroupBy(x => x)
+        .OrderByDescending(g => g.Count())
+        .FirstOrDefault();
+    var mostCommonValue = modeGroup?.Key;
+    var modeFrequency = modeGroup?.Count() ?? 0;
+
+    // Extract numeric values
+    var numericValues = nonNullValues
+        .Where(v => v is byte or short or int or long or float or double or decimal)
+        .Select(Convert.ToDouble)
+        .ToArray();
+
+    // Calculate statistics
+    var mean = numericValues.Length > 0 ? numericValues.Average() : double.NaN;
+    var standardDeviation = numericValues.Length > 0 ? 
+        AnalysisUtilities.CalculateStandardDeviation(numericValues) : double.NaN;
+    var skewness = numericValues.Length > 0 ? 
+        AnalysisUtilities.CalculateSkewness(numericValues) : double.NaN;
+
+    // Calculate quartiles
+    if (numericValues.Length > 0)
+    {
+        var sorted = numericValues.OrderBy(x => x).ToArray();
+        var median = CalculatePercentile(sorted, 50);
+        var q1 = CalculatePercentile(sorted, 25);
+        var q3 = CalculatePercentile(sorted, 75);
+        var iqr = q3 - q1;
+    }
+    
+    return new ColumnInfo { /* populate properties */ };
+}
+</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h6>Visualization with ScottPlot</h6>
+                    <p>DataSpark uses ScottPlot to generate visualizations for both numeric and categorical data:</p>
+
+                    <pre class="bg-dark text-light p-3 rounded"><code>// Box Plot for Numeric Data
+public string GetScottPlotSvg(string columnName, DataTable dataTable)
+{
+    var columnData = dataTable.AsEnumerable()
+        .Select(row => row[columnName].ToString()).ToList();
+    var isNumeric = columnData.All(value => double.TryParse(value, out _));
+
+    var plt = new ScottPlot.Plot();
+    
+    if (isNumeric)
+    {
+        var data = dataTable.AsEnumerable()
+            .Select(row => Convert.ToDouble(row[columnName]))
+            .ToArray();
+
+        // Calculate box plot statistics
+        double min = data.Min();
+        double max = data.Max();
+        double median = CalculateMedian(data);
+        double q1 = CalculateQuantile(data, 0.25);
+        double q3 = CalculateQuantile(data, 0.75);
+
+        ScottPlot.Box box = new()
+        {
+            Position = 1,
+            BoxMin = q1,
+            BoxMax = q3,
+            WhiskerMin = min,
+            WhiskerMax = max,
+            BoxMiddle = median,
+        };
+
+        plt.Add.Box(box);
+        plt.Title($"Box Plot of {columnName}");
+    }
+    else
+    {
+        // Frequency chart for categorical data
+        var valueCounts = columnData.GroupBy(x => x)
+            .ToDictionary(g => g.Key ?? string.Empty, g => g.Count());
+
+        var sortedValueCounts = valueCounts.OrderByDescending(kvp => kvp.Value).ToList();
+        var categories = sortedValueCounts.Select(kvp => kvp.Key).ToArray();
+        var counts = sortedValueCounts.Select(kvp => (double)kvp.Value).ToArray();
+
+        var bars = categories.Select((category, index) => new ScottPlot.Bar
+        {
+            Position = index,
+            Value = counts[index],
+            Label = category
+        }).ToArray();
+
+        plt.Add.Bars(bars);
+        plt.Title($"Frequency Count of {columnName}");
+    }
+    
+    return plt.GetSvgXml(600, 400);
+}
+</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h6>Skewness and Kurtosis Calculation</h6>
+                    <p>Understanding the shape of data distribution:</p>
+
+                    <pre class="bg-dark text-light p-3 rounded"><code>// From CsvProcessingUtils.cs
+public static double CalculateSkewness(double[] values)
+{
+    if (values.Length < 3) return double.NaN;
+    
+    double mean = values.Average();
+    double standardDeviation = CalculateStandardDeviation(values);
+    double skewness = values.Sum(v => Math.Pow((v - mean) / standardDeviation, 3)) / values.Length;
+    
+    return skewness;
+}
+
+public static double CalculateStandardDeviation(double[] values)
+{
+    if (values.Length == 0) return double.NaN;
+    
+    double mean = values.Average();
+    double sum = values.Sum(v => Math.Pow(v - mean, 2));
+    
+    return Math.Sqrt(sum / values.Length);
+}
+</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <h3 class="text-primary mb-4">3.2 Bivariate Data Analysis</h3>
+                <p>Bivariate analysis focuses on analyzing the relationship between two variables in the dataset. It
+                    helps us understand how variables interact with each other and identify correlations.</p>
+
+                <div class="bg-light p-3 rounded mb-4">
+                    <h6 class="text-primary">Types of Bivariate Relationships:</h6>
+                    <ul>
+                        <li><strong>Numeric vs. Numeric:</strong> Correlation analysis and scatter plots</li>
+                        <li><strong>Numeric vs. Categorical:</strong> Group comparisons and box plots</li>
+                        <li><strong>Categorical vs. Categorical:</strong> Cross-tabulation and chi-square tests</li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h6>Comprehensive Bivariate Analysis</h6>
+                    <p>DataSpark's BivariateAnalysisExtensions handles all types of variable relationships:</p>
+
+                    <pre class="bg-dark text-light p-3 rounded"><code>// From BivariateAnalysisExtensions.cs
+private static void AnalyzeColumnPair(this BivariateAnalysis analysis, 
+    DataFrameColumn column1, DataFrameColumn column2)
+{
+    var values1 = column1.Cast&lt;object&gt;().ToArray();
+    var values2 = column2.Cast&lt;object&gt;().ToArray();
+
+    bool column1IsNumeric = AnalysisUtilities.IsNumericType(column1.DataType);
+    bool column2IsNumeric = AnalysisUtilities.IsNumericType(column2.DataType);
+    bool column1IsCategorical = AnalysisUtilities.IsCategorical(column1);
+    bool column2IsCategorical = AnalysisUtilities.IsCategorical(column2);
+
+    // Numeric vs. Numeric Analysis
+    if (column1IsNumeric && column2IsNumeric)
+    {
+        double[] numericValues1 = values1.OfType&lt;IConvertible&gt;()
+            .Select(Convert.ToDouble).ToArray();
+        double[] numericValues2 = values2.OfType&lt;IConvertible&gt;()
+            .Select(Convert.ToDouble).ToArray();
+
+        if (numericValues1.Length == numericValues2.Length && numericValues1.Length > 0)
+        {
+            var correlation = AnalysisUtilities.CalculateCorrelation(
+                numericValues1, numericValues2);
+            
+            var noiseFactor1 = AnalysisUtilities.CalculateNoiseFactor(numericValues1);
+            var noiseFactor2 = AnalysisUtilities.CalculateNoiseFactor(numericValues2);
+            var outlierFactor1 = AnalysisUtilities.CalculateOutlierFactor(numericValues1);
+            var outlierFactor2 = AnalysisUtilities.CalculateOutlierFactor(numericValues2);
+
+            var combinedNoiseFactor = Math.Max(noiseFactor1, noiseFactor2) * 
+                                    Math.Max(outlierFactor1, outlierFactor2);
+
+            analysis.InsightScore = AnalysisUtilities.CalculateInsightScore(
+                correlation, uniqueValues1.Length, uniqueValues2.Length, 
+                column1.Length, 0.05, combinedNoiseFactor);
+
+            analysis.Observations.Add($"Correlation: {correlation:F2}, " +
+                $"Insight Score: {analysis.InsightScore:F2}%");
+            analysis.VisualizationRecommendations.Add(
+                "Recommended: scatter plots, heatmaps");
+        }
+    }
+    // Numeric vs. Categorical Analysis
+    else if (column1IsNumeric && column2IsCategorical)
+    {
+        var numericValues = values1.OfType&lt;IConvertible&gt;()
+            .Select(Convert.ToDouble).ToArray();
+
+        var categoryGroups = values2.Where(v => v != null)
+            .GroupBy(v => v)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        analysis.Observations.Add($"Analyzing numeric '{analysis.Column1}' " +
+            $"with categorical '{analysis.Column2}'");
+        analysis.VisualizationRecommendations.Add(
+            "Recommended: box plots, bar charts with numeric values by categories");
+    }
+}
+</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h6>Correlation Analysis</h6>
+                    <p>Understanding relationships between numeric variables:</p>
+
+                    <pre class="bg-dark text-light p-3 rounded"><code>// Correlation coefficient calculation
+public static double CalculateCorrelation(double[] x, double[] y)
+{
+    if (x.Length != y.Length || x.Length < 2) return double.NaN;
+
+    double meanX = x.Average();
+    double meanY = y.Average();
+
+    double numerator = x.Zip(y, (xi, yi) => (xi - meanX) * (yi - meanY)).Sum();
+    double denominatorX = x.Sum(xi => Math.Pow(xi - meanX, 2));
+    double denominatorY = y.Sum(yi => Math.Pow(yi - meanY, 2));
+
+    double denominator = Math.Sqrt(denominatorX * denominatorY);
+
+    return denominator == 0 ? 0 : numerator / denominator;
+}
+</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h6>Getting All Bivariate Relationships</h6>
+                    <p>Automatically analyze all column pairs:</p>
+
+                    <pre class="bg-dark text-light p-3 rounded"><code>// Generate all unique pairs for analysis
+public static List&lt;BivariateAnalysis&gt; GetBivariateAnalysis(this DataFrame dataFrame)
+{
+    var bivariateAnalyses = new ConcurrentBag&lt;BivariateAnalysis&gt;();
+
+    var columnPairs = from i in Enumerable.Range(0, dataFrame.Columns.Count)
+                      from j in Enumerable.Range(i + 1, dataFrame.Columns.Count - i - 1)
+                      select (dataFrame.Columns[i], dataFrame.Columns[j]);
+
+    foreach (var pair in columnPairs)
+    {
+        var (column1, column2) = pair;
+        var analysis = new BivariateAnalysis
+        {
+            Column1 = column1.Name,
+            Column2 = column2.Name
+        };
+
+        try
+        {
+            analysis.AnalyzeColumnPair(column1, column2);
+        }
+        catch (Exception ex)
+        {
+            analysis.Observations.Add($"Error analyzing pair: {ex.Message}");
+        }
+        
+        bivariateAnalyses.Add(analysis);
+    }
+
+    return bivariateAnalyses.ToList();
+}
+</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Data Quality and Insights -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-secondary mb-4" id="data-quality">Section 4: Data Quality Assessment</h2>
+            <p class="lead">Objective: Evaluate data quality and calculate insight scores.</p>
+
+            <p>DataSpark includes sophisticated data quality assessment tools that help you understand not just the
+                statistical properties of your data, but also its overall quality and potential for generating insights.
+            </p>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">Data Quality Scoring</h4>
+                <p>The system calculates comprehensive quality metrics for each column:</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Data quality calculation from UnivariateAnalysisExtensions
+private static double CalculateDataQualityScore(double missingPercentage, 
+    double duplicatePercentage, AnalysisConfig config)
+{
+    // Penalize missing values
+    double missingPenalty = Math.Min(missingPercentage / 100.0, 1.0) * 40;
+    
+    // Penalize duplicates
+    double duplicatePenalty = Math.Min(duplicatePercentage / 100.0, 1.0) * 20;
+    
+    // Start with perfect score and apply penalties
+    double baseScore = 100.0 - missingPenalty - duplicatePenalty;
+    
+    return Math.Max(baseScore, 0.0);
+}
+
+// Information content scoring
+private static double CalculateInformationContentScore(int uniqueCount, int totalCount)
+{
+    if (totalCount == 0) return 0.0;
+    
+    double uniqueRatio = (double)uniqueCount / totalCount;
+    
+    // Higher scores for moderate uniqueness (not too low, not too high)
+    if (uniqueRatio < 0.01) return 20.0;  // Very low uniqueness
+    if (uniqueRatio > 0.95) return 30.0;  // Very high uniqueness (likely IDs)
+    
+    // Optimal range gives highest scores
+    return 100.0 * (1.0 - Math.Abs(uniqueRatio - 0.3) / 0.7);
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">Insight Score Calculation</h4>
+                <p>For bivariate relationships, DataSpark calculates insight scores to help prioritize which
+                    relationships are most worthy of further investigation:</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Insight score calculation considers multiple factors
+public static double CalculateInsightScore(double correlation, int uniqueValues1, 
+    int uniqueValues2, long totalRows, double pValue, double noiseFactor)
+{
+    // Base score from correlation strength
+    double correlationScore = Math.Abs(correlation) * 100;
+    
+    // Bonus for statistical significance
+    double significanceBonus = pValue < 0.05 ? 20 : 0;
+    
+    // Penalty for noise and outliers
+    double noisePenalty = noiseFactor * 30;
+    
+    // Bonus for appropriate data variety
+    double varietyBonus = 0;
+    double uniqueRatio1 = (double)uniqueValues1 / totalRows;
+    double uniqueRatio2 = (double)uniqueValues2 / totalRows;
+    
+    if (uniqueRatio1 > 0.1 && uniqueRatio1 < 0.9 && 
+        uniqueRatio2 > 0.1 && uniqueRatio2 < 0.9)
+    {
+        varietyBonus = 15;
+    }
+    
+    double finalScore = correlationScore + significanceBonus + varietyBonus - noisePenalty;
+    return Math.Max(0, Math.Min(100, finalScore));
+}
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Practical Implementation -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-success mb-4" id="practical-implementation">Section 5: Practical Implementation in DataSpark
+            </h2>
+            <p class="lead">How to use DataSpark's EDA capabilities in your .NET applications.</p>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">Service Integration</h4>
+                <p>DataSpark's services work together to provide comprehensive EDA capabilities:</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// In your controller or service
+public class DataAnalysisController : Controller
+{
+    private readonly CsvProcessingService _csvService;
+    
+    public DataAnalysisController(CsvProcessingService csvService)
+    {
+        _csvService = csvService;
+    }
+
+    public async Task&lt;IActionResult&gt; AnalyzeFile(string fileName)
+    {
+        // Process CSV with fallback for robustness
+        var result = await _csvService.ProcessCsvWithFallbackAsync(fileName);
+        
+        // The result contains:
+        // - Basic file information (RowCount, ColumnCount)
+        // - Univariate analysis (ColumnDetails)
+        // - Bivariate analysis (BivariateAnalyses)
+        // - Data quality metrics
+        // - Visualization data
+        
+        return View(result);
+    }
+}
+</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-secondary">Complete Analysis Pipeline</h4>
+                <p>The CsvProcessingService provides a complete analysis pipeline:</p>
+
+                <pre class="bg-dark text-light p-3 rounded"><code>// Complete pipeline in PopulateCsvViewModel
+private static void PopulateCsvViewModel(CsvViewModel model, DataFrame dataFrame)
+{
+    // Basic information
+    model.RowCount = dataFrame.Rows.Count;
+    model.ColumnCount = dataFrame.Columns.Count;
+    
+    // Comprehensive univariate analysis
+    model.ColumnDetails = dataFrame.GetUnivariateAnalysis();
+    
+    // Bivariate relationship analysis
+    model.BivariateAnalyses = dataFrame.GetBivariateAnalysis();
+    
+    // Data overview
+    model.Info = dataFrame.Info();
+    model.Description = dataFrame.Description();
+    model.Head = dataFrame.Head(5);
+}
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-primary mb-4" id="conclusion">Conclusion</h2>
+            <p class="lead">Building robust EDA capabilities with .NET</p>
+
+            <p>By conducting thorough data sanity checks and EDA using .NET technologies, we lay a strong foundation for
+                further analysis. DataSpark demonstrates how to build comprehensive data analysis capabilities using:
+            </p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Core Technologies</h5>
+                            <ul>
+                                <li><strong>Microsoft.Data.Analysis:</strong> DataFrame operations</li>
+                                <li><strong>ScottPlot:</strong> High-performance visualizations</li>
+                                <li><strong>.NET Parallel Processing:</strong> Efficient analysis</li>
+                                <li><strong>Comprehensive Statistical Methods:</strong> Built-in calculations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">Key Benefits</h5>
+                            <ul>
+                                <li><strong>Type Safety:</strong> Strong typing prevents runtime errors</li>
+                                <li><strong>Performance:</strong> Compiled code and parallel processing</li>
+                                <li><strong>Integration:</strong> Seamless integration with .NET ecosystem</li>
+                                <li><strong>Scalability:</strong> Handle large datasets efficiently</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <h5>Next Steps</h5>
+                <p class="mb-0">With a clear understanding of your data through EDA, you can proceed to:</p>
+                <ul class="mt-2 mb-0">
+                    <li>Feature engineering and data preprocessing</li>
+                    <li>Advanced visualizations and dashboards</li>
+                    <li>Machine learning model development</li>
+                    <li>Automated reporting and insights generation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Try DataSpark Section -->
+    <form asp-action="UploadCSV" asp-controller="Home" method="post" enctype="multipart/form-data" class="mb-4">
+        <div class="mb-3">
+            <label for="file" class="form-label">Upload CSV File</label>
+            <input class="form-control" type="file" id="file" name="file" accept=".csv" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success">@ViewBag.Message</div>
+    }
+    @if (ViewBag.Records != null && ((List<dynamic>)ViewBag.Records).Count > 0)
+    {
+        <div class="card mb-3">
+            <div class="card-header">Sample Records</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                @foreach (var key in ((IDictionary<string,
+                                                            object>)((List<dynamic>)ViewBag.Records)[0]).Keys)
+                                {
+                                    <th>@key</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in (List<dynamic>)ViewBag.Records)
+                            {
+                                <tr>
+                                    @foreach (var value in ((IDictionary<string, object>)record).Values)
+                                    {
+                                        <td>@value</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+</div>
+<div class="row mb-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="card">
+            <div class="card-header">Available CSV Files</div>
+            <ul class="list-group list-group-flush">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var file in Model)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @file
+                            <a href="/home/completeanalysis?fileName=@file" class="btn btn-sm btn-outline-primary ms-2">Full
+                                Analysis</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No CSV files found.</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+
+   
+           
+               
+               
+               
+               
+           
+               </p>
+
+               
+           
+               
+        
+           

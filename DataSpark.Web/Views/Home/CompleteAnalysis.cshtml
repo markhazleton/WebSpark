@@ -1,8 +1,11 @@
-﻿@model CsvViewModel
+@model CsvViewModel
+@{
+    ViewData["Title"] = "Complete Analysis";
+}
 <div class="container mt-4">
     <div class="card shadow-sm mb-4">
         <div class="card-header">
-            <h1 class="card-title mb-0"><i class="bi bi-lightning"></i> Data Spark - CSV File Analysis</h1>
+            <h1 class="card-title mb-0"><i class="bi bi-lightning"></i> Data Spark - Complete Analysis</h1>
         </div>
         <div class="card-body">
             <!-- Overview Section -->
@@ -45,10 +48,8 @@
                 <div class="accordion" id="columnAnalysisAccordion">
                     @foreach (var column in Model.ColumnDetails)
                     {
-                        // Index analysis summary for each column using column.Observations list of string
                         var analysisSummary = string.Join(", ", column.Observations);
                         var columnId = column.Column?.Replace(" ", "_") ?? "unknown";
-
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading-@columnId">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -115,21 +116,18 @@
                                             </tr>
                                             <tr>
                                                 <th>Standard Deviation</th>
-                                                <td>@(double.IsNaN(column.StandardDeviation) ? "N/A" :
-                                                                                                    column.StandardDeviation.ToString("F2"))</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Skewness</th>
-                                            <td>@(double.IsNaN(column.Skewness) ? "N/A" :
-                                                                                                column.Skewness.ToString("F2"))
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                <td>@(double.IsNaN(column.StandardDeviation) ? "N/A" : column.StandardDeviation.ToString("F2"))</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Skewness</th>
+                                                <td>@(double.IsNaN(column.Skewness) ? "N/A" : column.Skewness.ToString("F2"))</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                                        }
+                    }
                 </div>
             </div>
             <div class="mb-4 p-3 bg-light rounded shadow-sm">

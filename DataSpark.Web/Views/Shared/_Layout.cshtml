@@ -35,6 +35,10 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="CsvAIProcessing"
+                                asp-action="Index">AI Analysis</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="dataAnalysisDropdown"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -49,17 +53,13 @@
                                         asp-action="Index">2) EDA Univariate</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Visualization"
                                         asp-action="Bivariate">3) EDA Bivariate</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Dashboard">4)
-                                        Dashboard</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Home"
+                                        asp-action="CompleteAnalysis">Complete Analysis</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Visualization"
                                         asp-action="Index">5) Further Exploration & Visualization</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Results">Full
-                                        Analysis Report</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Visualization"
-                                        asp-action="Pivot">Pivot Table</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Home"
                                         asp-action="Privacy">Privacy Policy</a></li>
                                 <li><a class="dropdown-item" href="/README.md" target="_blank">API & Docs</a></li>
@@ -89,4 +89,3 @@
 </body>
 
 </html>
-

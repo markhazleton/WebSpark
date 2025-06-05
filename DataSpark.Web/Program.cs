@@ -1,5 +1,6 @@
 using DataSpark.Web.Services;
 using WebSpark.Bootswatch;
+using static DataSpark.Web.Services.OpenAIFileAnalysisService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,27 @@ builder.Services.AddHttpContextAccessor();
 
 // Register WebSpark.HttpClientUtility services required by Bootswatch
 builder.Services.AddScoped<WebSpark.HttpClientUtility.RequestResult.IHttpRequestResultService, WebSpark.HttpClientUtility.RequestResult.HttpRequestResultService>();
+
+// Configure OpenAI options
+builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
+
+// Validate OpenAI configuration in development
+if (builder.Environment.IsDevelopment())
+{
+    var openAiConfig = builder.Configuration.GetSection("OpenAI");
+    if (string.IsNullOrEmpty(openAiConfig["ApiKey"]) || string.IsNullOrEmpty(openAiConfig["AssistantId"]))
+    {
+        throw new InvalidOperationException(
+            "OpenAI configuration is missing. Please set the configuration using User Secrets:\n" +
+            "dotnet user-secrets set \"OpenAI:ApiKey\" \"your-api-key\"\n" +
+            "dotnet user-secrets set \"OpenAI:AssistantId\" \"your-assistant-id\"");
+    }
+}
+
+// Register HttpClient and OpenAIFileAnalysisService
+builder.Services.AddHttpClient<OpenAIFileAnalysisService>();
+
+
 
 var app = builder.Build();
 

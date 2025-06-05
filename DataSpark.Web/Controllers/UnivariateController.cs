@@ -240,7 +240,7 @@ public class UnivariateController : DataSparkBaseController<UnivariateController
     }
 
     [HttpGet]
-    public IActionResult Dashboard()
+    public IActionResult CompleteAnalysis()
     {
         var files = CsvFileService.GetCsvFileNames();
         return View(files);

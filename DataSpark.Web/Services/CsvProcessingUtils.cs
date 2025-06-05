@@ -60,6 +60,22 @@ public static class CsvProcessingUtils
         return false;
     }
 
+    // Utility: Convert nulls in a DataFrame column to blank strings (for serialization or display)
+    public static void ConvertNullsToBlanks(DataFrame dataFrame)
+    {
+        foreach (var column in dataFrame.Columns)
+        {
+            if (column.DataType == typeof(string))
+            {
+                for (int i = 0; i < column.Length; i++)
+                {
+                    if (column[i] == null)
+                        column[i] = string.Empty;
+                }
+            }
+        }
+    }
+
     public static void ParseAndConvertDatesInColumn(DataFrame dataFrame, DataFrameColumn column, string dateFormat, ColumnInfo columnInfo)
     {
         var dateTimeColumn = new PrimitiveDataFrameColumn<DateTime>(column.Name, column.Length);

@@ -27,13 +27,26 @@ DataSpark.Web is a modern ASP.NET Core 9.0 web application for interactive data 
    dotnet restore
    ```
 
-3. **Run the application**
+3. **Configure OpenAI settings (for AI-powered CSV analysis)**
+
+   Set up your OpenAI API credentials using User Secrets (recommended for development):
+
+   ```pwsh
+   dotnet user-secrets set "OpenAI:ApiKey" "your-openai-api-key"
+   dotnet user-secrets set "OpenAI:AssistantId" "your-openai-assistant-id"
+   ```
+
+   For production deployment, set these as environment variables:
+   - `OpenAI__ApiKey`
+   - `OpenAI__AssistantId`
+
+4. **Run the application**
 
    ```pwsh
    dotnet run
    ```
 
-4. **Open in your browser**
+5. **Open in your browser**
    Visit [https://localhost:7104](https://localhost:7104) (or the port shown in your terminal).
 
 ## Project Structure

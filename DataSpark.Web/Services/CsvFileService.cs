@@ -222,13 +222,30 @@ public class CsvFileService
                 }
                 else
                 {
-                    return DataFrame.LoadCsv(
-                        stream,
-                        separator: delimiter,
-                        header: true,
-                        encoding: encoding ?? Encoding.UTF8,
-                        cultureInfo: CultureInfo.InvariantCulture
-                    );
+                    try
+                    {
+                        return DataFrame.LoadCsv(
+                            stream,
+                            separator: delimiter,
+                            header: true,
+                            encoding: encoding ?? Encoding.UTF8,
+                            cultureInfo: CultureInfo.InvariantCulture
+                        );
+                    }
+                    catch (FormatException)
+                    {
+                        // Retry with all columns as string if type inference fails
+                        stream.Position = 0;
+                        int colCount = CsvProcessingUtils.GetColumnCount(filePath);
+                        return DataFrame.LoadCsv(
+                            stream,
+                            separator: delimiter,
+                            header: true,
+                            dataTypes: Enumerable.Repeat(typeof(string), colCount).ToArray(),
+                            encoding: encoding ?? Encoding.UTF8,
+                            cultureInfo: CultureInfo.InvariantCulture
+                        );
+                    }
                 }
             });
             result.Data.Add(df);
@@ -238,6 +255,9 @@ public class CsvFileService
         {
             _logger.LogError(ex, "Error reading DataFrame from CSV file: {FileName}", fileName);
             result.ErrorMessage = ex.Message;
+            // Fault tolerance: return an empty DataFrame if loading fails
+            result.Data.Add(new DataFrame());
+            result.Success = false;
         }
         return result;
     }

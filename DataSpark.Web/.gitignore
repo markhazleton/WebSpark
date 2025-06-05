@@ -1,0 +1,56 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+.vscode/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User Secrets (should never be committed)
+**/secrets.json
+
+# Environment files that might contain secrets
+.env
+.env.local
+.env.production
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Temporary files
+**/wwwroot/files/*.csv
+**/wwwroot/files/*.xlsx
+**/wwwroot/files/*.json
+
+# Package files
+*.nupkg
+*.snupkg
+
+# NuGet
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

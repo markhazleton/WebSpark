@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "CSV AI Analysis";
+}
+
+<h2>Upload CSV File for AI Analysis</h2>
+<form asp-controller="CsvAIProcessing" asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="file">Select CSV file:</label>
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Analyze</button>
+</form>
+
+@if (ViewBag.Analysis != null)
+{
+    <hr />
+    <h4>AI Analysis Result:</h4>
+    <pre>@ViewBag.Analysis</pre>
+}

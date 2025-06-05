@@ -88,14 +88,7 @@ namespace DataSpark.Web.Controllers
             return View();
         }
 
-        public IActionResult Dashboard()
-        {
-            // Pass available CSV files to the view for dashboard
-            var files = _csvFileService.GetCsvFileNames();
-            return View(files);
-        }
-
-        public async Task<IActionResult> Results(string fileName)
+        public async Task<IActionResult> CompleteAnalysis(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
