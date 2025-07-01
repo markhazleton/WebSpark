@@ -33,10 +33,10 @@ public class SessionInitializationMiddleware(
                 var _baseView = await _websiteService.GetBaseViewByHostAsync(context.Request.Host.Host, _DefaultSiteId);
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<BootswatchStyleProvider>>();
                 var service = scope.ServiceProvider.GetRequiredService<IHttpRequestResultService>();
-                var styleService = new BootswatchStyleProvider(logger,service);
+                var styleService = new BootswatchStyleProvider(logger, service);
                 var bootswatchModels = await styleService.GetAsync();
 
-               _baseView.StyleList = Create(bootswatchModels);
+                _baseView.StyleList = Create(bootswatchModels);
 
                 var RequestScheme = "https";
                 var curSiteRoot = $"{RequestScheme}://{context.Request.Host.Host}:{context.Request.Host.Port}/";

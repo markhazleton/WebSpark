@@ -208,9 +208,9 @@ public class EditNodeViewModel : Node
 {
     public EditNodeViewModel()
     {
-            
+
     }
-    public EditNodeViewModel(Node node,string filename)
+    public EditNodeViewModel(Node node, string filename)
     {
         Id = node.Id;
         Question = node.Question;
@@ -218,7 +218,7 @@ public class EditNodeViewModel : Node
         FileName = filename;
     }
 
-    public string FileName { get; set; } 
+    public string FileName { get; set; }
 }
 public class Node
 {

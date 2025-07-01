@@ -1,6 +1,4 @@
-using Polly;
 using System.Text.Json;
-using WebSpark.Bootswatch.Model;
 using WebSpark.Bootswatch.Provider;
 using WebSpark.HttpClientUtility.RequestResult;
 using WebSpark.Web.Extensions;

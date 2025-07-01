@@ -4,7 +4,6 @@ using Markdig.Renderers.Html;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace PromptSpark.Domain.Models;
@@ -129,8 +128,8 @@ public static class DefinitionResponseDto_Extension
     public static string CleanJsonString(string input)
     {
         // Step 1: Replace `\\r\\n` and `\\n` with actual newlines, or remove them if they are not needed
-        string cleanedInput = input.Replace("\\r\\n", "")
-                                   .Replace("\\n", "");
+        string cleanedInput = input.Replace("\\r\\n", string.Empty)
+                                   .Replace("\\n", string.Empty);
 
         // Step 2: Remove unnecessary backslashes before quotes
         cleanedInput = Regex.Replace(cleanedInput, @"\\(?=[""{}:\[\],])", string.Empty);

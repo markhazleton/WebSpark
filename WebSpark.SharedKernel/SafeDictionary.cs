@@ -1,4 +1,4 @@
-﻿namespace WebSpark.SharedKernel;
+namespace WebSpark.SharedKernel;
 
 /// <summary>
 /// Provides a type-safe, null-safe dictionary wrapper with convenience methods for safe access and mutation.

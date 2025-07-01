@@ -1,7 +1,7 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Text.RegularExpressions;
 
 namespace ConsoleApp1.Service;
 public class JsonCleaner
@@ -15,8 +15,8 @@ public class JsonCleaner
     public string CleanJsonString(string input)
     {
         // Step 1: Replace `\\r\\n` and `\\n` with actual newlines, or remove them if they are not needed
-        string cleanedInput = input.Replace("\\r\\n", "")
-                                   .Replace("\\n", "");
+        string cleanedInput = input.Replace("\\r\\n", string.Empty)
+                                   .Replace("\\n", string.Empty);
 
         // Step 2: Remove unnecessary backslashes before quotes
         cleanedInput = Regex.Replace(cleanedInput, @"\\(?=[""{}:\[\],])", string.Empty);

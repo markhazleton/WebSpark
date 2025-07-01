@@ -3,7 +3,6 @@ using Polly;
 using Polly.Retry;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using WebSpark.HttpClientUtility.MemoryCache;
 using WebSpark.HttpClientUtility.RequestResult;

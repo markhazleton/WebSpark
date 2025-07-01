@@ -10,7 +10,7 @@ namespace TriviaSpark.Domain.Services;
 public class TriviaMatchService(
     ILogger<TriviaMatchService> logger,
     IQuestionSourceAdapter questionSource,
-    TriviaSparkDbContext dbContent) 
+    TriviaSparkDbContext dbContent)
     : BaseMatchService(new MatchModel()), ITriviaMatchService
 {
     private Question Create(QuestionModel question)

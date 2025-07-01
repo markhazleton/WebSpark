@@ -1,8 +1,8 @@
-﻿using WebSpark.HttpClientUtility.RequestResult;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using TriviaSpark.Domain.Extensions;
 using TriviaSpark.Domain.Models;
 using TriviaSpark.Domain.Services;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace TriviaSpark.Domain.OpenTriviaDb;
 
@@ -55,7 +55,7 @@ public class OpenTriviaDbQuestionSource(
 
     public async Task<List<QuestionModel>> GetQuestions(
         int questionCount = 1,
-        Difficulty difficulty = Difficulty.Easy, 
+        Difficulty difficulty = Difficulty.Easy,
         CancellationToken ct = default)
     {
         var questionList = new List<QuestionModel>();
@@ -64,7 +64,7 @@ public class OpenTriviaDbQuestionSource(
         {
             RequestPath = $"https://opentdb.com/api.php?amount={questionCount}&difficulty={difficulty.ToString().ToLower()}&type=multiple"
         };
-        results = await httpGetCallService.HttpSendRequestResultAsync<OpenTBbResponse>(results,ct:ct).ConfigureAwait(false);
+        results = await httpGetCallService.HttpSendRequestResultAsync<OpenTBbResponse>(results, ct: ct).ConfigureAwait(false);
         if (results?.ResponseResults?.results is null)
         {
             logger.LogError("No results returned from OpenTriviaDb");

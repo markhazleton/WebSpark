@@ -1,6 +1,5 @@
 using DataSpark.Web.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace DataSpark.Web.Controllers;
 

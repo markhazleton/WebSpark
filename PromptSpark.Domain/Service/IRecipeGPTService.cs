@@ -13,5 +13,5 @@ public interface IRecipeGPTService
     /// <param name="prompt"></param>
     /// <param name="category"
     /// <returns></returns>
-    Task<RecipeModel> CreateMomGPTRecipe(RecipeModel model,string prompt, string category);
+    Task<RecipeModel> CreateMomGPTRecipe(RecipeModel model, string prompt, string category);
 }

@@ -162,7 +162,8 @@ public class WebsiteProvider(WebSparkDbContext webDomainContext) : Interfaces.IW
             menu.Url = "/";
             break;
 
-        };
+        }
+        ;
 
         return menuList;
     }

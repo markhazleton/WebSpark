@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.SignalR;
-
 namespace WebSpark.Portal.Utilities;
 
 // Remove this file as we're moving these methods back to ChatHub.cs

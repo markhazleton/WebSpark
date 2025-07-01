@@ -5,7 +5,6 @@ using Microsoft.SemanticKernel.ChatCompletion;
 using PromptSpark.Domain.Service;
 using System.Collections.Concurrent;
 using System.Globalization;
-using System.Text;
 
 namespace WebSpark.Portal.Utilities;
 

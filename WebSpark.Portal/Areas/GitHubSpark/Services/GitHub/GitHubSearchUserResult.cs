@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 /// <summary>

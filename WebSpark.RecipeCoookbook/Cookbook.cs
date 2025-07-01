@@ -1,5 +1,4 @@
-﻿using iText.Commons.Actions;
-using iText.IO.Font.Constants;
+﻿using iText.IO.Font.Constants;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;

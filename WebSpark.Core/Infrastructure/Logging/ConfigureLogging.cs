@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Serilog;
-using Serilog.Extensions.Logging;
-using Serilog.Events;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
 
 namespace WebSpark.Core.Infrastructure.Logging;
 

@@ -1,5 +1,4 @@
-﻿using WebSpark.HttpClientUtility.RequestResult;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PromptSpark.Domain.Data;
@@ -9,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using WebSpark.HttpClientUtility.RequestResult;
 
 namespace PromptSpark.Domain.Service;
 

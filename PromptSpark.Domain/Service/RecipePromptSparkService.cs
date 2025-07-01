@@ -154,7 +154,7 @@ public class RecipePromptSparkService(
         RecipeModelAI recipeAI = JsonConvert.DeserializeObject<RecipeModelAI>(chatCompletionResponse.Choices[0].Message.Content);
 
 
-        
+
 
         RecipeModel recipe = new()
         {

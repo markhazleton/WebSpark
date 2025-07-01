@@ -94,6 +94,6 @@ public class WebsiteVM : IBaseViewModel
     /// </summary>
     /// <value>The website theme.</value>
     [JsonPropertyName("is_recipe_site")]
-    public bool IsRecipeSite { get; set; } 
+    public bool IsRecipeSite { get; set; }
 
 }

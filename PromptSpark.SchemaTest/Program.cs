@@ -1,5 +1,4 @@
-﻿using PromptSpark.Domain.Service;
-using PromptSpark.SchemaTest.Utility;
+﻿using PromptSpark.SchemaTest.Utility;
 using TriviaSpark.JShow.Models;
 using WebSpark.Core.Models;
 

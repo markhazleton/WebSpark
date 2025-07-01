@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
-
-namespace WebSpark.Core.Models;
+﻿namespace WebSpark.Core.Models;
 
 public class ApplicationStatus
 {

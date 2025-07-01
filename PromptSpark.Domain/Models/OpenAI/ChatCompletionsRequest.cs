@@ -110,7 +110,7 @@ public class JsonSchema
     public string Name { get; set; }
 
     [JsonProperty("strict")]
-    public bool Strict { get; set; } 
+    public bool Strict { get; set; }
 
     [JsonProperty("schema")]
     public string Schema { get; set; }

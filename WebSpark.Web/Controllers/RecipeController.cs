@@ -74,7 +74,7 @@ public class RecipeController(
     [HttpGet]
     public ActionResult Index(string? id = null)
     {
-        if(!RecipeViewModel.IsRecipeSite)
+        if (!RecipeViewModel.IsRecipeSite)
         {
             return Redirect($"/");
         }

@@ -81,7 +81,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     {
         if (Recipe == null) return new Recipe();
 
-        if(Recipe.DomainID == 0)
+        if (Recipe.DomainID == 0)
         {
             Recipe.DomainID = RecipeConstants.INT_MOM_DomainId;
         }

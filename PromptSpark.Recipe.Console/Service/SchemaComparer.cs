@@ -18,7 +18,7 @@
             var schema2JObject = JsonConvert.DeserializeObject<JObject>(schema2Json);
 
             var differences = new List<string>();
-            CompareJTokens(schema1JObject, schema2JObject, differences, "");
+            CompareJTokens(schema1JObject, schema2JObject, differences, string.Empty);
 
             return differences;
         }

@@ -1,5 +1,4 @@
 ﻿using WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
-using WebSpark.Portal.Areas.GitHubSpark.Models;
 
 namespace WebSpark.Portal.Areas.GitHubSpark.Controllers;
 

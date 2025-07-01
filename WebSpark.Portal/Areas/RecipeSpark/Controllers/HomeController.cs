@@ -164,7 +164,7 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers
         {
             try
             {
-                var recipeToUpdate = _recipeService.Get(id); 
+                var recipeToUpdate = _recipeService.Get(id);
                 if (recipeToUpdate == null)
                 {
                     return RedirectToAction(nameof(Index));

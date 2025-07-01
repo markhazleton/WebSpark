@@ -15,6 +15,7 @@ using TriviaSpark.Domain.Services;
 using TriviaSpark.JShow.Data;
 using TriviaSpark.JShow.Models;
 using TriviaSpark.JShow.Service;
+using WebSpark.Bootswatch;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
@@ -28,7 +29,6 @@ using WebSpark.Portal.Areas.DataSpark.Services;
 using WebSpark.Portal.Areas.GitHubSpark.Extensions;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
-using WebSpark.Bootswatch;
 
 var builder = WebApplication.CreateBuilder(args);
 
