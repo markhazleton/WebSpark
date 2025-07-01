@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
-    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.0.10" />
+    <PackageReference Include="WebSpark.HttpClientUtility" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

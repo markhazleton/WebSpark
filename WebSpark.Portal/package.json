@@ -67,7 +67,7 @@
         "clean-css-cli": "^5.6.3",
         "concurrently": "9.2.0",
         "cssnano": "^7.0.7",
-        "dotenv": "17.0.0",
+        "dotenv": "17.0.1",
         "ncp": "^2.0.0",
         "p-limit": "6.2.0",
         "postcss": "8.5.6",
