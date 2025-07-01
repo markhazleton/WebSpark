@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace DataSpark.Web.Services;
 
+
 /// <summary>
 /// Service for processing CSV files.
 /// </summary>
@@ -21,26 +22,26 @@ public class CsvProcessingService
     /// <summary>
     /// Process the CSV file with fallback to the safe method if an error occurs.
     /// </summary>
-    /// <param name="filePath">The path of the CSV file.</param>
+    /// <param name="fileName">The name of the CSV file.</param>
     /// <returns>The processed CsvViewModel.</returns>
     public async Task<CsvViewModel> ProcessCsvWithFallbackAsync(string fileName, char delimiter = ',')
     {
         try
         {
             // Attempt to process the CSV using the fast method
-            return await ProcessCsvAsync(fileName, useSafeMethod: false, delimiter: delimiter);
+            return await ProcessCsvAsync(fileName, useSafeMethod: false, delimiter);
         }
         catch
         {
             // If an error occurs, fall back to the safer method
-            return await ProcessCsvAsync(fileName, useSafeMethod: true, delimiter: delimiter);
+            return await ProcessCsvAsync(fileName, useSafeMethod: true, delimiter);
         }
     }
 
     /// <summary>
     /// Process the CSV file with an option to use a safe method.
     /// </summary>
-    /// <param name="filePath">The path of the CSV file.</param>
+    /// <param name="fileName">The name of the CSV file.</param>
     /// <param name="useSafeMethod">If true, loads all columns as strings; otherwise, uses type detection.</param>
     /// <returns>The processed CsvViewModel.</returns>
     private async Task<CsvViewModel> ProcessCsvAsync(string fileName, bool useSafeMethod, char delimiter = ',')
@@ -51,18 +52,21 @@ public class CsvProcessingService
         };
         try
         {
-            var dataFrameResult = await _csvFileService.ReadCsvAsDataFrameAsync(fileName, delimiter, null, allString: useSafeMethod);
+            var dataFrameResult = await _csvFileService.ReadCsvAsDataFrameAsync(fileName, delimiter, null, useSafeMethod);
+
             if (!dataFrameResult.Success || dataFrameResult.Data.Count == 0 || dataFrameResult.Data[0] == null)
             {
-                model.Message = $"Error: Could not read file {fileName}. {dataFrameResult.ErrorMessage}";
+                model.Message = dataFrameResult.ErrorMessage ?? "Failed to load CSV data";
                 return model;
             }
-            PopulateCsvViewModel(model, dataFrameResult.Data[0]);
+
+            var dataFrame = dataFrameResult.Data[0];
+            PopulateCsvViewModel(model, dataFrame);
         }
         catch (Exception ex)
         {
             model.Message = $"Error processing file: {ex.Message}";
-            if (!useSafeMethod) throw;
+            if (!useSafeMethod) throw; // Rethrow the exception only if not using the safe method
         }
         return model;
     }
@@ -218,30 +222,30 @@ public class CsvProcessingService
     /// <summary>
     /// Processes the CSV file and returns the contents as a JSON string.
     /// </summary>
-    /// <param name="filePath">The path to the CSV file.</param>
+    /// <param name="fileName">The name of the CSV file.</param>
     /// <param name="useSafeMethod">If true, loads all columns as strings to avoid parsing issues; otherwise, type detection is used.</param>
     /// <returns>A JSON string representing the contents of the CSV file.</returns>
     public async Task<string> ProcessCsvToJsonAsync(string fileName, bool useSafeMethod, char delimiter = ',')
     {
-        try
+        var dataFrameResult = await _csvFileService.ReadCsvAsDataFrameAsync(fileName, delimiter, null, useSafeMethod);
+
+        if (!dataFrameResult.Success || dataFrameResult.Data.Count == 0 || dataFrameResult.Data[0] == null)
         {
-            var dataFrameResult = await _csvFileService.ReadCsvAsDataFrameAsync(fileName, delimiter, null, allString: useSafeMethod);
-            if (!dataFrameResult.Success || dataFrameResult.Data.Count == 0 || dataFrameResult.Data[0] == null)
-            {
-                return JsonSerializer.Serialize(new { error = $"Could not read file {fileName}. {dataFrameResult.ErrorMessage}" });
-            }
-            return DataFrameToJson(dataFrameResult.Data[0]);
+            return "[]"; // Return empty JSON array if no data
         }
-        catch (Exception ex)
-        {
-            return JsonSerializer.Serialize(new { error = ex.Message });
-        }
+
+        return DataFrameToJson(dataFrameResult.Data[0]);
     }
 
-    // Legacy sync method for compatibility (calls async version)
-    public string ProcessCsvToJson(string fileName, bool useSafeMethod, char delimiter = ',')
+    /// <summary>
+    /// Processes the CSV file and returns the contents as a JSON string.
+    /// </summary>
+    /// <param name="filePath">The path to the CSV file.</param>
+    /// <param name="useSafeMethod">If true, loads all columns as strings to avoid parsing issues; otherwise, type detection is used.</param>
+    /// <returns>A JSON string representing the contents of the CSV file.</returns>
+    public string ProcessCsvToJson(string filePath, bool useSafeMethod, char delimiter = ',')
     {
-        return ProcessCsvToJsonAsync(fileName, useSafeMethod, delimiter).GetAwaiter().GetResult();
+        return ProcessCsvToJsonAsync(filePath, useSafeMethod, delimiter).GetAwaiter().GetResult();
     }
 
     /// <summary>
@@ -261,9 +265,7 @@ public class CsvProcessingService
             for (int i = 0; i < dataFrame.Columns.Count; i++)
             {
                 var columnName = dataFrame.Columns[i].Name;
-                var value = row[i];
-                // Fault tolerance: if value is null or DBNull, return blank string
-                rowDict[columnName] = value == null || value is DBNull ? string.Empty : value;
+                rowDict[columnName] = row[i]; // Add each column value to the dictionary
             }
 
             rows.Add(rowDict);

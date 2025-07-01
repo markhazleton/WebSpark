@@ -59,13 +59,7 @@ public class CsvAIProcessingController : Controller
             }
 
             // Get the full path to the CSV file
-            var filePath = _csvFileService.GetFilePath(fileName);
-
-            if (string.IsNullOrEmpty(filePath))
-            {
-                ViewBag.Analysis = $"File path for '{fileName}' could not be determined.";
-                return View("Index");
-            }
+            var filePath = _csvFileService.GetCsvFilePath(fileName);
 
             var prompt = string.IsNullOrWhiteSpace(customPrompt)
                 ? "Analyze and summarize this CSV file. Please load the CSV file, examine its structure, and provide detailed insights including data types, summary statistics, and any patterns you observe."
@@ -105,14 +99,7 @@ public class CsvAIProcessingController : Controller
             }
 
             // Get the full path to the CSV file
-            var filePath = _csvFileService.GetFilePath(fileName);
-
-            if (string.IsNullOrEmpty(filePath))
-            {
-                ViewBag.Analysis = $"File path for '{fileName}' could not be determined.";
-                ViewBag.UploadedFiles = _aiService.GetUploadedFiles();
-                return View("Index");
-            }
+            var filePath = _csvFileService.GetCsvFilePath(fileName);
 
             // Upload and register the file for future use
             var uploadedFile = await _aiService.UploadAndRegisterCsvFileAsync(filePath);

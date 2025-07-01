@@ -164,7 +164,7 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers
         {
             try
             {
-                var recipeToUpdate = _recipeService.Get().FirstOrDefault(w => w.Id == id);
+                var recipeToUpdate = _recipeService.Get(id); 
                 if (recipeToUpdate == null)
                 {
                     return RedirectToAction(nameof(Index));
@@ -173,7 +173,7 @@ namespace WebSpark.Portal.Areas.RecipeSpark.Controllers
                 // Update recipe properties
                 recipeToUpdate.RecipeCategoryID = item.RecipeCategoryID;
                 recipeToUpdate.AuthorNM = item.AuthorNM;
-                recipeToUpdate.Description = item.Description;
+                recipeToUpdate.Description = string.IsNullOrWhiteSpace(item.Description) ? " " : item.Description;
                 recipeToUpdate.Name = item.Name;
                 recipeToUpdate.Servings = item.Servings;
                 recipeToUpdate.Ingredients = item.Ingredients;

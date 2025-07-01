@@ -1,120 +1,221 @@
-﻿@model DataSpark.Web.Models.CsvViewModel
+﻿@model UnivariateViewModel
 @{
     ViewData["Title"] = "Univariate Analysis";
-    var numericColumns = Model.ColumnDetails.Where(c => c.Type == "Numeric").ToList();
-    var categoricalColumns = Model.ColumnDetails.Where(c => c.Type == "Categorical").ToList();
-    var files = ViewBag.Files as List<string> ?? new List<string>();
 }
-<div class="container py-4">
-    <h2 class="mb-4">Univariate Analysis</h2>
-    <form method="get" asp-action="Index" class="mb-4">
-        <div class="row g-2 align-items-end">
-            <div class="col-md-6">
-                <label for="fileName" class="form-label">Select CSV File</label>
-                <select class="form-select" id="fileName" name="fileName" onchange="this.form.submit()">
-                    @foreach (var file in files)
-                    {
-                        if (file == Model.FileName)
-                        {
-                            <option value="@file" selected="selected">@file</option>
-                        }
-                        else
-                        {
-                            <option value="@file">@file</option>
-                        }
-                    }
-                </select>
-            </div>
-        </div>
-    </form>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Univariate Analysis</h1>
+    <p class="lead">Explore individual columns in your dataset to understand their distributions, statistics, and characteristics.</p>
+    
     @if (ViewBag.ErrorMessage != null)
     {
         <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
     }
-    @if (Model != null && Model.FileName != null)
+
+    @if (ViewBag.Files != null && ((List<string>)ViewBag.Files).Any())
     {
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <strong>File:</strong> @Model.FileName
-            </div>
-            <div class="card-body">
-                <h5 class="mb-3">Numeric Columns</h5>
-                <div class="table-responsive mb-4">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Column</th>
-                                <th>Type</th>
-                                <th>Non-Null</th>
-                                <th>Null</th>
-                                <th>Unique</th>
-                                <th>Most Common</th>
-                                <th>Min</th>
-                                <th>Max</th>
-                                <th>Mean</th>
-                                <th>Std Dev</th>
-                                <th>Skewness</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var col in numericColumns)
-                            {
-                                <tr>
-                                    <td>@col.Column</td>
-                                    <td>@col.Type</td>
-                                    <td>@col.NonNullCount</td>
-                                    <td>@col.NullCount</td>
-                                    <td>@col.UniqueCount</td>
-                                    <td>@col.MostCommonValue</td>
-                                    <td>@col.Min</td>
-                                    <td>@col.Max</td>
-                                    <td>@(double.IsNaN(col.Mean) ? "N/A" : col.Mean.ToString("F2"))</td>
-                                    <td>@(double.IsNaN(col.StandardDeviation) ? "N/A" : col.StandardDeviation.ToString("F2"))
-                                    </td>
-                                    <td>@(double.IsNaN(col.Skewness) ? "N/A" : col.Skewness.ToString("F2"))</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Select File for Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="get">
+                            <div class="mb-3">
+                                <label for="fileName" class="form-label">CSV File</label>
+                                <select class="form-select" id="fileName" name="fileName" onchange="this.form.submit()">
+                                    @foreach (var file in (List<string>)ViewBag.Files)
+                                    {
+                                        <option value="@file" selected="@(file == Model.FileName)">@file</option>
+                                    }
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <h5 class="mb-3">Categorical Columns</h5>
-                <div class="table-responsive mb-4">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Column</th>
-                                <th>Type</th>
-                                <th>Non-Null</th>
-                                <th>Null</th>
-                                <th>Unique</th>
-                                <th>Most Common</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var col in categoricalColumns)
-                            {
-                                <tr>
-                                    <td>@col.Column</td>
-                                    <td>@col.Type</td>
-                                    <td>@col.NonNullCount</td>
-                                    <td>@col.NullCount</td>
-                                    <td>@col.UniqueCount</td>
-                                    <td>@col.MostCommonValue</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <h5 class="mb-3">Observations</h5>
-                <ul class="list-group mb-3">
-                    @foreach (var col in Model.ColumnDetails)
-                    {
-                        <li class="list-group-item">
-                            <strong>@col.Column:</strong> @string.Join("; ", col.Observations)
-                        </li>
-                    }
-                </ul>
             </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.FileName) && ViewBag.CsvModel != null)
+        {
+            var csvModel = (CsvViewModel)ViewBag.CsvModel;
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Dataset Overview: @Model.FileName</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="stat-box">
+                                        <h6>Rows</h6>
+                                        <span class="stat-number">@csvModel.RowCount</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-box">
+                                        <h6>Columns</h6>
+                                        <span class="stat-number">@csvModel.ColumnCount</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="stat-box">
+                                        <h6>Data Quality</h6>
+                                        <span class="text-success">Ready for Analysis</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Column Analysis</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="columnAnalysisAccordion">
+                                @foreach (var column in csvModel.ColumnDetails)
+                                {
+                                    var columnId = column.Column?.Replace(" ", "_").Replace(".", "_") ?? "unknown";
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="heading-@columnId">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapse-@columnId" aria-expanded="false"
+                                                aria-controls="collapse-@columnId">
+                                                <div class="d-flex justify-content-between w-100 me-3">
+                                                    <strong>@column.Column</strong>
+                                                    <small class="text-muted">@column.Type | @column.UniqueCount unique values</small>
+                                                </div>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse-@columnId" class="accordion-collapse collapse"
+                                            aria-labelledby="heading-@columnId" data-bs-parent="#columnAnalysisAccordion">
+                                            <div class="accordion-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div id="chart-container-@columnId" class="chart-container mb-3">
+                                                            <p class="text-muted">Click to load visualization...</p>
+                                                        </div>
+                                                        <button class="btn btn-primary btn-sm" onclick="loadChart('@columnId', '@column.Column')">
+                                                            Generate Chart
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h6>Statistical Summary</h6>
+                                                        <table class="table table-sm">
+                                                            <tr><th>Type:</th><td>@column.Type</td></tr>
+                                                            <tr><th>Non-null Count:</th><td>@column.NonNullCount</td></tr>
+                                                            <tr><th>Null Count:</th><td>@column.NullCount</td></tr>
+                                                            <tr><th>Unique Values:</th><td>@column.UniqueCount</td></tr>
+                                                            @if (column.MostCommonValue != null)
+                                                            {
+                                                                <tr><th>Most Common:</th><td>@column.MostCommonValue</td></tr>
+                                                            }
+                                                            @if (!double.IsNaN(column.Mean))
+                                                            {
+                                                                <tr><th>Mean:</th><td>@column.Mean.ToString("F2")</td></tr>
+                                                                <tr><th>Std Dev:</th><td>@column.StandardDeviation.ToString("F2")</td></tr>
+                                                                <tr><th>Skewness:</th><td>@column.Skewness.ToString("F2")</td></tr>
+                                                            }
+                                                            @if (column.Min != null && column.Max != null)
+                                                            {
+                                                                <tr><th>Range:</th><td>@column.Min - @column.Max</td></tr>
+                                                            }
+                                                        </table>
+                                                        
+                                                        @if (column.Observations.Any())
+                                                        {
+                                                            <h6>Key Observations</h6>
+                                                            <ul class="small">
+                                                                @foreach (var observation in column.Observations.Take(5))
+                                                                {
+                                                                    <li>@observation</li>
+                                                                }
+                                                            </ul>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <h5>No CSV Files Found</h5>
+            <p>Please upload a CSV file first using the <a href="@Url.Action("Index", "Home")" class="alert-link">Home page</a>.</p>
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        function loadChart(columnId, columnName) {
+            const container = document.getElementById('chart-container-' + columnId);
+            container.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Loading chart...</p></div>';
+            
+            fetch('@Url.Action("Analyze")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'fileName=@Model.FileName&columnName=' + encodeURIComponent(columnName)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to generate chart');
+                }
+                return response.text();
+            })
+            .then(svgContent => {
+                container.innerHTML = svgContent;
+            })
+            .catch(error => {
+                container.innerHTML = '<div class="alert alert-danger">Error loading chart: ' + error.message + '</div>';
+            });
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .stat-box {
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        
+        .chart-container {
+            min-height: 300px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+    </style>
+}

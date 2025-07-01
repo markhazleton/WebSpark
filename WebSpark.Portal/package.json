@@ -39,11 +39,11 @@
     "dependencies": {
         "@microsoft/signalr": "^8.0.7",
         "@popperjs/core": "^2.11.8",
-        "bootstrap": "^5.3.6",
+        "bootstrap": "^5.3.7",
         "bootstrap-icons": "^1.13.1",
-        "bootswatch": "^5.3.6",
-        "datatables.net": "^2.3.1",
-        "datatables.net-bs5": "^2.3.1",
+        "bootswatch": "^5.3.7",
+        "datatables.net": "^2.3.2",
+        "datatables.net-bs5": "^2.3.2",
         "datatables.net-buttons-bs5": "^3.2.3",
         "datatables.net-colreorder-bs5": "^2.1.1",
         "datatables.net-datetime": "^1.5.5",
@@ -56,26 +56,26 @@
         "jszip": "^3.10.1",
         "pdfmake": "^0.2.20",
         "prismjs": "^1.30.0",
-        "terser": "^5.40.0"
+        "terser": "^5.43.1"
     },
     "devDependencies": {
         "@fullhuman/postcss-purgecss": "^7.0.2",
         "autoprefixer": "10.4.21",
-        "bootswatch": "^5.3.6",
+        "bootswatch": "^5.3.7",
         "browser-sync": "3.0.4",
         "chokidar": "4.0.3",
         "clean-css-cli": "^5.6.3",
-        "concurrently": "9.1.2",
+        "concurrently": "9.2.0",
         "cssnano": "^7.0.7",
-        "dotenv": "16.5.0",
+        "dotenv": "17.0.0",
         "ncp": "^2.0.0",
         "p-limit": "6.2.0",
-        "postcss": "8.5.4",
-        "prettier": "3.5.3",
-        "sass": "^1.89.1",
+        "postcss": "8.5.6",
+        "prettier": "3.6.2",
+        "sass": "^1.89.2",
         "shelljs": "0.10.0",
         "uglify-js": "^3.19.3",
         "upath": "2.0.1",
-        "workerpool": "9.3.2"
+        "workerpool": "9.3.3"
     }
 }

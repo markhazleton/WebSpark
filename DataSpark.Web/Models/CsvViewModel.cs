@@ -9,11 +9,11 @@ public class CsvViewModel
     public int ColumnCount { get; set; }
     public List<ColumnInfo> ColumnDetails { get; set; } = [];
     public DataFrame Description { get; set; } = new();
-    public string? FileName { get; set; }
-    public string? FilePath { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public string FilePath { get; set; } = string.Empty;
     public DataFrame Head { get; set; } = new();
     public DataFrame Info { get; internal set; } = new();
-    public string? Message { get; set; }
+    public string Message { get; set; } = string.Empty;
     public long RowCount { get; set; }
 }
 

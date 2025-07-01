@@ -1,0 +1,17 @@
+{
+  "menuItems": [
+    {
+      "text": "DataSpark",
+      "subMenu": [
+        { "text": "Home", "url": "/DataSpark/Home" },
+        { "text": "Univariate Analysis", "url": "/DataSpark/Univariate" },
+        { "text": "Bivariate Analysis", "url": "/DataSpark/Bivariate" },
+        { "text": "Pivot Table", "url": "/DataSpark/PivotTable" },
+        { "text": "Files", "url": "/DataSpark/Home/Files" },
+        { "text": "Results", "url": "/DataSpark/Home/Results" },
+        { "text": "Analyze Results", "url": "/DataSpark/Home/AnalyzeResults" },
+        { "text": "Select Column", "url": "/DataSpark/Home/SelectColumn" }
+      ]
+    }
+  ]
+}
