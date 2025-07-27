@@ -4,15 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DataSpark.Web.Controllers;
 
-public class UnivariateController : Controller
+public class UnivariateController : BaseController
 {
-    private readonly CsvFileService _csvFileService;
-    private readonly CsvProcessingService _csvProcessingService;
-
-    public UnivariateController(CsvFileService csvFileService, CsvProcessingService csvProcessingService)
+    public UnivariateController(IWebHostEnvironment env, ILogger<UnivariateController> logger, CsvFileService csvFileService, CsvProcessingService csvProcessingService)
+        : base(env, logger, csvFileService, csvProcessingService)
     {
-        _csvFileService = csvFileService;
-        _csvProcessingService = csvProcessingService;
     }
 
     [HttpGet]

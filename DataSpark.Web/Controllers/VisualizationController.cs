@@ -1,18 +1,15 @@
+using DataSpark.Web.Models;
 using DataSpark.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace DataSpark.Web.Controllers
 {
-    public class VisualizationController : Controller
+    public class VisualizationController : BaseController
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly CsvFileService _csvFileService;
-
-        public VisualizationController(IWebHostEnvironment env, CsvFileService csvFileService)
+        public VisualizationController(IWebHostEnvironment env, ILogger<VisualizationController> logger, CsvFileService csvFileService, CsvProcessingService csvProcessingService)
+            : base(env, logger, csvFileService, csvProcessingService)
         {
-            _env = env;
-            _csvFileService = csvFileService;
         }
 
         public IActionResult Index()
