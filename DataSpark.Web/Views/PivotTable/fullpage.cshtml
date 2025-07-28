@@ -1,191 +1,432 @@
-﻿@model string
-
+﻿@model PivotTableViewModel
 @{
-    ViewData["Title"] = "Using PivotTable.js in an ASP.NET MVC Application";
-    ViewData["Description"] = "Learn how to integrate PivotTable.js into an ASP.NET MVC application for interactive data analysis and dynamic pivot table generation.";
-    ViewData["Keywords"] = "PivotTable.js, ASP.NET MVC, Pivot Table, Interactive Data Analysis, JavaScript, Web Application";
+    ViewData["Title"] = "Interactive Pivot Table - Full Screen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Styles
-{
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.13.0/pivot.min.css">
-    <style id="compiled-css" type="text/css">
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.css" />
+    <style>
         body {
-            font-family: Verdana;
+            padding: 0;
+            margin: 0;
+        }
+
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .fullscreen-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+
+        .fullscreen-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pivot-fullscreen {
+            padding: 20px;
+            height: calc(100vh - 60px);
+            overflow: auto;
+        }
+
+        .file-info {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .loading-fullscreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .error-fullscreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #dc3545;
         }
     </style>
 }
 
-<div class="container mt-5">
-    <!-- Header Section -->
-    <div class="text-center mb-4">
-        <h1 class="display-4 fw-bold text-primary">
-            Analyze Your Data with DataSpark and PivotTable.js
-        </h1>
-        <div id="output"></div>
+<div class="fullscreen-container">
+    <div class="fullscreen-header">
+        <div class="fullscreen-controls">
+            <div>
+                <h5 class="mb-0">Interactive Pivot Table</h5>
+                @if (!string.IsNullOrEmpty(Model.CurrentFile))
+                {
+                    <div class="file-info">
+                        <strong>File:</strong> @Model.CurrentFile |
+                        <strong>Records:</strong> @Model.RecordCount.ToString("N0") |
+                        <strong>Columns:</strong> @Model.ColumnHeaders.Count
+                    </div>
+                }
+            </div>
+            <div class="control-buttons">
+                <button id="saveConfigBtn" class="btn btn-success btn-sm" disabled>
+                    <i class="fas fa-save"></i> Save Config
+                </button>
+                <button id="exportBtn" class="btn btn-info btn-sm" disabled>
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button id="closeFullscreenBtn" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pivot-fullscreen">
+        <div id="pivotTableContainer">
+            @if (string.IsNullOrEmpty(Model.CurrentFile))
+            {
+                <div class="error-fullscreen">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <h4>No CSV file selected</h4>
+                    <p>Please select a CSV file from the main pivot table page.</p>
+                    <a href="@Url.Action("Index", "PivotTable")" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Go to Main Page
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="loading-fullscreen">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4>Loading pivot table...</h4>
+                    <p>Please wait while we prepare your data for analysis.</p>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
-
-
-<div class="container mt-4">
-    <h1 class="mb-3">@ViewData["Title"]</h1>
-    <p>@ViewData["Description"]</p>
-    <h2>Overview</h2>
-    <p>
-        PivotTable.js is a powerful JavaScript library that enables users to create pivot tables directly in the browser.
-        This example demonstrates how to integrate PivotTable.js into an ASP.NET MVC application, allowing for interactive data analysis
-        with a dynamic pivot table rendered on a Razor view.
-    </p>
+<!-- Save Configuration Modal -->
+<div class="modal fade" id="saveConfigModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save Pivot Configuration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="configName" class="form-label">Configuration Name:</label>
+                    <input type="text" id="configName" class="form-control"
+                        placeholder="Enter a name for this configuration">
+                    <div class="form-text">Choose a descriptive name to help you identify this configuration later.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="saveConfigConfirmBtn" class="btn btn-primary">Save Configuration</button>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="container my-5">
-    <header class="mb-4">
-        <h1 class="display-4 text-center">@ViewData["Title"]</h1>
-        <p class="lead text-center">@ViewData["Description"]</p>
-    </header>
 
-    <section class="mb-5">
-        <h2>Overview</h2>
-        <p>PivotTable.js is a powerful JavaScript library that allows you to create interactive pivot tables in your web applications. In this guide, we'll explore how to integrate PivotTable.js into a .Net 9 MVC application, leveraging MVC Controllers, Razor Pages, and Bootstrap 5 for UI enhancements.</p>
-    </section>
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Export Pivot Table</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Export Format:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exportFormat" id="exportCsv" value="csv"
+                            checked>
+                        <label class="form-check-label" for="exportCsv">CSV (Comma-separated values)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exportFormat" id="exportTsv" value="tsv">
+                        <label class="form-check-label" for="exportTsv">TSV (Tab-separated values)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exportFormat" id="exportExcel" value="excel">
+                        <label class="form-check-label" for="exportExcel">Excel (.xlsx)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exportFormat" id="exportJson" value="json">
+                        <label class="form-check-label" for="exportJson">JSON (with configuration)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="exportConfirmBtn" class="btn btn-primary">Export Data</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <section class="mb-5">
-        <h2>Setting Up Your .Net 9 MVC Project</h2>
-        <p>Start by creating a new .Net 9 MVC project in Visual Studio. Ensure you have the latest version of .Net 9 installed. Use the following command in your terminal:</p>
-        <pre class="language-csharp">
-        <code class="language-csharp">
-dotnet new mvc -n PivotTableDemo
-              </code>
-            </pre>
-        <p>Once your project is set up, open the <code>Startup.cs</code> file to configure the services and middleware.</p>
-    </section>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/d3_renderers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/c3_renderers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/export_renderers.min.js"></script>
 
-    <section class="mb-5">
-        <h2>Adding PivotTable.js to Your Project</h2>
-        <p>Include PivotTable.js in your project by adding its CSS and JavaScript files. You can use a CDN link for simplicity:</p>
-        <pre class="language-html">
-        <code class="language-html">
-&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.css" rel="stylesheet"&gt;
-&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.js"&gt;&lt;/script&gt;
-              </code>
-            </pre>
-        <p>Add these links to your <code>_Layout.cshtml</code> file under the <code>&lt;head&gt;</code> section.</p>
-    </section>
-
-    <section class="mb-5">
-        <h2>Creating the Pivot Table View</h2>
-        <p>In your MVC project, create a new View named <code>PivotTable.cshtml</code>. Use Bootstrap's grid system to layout the pivot table interface:</p>
-        <pre class="language-html">
-        <code class="language-html">
-                @{
-                    ViewData["Title"] = "Pivot Table Example";
-                }
-&lt;div class="container"&gt;
-    &lt;div class="row"&gt;
-        &lt;div class="col-md-12"&gt;
-            &lt;h2&gt;Pivot Table Example&lt;/h2&gt;
-            &lt;div id="pivot-output" class="mt-3"&gt;&lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;script&gt;
-    $(function () {
-        $("#pivot-output").pivotUI([
-            {name: "John", age: 30, gender: "Male"},
-            {name: "Jane", age: 25, gender: "Female"},
-            {name: "Doe", age: 35, gender: "Male"}
-        ], {
-            rows: ["gender"],
-            cols: ["age"]
-        });
-    });
-&lt;/script&gt;
-              </code>
-            </pre>
-    </section>
-
-    <section class="mb-5">
-        <h2>Handling Data in MVC Controllers</h2>
-        <p>Create an API endpoint in your MVC Controller to handle data requests. Here is an example controller action that returns data in JSON format:</p>
-        <pre class="language-csharp">
-        <code class="language-csharp">
-public class PivotController : Controller
-{
-    [HttpGet]
-    public JsonResult GetData()
-    {
-        var data = new[]
+    <script>
+        $(document).ready(function ()
         {
-            new { Name = "John", Age = 30, Gender = "Male" },
-            new { Name = "Jane", Age = 25, Gender = "Female" },
-            new { Name = "Doe", Age = 35, Gender = "Male" }
-        };
-        return Json(data);
-    }
-}
-              </code>
-            </pre>
-    </section>
+            let pivotData = null;
+            let currentConfig = null;
 
-    <section class="mb-5">
-        <h2>Integrating Bootstrap 5 UI Elements</h2>
-        <p>Enhance the user interface using Bootstrap 5 components like cards, buttons, and modals. Below is an example of wrapping the pivot table in a Bootstrap card:</p>
-        <pre class="language-html">
-        <code class="language-html">
-&lt;div class="card"&gt;
-    &lt;div class="card-header"&gt;Pivot Table Visualization&lt;/div&gt;
-    &lt;div class="card-body"&gt;
-        &lt;div id="pivot-output"&gt;&lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-              </code>
-            </pre>
-    </section>
-
-    <section class="mb-5">
-        <h2>Final Thoughts</h2>
-        <p>Implementing PivotTable.js in a .Net 9 MVC application can significantly enhance your data visualization capabilities. By combining PivotTable.js with Bootstrap 5, you can create interactive and visually appealing data representations that are easy to navigate and interpret.</p>
-    </section>
-
-    <footer class="text-center mt-5">
-        <p class="text-muted">&copy; 2024 - PivotTable.js Implementation Guide</p>
-    </footer>
-</div>
-
-@section PageScripts
-{
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Fetch data from the /categorization/pivot/data endpoint using the model variable as the filename
-            var filename = '@Model'; // Use the model string as the filename
-
-            $.ajax({
-                url: '/pivottable/getexistingfile/' + filename,
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    // Create a dictionary of all renderers including Plotly renderers
-                    var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.plotly_renderers);
-
-                    $("#output").pivotUI(data);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error("Error fetching data: ", textStatus, errorThrown);
-                }
+            // Event handlers
+            $('#closeFullscreenBtn').click(function ()
+            {
+                window.close();
             });
+
+            $('#saveConfigBtn').click(function ()
+            {
+                if (!pivotData)
+                {
+                    alert('Please load data first.');
+                    return;
+                }
+
+                $('#saveConfigModal').modal('show');
+            });
+
+            $('#saveConfigConfirmBtn').click(function ()
+            {
+                const configName = $('#configName').val().trim();
+                if (!configName)
+                {
+                    alert('Please enter a configuration name.');
+                    return;
+                }
+
+                saveConfiguration(configName);
+            });
+
+            $('#exportBtn').click(function ()
+            {
+                if (!pivotData)
+                {
+                    alert('Please load data first.');
+                    return;
+                }
+
+                $('#exportModal').modal('show');
+            });
+
+            $('#exportConfirmBtn').click(function ()
+            {
+                const format = $('input[name="exportFormat"]:checked').val();
+                exportData(format);
+            });
+
+            // Load data if current file is available
+            @if (!string.IsNullOrEmpty(Model.CurrentFile))
+                {
+                    <text>
+                        setTimeout(() => {
+                            loadCsvData('@Model.CurrentFile');
+                        }, 500);
+                    </text>
+            }
+
+                function loadCsvData(fileName)
+                {
+                    $.ajax({
+                        url: '@Url.Action("LoadCsvData", "PivotTable")',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ fileName: fileName }),
+                        success: function (response)
+                        {
+                            if (response.success)
+                            {
+                                pivotData = response.data;
+                                createPivotTable(response.data);
+                                updateUIState();
+                            } else
+                            {
+                                showError('Error loading data: ' + response.error);
+                            }
+                        },
+                        error: function (xhr, status, error)
+                        {
+                            showError('Failed to load CSV data: ' + error);
+                        }
+                    });
+                }
+
+            function createPivotTable(data)
+            {
+                if (!data || data.length === 0)
+                {
+                    showError('No data available. The selected file appears to be empty or could not be processed.');
+                    return;
+                }
+
+                // Get all available renderers
+                const renderers = $.extend(
+                    $.pivotUtilities.renderers,
+                    $.pivotUtilities.d3_renderers,
+                    $.pivotUtilities.c3_renderers,
+                    $.pivotUtilities.export_renderers
+                );
+
+                // Create pivot table
+                $('#pivotTableContainer').pivot(data, {
+                    renderers: renderers,
+                    hiddenAttributes: [],
+                    onRefresh: function (config)
+                    {
+                        currentConfig = config;
+                        console.log('Pivot table refreshed with config:', config);
+                    }
+                });
+            }
+
+            function saveConfiguration(name)
+            {
+                if (!currentConfig)
+                {
+                    alert('No configuration to save.');
+                    return;
+                }
+
+                const configData = {
+                    name: name,
+                    csvFile: '@Model.CurrentFile',
+                    aggregatorName: currentConfig.aggregatorName,
+                    rendererName: currentConfig.rendererName,
+                    cols: currentConfig.cols,
+                    rows: currentConfig.rows,
+                    vals: currentConfig.vals,
+                    includeValues: currentConfig.inclusions || {},
+                    excludeValues: currentConfig.exclusions || {}
+                };
+
+                $.ajax({
+                    url: '@Url.Action("SaveConfiguration", "PivotTable")',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(configData),
+                    success: function (response)
+                    {
+                        if (response.success)
+                        {
+                            alert('Configuration saved successfully!');
+                            $('#saveConfigModal').modal('hide');
+                            $('#configName').val('');
+                        } else
+                        {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function (xhr, status, error)
+                    {
+                        alert('Failed to save configuration: ' + error);
+                    }
+                });
+            }
+
+            function exportData(format)
+            {
+                if (!currentConfig)
+                {
+                    alert('No data to export.');
+                    return;
+                }
+
+                const exportData = {
+                    format: format,
+                    configuration: {
+                        csvFile: '@Model.CurrentFile',
+                        aggregatorName: currentConfig.aggregatorName,
+                        rendererName: currentConfig.rendererName,
+                        cols: currentConfig.cols,
+                        rows: currentConfig.rows,
+                        vals: currentConfig.vals,
+                        includeValues: currentConfig.inclusions || {},
+                        excludeValues: currentConfig.exclusions || {}
+                    }
+                };
+
+                // Create a temporary form to download the file
+                const form = $('<form>', {
+                    method: 'POST',
+                    action: '@Url.Action("Export", "PivotTable")'
+                });
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: 'format',
+                    value: format
+                }));
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: 'configuration',
+                    value: JSON.stringify(exportData.configuration)
+                }));
+
+                form.appendTo('body').submit().remove();
+
+                $('#exportModal').modal('hide');
+                alert('Export started. Your download should begin shortly.');
+            }
+
+            function updateUIState()
+            {
+                const hasData = pivotData !== null;
+                $('#saveConfigBtn').prop('disabled', !hasData);
+                $('#exportBtn').prop('disabled', !hasData);
+            }
+
+            function showError(message)
+            {
+                $('#pivotTableContainer').html(`
+                        <div class="error-fullscreen">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <h4>Error</h4>
+                            <p>${message}</p>
+                            <a href="@Url.Action("Index", "PivotTable")" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> Go to Main Page
+                            </a>
+                        </div>
+                    `);
+            }
         });
     </script>
 }
-
-@section Scripts
-{
-    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.13.0/pivot.min.js"></script>
-    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/plotly_renderers.min.js"></script>
-    <script id="insert"></script>
-}
-

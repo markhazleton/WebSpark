@@ -1,1 +1,485 @@
-@* ...existing code from c:\WebSpark\WebSpark.Portal\Areas\DataSpark\Views\PivotTable\SelectColumn.cshtml... *@
+@model PivotTableViewModel
+@{
+    ViewData["Title"] = "Select Columns for Pivot Table";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .column-selection {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+
+        .column-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 2px 0;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .column-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .column-item.selected {
+            background: #e8f5e8;
+            border-color: #28a745;
+        }
+
+        .column-info {
+            flex: 1;
+        }
+
+        .column-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .column-type {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .column-stats {
+            font-size: 0.8em;
+            color: #28a745;
+            text-align: right;
+        }
+
+        .selection-summary {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .file-info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group-custom {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .preview-table {
+            max-height: 300px;
+            overflow: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .table-responsive {
+            margin: 0;
+        }
+
+        .stats-card {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2>@ViewData["Title"]</h2>
+            <p class="text-muted">Choose which columns to include in your pivot table analysis.</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.CurrentFile))
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="file-info-card">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4><i class="fas fa-file-csv"></i> @Model.CurrentFile</h4>
+                            <p class="mb-0">CSV file loaded and ready for analysis</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="fs-2 fw-bold">@Model.RecordCount.ToString("N0")</div>
+                            <div>Records</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-columns"></i> Available Columns (@(Model.ColumnHeaders?.Count ?? 0))
+                        </h5>
+                        <small class="text-muted">Click columns to select/deselect them for the pivot table</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="column-selection" id="columnSelection">
+                            @for (int i = 0; i < (Model.ColumnHeaders?.Count ?? 0); i++)
+                            {
+                                var column = Model.ColumnHeaders?[i] ?? string.Empty;
+                                <div class="column-item" data-column="@column" data-index="@i">
+                                    <div class="column-info">
+                                        <div class="column-name">@column</div>
+                                        <div class="column-type">
+                                            @* We'll determine type via JavaScript *@
+                                            <span class="type-indicator">Analyzing...</span>
+                                        </div>
+                                    </div>
+                                    <div class="column-stats">
+                                        <div class="selection-checkbox">
+                                            <input type="checkbox" class="form-check-input" data-column="@column" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group-custom">
+                    <button id="selectAllBtn" class="btn btn-outline-primary">
+                        <i class="fas fa-check-double"></i> Select All
+                    </button>
+                    <button id="selectNoneBtn" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Select None
+                    </button>
+                    <button id="selectNumericBtn" class="btn btn-outline-info">
+                        <i class="fas fa-calculator"></i> Numeric Only
+                    </button>
+                    <button id="selectTextBtn" class="btn btn-outline-warning">
+                        <i class="fas fa-font"></i> Text Only
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle"></i> Selection Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="selectionSummary">
+                            <div class="stats-card">
+                                <strong>Selected Columns:</strong>
+                                <span id="selectedCount" class="text-primary">@(Model.ColumnHeaders?.Count ?? 0)</span> of
+                                @(Model.ColumnHeaders?.Count ?? 0)
+                            </div>
+                            <div class="stats-card">
+                                <strong>Total Records:</strong>
+                                <span class="text-success">@Model.RecordCount.ToString("N0")</span>
+                            </div>
+                            <div class="stats-card">
+                                <strong>Estimated Size:</strong>
+                                <span id="estimatedSize" class="text-info">Calculating...</span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-grid gap-2">
+                            <button id="createPivotBtn" class="btn btn-success btn-lg">
+                                <i class="fas fa-table"></i> Create Pivot Table
+                            </button>
+                            <a href="@Url.Action("Index", "PivotTable")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Files
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-eye"></i> Data Preview
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="preview-table">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped mb-0" id="previewTable">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            @foreach (var header in (Model.ColumnHeaders ?? new List<string>()).Take(5))
+                                            {
+                                                <th style="white-space: nowrap;">@header</th>
+                                            }
+                                            @if ((Model.ColumnHeaders?.Count ?? 0) > 5)
+                                            {
+                                                <th>...</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody id="previewTableBody">
+                                        <tr>
+                                            <td colspan="@(Math.Min(Model.ColumnHeaders?.Count ?? 0, 5) + ((Model.ColumnHeaders?.Count ?? 0) > 5 ? 1 : 0))"
+                                                class="text-center text-muted">
+                                                <i class="fas fa-spinner fa-spin"></i> Loading preview...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h4>No CSV File Selected</h4>
+                    <p class="text-muted">Please select a CSV file first before choosing columns.</p>
+                    <a href="@Url.Action("Index", "PivotTable")" class="btn btn-primary">
+                        <i class="fas fa-file-csv"></i> Select CSV File
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function ()
+        {
+            let csvData = null;
+            let selectedColumns = new Set(@Html.Raw(Json.Serialize(Model.ColumnHeaders ?? new List<string>())));
+
+            // Initialize
+            updateSelectionSummary();
+            loadPreviewData();
+
+            // Column selection handlers
+            $('.column-item').click(function (e)
+            {
+                if (e.target.type !== 'checkbox')
+                {
+                    const checkbox = $(this).find('input[type="checkbox"]');
+                    checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+                }
+            });
+
+            $('input[type="checkbox"][data-column]').change(function ()
+            {
+                const column = $(this).data('column');
+                const isChecked = $(this).prop('checked');
+
+                if (isChecked)
+                {
+                    selectedColumns.add(column);
+                    $(this).closest('.column-item').addClass('selected');
+                } else
+                {
+                    selectedColumns.delete(column);
+                    $(this).closest('.column-item').removeClass('selected');
+                }
+
+                updateSelectionSummary();
+            });
+
+            // Button handlers
+            $('#selectAllBtn').click(function ()
+            {
+                $('input[type="checkbox"][data-column]').prop('checked', true).trigger('change');
+            });
+
+            $('#selectNoneBtn').click(function ()
+            {
+                $('input[type="checkbox"][data-column]').prop('checked', false).trigger('change');
+            });
+
+            $('#selectNumericBtn').click(function ()
+            {
+                $('input[type="checkbox"][data-column]').each(function ()
+                {
+                    const column = $(this).data('column');
+                    const isNumeric = isColumnNumeric(column);
+                    $(this).prop('checked', isNumeric).trigger('change');
+                });
+            });
+
+            $('#selectTextBtn').click(function ()
+            {
+                $('input[type="checkbox"][data-column]').each(function ()
+                {
+                    const column = $(this).data('column');
+                    const isNumeric = isColumnNumeric(column);
+                    $(this).prop('checked', !isNumeric).trigger('change');
+                });
+            });
+
+            $('#createPivotBtn').click(function ()
+            {
+                if (selectedColumns.size === 0)
+                {
+                    alert('Please select at least one column.');
+                    return;
+                }
+
+                // Redirect to pivot table with selected columns
+                const columnsArray = Array.from(selectedColumns);
+                const queryString = columnsArray.map(col => 'columns=' + encodeURIComponent(col)).join('&');
+
+                window.location.href = '@Url.Action("Results", "PivotTable")?' + queryString;
+            });
+
+            function loadPreviewData()
+            {
+                @if (!string.IsNullOrEmpty(Model.CurrentFile))
+                    {
+                        <text>
+                            $.ajax({
+                                url: '@Url.Action("LoadCsvData", "PivotTable")',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({fileName: '@Model.CurrentFile' }),
+                            success: function(response) {
+                                    if (response.success && response.data.length > 0) {
+                                csvData = response.data;
+                            updatePreviewTable(response.data.slice(0, 5));
+                            analyzeColumnTypes(response.data);
+                                    }
+                                },
+                            error: function() {
+                                $('#previewTableBody').html('<tr><td colspan="100%" class="text-center text-danger">Failed to load preview data</td></tr>');
+                                }
+                            });
+                        </text>
+                }
+                }
+
+            function updatePreviewTable(data)
+            {
+                let tbody = '';
+                data.forEach(row =>
+                {
+                    tbody += '<tr>';
+                        @foreach (var header in (Model.ColumnHeaders ?? new List<string>()).Take(5))
+                        {
+                            <text>tbody += '<td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + (row['@header'] || '') + '">' + (row['@header'] || '') + '</td>';</text>
+                    }
+                        @if ((Model.ColumnHeaders?.Count ?? 0) > 5)
+                        {
+                            <text>tbody += '<td>...</td>';</text>
+                    }
+                        tbody += '</tr>';
+                });
+                $('#previewTableBody').html(tbody);
+            }
+
+            function analyzeColumnTypes(data)
+            {
+                if (!data || data.length === 0) return;
+
+                    @foreach (var header in Model.ColumnHeaders ?? new List<string>())
+                    {
+                        <text>
+                            const @(header.Replace(" ", "_").Replace("-", "_"))_values = data.slice(0, 100).map(row => row['@header']).filter(val => val !== null && val !== '');
+                            const @(header.Replace(" ", "_").Replace("-", "_"))_type = analyzeColumnType(@(header.Replace(" ", "_").Replace("-", "_"))_values);
+                            $('.column-item[data-column="@header"] .type-indicator').text(@(header.Replace(" ", "_").Replace("-", "_"))_type).removeClass('text-muted').addClass(
+                                @(header.Replace(" ", "_").Replace("-", "_"))_type.includes('Numeric') ? 'text-info' :
+                                @(header.Replace(" ", "_").Replace("-", "_"))_type.includes('Date') ? 'text-success' : 'text-warning'
+                            );
+                        </text>
+                }
+                }
+
+            function analyzeColumnType(values)
+            {
+                if (values.length === 0) return 'Empty';
+
+                let numericCount = 0;
+                let dateCount = 0;
+
+                values.forEach(val =>
+                {
+                    if (!isNaN(parseFloat(val)) && isFinite(val))
+                    {
+                        numericCount++;
+                    }
+                    if (Date.parse(val))
+                    {
+                        dateCount++;
+                    }
+                });
+
+                const numericRatio = numericCount / values.length;
+                const dateRatio = dateCount / values.length;
+
+                if (numericRatio > 0.8) return 'Numeric';
+                if (dateRatio > 0.8) return 'Date';
+                if (numericRatio > 0.5) return 'Mixed (Mostly Numeric)';
+                return 'Text';
+            }
+
+            function isColumnNumeric(column)
+            {
+                if (!csvData || csvData.length === 0) return false;
+
+                const values = csvData.slice(0, 100).map(row => row[column]).filter(val => val !== null && val !== '');
+                let numericCount = 0;
+
+                values.forEach(val =>
+                {
+                    if (!isNaN(parseFloat(val)) && isFinite(val))
+                    {
+                        numericCount++;
+                    }
+                });
+
+                return (numericCount / values.length) > 0.7;
+            }
+
+            function updateSelectionSummary()
+            {
+                $('#selectedCount').text(selectedColumns.size);
+
+                // Estimate data size
+                const estimatedRows = @Model.RecordCount;
+                const selectedCols = selectedColumns.size;
+                const estimatedSizeKB = Math.round((estimatedRows * selectedCols * 10) / 1024);
+
+                if (estimatedSizeKB < 1024)
+                {
+                    $('#estimatedSize').text(estimatedSizeKB + ' KB');
+                } else
+                {
+                    $('#estimatedSize').text(Math.round(estimatedSizeKB / 1024 * 100) / 100 + ' MB');
+                }
+            }
+        });
+    </script>
+}
