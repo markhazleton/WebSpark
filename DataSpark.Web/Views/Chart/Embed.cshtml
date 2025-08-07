@@ -1,0 +1,292 @@
+@model ChartDisplayViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = Model.Configuration.Name;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .chart-title {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+        }
+
+        .chart-subtitle {
+            margin: 0 0 20px 0;
+            font-size: 1rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .chart-canvas {
+            max-width: 100%;
+            max-height: calc(100vh - 100px);
+            display: none;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .error-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .powered-by {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 0.75rem;
+            color: #aaa;
+            text-decoration: none;
+        }
+
+        .powered-by:hover {
+            color: #666;
+        }
+
+        /* Hide scrollbars but allow scrolling */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chart-container">
+        @if (!string.IsNullOrWhiteSpace(Model.Configuration.Title))
+        {
+            <h1 class="chart-title">@Model.Configuration.Title</h1>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.Configuration.SubTitle))
+        {
+            <h2 class="chart-subtitle">@Model.Configuration.SubTitle</h2>
+        }
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Loading chart...</div>
+        </div>
+
+        <div id="error" class="error">
+            <div class="error-icon">⚠️</div>
+            <div class="error-message">Chart could not be loaded</div>
+            <div id="errorDetails" class="error-details"></div>
+        </div>
+
+        <canvas id="chartCanvas" class="chart-canvas" width="@Model.Configuration.Width"
+            height="@Model.Configuration.Height"></canvas>
+
+        <a href="#" class="powered-by" title="DataSpark Charts">⚡ DataSpark</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartConfiguration = @Html.Raw(Model.ChartJson ?? "{}");
+        let chartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', function ()
+        {
+            loadChart();
+        });
+
+        function loadChart()
+        {
+            try
+            {
+                if (!chartConfiguration || Object.keys(chartConfiguration).length === 0)
+                {
+                    throw new Error('No chart configuration available');
+                }
+
+                const canvas = document.getElementById('chartCanvas');
+                const ctx = canvas.getContext('2d');
+
+                // Adjust canvas size to fit container while maintaining aspect ratio
+                adjustCanvasSize(canvas);
+
+                if (chartInstance)
+                {
+                    chartInstance.destroy();
+                }
+
+                // Create chart with responsive options for embed mode
+                const embedConfig = {
+                    ...chartConfiguration,
+                    options: {
+                        ...chartConfiguration.options,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            ...chartConfiguration.options?.plugins,
+                            legend: {
+                                ...chartConfiguration.options?.plugins?.legend,
+                                display: @Model.Configuration.ShowLegend.ToString().ToLower()
+                            }
+                        },
+                        animation: {
+                            ...chartConfiguration.options?.animation,
+                            duration: @Model.Configuration.IsAnimated.ToString().ToLower() ? 1000 : 0
+                        }
+                    }
+                };
+
+                chartInstance = new Chart(ctx, embedConfig);
+
+                // Hide loading and show chart
+                document.getElementById('loading').style.display = 'none';
+                canvas.style.display = 'block';
+
+            } catch (error)
+            {
+                console.error('Chart loading error:', error);
+                showError(error.message);
+            }
+        }
+
+        function adjustCanvasSize(canvas)
+        {
+            const container = canvas.parentElement;
+            const containerRect = container.getBoundingClientRect();
+
+            // Calculate available space accounting for title/subtitle
+            const titleHeight = document.querySelector('.chart-title')?.offsetHeight || 0;
+            const subtitleHeight = document.querySelector('.chart-subtitle')?.offsetHeight || 0;
+            const availableHeight = containerRect.height - titleHeight - subtitleHeight - 40; // 40px for padding
+            const availableWidth = containerRect.width - 20; // 20px for padding
+
+            // Calculate scaling factor to fit within available space
+            const originalWidth = @Model.Configuration.Width;
+            const originalHeight = @Model.Configuration.Height;
+
+            const widthScale = availableWidth / originalWidth;
+            const heightScale = availableHeight / originalHeight;
+            const scale = Math.min(widthScale, heightScale, 1); // Don't scale up
+
+            canvas.style.width = (originalWidth * scale) + 'px';
+            canvas.style.height = (originalHeight * scale) + 'px';
+        }
+
+        function showError(message)
+        {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('errorDetails').textContent = message;
+            document.getElementById('error').style.display = 'flex';
+        }
+
+        // Handle window resize for responsive behavior
+        window.addEventListener('resize', function ()
+        {
+            if (chartInstance)
+            {
+                const canvas = document.getElementById('chartCanvas');
+                adjustCanvasSize(canvas);
+                chartInstance.resize();
+            }
+        });
+
+        // Optional: Handle iframe communication with parent window
+        window.addEventListener('message', function (event)
+        {
+            // Handle messages from parent window if needed
+            if (event.data.action === 'resize')
+            {
+                if (chartInstance)
+                {
+                    const canvas = document.getElementById('chartCanvas');
+                    adjustCanvasSize(canvas);
+                    chartInstance.resize();
+                }
+            }
+        });
+
+        // Send ready message to parent window
+        window.addEventListener('load', function ()
+        {
+            if (window.parent !== window)
+            {
+                window.parent.postMessage({ action: 'chartLoaded', chartId: @Model.Configuration.Id }, '*');
+            }
+        });
+    </script>
+</body>
+
+</html>

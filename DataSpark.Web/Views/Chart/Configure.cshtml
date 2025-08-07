@@ -1,0 +1,623 @@
+@model DataSpark.Web.Models.Chart.ChartConfigurationViewModel
+@{
+    ViewData["Title"] = Model.IsEditMode ? $"Edit Chart - {Model.Configuration.Name}" : "Configure New Chart";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">@ViewData["Title"]</h1>
+                    @if (!string.IsNullOrWhiteSpace(Model.DataSource))
+                    {
+                        <small class="text-muted">Data Source: @Model.DataSource</small>
+                    }
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="@Url.Action("Index", new { dataSource = Model.DataSource })"
+                        class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Charts
+                    </a>
+                    <button type="button" class="btn btn-info" onclick="previewChart()">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @Model.ErrorMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @Model.SuccessMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <form asp-action="Configure" method="post" id="chartForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="DataSource" />
+        <input type="hidden" asp-for="Configuration.CsvFile" value="@Model.DataSource" />
+        <input type="hidden" asp-for="IsEditMode" />
+        <input type="hidden" asp-for="Configuration.Id" />
+
+        <div class="row">
+            <!-- Configuration Panel -->
+            <div class="col-lg-4">
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="configTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="basic-tab" data-bs-toggle="tab" href="#basic">Basic</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="data-tab" data-bs-toggle="tab" href="#data">Data</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="style-tab" data-bs-toggle="tab" href="#style">Style</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="advanced-tab" data-bs-toggle="tab" href="#advanced">Advanced</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <!-- Basic Configuration -->
+                            <div class="tab-pane fade show active" id="basic">
+                                <div class="mb-3">
+                                    <label asp-for="Configuration.Name" class="form-label">Chart Name</label>
+                                    <input asp-for="Configuration.Name" class="form-control" required />
+                                    <span asp-validation-for="Configuration.Name" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Configuration.Title" class="form-label">Chart Title</label>
+                                    <input asp-for="Configuration.Title" class="form-control" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Configuration.SubTitle" class="form-label">Subtitle</label>
+                                    <input asp-for="Configuration.SubTitle" class="form-control" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Configuration.ChartType" class="form-label">Chart Type</label>
+                                    <select asp-for="Configuration.ChartType" class="form-select" id="chartTypeSelect">
+                                        @foreach (var chartType in Model.ChartTypes)
+                                        {
+                                            <option value="@chartType">@chartType</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label asp-for="Configuration.Width" class="form-label">Width</label>
+                                        <input asp-for="Configuration.Width" class="form-control" type="number"
+                                            min="200" max="2000" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label asp-for="Configuration.Height" class="form-label">Height</label>
+                                        <input asp-for="Configuration.Height" class="form-control" type="number"
+                                            min="200" max="2000" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Configuration -->
+                            <div class="tab-pane fade" id="data">
+                                <div class="mb-3">
+                                    <h6>Data Series</h6>
+                                    <div id="seriesContainer">
+                                        @for (int i = 0; i < Model.Configuration.Series.Count; i++)
+                                        {
+                                            <div class="series-item border rounded p-2 mb-2" data-index="@i">
+                                                <input type="hidden" asp-for="Configuration.Series[i].Id" />
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <label class="form-label">Series Name</label>
+                                                        <input asp-for="Configuration.Series[i].Name"
+                                                            class="form-control form-control-sm" />
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label">&nbsp;</label>
+                                                        <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                                                            onclick="removeSeries(@i)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-6">
+                                                        <label class="form-label">Data Column</label>
+                                                        <select asp-for="Configuration.Series[i].DataColumn"
+                                                            class="form-select form-select-sm">
+                                                            <option value="">Select column...</option>
+                                                            @foreach (var column in Model.AvailableColumns)
+                                                            {
+                                                                <option value="@column.Column">@column.Column</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label class="form-label">Aggregation</label>
+                                                        <select asp-for="Configuration.Series[i].AggregationFunction"
+                                                            class="form-select form-select-sm">
+                                                            <option value="Sum">Sum</option>
+                                                            <option value="Average">Average</option>
+                                                            <option value="Count">Count</option>
+                                                            <option value="Min">Min</option>
+                                                            <option value="Max">Max</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addSeries()">
+                                        <i class="fas fa-plus"></i> Add Series
+                                    </button>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6>X-Axis Configuration</h6>
+                                    <label class="form-label">Category Column</label>
+                                    <select asp-for="Configuration.XAxis.DataColumn" class="form-select">
+                                        <option value="">Select column...</option>
+                                        @foreach (var column in Model.AvailableColumns)
+                                        {
+                                            <option value="@column.Column">@column.Column</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Style Configuration -->
+                            <div class="tab-pane fade" id="style">
+                                <div class="mb-3">
+                                    <label asp-for="Configuration.ChartPalette" class="form-label">Color Palette</label>
+                                    <select asp-for="Configuration.ChartPalette" class="form-select">
+                                        @foreach (var palette in Model.ColorPalettes)
+                                        {
+                                            <option value="@palette">@palette</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Configuration.ChartStyle" class="form-label">Chart Style</label>
+                                    <select asp-for="Configuration.ChartStyle" class="form-select">
+                                        <option value="2D">2D</option>
+                                        <option value="3D">3D</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="Configuration.ShowLegend" class="form-check-input"
+                                            type="checkbox" />
+                                        <label asp-for="Configuration.ShowLegend" class="form-check-label">Show
+                                            Legend</label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="Configuration.IsAnimated" class="form-check-input"
+                                            type="checkbox" />
+                                        <label asp-for="Configuration.IsAnimated" class="form-check-label">Enable
+                                            Animation</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Configuration -->
+                            <div class="tab-pane fade" id="advanced">
+                                <div class="mb-3">
+                                    <h6>Filters</h6>
+                                    <div id="filtersContainer">
+                                        <!-- Filters will be added dynamically -->
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addFilter()">
+                                        <i class="fas fa-plus"></i> Add Filter
+                                    </button>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6>Export Options</h6>
+                                    <div class="form-check">
+                                        <input asp-for="Configuration.EnableZoom" class="form-check-input"
+                                            type="checkbox" />
+                                        <label asp-for="Configuration.EnableZoom" class="form-check-label">Enable
+                                            Zoom</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input asp-for="Configuration.EnablePan" class="form-check-input"
+                                            type="checkbox" />
+                                        <label asp-for="Configuration.EnablePan" class="form-check-label">Enable
+                                            Pan</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" onclick="return validateForm()">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="saveAndView()">
+                                <i class="fas fa-save"></i> Save & View Chart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Preview -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Chart Preview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartPreviewContainer" class="text-center py-5">
+                            <div id="chartPreviewLoading" style="display: none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Generating preview...</p>
+                            </div>
+                            <div id="chartPreviewEmpty">
+                                <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Chart Preview</h5>
+                                <p class="text-muted">Configure your chart settings and click "Preview" to see the
+                                    result</p>
+                            </div>
+                            <div id="chartPreviewError" style="display: none;">
+                                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                <h5 class="text-warning">Preview Error</h5>
+                                <p id="chartPreviewErrorMessage" class="text-muted"></p>
+                            </div>
+                            <canvas id="chartPreview" style="display: none;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let seriesIndex = @Model.Configuration.Series.Count;
+        let filterIndex = 0;
+        let chartInstance = null;
+
+        function addSeries()
+        {
+            const container = document.getElementById('seriesContainer');
+            const seriesHtml = `
+                        <div class="series-item border rounded p-2 mb-2" data-index="${seriesIndex}">
+                            <input type="hidden" name="Configuration.Series[${seriesIndex}].Id" value="0" />
+                            <div class="row">
+                                <div class="col-8">
+                                    <label class="form-label">Series Name</label>
+                                    <input name="Configuration.Series[${seriesIndex}].Name" class="form-control form-control-sm" value="Series ${seriesIndex + 1}" />
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeSeries(${seriesIndex})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <label class="form-label">Data Column</label>
+                                    <select name="Configuration.Series[${seriesIndex}].DataColumn" class="form-select form-select-sm">
+                                        <option value="">Select column...</option>
+                                        @foreach (var column in Model.AvailableColumns)
+                                        {
+                                                    <option value="@column.Column">@column.Column</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Aggregation</label>
+                                    <select name="Configuration.Series[${seriesIndex}].AggregationFunction" class="form-select form-select-sm">
+                                        <option value="Sum">Sum</option>
+                                        <option value="Average">Average</option>
+                                        <option value="Count">Count</option>
+                                        <option value="Min">Min</option>
+                                        <option value="Max">Max</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" name="Configuration.Series[${seriesIndex}].IsVisible" value="true" />
+                            <input type="hidden" name="Configuration.Series[${seriesIndex}].DisplayOrder" value="${seriesIndex}" />
+                        </div>
+                    `;
+            container.insertAdjacentHTML('beforeend', seriesHtml);
+            seriesIndex++;
+        }
+
+        function removeSeries(index)
+        {
+            const seriesItem = document.querySelector(`[data-index="${index}"]`);
+            if (seriesItem)
+            {
+                seriesItem.remove();
+            }
+        }
+
+        function addFilter()
+        {
+            const container = document.getElementById('filtersContainer');
+            const filterHtml = `
+                        <div class="filter-item border rounded p-2 mb-2" data-filter-index="${filterIndex}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <label class="form-label">Filter Column</label>
+                                    <select name="Configuration.Filters[${filterIndex}].Column" class="form-select form-select-sm">
+                                        <option value="">Select column...</option>
+                                        @foreach (var column in Model.AvailableColumns)
+                                        {
+                                                    <option value="@column.Column">@column.Column</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeFilter(${filterIndex})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="Configuration.Filters[${filterIndex}].FilterType" value="Include" />
+                            <input type="hidden" name="Configuration.Filters[${filterIndex}].IsEnabled" value="true" />
+                        </div>
+                    `;
+            container.insertAdjacentHTML('beforeend', filterHtml);
+            filterIndex++;
+        }
+
+        function removeFilter(index)
+        {
+            const filterItem = document.querySelector(`[data-filter-index="${index}"]`);
+            if (filterItem)
+            {
+                filterItem.remove();
+            }
+        }
+
+        function previewChart()
+        {
+            const formData = new FormData(document.getElementById('chartForm'));
+            const config = formDataToChartConfiguration(formData);
+
+            showPreviewLoading();
+
+            fetch('/Chart/Preview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    configuration: config,
+                    dataSource: '@Model.DataSource',
+                    includeData: false,
+                    maxDataPoints: 1000
+                })
+            })
+                .then(response => response.json())
+                .then(data =>
+                {
+                    hidePreviewLoading();
+
+                    if (data.success)
+                    {
+                        displayChart(JSON.parse(data.chartJson));
+                        if (data.warnings && data.warnings.length > 0)
+                        {
+                            showWarnings(data.warnings);
+                        }
+                    } else
+                    {
+                        showPreviewError(data.errors ? data.errors.join(', ') : 'Unknown error');
+                    }
+                })
+                .catch(error =>
+                {
+                    hidePreviewLoading();
+                    showPreviewError('Error generating preview: ' + error.message);
+                });
+        }
+
+        function saveAndView()
+        {
+            // Validate form before submission
+            if (!validateForm())
+            {
+                return false;
+            }
+
+            const form = document.getElementById('chartForm');
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'redirectToView';
+            hiddenInput.value = 'true';
+            form.appendChild(hiddenInput);
+            form.submit();
+        }
+
+        function validateForm()
+        {
+            const errors = [];
+            
+            // Check chart name
+            const chartName = document.querySelector('input[name="Configuration.Name"]').value.trim();
+            if (!chartName)
+            {
+                errors.push("Chart name is required");
+            }
+
+            // Check if at least one series exists and is valid
+            const seriesItems = document.querySelectorAll('.series-item');
+            if (seriesItems.length === 0)
+            {
+                errors.push("At least one data series is required");
+            }
+            else
+            {
+                let validSeriesCount = 0;
+                seriesItems.forEach((item, index) =>
+                {
+                    const seriesName = item.querySelector('input[name*=".Name"]')?.value?.trim();
+                    const dataColumn = item.querySelector('select[name*=".DataColumn"]')?.value;
+                    
+                    if (!seriesName)
+                    {
+                        errors.push(`Series ${index + 1} requires a name`);
+                    }
+                    if (!dataColumn)
+                    {
+                        errors.push(`Series ${index + 1} (${seriesName || 'Unnamed'}) requires a data column selection`);
+                    }
+                    
+                    if (seriesName && dataColumn)
+                    {
+                        validSeriesCount++;
+                    }
+                });
+
+                if (validSeriesCount === 0)
+                {
+                    errors.push("At least one series must have both a name and data column selected");
+                }
+            }
+
+            // Check X-axis column selection
+            const xAxisColumn = document.querySelector('select[name="Configuration.XAxis.DataColumn"]')?.value;
+            if (!xAxisColumn)
+            {
+                errors.push("X-axis category column is required");
+            }
+
+            // Display errors if any
+            if (errors.length > 0)
+            {
+                const errorMessage = "Please fix the following issues before saving:\n• " + errors.join("\n• ");
+                alert(errorMessage);
+                return false;
+            }
+
+            return true;
+        }
+
+        function showPreviewLoading()
+        {
+            document.getElementById('chartPreviewEmpty').style.display = 'none';
+            document.getElementById('chartPreviewError').style.display = 'none';
+            document.getElementById('chartPreview').style.display = 'none';
+            document.getElementById('chartPreviewLoading').style.display = 'block';
+        }
+
+        function hidePreviewLoading()
+        {
+            document.getElementById('chartPreviewLoading').style.display = 'none';
+        }
+
+        function showPreviewError(message)
+        {
+            document.getElementById('chartPreviewErrorMessage').textContent = message;
+            document.getElementById('chartPreviewError').style.display = 'block';
+        }
+
+        function displayChart(chartConfig)
+        {
+            const canvas = document.getElementById('chartPreview');
+            canvas.style.display = 'block';
+
+            if (chartInstance)
+            {
+                chartInstance.destroy();
+            }
+
+            const ctx = canvas.getContext('2d');
+            chartInstance = new Chart(ctx, chartConfig);
+        }
+
+        function formDataToChartConfiguration(formData)
+        {
+            // Convert form data to chart configuration object
+            // This is a simplified version - you might need to expand this based on your needs
+            const config = {
+                id: parseInt(formData.get('Configuration.Id') || '0'),
+                name: formData.get('Configuration.Name'),
+                csvFile: formData.get('DataSource'),
+                chartType: formData.get('Configuration.ChartType'),
+                title: formData.get('Configuration.Title'),
+                subTitle: formData.get('Configuration.SubTitle'),
+                width: parseInt(formData.get('Configuration.Width')),
+                height: parseInt(formData.get('Configuration.Height')),
+                chartPalette: formData.get('Configuration.ChartPalette'),
+                chartStyle: formData.get('Configuration.ChartStyle'),
+                showLegend: formData.get('Configuration.ShowLegend') === 'true',
+                isAnimated: formData.get('Configuration.IsAnimated') === 'true',
+                enableZoom: formData.get('Configuration.EnableZoom') === 'true',
+                enablePan: formData.get('Configuration.EnablePan') === 'true',
+                series: [],
+                xAxis: {
+                    dataColumn: formData.get('Configuration.XAxis.DataColumn')
+                },
+                filters: []
+            };
+
+            // Extract series data
+            const seriesNames = formData.getAll('Configuration.Series[0].Name');
+            // Note: This is simplified - you'd need more complex logic to handle dynamic series
+
+            return config;
+        }
+
+        function showWarnings(warnings)
+        {
+            warnings.forEach(warning =>
+            {
+                console.warn('Chart warning:', warning);
+            });
+        }
+
+        // Auto-preview on significant changes
+        document.addEventListener('change', function (e)
+        {
+            if (e.target.matches('#chartTypeSelect, select[name*="DataColumn"]'))
+            {
+                // Auto-preview when chart type or data columns change
+                setTimeout(previewChart, 1000);
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function ()
+        {
+            // Generate initial preview if we have basic configuration
+            if (document.querySelector('input[name="Configuration.Name"]').value)
+            {
+                setTimeout(previewChart, 500);
+            }
+        });
+    </script>
+}

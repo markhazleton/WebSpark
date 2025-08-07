@@ -37,7 +37,7 @@
         "url": "https://github.com/markhazleton/webspark.git"
     },
     "dependencies": {
-        "@microsoft/signalr": "^8.0.7",
+        "@microsoft/signalr": "^9.0.6",
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.7",
         "bootstrap-icons": "^1.13.1",
@@ -72,7 +72,7 @@
         "p-limit": "6.2.0",
         "postcss": "8.5.6",
         "prettier": "3.6.2",
-        "sass": "^1.89.2",
+        "sass": "^1.90.0",
         "shelljs": "0.10.0",
         "uglify-js": "^3.19.3",
         "upath": "2.0.1",

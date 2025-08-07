@@ -1,4 +1,6 @@
 using DataSpark.Web.Services;
+using DataSpark.Web.Services.Chart;
+using DataSpark.Web.Models.Chart;
 using WebSpark.Bootswatch;
 using static DataSpark.Web.Services.OpenAIFileAnalysisService;
 
@@ -19,6 +21,13 @@ builder.Services.AddSession(options =>
 // Register DataSpark services
 builder.Services.AddScoped<CsvFileService>();
 builder.Services.AddScoped<CsvProcessingService>();
+
+// Register Chart services
+builder.Services.AddScoped<IChartConfigurationRepository, FileChartConfigurationRepository>();
+builder.Services.AddScoped<IChartService, ChartService>();
+builder.Services.AddScoped<IDataService, ChartDataService>();
+builder.Services.AddScoped<IChartRenderingService, ChartRenderingService>();
+builder.Services.AddScoped<IChartValidationService, ChartValidationService>();
 
 // Add memory cache services
 builder.Services.AddMemoryCache();

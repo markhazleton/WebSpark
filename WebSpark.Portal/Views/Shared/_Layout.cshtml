@@ -2,19 +2,10 @@
 <html lang="en">
 
 <head>
-    @using WebSpark.Bootswatch.Services
-    @using WebSpark.Bootswatch.Helpers
-    @inject WebSpark.Bootswatch.Services.StyleCache StyleCache
-    @{
-        var themeName = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetCurrentThemeName(ViewContext.HttpContext);
-        var themeUrl = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetThemeUrl(StyleCache, themeName);
-    }
     @await Html.PartialAsync("Sections/Meta/_metatags")
     <link href="/dist/css/webspark.min.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link id="bootswatch-theme-stylesheet" rel="stylesheet" href="@themeUrl" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
-    <script src="/_content/WebSpark.Bootswatch/js/bootswatch-theme-switcher.js"></script>
 
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("PageStyles", required: false)
@@ -44,7 +35,6 @@
     <script src="/lib/jquery/dist/jquery.min.js"></script>
     <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/lib/js-cookie/js.cookie.min.js"></script>
-    <script src="/lib/WebSpark.Bootswatch/bootswatch-switcher.js"></script>
 </body>
 
 </html>

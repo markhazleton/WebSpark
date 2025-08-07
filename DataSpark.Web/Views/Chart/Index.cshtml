@@ -1,0 +1,414 @@
+@model ChartIndexViewModel
+@{
+    ViewData["Title"] = "Chart Configuration";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Chart Configuration</h1>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary" onclick="createNewChart()">
+                        <i class="fas fa-plus"></i> New Chart
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @Model.ErrorMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @Model.SuccessMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Data Source Selection -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Data Sources</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.AvailableDataSources.Any())
+                    {
+                        <div class="list-group">
+                            <!-- All Charts option -->
+                            <a href="@Url.Action("Index")"
+                                class="list-group-item list-group-item-action @(string.IsNullOrEmpty(Model.ActiveDataSource) ? "active" : "")">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="fas fa-chart-bar me-2"></i>All Charts</h6>
+                                    <small class="text-muted">@Model.SavedConfigurations.Count total</small>
+                                </div>
+                            </a>
+                            @foreach (var dataSource in Model.AvailableDataSources)
+                            {
+                                <a href="@Url.Action("Index", new { dataSource = dataSource })"
+                                    class="list-group-item list-group-item-action @(dataSource == Model.ActiveDataSource ? "active" : "")">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@dataSource</h6>
+                                        @if (Model.ConfigurationCounts.TryGetValue(dataSource, out var count))
+                                        {
+                                            <small class="text-muted">@count charts</small>
+                                        }
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted text-center py-3">
+                            <i class="fas fa-database fa-2x mb-2"></i>
+                            <p>No data sources available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Configurations -->
+        <div class="col-md-9">
+            @if (Model.SavedConfigurations.Any() || !string.IsNullOrWhiteSpace(Model.ActiveDataSource))
+            {
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            @if (!string.IsNullOrWhiteSpace(Model.ActiveDataSource))
+                            {
+                                <text>Charts for @Model.ActiveDataSource</text>
+                            }
+                            else
+                            {
+                                <text>All Charts</text>
+                            }
+                        </h5>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-secondary" onclick="toggleView('grid')"
+                                id="gridViewBtn">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary active" onclick="toggleView('list')"
+                                id="listViewBtn">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.SavedConfigurations.Any())
+                        {
+                            <!-- List View -->
+                            <div id="listView" class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Chart Type</th>
+                                            <th>Series</th>
+                                            <th>Filters</th>
+                                            <th>Modified</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var config in Model.SavedConfigurations)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@config.Name</strong>
+                                                    @if (!string.IsNullOrWhiteSpace(config.Description))
+                                                    {
+                                                        <br>
+
+                                                        <small class="text-muted">@config.Description</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary">@config.ChartType</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info">@config.SeriesCount</span>
+                                                </td>
+                                                <td>
+                                                    @if (config.FilterCount > 0)
+                                                    {
+                                                        <span class="badge bg-warning">@config.FilterCount</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">None</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted" title="@config.ModifiedDate.ToString("F")">
+                                                        @config.ModifiedDate.ToString("MM/dd/yyyy")
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a href="@Url.Action("View", new { id = config.Id })"
+                                                            class="btn btn-outline-primary" title="View Chart">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <a href="@Url.Action("Configure", new { id = config.Id })"
+                                                            class="btn btn-outline-secondary" title="Edit">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-outline-warning"
+                                                            onclick="duplicateChart(@config.Id, '@config.Name')" title="Duplicate">
+                                                            <i class="fas fa-copy"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger"
+                                                            onclick="deleteChart(@config.Id, '@config.Name')" title="Delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Grid View -->
+                            <div id="gridView" class="row" style="display: none;">
+                                @foreach (var config in Model.SavedConfigurations)
+                                {
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">@config.Name</h6>
+                                                <p class="card-text">
+                                                    <span class="badge bg-secondary">@config.ChartType</span>
+                                                    <span class="badge bg-info">@config.SeriesCount series</span>
+                                                    @if (config.FilterCount > 0)
+                                                    {
+                                                        <span class="badge bg-warning">@config.FilterCount filters</span>
+                                                    }
+                                                </p>
+                                                <small class="text-muted">Modified:
+                                                    @config.ModifiedDate.ToString("MM/dd/yyyy")</small>
+                                            </div>
+                                            <div class="card-footer">
+                                                <div class="btn-group w-100" role="group">
+                                                    <a href="@Url.Action("View", new { id = config.Id })"
+                                                        class="btn btn-primary btn-sm flex-fill">View</a>
+                                                    <a href="@Url.Action("Configure", new { id = config.Id })"
+                                                        class="btn btn-outline-secondary btn-sm">Edit</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No charts configured</h5>
+                                <p class="text-muted">Create your first chart to get started</p>
+                                <a href="@Url.Action("Configure", new { dataSource = Model.ActiveDataSource })"
+                                    class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Create Chart
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Welcome to Chart Configuration</h5>
+                        <p class="text-muted">Select a data source from the left to view and create charts</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Duplicate Chart Modal -->
+<div class="modal fade" id="duplicateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Duplicate Chart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="duplicateForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newChartName" class="form-label">New Chart Name</label>
+                        <input type="text" class="form-control" id="newChartName" required>
+                        <div class="form-text">Enter a unique name for the duplicated chart</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Duplicate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentChartId = 0;
+
+        function createNewChart()
+        {
+            const dataSource = '@Model.ActiveDataSource';
+            if (dataSource)
+            {
+                window.location.href = '@Url.Action("Configure")?dataSource=' + encodeURIComponent(dataSource);
+            } else
+            {
+                alert('Please select a data source first');
+            }
+        }
+
+        function refreshData()
+        {
+            window.location.reload();
+        }
+
+        function toggleView(viewType)
+        {
+            const listView = document.getElementById('listView');
+            const gridView = document.getElementById('gridView');
+            const listBtn = document.getElementById('listViewBtn');
+            const gridBtn = document.getElementById('gridViewBtn');
+
+            if (viewType === 'list')
+            {
+                listView.style.display = 'block';
+                gridView.style.display = 'none';
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+            } else
+            {
+                listView.style.display = 'none';
+                gridView.style.display = 'block';
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+            }
+
+            // Save preference
+            localStorage.setItem('chartViewType', viewType);
+        }
+
+        function duplicateChart(chartId, chartName)
+        {
+            currentChartId = chartId;
+            document.getElementById('newChartName').value = chartName + ' (Copy)';
+            new bootstrap.Modal(document.getElementById('duplicateModal')).show();
+        }
+
+        function deleteChart(chartId, chartName)
+        {
+            if (confirm(`Are you sure you want to delete the chart "${chartName}"?`))
+            {
+                fetch(`/Chart/Delete/${chartId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data =>
+                    {
+                        if (data.success)
+                        {
+                            showAlert('success', data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else
+                        {
+                            showAlert('danger', data.message);
+                        }
+                    })
+                    .catch(error =>
+                    {
+                        console.error('Error:', error);
+                        showAlert('danger', 'Error deleting chart');
+                    });
+            }
+        }
+
+        // Handle duplicate form submission
+        document.getElementById('duplicateForm').addEventListener('submit', function (e)
+        {
+            e.preventDefault();
+
+            const newName = document.getElementById('newChartName').value;
+            const formData = new FormData();
+            formData.append('newName', newName);
+
+            fetch(`/Chart/Duplicate/${currentChartId}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                }
+            })
+                .then(response => response.json())
+                .then(data =>
+                {
+                    bootstrap.Modal.getInstance(document.getElementById('duplicateModal')).hide();
+
+                    if (data.success)
+                    {
+                        showAlert('success', data.message);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else
+                    {
+                        showAlert('danger', data.message);
+                    }
+                })
+                .catch(error =>
+                {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Error duplicating chart');
+                });
+        });
+
+        function showAlert(type, message)
+        {
+            const alertHtml = `
+                        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                            ${message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+
+            const container = document.querySelector('.container-fluid .row .col-12');
+            container.insertAdjacentHTML('afterbegin', alertHtml);
+        }
+
+        // Restore view preference on page load
+        document.addEventListener('DOMContentLoaded', function ()
+        {
+            const savedView = localStorage.getItem('chartViewType') || 'list';
+            toggleView(savedView);
+        });
+    </script>
+}

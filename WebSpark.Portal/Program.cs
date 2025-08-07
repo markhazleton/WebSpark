@@ -6,6 +6,7 @@ using OpenWeatherMapClient.WeatherService;
 using PromptSpark.Domain.Data;
 using PromptSpark.Domain.PromptSparkChat;
 using PromptSpark.Domain.Service;
+using Scalar.AspNetCore;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,7 +16,6 @@ using TriviaSpark.Domain.Services;
 using TriviaSpark.JShow.Data;
 using TriviaSpark.JShow.Models;
 using TriviaSpark.JShow.Service;
-using WebSpark.Bootswatch;
 using WebSpark.Core.Data;
 using WebSpark.Core.Infrastructure.Logging;
 using WebSpark.Core.Interfaces;
@@ -111,8 +111,9 @@ RegisterHttpClientUtilities(builder);
 
 // ========================
 // Add OpenAPI/Swagger generation
-//  ========================
+// ========================
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
 
 
 // ========================
@@ -183,11 +184,6 @@ builder.Services.AddTransient<CsvProcessingService>();
 builder.Services.AddMarkdown();
 
 // ========================
-// Bootswatch Theme Switcher
-// ========================
-builder.Services.AddBootswatchThemeSwitcher();
-
-// ========================
 // MVC and Razor Pages
 // ========================
 builder.Services.AddControllersWithViews();
@@ -256,7 +252,18 @@ app.UseMiddleware<NotFoundMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    // OpenAPI endpoint mapping - must be before UseRouting()
+    app.MapOpenApi();
 
+    // Add Scalar UI for modern API documentation
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("WebSpark Portal API")
+               .WithTheme(ScalarTheme.BluePlanet)
+               .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
+               .WithModels(true)
+               .WithSearchHotKey("k");
+    });
 }
 else
 {
@@ -266,8 +273,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-// Use all Bootswatch features (includes StyleCache and static files)
-app.UseBootswatchAll();
 
 app.Use(async (context, next) =>
 {

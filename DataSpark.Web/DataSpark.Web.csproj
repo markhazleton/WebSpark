@@ -13,6 +13,8 @@
 		<PackageReference Include="WebSpark.HttpClientUtility" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Data.Analysis" Version="0.22.2" />
 		<PackageReference Include="ScottPlot" Version="5.0.55" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
 
 		<!-- Explicit references to resolve package downgrade conflicts -->
 		<PackageReference Include="System.IO" Version="4.3.0" />

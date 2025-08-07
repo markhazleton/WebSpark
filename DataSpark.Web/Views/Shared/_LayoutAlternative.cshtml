@@ -1,0 +1,80 @@
+@using WebSpark.Bootswatch.Services
+@using WebSpark.Bootswatch.Helpers
+@inject StyleCache StyleCache
+@{
+    var httpContext = Context;
+}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="@(BootswatchThemeHelper.GetCurrentColorMode(Context))">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DataSpark.Web (Alternative Layout)</title>
+    @{
+        var themeName = BootswatchThemeHelper.GetCurrentThemeName(Context);
+        var themeUrl = BootswatchThemeHelper.GetThemeUrl(StyleCache, themeName);
+    }
+    <link id="bootswatch-theme-stylesheet" rel="stylesheet" href="@themeUrl" />
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @await RenderSectionAsync("Styles", required: false)
+
+    <script src="/_content/WebSpark.Bootswatch/js/bootswatch-theme-switcher.js"></script>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        @{
+            // Example of using the shared navigation partial in a different layout
+            // This demonstrates how any layout can reuse the same navigation
+        }
+        @await Html.PartialAsync("_Navigation")
+    </header>
+    
+    <!-- Alternative layout with sidebar and different container structure -->
+    <div class="container-fluid flex-grow-1">
+        <div class="row h-100">
+            <!-- Optional sidebar for alternative layouts -->
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky pt-3">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Quick Links</span>
+                    </h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Chart" asp-action="Index">
+                                <i class="fas fa-chart-line me-2"></i>Charts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="PivotTable" asp-action="Index">
+                                <i class="fas fa-table me-2"></i>Pivot Tables
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content area -->
+            <main role="main" class="col-md-10 ml-sm-auto px-md-4 py-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="bg-light text-muted py-3 mt-auto">
+        <div class="container">
+            &copy; 2025 - DataSpark.Web (Alternative Layout) - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("PageScripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

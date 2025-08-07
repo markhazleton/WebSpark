@@ -1,0 +1,420 @@
+@model ChartDisplayViewModel
+@{
+    ViewData["Title"] = $"Chart - {Model.Configuration.Name}";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">@Model.Configuration.Name</h1>
+                    @if (!string.IsNullOrWhiteSpace(Model.Configuration.CsvFile))
+                    {
+                        <small class="text-muted">Data Source: @Model.Configuration.CsvFile</small>
+                    }
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Charts
+                    </a>
+                    <a href="@Url.Action("Configure", new { id = Model.Configuration.Id })" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Chart
+                    </a>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="exportChart('PNG')">
+                                    <i class="fas fa-image"></i> PNG Image
+                                </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportChart('JPEG')">
+                                    <i class="fas fa-image"></i> JPEG Image
+                                </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportChart('PDF')">
+                                    <i class="fas fa-file-pdf"></i> PDF Document
+                                </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportChart('SVG')">
+                                    <i class="fas fa-vector-square"></i> SVG Vector
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="exportChart('CSV')">
+                                    <i class="fas fa-file-csv"></i> CSV Data
+                                </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportChart('Excel')">
+                                    <i class="fas fa-file-excel"></i> Excel Data
+                                </a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#shareModal">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @Model.ErrorMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @ViewBag.SuccessMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Chart Display -->
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">@Model.Configuration.Title</h5>
+                        @if (!string.IsNullOrWhiteSpace(Model.Configuration.SubTitle))
+                        {
+                            <small class="text-muted">@Model.Configuration.SubTitle</small>
+                        }
+                    </div>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary" onclick="refreshChart()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div id="chartContainer" class="text-center">
+                        <div id="chartLoading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading chart...</span>
+                            </div>
+                            <p class="mt-2">Loading chart...</p>
+                        </div>
+                        <div id="chartError" style="display: none;">
+                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                            <h5 class="text-warning">Chart Error</h5>
+                            <p id="chartErrorMessage" class="text-muted"></p>
+                            <button class="btn btn-primary" onclick="refreshChart()">
+                                <i class="fas fa-sync-alt"></i> Retry
+                            </button>
+                        </div>
+                        <canvas id="chartCanvas" width="@Model.Configuration.Width" height="@Model.Configuration.Height"
+                            style="display: none; max-width: 100%; height: auto;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Information -->
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Chart Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Chart Type</label>
+                        <div>@Model.Configuration.ChartType</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Dimensions</label>
+                        <div>@Model.Configuration.Width × @Model.Configuration.Height</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Color Palette</label>
+                        <div>@Model.Configuration.ChartPalette</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Data Series</label>
+                        <div>@Model.Configuration.Series.Count series</div>
+                        @if (Model.Configuration.Series.Any())
+                        {
+                            <ul class="list-unstyled mt-2">
+                                @foreach (var series in Model.Configuration.Series)
+                                {
+                                    <li class="small text-muted">
+                                        <i class="fas fa-chart-line"></i> @series.Name
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+
+                    @if (Model.Configuration.Filters.Any())
+                    {
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Active Filters</label>
+                            <div>@Model.Configuration.Filters.Count(f => f.IsEnabled) filters</div>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Created</label>
+                        <div class="small">@Model.Configuration.CreatedDate.ToString("MMM dd, yyyy")</div>
+                    </div>
+
+                    @if (Model.Configuration.ModifiedDate != Model.Configuration.CreatedDate)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Last Modified</label>
+                            <div class="small">@Model.Configuration.ModifiedDate.ToString("MMM dd, yyyy")</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Data != null && Model.Summary != null)
+            {
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Data Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <label class="form-label text-muted">Total Records</label>
+                            <div>@Model.Summary.TotalDataPoints.ToString("N0")</div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label text-muted">Data Points</label>
+                            <div>@Model.Data.DataPoints.Count.ToString("N0")</div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Data.ProcessingNotes))
+                        {
+                            <div class="mb-2">
+                                <label class="form-label text-muted">Notes</label>
+                                <div class="small text-muted">@Model.Data.ProcessingNotes</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Share Chart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Chart URL</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="shareUrl"
+                            value="@Url.Action("View", "Chart", new { id = Model.Configuration.Id }, Context.Request.Scheme)"
+                            readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('shareUrl')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Embed Code</label>
+                    <textarea class="form-control" id="embedCode" rows="3"
+                        readonly><iframe src="@Url.Action("Embed", "Chart", new { id = Model.Configuration.Id }, Context.Request.Scheme)" width="@Model.Configuration.Width" height="@Model.Configuration.Height" frameborder="0"></iframe></textarea>
+                    <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyToClipboard('embedCode')">
+                        <i class="fas fa-copy"></i> Copy Embed Code
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chartInstance = null;
+        const chartConfiguration = @Html.Raw(Model.ChartJson ?? "{}");
+
+        document.addEventListener('DOMContentLoaded', function ()
+        {
+            loadChart();
+        });
+
+        function loadChart()
+        {
+            showChartLoading();
+
+            try
+            {
+                if (!chartConfiguration || Object.keys(chartConfiguration).length === 0)
+                {
+                    throw new Error('No chart configuration available');
+                }
+
+                const canvas = document.getElementById('chartCanvas');
+                const ctx = canvas.getContext('2d');
+
+                if (chartInstance)
+                {
+                    chartInstance.destroy();
+                }
+
+                chartInstance = new Chart(ctx, chartConfiguration);
+
+                hideChartLoading();
+                canvas.style.display = 'block';
+
+            } catch (error)
+            {
+                console.error('Chart loading error:', error);
+                showChartError(error.message);
+            }
+        }
+
+        function refreshChart()
+        {
+            loadChart();
+        }
+
+        function showChartLoading()
+        {
+            document.getElementById('chartLoading').style.display = 'block';
+            document.getElementById('chartError').style.display = 'none';
+            document.getElementById('chartCanvas').style.display = 'none';
+        }
+
+        function hideChartLoading()
+        {
+            document.getElementById('chartLoading').style.display = 'none';
+        }
+
+        function showChartError(message)
+        {
+            hideChartLoading();
+            document.getElementById('chartErrorMessage').textContent = message;
+            document.getElementById('chartError').style.display = 'block';
+        }
+
+        function exportChart(format)
+        {
+            if (!chartInstance)
+            {
+                alert('Chart not loaded. Please wait for the chart to load and try again.');
+                return;
+            }
+
+            const chartId = @Model.Configuration.Id;
+
+            // Show loading state
+            const exportButton = event.target.closest('.btn-group').querySelector('.dropdown-toggle');
+            const originalText = exportButton.innerHTML;
+            exportButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+            exportButton.disabled = true;
+
+            fetch(`/api/Chart/Export`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chartId: chartId,
+                    format: format,
+                    width: @Model.Configuration.Width,
+                    height: @Model.Configuration.Height,
+                    includeData: format === 'CSV' || format === 'Excel'
+                })
+            })
+                .then(response =>
+                {
+                    if (!response.ok)
+                    {
+                        throw new Error('Export failed');
+                    }
+                    return response.blob();
+                })
+                .then(blob =>
+                {
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `@Model.Configuration.Name.${format.toLowerCase()}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(error =>
+                {
+                    console.error('Export error:', error);
+                    alert('Error exporting chart. Please try again.');
+                })
+                .finally(() =>
+                {
+                    // Restore button state
+                    exportButton.innerHTML = originalText;
+                    exportButton.disabled = false;
+                });
+        }
+
+        function toggleFullscreen()
+        {
+            const chartContainer = document.getElementById('chartContainer');
+            const button = event.target.closest('button');
+
+            if (!document.fullscreenElement)
+            {
+                chartContainer.requestFullscreen();
+                button.innerHTML = '<i class="fas fa-compress"></i>';
+            } else
+            {
+                document.exitFullscreen();
+                button.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        }
+
+        function copyToClipboard(elementId)
+        {
+            const element = document.getElementById(elementId);
+            element.select();
+            element.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+
+            // Show feedback
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() =>
+            {
+                button.innerHTML = originalText;
+            }, 2000);
+        }
+
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', function ()
+        {
+            const button = document.querySelector('button[onclick="toggleFullscreen()"]');
+            if (!document.fullscreenElement)
+            {
+                button.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        });
+    </script>
+}

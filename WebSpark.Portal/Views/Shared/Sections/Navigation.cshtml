@@ -1,12 +1,7 @@
 ﻿@using System.IO
 @using System.Text.Json
-@using WebSpark.Bootswatch.Services
-@using WebSpark.Bootswatch.Helpers
-@inject WebSpark.Bootswatch.Services.StyleCache StyleCache
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Environment
 @{
-    var themeName = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetCurrentThemeName(ViewContext.HttpContext);
-    var themeUrl = WebSpark.Bootswatch.Helpers.BootswatchThemeHelper.GetThemeUrl(StyleCache, themeName);
     var areaName = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
     var currentPath =
     $"/{ViewContext.RouteData.Values["area"]}/{ViewContext.RouteData.Values["controller"]}/{ViewContext.RouteData.Values["action"]}";
@@ -35,7 +30,7 @@
 <!-- Top Navigation (When NOT in an Area) -->
 @if (string.IsNullOrEmpty(areaName))
 {
-    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm fixed-top mb-4" data-bs-theme="auto">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm fixed-top mb-4">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/">
                 <i class="bi bi-lightning-charge-fill fs-4 text-primary"></i>
@@ -77,14 +72,6 @@
                             <i class="bi bi-question-circle"></i>TriviaSpark
                         </a>
                     </li>
-                    <li class="nav-item ms-lg-2">
-                        <button
-                            class="btn btn-sm btn-outline-primary rounded-pill theme-toggle d-flex align-items-center gap-2"
-                            aria-label="Toggle theme" title="Toggle light/dark mode">
-                            <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
-                            <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
-                        </button>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -95,7 +82,7 @@
 <!-- Area Navigation (When Inside an Area) -->
 @if (!string.IsNullOrEmpty(areaName) && menuItems != null)
 {
-    <nav class="navbar navbar-expand-lg bg-secondary sticky-top shadow-sm" data-bs-theme="auto">
+    <nav class="navbar navbar-expand-lg bg-secondary sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand me-2 d-flex align-items-center gap-2 text-light" href="/">
                 <i class="bi bi-house-door"></i><span class="d-none d-sm-inline">Home</span>
@@ -129,14 +116,6 @@
                             </li>
                         }
                     }
-                    <li class="nav-item ms-lg-2">
-                        <button
-                            class="btn btn-sm btn-outline-light rounded-pill theme-toggle d-flex align-items-center gap-2"
-                            aria-label="Toggle theme" title="Toggle light/dark mode">
-                            <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
-                            <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
-                        </button>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -144,8 +123,7 @@
 }
 
 <!-- Mobile Offcanvas Navigation -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel"
-    data-bs-theme="auto">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="mobileNavLabel">Navigation</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -182,16 +160,6 @@
                     <i class="bi bi-question-circle"></i>TriviaSpark
                 </a>
             </li>
-            <li class="nav-item mt-3">
-                <div class="d-grid">
-                    <button class="btn btn-outline-primary theme-toggle d-flex align-items-center gap-2"
-                        aria-label="Toggle theme">
-                        <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
-                        <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
-                        Toggle light/dark mode
-                    </button>
-                </div>
-            </li>
         </ul>
     </div>
 </div>
@@ -199,8 +167,7 @@
 <!-- Area Navigation Offcanvas (For Mobile) -->
 @if (!string.IsNullOrEmpty(areaName) && menuItems != null)
 {
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="areaNavCanvas" aria-labelledby="areaNavCanvasLabel"
-        data-bs-theme="auto">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="areaNavCanvas" aria-labelledby="areaNavCanvasLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="areaNavCanvasLabel">@areaName Navigation</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -226,64 +193,7 @@
                         </li>
                     }
                 }
-                <li class="nav-item mt-3">
-                    <div class="d-grid">
-                        <button class="btn btn-outline-light theme-toggle d-flex align-items-center gap-2"
-                            aria-label="Toggle theme">
-                            <i class="bi bi-moon-fill theme-toggle-dark-icon"></i>
-                            <i class="bi bi-sun-fill theme-toggle-light-icon d-none"></i>
-                            Toggle light/dark mode
-                        </button>
-                    </div>
-                </li>
             </ul>
         </div>
     </div>
 }
-
-<!-- Custom styles for navbars in dark mode -->
-<style>
-    /* Default navbar styles in light mode */
-    .navbar:not(.bg-secondary) {
-        background-color: var(--bs-body-bg);
-    }
-
-    /* Custom background for secondary navbar in dark mode */
-    [data-bs-theme="dark"] .navbar.bg-secondary {
-        background-color: #343a40 !important;
-    }
-
-    /* Ensure the navbar toggler icon is visible in dark mode */
-    [data-bs-theme="dark"] .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    }
-
-    /* Ensure offcanvas has appropriate background in dark mode */
-    [data-bs-theme="dark"] .offcanvas {
-        background-color: #212529;
-        color: #dee2e6;
-    }
-
-    /* Make sure active links are properly highlighted */
-    [data-bs-theme="dark"] .nav-link.active {
-        color: #fff !important;
-        font-weight: 500;
-    }
-
-    /* Icon color adjustments for dark mode */
-    [data-bs-theme="dark"] .navbar .bi,
-    [data-bs-theme="dark"] .offcanvas .bi {
-        color: #f8f9fa;
-    }
-
-    [data-bs-theme="light"] .navbar .bi,
-    [data-bs-theme="light"] .offcanvas .bi {
-        color: #212529;
-    }
-</style>
-
-
-
-
-
-
