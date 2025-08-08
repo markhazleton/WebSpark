@@ -1,0 +1,331 @@
+@model IEnumerable<DefinitionDto>
+
+@{
+    ViewData["Title"] = "Pick Spark Variant - Enhance Your AI Interaction";
+    ViewData["Description"] = "Discover and choose from a range of Spark Variants designed to optimize AI interactions, boost productivity, and explore creative solutions.";
+    ViewData["Keywords"] = "Spark Variants, AI Interaction, Optimize AI, Productivity, Creative AI Solutions, AI Experience, Chat with AI, AI Models";
+
+    var definitionTypes = Model.Select(d => d.DefinitionType).Distinct();
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3 text-center">Pick Enhanced Spark Variant</h2>
+
+    <!-- Filter Buttons (Scrollable on Mobile) -->
+    <div class="d-flex overflow-auto mb-3" id="definitionTypeFilter">
+        <button type="button" class="btn btn-outline-primary btn-sm active mx-1" data-type="All">All</button>
+        @foreach (var type in definitionTypes)
+        {
+            <button type="button" class="btn btn-outline-primary btn-sm mx-1" data-type="@type">@type</button>
+        }
+    </div>
+
+    <!-- Definition Grid -->
+    <div class="row g-3" id="definitionGrid">
+        @foreach (var definition in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4 definition-item" data-type="@definition.DefinitionType">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@definition.Name</h5>
+                        <p class="card-text text-muted">@definition.Description</p>
+                        <small class="text-muted mb-2">Created: @definition.Created.ToShortDateString()</small>
+                        <a href="/PromptSpark/EnhancedChat/@definition.DefinitionId/@definition.Slug" class="btn btn-primary mt-auto">
+                            Start Enhanced Chat <i class="bi bi-arrow-right-circle-fill ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4" id="pagination"></ul>
+    </nav>
+</div>
+
+<div class="container my-5">
+    <h1 class="display-4 text-center mb-4">@ViewData["Title"]</h1>
+    <p class="lead text-center mb-5">@ViewData["Description"]</p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Features of Enhanced PromptSpark</h2>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="bi bi-lightning-fill me-2 text-primary"></i><strong>Core Sparks:</strong> Define standard AI behaviors for consistent performance.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-box-seam me-2 text-success"></i><strong>Spark Variants:</strong> Explore and test different prompt implementations.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-gear-fill me-2 text-warning"></i><strong>Spark Inputs:</strong> Evaluate and refine responses with various input configurations.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-graph-up me-2 text-danger"></i><strong>Performance Tracking:</strong> Monitor accuracy, relevance, and efficiency of prompts.
+                </li>
+                <li class="list-group-item">
+                    <i class="bi bi-rocket-takeoff me-2 text-info"></i><strong>Enhanced Experience:</strong> World-class UI/UX with modern design and optimized performance.
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Enhanced ChatCompletions Functionality</h2>
+            <p>
+                The Enhanced ChatCompletions feature enables interactive conversations with specific PromptSpark Variants using world-class best practices. Users can tailor AI responses by selecting the appropriate variant, which influences the behavior and tone of the interaction with improved caching, validation, and modern UI design.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Why Choose Enhanced PromptSpark?</h3>
+            <p>
+                Enhanced PromptSpark provides a streamlined approach to managing and optimizing AI prompts with modern web technologies and best practices. By leveraging advanced caching, memory optimization, rate limiting, and a beautiful modern UI, users can experience faster and more reliable interactions with large language models, ensuring more accurate and contextually appropriate responses.
+            </p>
+            <div class="text-center">
+                <a href="/PromptSpark/home/learnmore" class="btn btn-outline-secondary">
+                    <i class="bi bi-info-circle me-1"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mt-5">
+        <h2>What is Microsoft SignalR?</h2>
+        <p>
+            Microsoft SignalR is an open-source library that simplifies the process of adding real-time web functionality to applications. Real-time web functionality is the ability of a server to push content updates to clients instantly, as they happen. SignalR supports WebSockets, server-sent events, and long polling, enabling seamless client-server communication.
+        </p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <i class="bi bi-lightning-charge-fill text-primary me-2"></i>
+                <strong>Real-Time Communication:</strong> SignalR allows bi-directional communication between server and client.
+            </li>
+            <li class="list-group-item">
+                <i class="bi bi-plug-fill text-success me-2"></i>
+                <strong>Transport Protocols:</strong> Automatically selects the best transport available, falling back through WebSockets, server-sent events, and long polling.
+            </li>
+            <li class="list-group-item">
+                <i class="bi bi-box-arrow-in-right text-warning me-2"></i>
+                <strong>Hub API:</strong> Provides a simple API to call methods on clients from the server and vice versa.
+            </li>
+            <li class="list-group-item">
+                <i class="bi bi-shield-lock-fill text-danger me-2"></i>
+                <strong>Security:</strong> Integrates with ASP.NET Core authentication and authorization, securing communication channels.
+            </li>
+        </ul>
+    </div>
+
+    <div class="mt-5">
+        <h2>Enhanced Features in This Version</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Performance Enhancements</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="bi bi-speedometer2 text-success me-2"></i> <strong>Memory Caching:</strong> Intelligent caching of conversation history and definitions.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-shield-check text-primary me-2"></i> <strong>Rate Limiting:</strong> Built-in protection against spam and abuse.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-scissors text-warning me-2"></i> <strong>Smart Trimming:</strong> Automatic conversation history optimization.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle text-info me-2"></i> <strong>Enhanced Validation:</strong> Comprehensive input validation and sanitization.
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h3>User Experience</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="bi bi-palette text-primary me-2"></i> <strong>Modern UI:</strong> Beautiful gradient designs with glass morphism effects.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-phone text-success me-2"></i> <strong>Responsive Design:</strong> Perfect experience across all devices.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-bell text-warning me-2"></i> <strong>Toast Notifications:</strong> Elegant feedback system for user actions.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-moon-stars text-info me-2"></i> <strong>Dark Mode Support:</strong> Theme-aware design for comfortable viewing.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h2>Scaling SignalR with Azure SignalR Service</h2>
+        <p>
+            Azure SignalR Service is a fully managed Azure service that simplifies the process of adding real-time web functionality to applications using SignalR. It offloads the responsibility of scaling SignalR connections, managing performance, and maintaining the service infrastructure.
+        </p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <i class="bi bi-cloud-fill text-primary me-2"></i>
+                <strong>Automatic Scaling:</strong> Azure SignalR Service automatically scales to handle a large number of connections, making it suitable for large-scale applications.
+            </li>
+            <li class="list-group-item">
+                <i class="bi bi-speedometer2 text-success me-2"></i>
+                <strong>Performance Optimization:</strong> Offloads connection handling from your server, improving overall application performance.
+            </li>
+            <li class="list-group-item">
+                <i class="bi bi-shield-lock-fill text-warning me-2"></i>
+                <strong>Security and Compliance:</strong> Built-in support for security and compliance, integrating seamlessly with other Azure services.
+            </li>
+            <li class="list-group-item">
+                <i class="bi bi-tools text-danger me-2"></i>
+                <strong>Easy Integration:</strong> Minimal configuration needed; simply switch the connection from your local SignalR setup to Azure SignalR Service.
+            </li>
+        </ul>
+        <p class="mt-3">
+            To use Azure SignalR Service, you just need to configure your ASP.NET Core application to connect to Azure SignalR Service instead of self-hosting SignalR.
+        </p>
+        <p>
+            <strong>Example Configuration for self-hosting:</strong>
+        </p>
+
+
+        <pre class="language-csharp">
+        <code class="language-csharp">
+// ========================
+// SignalR Configuration
+// ========================
+// Add CORS configuration if needed for SignalR
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyHeader()
+               .AllowAnyMethod()
+               .SetIsOriginAllowed(_ => true)  // Allows all origins
+               .AllowCredentials();            // Necessary for SignalR
+    });
+});
+
+// SignalR Configuration
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    // Configuring JSON serializer options if needed
+    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+});
+
+// ========================
+// Endpoint Configuration
+// ========================
+app.MapHub<ChatHub>("/chatHub");
+app.MapHub<CrawlHub>("/crawlHub");
+
+
+</code></pre>
+    </div>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h2>Real-Time Chat with SignalR</h2>
+                <p>
+                    SignalR enables real-time communication between the browser and server, facilitating interactive conversations with OpenAI through ChatCompletions. Below is a basic setup for SignalR and its integration with OpenAI API calls:
+                </p>
+                <pre class="language-csharp">
+                <code class="language-csharp">
+// ChatHub.cs
+public class ChatHub : Hub
+{
+    public async Task SendMessage(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessage", user, message);
+    }
+}
+
+// Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSignalR();
+}
+
+public void Configure(IApplicationBuilder app)
+{
+    app.UseRouting();
+    app.UseEndpoints(endpoints => { endpoints.MapHub&lt;ChatHub&gt;("/chatHub"); });
+}
+</code></pre>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3>Client-Side Integration</h3>
+                <p>
+                    On the client side, JavaScript connects to the SignalR hub and listens for messages from the server:
+                </p>
+                <pre class="language-csharp">
+                <code class="language-javascript">
+// Client-side JavaScript
+const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+connection.start().catch(err => console.error(err.toString()));
+connection.on("ReceiveMessage", function (user, message) {
+    const msg = `${user}: ${message}`;
+    document.getElementById("messagesList").appendChild(document.createElement("li")).textContent = msg;
+});
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const items = Array.from(document.querySelectorAll(".definition-item"));
+            const filterButtons = document.querySelectorAll("#definitionTypeFilter button");
+            const perPage = 6;
+            let currentPage = 1;
+            let filteredItems = [...items];
+
+            function renderPage(page) {
+                items.forEach(item => item.style.display = "none");
+                const start = (page - 1) * perPage;
+                filteredItems.slice(start, start + perPage).forEach(item => item.style.display = "block");
+                renderPagination();
+            }
+
+            function renderPagination() {
+                const pagination = document.getElementById("pagination");
+                pagination.innerHTML = "";
+                const pageCount = Math.ceil(filteredItems.length / perPage);
+
+                for (let i = 1; i <= pageCount; i++) {
+                    let li = document.createElement("li");
+                    li.className = `page-item ${i === currentPage ? "active" : ""}`;
+                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    li.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        currentPage = i;
+                        renderPage(currentPage);
+                    });
+                    pagination.appendChild(li);
+                }
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    filterButtons.forEach(btn => btn.classList.remove("active"));
+                    this.classList.add("active");
+                    const selectedType = this.getAttribute("data-type");
+                    filteredItems = selectedType === "All" ? [...items] : items.filter(item => item.getAttribute("data-type") === selectedType);
+                    currentPage = 1;
+                    renderPage(currentPage);
+                });
+            });
+
+            renderPage(currentPage);
+        });
+    </script>
+}

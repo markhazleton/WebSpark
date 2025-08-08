@@ -1,0 +1,650 @@
+@model DefinitionDto
+@{
+    var encodedName = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model.Name);
+    var encodedDescription = System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Model.Description);
+    ViewData["Title"] = $"Interactive Chat with AI - {encodedName}";
+    ViewData["Description"] = $"Experience an interactive chat interface with {encodedName} powered by AI. Discover how PromptSpark enhances communication with advanced SignalR integration and seamless user interactions.";
+    ViewData["Keywords"] = $"PromptSpark, AI Chat, SignalR, Interactive Chat, Chat Completions, .Net 9, Bootstrap 5, AI Communication,{encodedName}";
+}
+
+<div class="container-fluid vh-100 d-flex flex-column bg-white p-0">
+    <div class="card bg-white text-dark w-100 h-100" style="max-width: 1200px; max-height: 60vh; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-chat-dots-fill me-2"></i> Enhanced Chat with @Model.Name</h5>
+                <span class="small text-light"><i class="bi bi-info-circle"></i> You can copy any response in markdown format</span>
+            </div>
+        </div>        <!-- Chat messages container -->
+        <div class="card-body overflow-auto p-3 flex-grow-1" id="messagesContainer" style="height: 60vh; background-color: #f9f9f9;">
+            <!-- Initial welcome message -->
+            <div class="welcome-message text-center p-4">
+                <h4>Welcome to the Enhanced Chat!</h4>
+                <p class="mb-2">You're chatting with <strong>@Model.Name</strong></p>
+                <p class="mb-4">@Model.Description</p>
+                <div class="alert alert-info p-2">
+                    <small>
+                        <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Use the "Copy Markdown" button to copy responses in markdown format.
+                        <br>
+                        <i class="bi bi-keyboard"></i> <strong>Keyboard shortcuts:</strong> 
+                        <span class="badge bg-light text-dark">Enter</span> to send, 
+                        <span class="badge bg-light text-dark">Ctrl+Enter</span> for new line, 
+                        <span class="badge bg-light text-dark">Ctrl+L</span> to clear chat
+                    </small>
+                </div>
+            </div>
+            <!-- Messages will be appended here -->
+        </div><!-- Input section -->
+        <div class="card-footer p-2 bg-white border-top">
+            <div class="input-group">
+                <input type="text" id="messageInput" class="form-control border" placeholder="Type your message... (Press Enter to send)" aria-label="Type your message">
+                <button class="btn btn-primary" id="sendButton" title="Send message (Enter)">
+                    <i class="bi bi-send"></i>
+                </button>
+                <button class="btn btn-outline-secondary" id="clearButton" title="Clear conversation (Ctrl+L)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>            <div class="d-flex justify-content-between mt-1">
+                <small class="text-muted">
+                    <a href="#" id="testConnectionBtn" class="text-decoration-none">
+                        <i class="bi bi-lightning"></i> Test Connection
+                    </a>
+                </small>
+                <small class="text-muted">Press Ctrl+Enter for a new line</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
+    <script>
+        // Save the AI sender name from the model
+        const aiSenderName = "@Model.Name";
+        // Track raw markdown content for system messages
+        const markdownContentMap = new Map();
+        let messageCounter = 0;
+
+        // Initialize tooltips after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        });        // Helper function to append a message
+        // - sender: the sender label (aiSenderName or "You")
+        // - message: the message content
+        // - alignment: "text-start" (left) or "text-end" (right)
+        // - streamingId: optional ID for streaming messages
+        function appendMessage(sender, message, alignment, streamingId = null) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            let lastMsgContainer = messagesContainer.lastElementChild;
+            const isSystem = sender !== "You";
+            
+            // Generate a unique ID for this message
+            const messageId = streamingId || `msg-${Date.now()}-${messageCounter++}`;
+
+            // Check if the last container exists and is from the same sender.
+            if (lastMsgContainer && lastMsgContainer.getAttribute('data-sender') === sender) {
+                // Append a new message element to the existing container.
+                const msgDiv = document.createElement('div');
+                msgDiv.className = isSystem ? 'systemResponse d-inline-block mt-1 p-2 bg-white rounded' : 'userInput d-inline-block mt-1 p-2 bg-light rounded';
+                msgDiv.id = messageId;
+                
+                if (isSystem) {
+                    // For system messages, save the raw markdown and show the HTML
+                    const rawContent = message.replace(/<[^>]*>/g, '');
+                    markdownContentMap.set(messageId, rawContent);
+                    msgDiv.innerHTML = message;
+                    
+                    // If this is a streaming message, store reference for later updates
+                    if (streamingId) {
+                        activeMessageIds.set(streamingId, {
+                            container: lastMsgContainer,
+                            messageElement: msgDiv,
+                            rawContent: rawContent
+                        });
+                    }
+                    
+                    // Add copy button for system messages
+                    const copyButton = document.createElement('button');
+                    copyButton.className = 'btn btn-sm btn-outline-secondary ms-2 copy-btn';
+                    copyButton.innerHTML = '<i class="bi bi-clipboard"></i> Copy Markdown';
+                    copyButton.setAttribute('data-message-id', messageId);
+                    copyButton.setAttribute('title', 'Copy response in markdown format');
+                    copyButton.setAttribute('data-bs-toggle', 'tooltip');
+                    copyButton.setAttribute('data-bs-placement', 'top');
+                    copyButton.onclick = function() { copyToClipboard(messageId); };
+                    lastMsgContainer.appendChild(copyButton);
+                } else {
+                    msgDiv.textContent = message;
+                }
+                lastMsgContainer.appendChild(msgDiv);
+            } else {
+                // Create a new container with a sender header.
+                const msgContainer = document.createElement('div');
+                msgContainer.classList.add('message-container', alignment, 'mb-3');
+                msgContainer.setAttribute('data-sender', sender);
+
+                // Create a Bootstrap button as the sender label.
+                const senderButton = document.createElement('button');
+                senderButton.className = isSystem ? 'btn btn-sm btn-outline-primary me-2' : 'btn btn-sm btn-outline-secondary me-2';
+                senderButton.textContent = sender;
+                msgContainer.appendChild(senderButton);
+
+                // Create the message content element.
+                const msgDiv = document.createElement('div');
+                msgDiv.className = isSystem ? 'systemResponse d-inline-block p-2 bg-white rounded shadow-sm' : 'userInput d-inline-block p-2 bg-light rounded';
+                msgDiv.id = messageId;
+                
+                if (isSystem) {
+                    // For system messages, save the raw markdown and show the HTML
+                    const rawContent = message.replace(/<[^>]*>/g, '');
+                    markdownContentMap.set(messageId, rawContent);
+                    msgDiv.innerHTML = message;
+                    
+                    // If this is a streaming message, store reference for later updates
+                    if (streamingId) {
+                        activeMessageIds.set(streamingId, {
+                            container: msgContainer,
+                            messageElement: msgDiv,
+                            rawContent: rawContent
+                        });
+                    }
+                    
+                    // Add copy button for system messages
+                    const copyButton = document.createElement('button');
+                    copyButton.className = 'btn btn-sm btn-outline-secondary ms-2 copy-btn';
+                    copyButton.innerHTML = '<i class="bi bi-clipboard"></i> Copy Markdown';
+                    copyButton.setAttribute('data-message-id', messageId);
+                    copyButton.setAttribute('title', 'Copy response in markdown format');
+                    copyButton.setAttribute('data-bs-toggle', 'tooltip');
+                    copyButton.setAttribute('data-bs-placement', 'top');
+                    copyButton.onclick = function() { copyToClipboard(messageId); };
+                    msgContainer.appendChild(copyButton);
+                } else {
+                    msgDiv.textContent = message;
+                }
+                msgContainer.appendChild(msgDiv);
+
+                messagesContainer.appendChild(msgContainer);
+            }
+            // Scroll to the bottom.
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Initialize any new tooltips
+            const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltips.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }// Function to copy message markdown to clipboard
+        function copyToClipboard(messageId) {
+            const markdownContent = markdownContentMap.get(messageId);
+            if (markdownContent) {
+                navigator.clipboard.writeText(markdownContent).then(() => {
+                    // Visual feedback for copy action
+                    const copyBtn = document.querySelector(`button[data-message-id="${messageId}"]`);
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
+                    copyBtn.classList.remove('btn-outline-secondary');
+                    copyBtn.classList.add('btn-success');
+                    
+                    // Create a toast notification
+                    const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-white bg-success border-0';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-clipboard-check"></i> Markdown copied to clipboard!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    `;
+                    toastContainer.appendChild(toast);
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.show();
+                    
+                    // Remove the toast after it's hidden
+                    toast.addEventListener('hidden.bs.toast', function () {
+                        toast.remove();
+                    });
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.classList.remove('btn-success');
+                        copyBtn.classList.add('btn-outline-secondary');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    
+                    // Show error toast
+                    const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-white bg-danger border-0';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-exclamation-triangle"></i> Failed to copy to clipboard!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    `;
+                    toastContainer.appendChild(toast);
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.show();
+                    
+                    // Remove the toast after it's hidden
+                    toast.addEventListener('hidden.bs.toast', function () {
+                        toast.remove();
+                    });
+                });
+            }
+        }
+        
+        // Create toast container if it doesn't exist
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.style.zIndex = '11';
+            document.body.appendChild(container);
+            return container;
+        }        // Track ongoing message IDs and content
+        const activeMessageIds = new Map(); // Maps message IDs to their container elements
+
+        // Establish the SignalR connection.
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .withAutomaticReconnect([0, 2000, 5000, 10000, null]) // Add reconnection logic
+            .build();
+            
+        // Start the connection and handle errors
+        connection.start()
+            .then(() => {
+                console.log("SignalR connection established successfully");
+                // Enable UI elements that depend on SignalR
+                document.getElementById('sendButton').disabled = false;
+                document.getElementById('messageInput').disabled = false;
+            })
+            .catch(err => {
+                console.error("Error establishing SignalR connection:", err);
+                // Show error message to user
+                const messagesContainer = document.getElementById('messagesContainer');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger mt-3';
+                errorDiv.innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error connecting to chat service: ${err.toString()}<br>Please refresh the page to try again.`;
+                messagesContainer.appendChild(errorDiv);
+                
+                // Disable UI elements that depend on SignalR
+                document.getElementById('sendButton').disabled = true;
+                document.getElementById('messageInput').disabled = true;
+            });
+            
+        // Add connection state change handling
+        connection.onreconnecting(error => {
+            console.warn("SignalR connection lost, attempting to reconnect...", error);
+            const messagesContainer = document.getElementById('messagesContainer');
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'connection-status';
+            statusDiv.className = 'alert alert-warning mt-3';
+            statusDiv.innerHTML = `<i class="bi bi-wifi"></i> Connection lost. Reconnecting...`;
+            messagesContainer.appendChild(statusDiv);
+        });
+        
+        connection.onreconnected(connectionId => {
+            console.log("SignalR connection reestablished", connectionId);
+            const statusDiv = document.getElementById('connection-status');
+            if (statusDiv) {
+                statusDiv.className = 'alert alert-success mt-3';
+                statusDiv.innerHTML = `<i class="bi bi-wifi"></i> Connection restored!`;
+                setTimeout(() => {
+                    statusDiv.remove();
+                }, 3000);
+            }
+        });        // Handle incoming messages with updated parameters
+        connection.on("ReceiveMessage", (user, message, conversationId, messageId, isAppend) => {
+            console.log(`Received message from ${user}:`, { message, conversationId, messageId, isAppend });
+            
+            // Determine sender and alignment.
+            const sender = (user === "System") ? aiSenderName : "You";
+            const alignment = (user === "System") ? 'text-start' : 'text-end';
+            
+            // For user messages, just append as before (these don't stream)
+            if (sender === "You") {
+                appendMessage(sender, message, alignment);
+                return;
+            }
+            
+            // Remove loading indicator when we receive a system message
+            removeLoadingIndicator();
+            
+            // For system messages that are part of a stream
+            if (messageId) {
+                if (isAppend && activeMessageIds.has(messageId)) {
+                    console.log("Appending to existing message:", messageId);
+                    // This is a continuation of an existing message
+                    appendToExistingMessage(messageId, message);
+                } else {
+                    console.log("New message with ID:", messageId);
+                    // This is a new message or the first chunk of a message
+                    appendMessage(sender, message, alignment, messageId);
+                }
+            } else {
+                console.log("Legacy format or single message without ID");
+                // Legacy format or single message
+                appendMessage(sender, message, alignment);
+            }
+        });// Function to append content to an existing message
+        function appendToExistingMessage(messageId, newContent) {
+            const msgInfo = activeMessageIds.get(messageId);
+            if (!msgInfo) return; // Safety check
+            
+            const { container, messageElement, rawContent } = msgInfo;
+            
+            // Update the message content in the DOM with the complete new content
+            // (not appending, completely replacing with the new HTML that includes all previous content)
+            messageElement.innerHTML = newContent;
+            
+            // Extract the raw markdown content from the HTML
+            const updatedRawContent = newContent.replace(/<[^>]*>/g, '');
+            
+            // Update the markdown map with the complete content
+            markdownContentMap.set(messageId, updatedRawContent);
+            
+            // Update the stored info
+            activeMessageIds.set(messageId, {
+                container,
+                messageElement,
+                rawContent: updatedRawContent
+            });
+            
+            // Scroll to bottom to show latest content
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }// Function to send a message.
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message === "") return;
+            
+            // Hide welcome message if it exists
+            const welcomeMessage = document.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'none';
+            }
+
+            // Append the user message (right aligned).
+            appendMessage("You", message, 'text-end');
+            
+            // Show loading indicator
+            showLoadingIndicator();
+            
+            // Set a timeout to detect if no response is received
+            const responseTimeout = setTimeout(() => {
+                removeLoadingIndicator();
+                
+                // Show error message
+                const messagesContainer = document.getElementById('messagesContainer');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message-container text-start mb-3';
+                errorDiv.setAttribute('data-sender', aiSenderName);
+                errorDiv.innerHTML = `
+                    <button class="btn btn-sm btn-outline-primary me-2">${aiSenderName}</button>
+                    <div class="systemResponse d-inline-block p-2 bg-white rounded shadow-sm text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> No response received. Please try again or check the server connection.
+                    </div>
+                `;
+                messagesContainer.appendChild(errorDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 30000); // 30 second timeout
+
+            // Gather conversation history from the messages container.
+            const allMessages = [];
+            const messageContainers = document.querySelectorAll('.message-container');
+            
+            messageContainers.forEach(container => {
+                const sender = container.getAttribute('data-sender');
+                // Skip the loading message
+                if (container.id === 'loading-message') return;
+                
+                const messageElements = container.querySelectorAll(sender === "You" ? '.userInput' : '.systemResponse');
+                
+                messageElements.forEach(msgEl => {
+                    if (sender === "You") {
+                        allMessages.push(msgEl.textContent);
+                    } else {
+                        // For system messages, use the stored markdown content if available
+                        const messageId = msgEl.id;
+                        if (messageId && markdownContentMap.has(messageId)) {
+                            allMessages.push(markdownContentMap.get(messageId));
+                        } else {
+                            // Fallback to the HTML content with tags removed
+                            allMessages.push(msgEl.textContent);
+                        }
+                    }
+                });
+            });
+
+            // Clear the input field.
+            input.value = '';
+
+            // Prepare form data.
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('conversationHistory', JSON.stringify(allMessages));
+
+            // Send the message to the server - UPDATED URL for enhanced controller
+            fetch('/PromptSpark/EnhancedChat/SendMessage', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // The server may not return JSON, so only try to parse if content exists
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json();
+                }
+                return { success: true }; // Return a simple object for empty responses
+            })
+            .then(data => {
+                console.log('Server response:', data);
+                // Server responded, wait for SignalR to update the UI
+                // We'll remove the loading indicator when we get the first chunk of the response
+                
+                // Set up a listener to remove the loading indicator when a message comes in
+                const messageListener = (user, message) => {
+                    if (user === "System") {
+                        // Remove loading indicator
+                        removeLoadingIndicator();
+                        
+                        // Clear the timeout
+                        clearTimeout(responseTimeout);
+                        
+                        // Remove this one-time listener
+                        connection.off("ReceiveMessage", messageListener);
+                    }
+                };
+                
+                // Add the one-time listener
+                connection.on("ReceiveMessage", messageListener);
+            })
+            .catch(err => {
+                // Clear the timeout
+                clearTimeout(responseTimeout);
+                
+                // Remove loading indicator
+                removeLoadingIndicator();
+                
+                console.error('Fetch error:', err.toString());
+                // Show error message to user
+                const messagesContainer = document.getElementById('messagesContainer');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message-container text-start mb-3';
+                errorDiv.setAttribute('data-sender', aiSenderName);
+                errorDiv.innerHTML = `
+                    <button class="btn btn-sm btn-outline-primary me-2">${aiSenderName}</button>
+                    <div class="systemResponse d-inline-block p-2 bg-white rounded shadow-sm text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Error: ${err.toString()}
+                    </div>
+                `;
+                messagesContainer.appendChild(errorDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }        // Event listeners for the send button and Enter key.
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keydown', (event) => {
+            // Ctrl+Enter for new line
+            if (event.key === 'Enter' && event.ctrlKey) {
+                const input = document.getElementById('messageInput');
+                const cursorPos = input.selectionStart;
+                const textBefore = input.value.substring(0, cursorPos);
+                const textAfter = input.value.substring(cursorPos);
+                input.value = textBefore + '\n' + textAfter;
+                
+                // Move cursor after the new line
+                setTimeout(() => {
+                    input.selectionStart = input.selectionEnd = cursorPos + 1;
+                }, 0);
+                
+                event.preventDefault();
+            } 
+            // Enter (without Ctrl) to send message
+            else if (event.key === 'Enter' && !event.ctrlKey) {
+                sendMessage();
+                event.preventDefault();
+            }
+            // Ctrl+L to clear chat
+            else if (event.key === 'l' && event.ctrlKey) {
+                clearChat();
+                event.preventDefault();
+            }
+        });
+        
+        // Clear chat functionality
+        document.getElementById('clearButton').addEventListener('click', clearChat);          function clearChat() {
+            // Show confirmation dialog
+            if (confirm('Are you sure you want to clear the entire conversation?')) {
+                // Clear messages container
+                const messagesContainer = document.getElementById('messagesContainer');
+                
+                // Save the welcome message HTML if it exists
+                const welcomeMessageHtml = document.querySelector('.welcome-message')?.outerHTML || `
+                    <div class="welcome-message text-center p-4">
+                        <h4>Welcome to the Enhanced Chat!</h4>
+                        <p class="mb-2">You're chatting with <strong>@Model.Name</strong></p>
+                        <p class="mb-4">@Model.Description</p>
+                        <div class="alert alert-info p-2">
+                            <small>
+                                <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Use the "Copy Markdown" button to copy responses in markdown format.
+                                <br>
+                                <i class="bi bi-keyboard"></i> <strong>Keyboard shortcuts:</strong> 
+                                <span class="badge bg-light text-dark">Enter</span> to send, 
+                                <span class="badge bg-light text-dark">Ctrl+Enter</span> for new line, 
+                                <span class="badge bg-light text-dark">Ctrl+L</span> to clear chat
+                            </small>
+                        </div>
+                    </div>
+                `;
+                
+                // Clear container and add welcome message back
+                messagesContainer.innerHTML = welcomeMessageHtml;
+                
+                // Clear markdown content map and active message IDs
+                markdownContentMap.clear();
+                activeMessageIds.clear();
+                messageCounter = 0;
+                
+                // Reset conversation ID in session - UPDATED URL for enhanced controller
+                fetch('/PromptSpark/EnhancedChat/ResetConversation', {
+                    method: 'POST'
+                }).catch(err => console.error('Error resetting conversation:', err));
+            }
+        }
+        
+        // Function to show loading indicator
+        function showLoadingIndicator() {
+            // Add a temporary loading message
+            const messagesContainer = document.getElementById('messagesContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-message';
+            loadingDiv.className = 'message-container text-start mb-3';
+            loadingDiv.setAttribute('data-sender', aiSenderName);
+            loadingDiv.innerHTML = `
+                <button class="btn btn-sm btn-outline-primary me-2">${aiSenderName}</button>
+                <div class="systemResponse d-inline-block p-2 bg-white rounded shadow-sm">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Thinking...
+                </div>
+            `;
+            messagesContainer.appendChild(loadingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Disable send button while processing
+            document.getElementById('sendButton').disabled = true;
+            
+            return loadingDiv;
+        }
+        
+        // Function to remove loading indicator
+        function removeLoadingIndicator() {
+            const loadingMessage = document.getElementById('loading-message');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+            
+            // Re-enable send button
+            document.getElementById('sendButton').disabled = false;
+        }
+        
+        // Test connection functionality
+        document.getElementById('testConnectionBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show that we're testing
+            const testBtn = document.getElementById('testConnectionBtn');
+            const originalText = testBtn.innerHTML;
+            testBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Testing...';
+            
+            // Call the test endpoint
+            fetch('/api/diagnostics/test-signalr', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Test response:', data);
+                testBtn.innerHTML = '<i class="bi bi-check-circle"></i> Test Sent!';
+                setTimeout(() => {
+                    testBtn.innerHTML = originalText;
+                }, 3000);
+            })
+            .catch(err => {
+                console.error('Test error:', err.toString());
+                testBtn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Test Failed';
+                setTimeout(() => {
+                    testBtn.innerHTML = originalText;
+                }, 3000);
+                
+                // Show error to user
+                const messagesContainer = document.getElementById('messagesContainer');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger mt-3';
+                errorDiv.innerHTML = `<i class="bi bi-exclamation-triangle"></i> Connection test failed: ${err.toString()}`;
+                messagesContainer.appendChild(errorDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        });
+    </script>
+}

@@ -30,11 +30,9 @@
     </footer>
 
     @await Html.PartialAsync("Sections/Footer/_footer_scripts")
+    <script src="/dist/js/webspark.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("PageScripts", required: false)
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/lib/js-cookie/js.cookie.min.js"></script>
 </body>
 
 </html>
