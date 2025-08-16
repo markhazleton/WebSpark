@@ -29,6 +29,8 @@ using WebSpark.Portal.Areas.DataSpark.Services;
 using WebSpark.Portal.Areas.GitHubSpark.Extensions;
 using WebSpark.RecipeCookbook;
 using Westwind.AspNetCore.Markdown;
+using WebSpark.Portal.Utilities;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -199,12 +201,17 @@ builder.Services.AddMvc()
 // Add CORS configuration if needed for SignalR
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
+    options.AddPolicy("AllowAllOrigins", policy =>
     {
-        builder.AllowAnyHeader()
-               .AllowAnyMethod()
-               .SetIsOriginAllowed(_ => true)  // Allows all origins
-               .AllowCredentials();            // Necessary for SignalR
+        // Tightened: restrict to configured origins (semicolon separated) or sensible localhost defaults
+        var configuredOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+            ?? builder.Configuration.GetValue<string>("AllowedOrigins")?
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            ?? new[] { "https://localhost:5001", "https://localhost:7123" };
+        policy.WithOrigins(configuredOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Needed for SignalR auth/cookies
     });
 });
 
@@ -238,14 +245,19 @@ builder.Services.AddSingleton<ConversationService>();
 // Register PromptSparkHub with all dependencies injected
 builder.Services.AddSingleton<PromptSparkHub>();
 
+// Conversation logging service (async background CSV writer)
+builder.Services.AddSingleton<ConversationLogService>();
+builder.Services.AddSingleton<IConversationLogService>(sp => sp.GetRequiredService<ConversationLogService>());
+builder.Services.AddHostedService(sp => sp.GetRequiredService<ConversationLogService>());
+
 
 
 var app = builder.Build();
 
 // ========================
 // Middleware Configuration
+// (NotFoundMiddleware moved later after status code pages & before endpoints)
 // ========================
-app.UseMiddleware<NotFoundMiddleware>();
 
 
 
@@ -274,15 +286,119 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// =====================================
+// Combined Middleware: Buffer -> Hash inline scripts -> Set Security Headers + CSP -> Write Body
+// =====================================
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
-    context.Response.Headers.Append("X-Frame-Options", "DENY");
-    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
-    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
-    context.Response.Headers.Append("Permissions-Policy", "geolocation=(), camera=(), microphone=()");
-    await next();
+    var env = app.Environment;
+    var originalBody = context.Response.Body;
+    await using var buffer = new MemoryStream();
+    context.Response.Body = buffer;
+
+    await next(); // execute rest of pipeline writing into buffer
+
+    buffer.Seek(0, SeekOrigin.Begin);
+    var isHtml = context.Response.ContentType != null && context.Response.ContentType.Contains("text/html", StringComparison.OrdinalIgnoreCase);
+    List<string> scriptHashes = new();
+    string? html = null;
+    if (isHtml)
+    {
+        html = await new StreamReader(buffer).ReadToEndAsync();
+        var inlineScriptPattern = new Regex("<script(?![^>]*\\bsrc=)(?![^>]*type=\"application/ld\\+json\")[^>]*>([\\s\\S]*?)</script>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        var matches = inlineScriptPattern.Matches(html);
+        foreach (System.Text.RegularExpressions.Match m in matches)
+        {
+            var code = m.Groups[1].Value;
+            if (string.IsNullOrWhiteSpace(code)) continue; // keep whitespace inside hash, so skip only fully blank
+            using var sha = System.Security.Cryptography.SHA256.Create();
+            var hashBytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(code));
+            var base64 = Convert.ToBase64String(hashBytes);
+            scriptHashes.Add($"'sha256-{base64}'");
+        }
+    }
+
+    // ---------- Security Headers ----------
+    var headers = context.Response.Headers;
+    void SetHeader(string key, string value)
+    {
+        if (!headers.ContainsKey(key)) headers.Append(key, value);
+    }
+    SetHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+    SetHeader("X-Content-Type-Options", "nosniff");
+    SetHeader("X-Frame-Options", "DENY");
+    SetHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    SetHeader("Permissions-Policy", "geolocation=(), camera=(), microphone=()");
+    SetHeader("Cross-Origin-Opener-Policy", "same-origin");
+    SetHeader("Cross-Origin-Embedder-Policy", "require-corp");
+    SetHeader("Cross-Origin-Resource-Policy", "same-origin");
+
+    // ---------- CSP Construction ----------
+    var scriptSrc = new List<string> { "'self'" };
+    var styleSrc = new List<string> { "'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'", "https://fonts.googleapis.com" }; // retain inline styles for now
+    var fontSrc = new List<string> { "'self'", "data:", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com" };
+    var connectSrc = new List<string> { "'self'", "https:", "wss:", "ws:" }; // add ws: for BrowserLink / dev websockets
+    var imgSrc = new List<string> { "'self'", "data:", "blob:" };
+
+    scriptSrc.AddRange(new[]
+    {
+        "https://www.googletagmanager.com",
+        "https://www.google-analytics.com",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://unpkg.com",
+        "https://ajax.aspnetcdn.com",
+        "https://code.jquery.com",
+        "https://cdn.plot.ly"
+    });
+    connectSrc.Add("https://www.google-analytics.com");
+
+    if (env.IsDevelopment())
+    {
+        connectSrc.Add("http://localhost:*");
+    }
+
+    if (scriptHashes.Count > 0)
+    {
+        scriptSrc.AddRange(scriptHashes);
+    }
+
+    scriptSrc = scriptSrc.Distinct().ToList();
+    styleSrc = styleSrc.Distinct().ToList();
+    fontSrc = fontSrc.Distinct().ToList();
+    connectSrc = connectSrc.Distinct().ToList();
+    imgSrc = imgSrc.Distinct().ToList();
+
+    var csp = string.Join("; ", new[]
+    {
+        $"default-src 'self'",
+        $"script-src {string.Join(' ', scriptSrc)}",
+        $"style-src {string.Join(' ', styleSrc)}",
+        $"img-src {string.Join(' ', imgSrc)}",
+        $"font-src {string.Join(' ', fontSrc)}",
+        $"connect-src {string.Join(' ', connectSrc)}",
+        "frame-ancestors 'none'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'"
+    });
+    if (!headers.ContainsKey("Content-Security-Policy"))
+        headers.Append("Content-Security-Policy", csp);
+
+    // ---------- Write Body ----------
+    buffer.Seek(0, SeekOrigin.Begin);
+    if (isHtml && html != null)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(html);
+        context.Response.Headers.Remove("Content-Length");
+        context.Response.Body = originalBody;
+        await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+    }
+    else
+    {
+        await buffer.CopyToAsync(originalBody);
+        context.Response.Body = originalBody;
+    }
 });
 
 app.UseRouting();
@@ -296,6 +412,7 @@ app.UseCors("AllowAllOrigins"); // Apply CORS policy for SignalR
 // Endpoint Configuration
 // ========================
 app.UseStatusCodePagesWithReExecute("/Error/{0}");
+app.UseMiddleware<NotFoundMiddleware>();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "areaRoute",
@@ -334,7 +451,7 @@ static void RegisterHttpClientUtilities(WebApplicationBuilder builder)
         IHttpRequestResultService baseService = new HttpRequestResultService(
             serviceProvider.GetRequiredService<ILogger<HttpRequestResultService>>(),
             configuration,
-            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientDecorator"));
+            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("HttpClientService"));
 
 
         IHttpRequestResultService pollyService = new HttpRequestResultServicePolly(

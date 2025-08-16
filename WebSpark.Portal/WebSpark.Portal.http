@@ -9,3 +9,11 @@ POST {{WebSpark.Portal_HostAddress}}/{area:exists}/jshowadmin/deleteconfirmed/{{
 GET {{WebSpark.Portal_HostAddress}}/api/AsyncSpark/openweatherapi/weather?location=Dallas
 
 ###
+
+GET {{WebSpark.Portal_HostAddress}}/api/WebCMS/webcmsapi/dashboard/stats
+
+###
+
+GET {{WebSpark.Portal_HostAddress}}/api/WebCMS/webcmsapi/websites/{id:int}?id={{id}}
+
+###

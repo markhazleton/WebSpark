@@ -18,64 +18,15 @@ public class ChatCompletionController(
     IChatCompletionService _chatCompletionService,
     IGPTDefinitionService definitionService,
     ILogger<ChatCompletionController> logger,
-    IConfiguration configuration) : PromptSparkBaseController
+    IConfiguration configuration,
+    IConversationLogService conversationLogService) : PromptSparkBaseController
 {
 
-    private async Task AppendToCsvLog(string conversationId, string sender, string message, string definitionName)
+    private async Task EnqueueLog(string conversationId, string sender, string message, string definitionName)
     {
-        try
-        {
-            // Index the CSV output folder from configuration
-            var csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
-            if (string.IsNullOrEmpty(csvOutputFolder))
-            {
-                logger.LogError("CsvOutputFolder is not configured.");
-                return;
-            }
-
-            // Ensure the directory exists
-            Directory.CreateDirectory(csvOutputFolder);
-            string csvFilePath = Path.Combine(csvOutputFolder, "ConversationLogs.csv");
-
-            // Check if the file exists to determine if the header should be written
-            bool fileExists = System.IO.File.Exists(csvFilePath);
-
-            // Prepare the log entry as an object
-            var logEntry = new LogEntry
-            {
-                ConversationId = conversationId,
-                Timestamp = DateTime.UtcNow.ToString("O"),
-                Sender = sender,
-                Message = message,
-                DefinitionName = definitionName
-            };
-
-            // Configure CsvHelper with UTF-8 encoding and to handle quoting on all fields
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Quote = '"',
-                Escape = '"',
-                Encoding = new UTF8Encoding(true), // UTF-8 with BOM
-                HasHeaderRecord = !fileExists, // Write header only if the file is new
-                ShouldQuote = args => true // Force quotes on all fields
-            };
-
-            // Append the log entry to the CSV file
-            using var stream = new StreamWriter(csvFilePath, append: true, encoding: csvConfig.Encoding);
-            using var csvWriter = new CsvWriter(stream, csvConfig);
-            if (!fileExists) // Write the header only if the file did not exist
-            {
-                csvWriter.WriteHeader<LogEntry>();
-                await csvWriter.NextRecordAsync();
-            }
-            csvWriter.WriteRecord(logEntry);
-            await csvWriter.NextRecordAsync();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error occurred while writing to CSV log.");
-        }
+        await conversationLogService.EnqueueAsync(new ConversationLogEntry(conversationId, sender, Sanitize(message), definitionName, DateTime.UtcNow));
     }
+    private static string Sanitize(string v) => v.Replace('\r', ' ').Replace('\n', ' ').Trim();
 
 
     [HttpGet("{id}/{slug}")]
@@ -93,7 +44,7 @@ public class ChatCompletionController(
         }
         var definitionDto = await definitionService.GetDefinitionDtoAsync(id);
 
-        var session = _httpContextAccessor.HttpContext.Session;
+        var session = _httpContextAccessor.HttpContext?.Session ?? throw new InvalidOperationException("Session not available");
         session.SetString("DefinitionDto", JsonConvert.SerializeObject(definitionDto));
         logger.LogInformation("Definition stored in session for id: {Id}", id);
         if (definitionDto == null)
@@ -134,7 +85,7 @@ public class ChatCompletionController(
                 return NotFound("Definition not found");
             }
 
-            var session = _httpContextAccessor.HttpContext.Session;
+            var session = _httpContextAccessor.HttpContext?.Session ?? throw new InvalidOperationException("Session not available");
             session.SetString("DefinitionDto", JsonConvert.SerializeObject(definitionDto));
             logger.LogInformation("Definition stored in session for id: {Id}", id);
 
@@ -159,7 +110,7 @@ public class ChatCompletionController(
             return BadRequest("Message cannot be empty");
         }
 
-        var session = _httpContextAccessor.HttpContext.Session;
+        var session = _httpContextAccessor.HttpContext?.Session ?? throw new InvalidOperationException("Session not available");
         var definitionDtoJson = session.GetString("DefinitionDto");
 
         if (string.IsNullOrEmpty(definitionDtoJson))
@@ -178,7 +129,7 @@ public class ChatCompletionController(
         logger.LogInformation("Processing message for definition: {Name}", definitionDto.Name);
 
         // Generate or retrieve a unique conversation identifier
-        string conversationId = session.GetString("ConversationId");
+        string? conversationId = session.GetString("ConversationId");
         if (string.IsNullOrEmpty(conversationId) || conversationHistory.Length == 1)
         {
             conversationId = Guid.NewGuid().ToString(); // Generate a new unique identifier for new conversations
@@ -194,7 +145,7 @@ public class ChatCompletionController(
         List<string> messages;
         try
         {
-            messages = JsonConvert.DeserializeObject<List<string>>(conversationHistory);
+            messages = JsonConvert.DeserializeObject<List<string>>(conversationHistory ?? "[]") ?? new List<string>();
             logger.LogInformation("Parsed conversation history with {Count} messages.", messages?.Count ?? 0);
         }
         catch (JsonException ex)
@@ -209,12 +160,12 @@ public class ChatCompletionController(
             if (i % 2 == 0)
             {
                 chatHistory.AddUserMessage(messages[i]); // Even index - User
-                await AppendToCsvLog(conversationId, "User", messages[i], definitionDto.Name); // Log user message
+                await EnqueueLog(conversationId, "User", messages[i], definitionDto.Name);
             }
             else
             {
                 chatHistory.AddSystemMessage(messages[i]); // Odd index - System
-                await AppendToCsvLog(conversationId, "System", messages[i], definitionDto.Name); // Log system message
+                await EnqueueLog(conversationId, "System", messages[i], definitionDto.Name);
             }
         }
         try
@@ -239,14 +190,14 @@ public class ChatCompletionController(
                         var htmlContent = Markdown.ToHtml(fullHtmlContent.ToString());
 
                         // Send to all clients in the conversation group using the conversation ID
-                        await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent, conversationId, messageId, !isFirstChunk);
+                        await hubContext.Clients.Group(conversationId).SendAsync("ReceiveMessage", "System", htmlContent, conversationId, messageId, !isFirstChunk);
 
                         logger.LogInformation("Sent message chunk to client: {Message}", contentToSend);
 
                         // Log only the first chunk to CSV to avoid duplicates
                         if (isFirstChunk)
                         {
-                            await AppendToCsvLog(conversationId, "System", "Streaming response started...", definitionDto.Name);
+                            await EnqueueLog(conversationId, "System", "Streaming response started...", definitionDto.Name);
                             isFirstChunk = false;
                         }
 
@@ -263,7 +214,7 @@ public class ChatCompletionController(
                 var htmlContent = Markdown.ToHtml(fullHtmlContent.ToString());
 
                 // Send final chunk with messageId and continuation flag to all clients
-                await hubContext.Clients.All.SendAsync("ReceiveMessage", "System", htmlContent, conversationId, messageId, !isFirstChunk);
+                await hubContext.Clients.Group(conversationId).SendAsync("ReceiveMessage", "System", htmlContent, conversationId, messageId, !isFirstChunk);
 
                 logger.LogInformation("Sent final message chunk to client: {RemainingContent}", remainingContent);
             }
@@ -272,7 +223,7 @@ public class ChatCompletionController(
             var fullResponse = rawMarkdownBuffer.ToString();
             if (!string.IsNullOrEmpty(fullResponse))
             {
-                await AppendToCsvLog(conversationId, "System", fullResponse, definitionDto.Name);
+                await EnqueueLog(conversationId, "System", fullResponse, definitionDto.Name);
             }
         }
         catch (Exception ex)

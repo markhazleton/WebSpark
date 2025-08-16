@@ -14,6 +14,7 @@ public class ChatHub : Hub
     private readonly IGPTDefinitionService _gptDefinitionService;
     private readonly IChatCompletionService _chatCompletionService;
     private readonly IConfiguration _configuration;
+    private readonly IConversationLogService _conversationLogService;
 
     // Keeping initialization syntax as per instructions (using [])
     private static readonly Dictionary<string, string> GptPrompts = new();
@@ -23,12 +24,14 @@ public class ChatHub : Hub
         ILogger<ChatHub> logger,
         IGPTDefinitionService gptDefinitionService,
         IChatCompletionService chatCompletionService,
-        IConfiguration configuration)
+    IConfiguration configuration,
+    IConversationLogService conversationLogService)
     {
         _logger = logger;
         _gptDefinitionService = gptDefinitionService;
         _chatCompletionService = chatCompletionService;
         _configuration = configuration;
+        _conversationLogService = conversationLogService;
     }
 
     public class ChatEntry
@@ -132,8 +135,8 @@ public class ChatHub : Hub
 
         // Append both the user message and the bot response to the CSV log.
         // This will create two rows in the CSV file for the conversation.
-        await AppendToCsvLog(conversationId, user, message, variantName);
-        await AppendToCsvLog(conversationId, "System", botResponse, variantName);
+        await _conversationLogService.EnqueueAsync(new ConversationLogEntry(conversationId, user, Sanitize(message), variantName, DateTime.UtcNow));
+        await _conversationLogService.EnqueueAsync(new ConversationLogEntry(conversationId, variantName, Sanitize(botResponse), variantName, DateTime.UtcNow));
     }
 
     private async Task<string> GenerateStreamingBotResponse(ChatHistory chatHistory, string conversationId, string variantName)
@@ -243,57 +246,5 @@ public class ChatHub : Hub
     }
 
     // CSV logging functionality
-    private async Task AppendToCsvLog(string conversationId, string sender, string message, string definitionName)
-    {
-        try
-        {
-            var csvOutputFolder = _configuration.GetValue<string>("CsvOutputFolder");
-            if (string.IsNullOrEmpty(csvOutputFolder))
-            {
-                _logger.LogError("CsvOutputFolder is not configured.");
-                return;
-            }
-
-            Directory.CreateDirectory(csvOutputFolder);
-            string csvFilePath = Path.Combine(csvOutputFolder, "ConversationLogs.csv");
-            bool fileExists = System.IO.File.Exists(csvFilePath);
-
-            // Clean message of line breaks
-            var cleanedMessage = message.Replace("\r", " ").Replace("\n", " ").Trim();
-
-            var logEntry = new LogEntry
-            {
-                ConversationId = conversationId,
-                Timestamp = DateTime.UtcNow.ToString("O"),
-                Sender = sender,
-                Message = cleanedMessage,
-                DefinitionName = definitionName
-            };
-
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Quote = '"',
-                Escape = '"',
-                Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true), // UTF-8 BOM for Excel
-                HasHeaderRecord = !fileExists,
-                ShouldQuote = args => true
-            };
-
-            using var stream = new StreamWriter(csvFilePath, append: true, encoding: csvConfig.Encoding);
-            using var csvWriter = new CsvWriter(stream, csvConfig);
-
-            if (!fileExists)
-            {
-                csvWriter.WriteHeader<LogEntry>();
-                await csvWriter.NextRecordAsync();
-            }
-
-            csvWriter.WriteRecord(logEntry);
-            await csvWriter.NextRecordAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while writing to CSV log.");
-        }
-    }
+    private static string Sanitize(string value) => value.Replace('\r', ' ').Replace('\n', ' ').Trim();
 }

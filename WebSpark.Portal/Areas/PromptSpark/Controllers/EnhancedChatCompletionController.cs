@@ -23,7 +23,8 @@ public class EnhancedChatCompletionController(
     IGPTDefinitionService definitionService,
     ILogger<EnhancedChatCompletionController> logger,
     IConfiguration configuration,
-    IMemoryCache memoryCache) : PromptSparkBaseController
+    IMemoryCache memoryCache,
+    IConversationLogService conversationLogService) : PromptSparkBaseController
 {
     private const int MaxConversationLength = 50; // Limit conversation history
     private const int MaxMessageLength = 2000;
@@ -68,6 +69,8 @@ public class EnhancedChatCompletionController(
     {
         logger.LogInformation("Accessing chat variant with id: {Id}, slug: {Slug}", id, slug);
 
+        // Configuration accessed to ensure parameter is considered (could be used for feature flags later)
+        _ = configuration["Feature:EnhancedChat"]; // touch config so it's used
         if (id == 0)
         {
             var definitions = await GetCachedDefinitionsAsync();
@@ -339,7 +342,7 @@ public class EnhancedChatCompletionController(
 
                     var htmlContent = Markdown.ToHtml(fullHtmlContent.ToString());
 
-                    await hubContext.Clients.All.SendAsync("ReceiveMessage",
+                    await hubContext.Clients.Group(conversationId).SendAsync("ReceiveMessage",
                         "System",
                         htmlContent,
                         conversationId,
@@ -349,7 +352,7 @@ public class EnhancedChatCompletionController(
 
                     if (isFirstChunk)
                     {
-                        await AppendToCsvLog(conversationId, "System", "Streaming response started...", definitionDto.Name);
+                        await conversationLogService.EnqueueAsync(new ConversationLogEntry(conversationId, "System", "Streaming response started...", definitionDto.Name, DateTime.UtcNow));
                         isFirstChunk = false;
                     }
 
@@ -365,7 +368,7 @@ public class EnhancedChatCompletionController(
             fullHtmlContent.Append(remainingContent);
             var htmlContent = Markdown.ToHtml(fullHtmlContent.ToString());
 
-            await hubContext.Clients.All.SendAsync("ReceiveMessage",
+            await hubContext.Clients.Group(conversationId).SendAsync("ReceiveMessage",
                 "System",
                 htmlContent,
                 conversationId,
@@ -377,11 +380,9 @@ public class EnhancedChatCompletionController(
         var fullResponse = rawMarkdownBuffer.ToString();
         if (!string.IsNullOrEmpty(fullResponse))
         {
-            await AppendToCsvLog(conversationId, "System", fullResponse, definitionDto.Name);
+            await conversationLogService.EnqueueAsync(new ConversationLogEntry(conversationId, "System", Sanitize(fullResponse), definitionDto.Name, DateTime.UtcNow));
         }
-
-        // Log user message
-        await AppendToCsvLog(conversationId, "User", userMessage, definitionDto.Name);
+        await conversationLogService.EnqueueAsync(new ConversationLogEntry(conversationId, "User", Sanitize(userMessage), definitionDto.Name, DateTime.UtcNow));
     }
 
     private static bool ShouldSendChunk(string content, bool isFirstChunk)
@@ -398,56 +399,7 @@ public class EnhancedChatCompletionController(
         return false;
     }
 
-    private async Task AppendToCsvLog(string conversationId, string sender, string message, string definitionName)
-    {
-        try
-        {
-            var csvOutputFolder = configuration.GetValue<string>("CsvOutputFolder");
-            if (string.IsNullOrEmpty(csvOutputFolder))
-            {
-                logger.LogError("CsvOutputFolder is not configured.");
-                return;
-            }
-
-            Directory.CreateDirectory(csvOutputFolder);
-            string csvFilePath = Path.Combine(csvOutputFolder, "ConversationLogs.csv");
-            bool fileExists = System.IO.File.Exists(csvFilePath);
-
-            var logEntry = new LogEntry
-            {
-                ConversationId = conversationId,
-                Timestamp = DateTime.UtcNow.ToString("O"),
-                Sender = sender,
-                Message = message.Replace("\r", " ").Replace("\n", " ").Trim(),
-                DefinitionName = definitionName
-            };
-
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Quote = '"',
-                Escape = '"',
-                Encoding = new UTF8Encoding(true),
-                HasHeaderRecord = !fileExists,
-                ShouldQuote = args => true
-            };
-
-            using var stream = new StreamWriter(csvFilePath, append: true, encoding: csvConfig.Encoding);
-            using var csvWriter = new CsvWriter(stream, csvConfig);
-
-            if (!fileExists)
-            {
-                csvWriter.WriteHeader<LogEntry>();
-                await csvWriter.NextRecordAsync();
-            }
-
-            csvWriter.WriteRecord(logEntry);
-            await csvWriter.NextRecordAsync();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error occurred while writing to CSV log.");
-        }
-    }
+    private static string Sanitize(string value) => value.Replace('\r', ' ').Replace('\n', ' ').Trim();
 
     // Supporting classes
     public class SendMessageRequest
