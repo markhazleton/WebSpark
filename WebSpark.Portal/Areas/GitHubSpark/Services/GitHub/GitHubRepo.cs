@@ -4,6 +4,66 @@ namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 public class GitHubRepo
 {
+    // Initializes non-nullable reference type properties with safe defaults so deserialization doesn't trigger CS8618.
+    public GitHubRepo()
+    {
+        NodeId = string.Empty;
+        Name = string.Empty;
+        FullName = string.Empty;
+        Owner = new Owner();
+        HtmlUrl = string.Empty;
+        Description = string.Empty;
+        Url = string.Empty;
+        ForksUrl = string.Empty;
+        KeysUrl = string.Empty;
+        CollaboratorsUrl = string.Empty;
+        TeamsUrl = string.Empty;
+        HooksUrl = string.Empty;
+        IssueEventsUrl = string.Empty;
+        EventsUrl = string.Empty;
+        AssigneesUrl = string.Empty;
+        BranchesUrl = string.Empty;
+        TagsUrl = string.Empty;
+        BlobsUrl = string.Empty;
+        GitTagsUrl = string.Empty;
+        GitRefsUrl = string.Empty;
+        TreesUrl = string.Empty;
+        StatusesUrl = string.Empty;
+        LanguagesUrl = string.Empty;
+        StargazersUrl = string.Empty;
+        ContributorsUrl = string.Empty;
+        SubscribersUrl = string.Empty;
+        SubscriptionUrl = string.Empty;
+        CommitsUrl = string.Empty;
+        GitCommitsUrl = string.Empty;
+        CommentsUrl = string.Empty;
+        IssueCommentUrl = string.Empty;
+        ContentsUrl = string.Empty;
+        CompareUrl = string.Empty;
+        MergesUrl = string.Empty;
+        ArchiveUrl = string.Empty;
+        DownloadsUrl = string.Empty;
+        IssuesUrl = string.Empty;
+        PullsUrl = string.Empty;
+        MilestonesUrl = string.Empty;
+        NotificationsUrl = string.Empty;
+        LabelsUrl = string.Empty;
+        ReleasesUrl = string.Empty;
+        DeploymentsUrl = string.Empty;
+        GitUrl = string.Empty;
+        SshUrl = string.Empty;
+        CloneUrl = string.Empty;
+        SvnUrl = string.Empty;
+        Homepage = string.Empty;
+        Language = string.Empty;
+        MirrorUrl = string.Empty;
+        License = new License();
+        Topics = new List<string>();
+        Visibility = string.Empty;
+        DefaultBranch = string.Empty;
+        Permissions = new Permissions();
+    }
+
     [JsonPropertyName("id")]
     public long Id { get; set; }
 

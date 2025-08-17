@@ -4,6 +4,15 @@ namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 public class License
 {
+    public License()
+    {
+        Key = string.Empty;
+        Name = string.Empty;
+        SpdxId = string.Empty;
+        Url = string.Empty;
+        NodeId = string.Empty;
+    }
+
     [JsonPropertyName("key")]
     public string Key { get; set; }
 

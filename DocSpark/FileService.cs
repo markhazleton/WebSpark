@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace DocSpark;
 /// <summary>
@@ -66,7 +65,7 @@ public class FileService
     /// </summary>
     /// <param name="rootPath">The root directory path.</param>
     /// <returns>A <see cref="FileSystemNode"/> representing the directory structure, or null if the directory does not exist.</returns>
-    public FileSystemNode GetFileSystemTree(string rootPath)
+    public FileSystemNode? GetFileSystemTree(string rootPath)
     {
         if (!Directory.Exists(rootPath))
         {
@@ -136,7 +135,7 @@ public class FileSystemNode
     /// <remarks>
     /// For directories, this represents the folder name. For files, it represents the file name with extension.
     /// </remarks>
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the full path to the file or directory.
@@ -144,7 +143,7 @@ public class FileSystemNode
     /// <remarks>
     /// This is the absolute path, including the root drive or network location.
     /// </remarks>
-    public string Path { get; set; }
+    public string Path { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether the node represents a directory.
@@ -160,5 +159,5 @@ public class FileSystemNode
     /// <remarks>
     /// For directories, this contains the child directories and files. For files, this is always null.
     /// </remarks>
-    public List<FileSystemNode> Children { get; set; }
+    public List<FileSystemNode>? Children { get; set; } = new();
 }

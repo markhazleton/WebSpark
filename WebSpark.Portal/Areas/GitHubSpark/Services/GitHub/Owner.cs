@@ -4,6 +4,26 @@ namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 public class Owner
 {
+    public Owner()
+    {
+        Login = string.Empty;
+        NodeId = string.Empty;
+        AvatarUrl = string.Empty;
+        GravatarId = string.Empty;
+        Url = string.Empty;
+        HtmlUrl = string.Empty;
+        FollowersUrl = string.Empty;
+        FollowingUrl = string.Empty;
+        GistsUrl = string.Empty;
+        StarredUrl = string.Empty;
+        SubscriptionsUrl = string.Empty;
+        OrganizationsUrl = string.Empty;
+        ReposUrl = string.Empty;
+        EventsUrl = string.Empty;
+        ReceivedEventsUrl = string.Empty;
+        Type = string.Empty;
+    }
+
     [JsonPropertyName("login")]
     public string Login { get; set; }
 

@@ -4,6 +4,33 @@ namespace WebSpark.Portal.Areas.GitHubSpark.Services.GitHub;
 
 public class GitHubUser
 {
+    public GitHubUser()
+    {
+        Login = string.Empty;
+        NodeId = string.Empty;
+        AvatarUrl = string.Empty;
+        GravatarId = string.Empty;
+        Url = string.Empty;
+        HtmlUrl = string.Empty;
+        FollowersUrl = string.Empty;
+        FollowingUrl = string.Empty;
+        GistsUrl = string.Empty;
+        StarredUrl = string.Empty;
+        SubscriptionsUrl = string.Empty;
+        OrganizationsUrl = string.Empty;
+        ReposUrl = string.Empty;
+        EventsUrl = string.Empty;
+        ReceivedEventsUrl = string.Empty;
+        Type = string.Empty;
+        Name = string.Empty;
+        Company = string.Empty;
+        Blog = string.Empty;
+        Location = string.Empty;
+        Email = string.Empty;
+        Bio = string.Empty;
+        TwitterUsername = string.Empty;
+    }
+
     [JsonPropertyName("login")]
     public string Login { get; set; }
 
