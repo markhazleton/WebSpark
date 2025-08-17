@@ -28,7 +28,7 @@ public class RecipeCategoryModel
     [StringLength(50, ErrorMessage = "Max length is 50.")]
     [DataType(DataType.Text)]
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the recipe category Description.
@@ -38,7 +38,7 @@ public class RecipeCategoryModel
     [DisplayName("Description")]
     [StringLength(100, ErrorMessage = "Max length is 100.")]
     [DataType(DataType.MultilineText)]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the display order.
@@ -62,7 +62,7 @@ public class RecipeCategoryModel
     /// <summary>
     /// Link to API
     /// </summary>
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
     public int DomainID { get; set; } = RecipeConstants.INT_MOM_DomainId;
 
 }

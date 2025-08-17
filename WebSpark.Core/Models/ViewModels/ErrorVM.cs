@@ -11,7 +11,7 @@ public class ErrorVM : WebsiteVM
     /// Initializes a new instance of the <see cref="ErrorVM" /> class.
     /// </summary>
     /// <param name="website">The website.</param>
-    public ErrorVM(WebsiteVM website, string slug = null)
+    public ErrorVM(WebsiteVM website, string? slug = null)
     {
         if (website == null) website = new WebsiteVM();
 
@@ -29,7 +29,7 @@ public class ErrorVM : WebsiteVM
         Menu = website.Menu;
         StyleList = website.StyleList;
         PageTitle = "Error";
-        RequestId = slug;
+        RequestId = slug ?? string.Empty;
 
     }
 
@@ -37,7 +37,7 @@ public class ErrorVM : WebsiteVM
     /// Gets or sets the request identifier.
     /// </summary>
     /// <value>The request identifier.</value>
-    public string RequestId { get; set; }
+    public string RequestId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets a value indicating whether [show request identifier].

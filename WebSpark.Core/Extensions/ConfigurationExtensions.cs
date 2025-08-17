@@ -6,7 +6,7 @@ namespace WebSpark.Core.Extensions;
 /// </summary>
 public static class ConfigurationExtensions
 {
-    private static int GetInt(string Value, string? defaultValue = null)
+    private static int GetInt(string? Value, string? defaultValue = null)
     {
         if (!string.IsNullOrEmpty(Value))
         {
@@ -19,7 +19,7 @@ public static class ConfigurationExtensions
         }
         return defaultValue.Split<int>(',', out _).FirstOrDefault();
     }
-    private static int[] GetIntList(string Value, string? defaultValue = null)
+    private static int[] GetIntList(string? Value, string? defaultValue = null)
     {
 
         if (!string.IsNullOrEmpty(Value))
@@ -33,7 +33,7 @@ public static class ConfigurationExtensions
         }
         return defaultValue.Split<int>(',', out _).ToArray() ?? Array.Empty<int>();
     }
-    private static string GetString(string Value, string? defaultValue = null)
+    private static string GetString(string? Value, string? defaultValue = null)
     {
         if (!string.IsNullOrEmpty(Value))
         {
@@ -46,7 +46,7 @@ public static class ConfigurationExtensions
         return defaultValue ?? string.Empty;
     }
 
-    private static string[] GetStringList(string Value, string? defaultValue = null)
+    private static string[] GetStringList(string? Value, string? defaultValue = null)
     {
         if (!string.IsNullOrEmpty(Value))
         {
@@ -59,10 +59,11 @@ public static class ConfigurationExtensions
         }
         return defaultValue.Split(",") ?? Array.Empty<string>();
     }
-    private static List<T> Split<T>(this string @this, char separator, out bool AllConverted)
+    private static List<T> Split<T>(this string? @this, char separator, out bool AllConverted)
     {
         List<T> returnVals = [];
         AllConverted = true;
+        if (string.IsNullOrEmpty(@this)) { AllConverted = false; return returnVals; }
         var itens = @this.Split(separator);
         foreach (var item in itens)
         {
@@ -82,8 +83,9 @@ public static class ConfigurationExtensions
     /// <param name="configKey"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static int GetInt(this IConfiguration _config, string configKey, string? defaultValue = null)
+    public static int GetInt(this IConfiguration _config, string? configKey, string? defaultValue = null)
     {
+        if (string.IsNullOrEmpty(configKey)) return GetInt(null, defaultValue);
         return GetInt(_config.GetSection(configKey).Value, defaultValue);
     }
     /// <summary>
@@ -93,8 +95,9 @@ public static class ConfigurationExtensions
     /// <param name="configKey"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static int[] GetIntList(this IConfiguration _config, string configKey, string? defaultValue = null)
+    public static int[] GetIntList(this IConfiguration _config, string? configKey, string? defaultValue = null)
     {
+        if (string.IsNullOrEmpty(configKey)) return GetIntList(null, defaultValue);
         return GetIntList(_config.GetSection(configKey).Value, defaultValue);
     }
     /// <summary>
@@ -104,8 +107,9 @@ public static class ConfigurationExtensions
     /// <param name="configKey"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static string GetString(this IConfiguration _config, string configKey, string? defaultValue = null)
+    public static string GetString(this IConfiguration _config, string? configKey, string? defaultValue = null)
     {
+        if (string.IsNullOrEmpty(configKey)) return GetString(null, defaultValue);
         return GetString(_config.GetSection(configKey).Value, defaultValue);
     }
     /// <summary>
@@ -115,8 +119,9 @@ public static class ConfigurationExtensions
     /// <param name="configKey"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static string[] GetStringList(this IConfiguration _config, string configKey, string? defaultValue = null)
+    public static string[] GetStringList(this IConfiguration _config, string? configKey, string? defaultValue = null)
     {
+        if (string.IsNullOrEmpty(configKey)) return GetStringList(null, defaultValue);
         return GetStringList(_config.GetSection(configKey).Value, defaultValue);
     }
 }

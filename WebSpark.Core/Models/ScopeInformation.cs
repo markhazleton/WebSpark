@@ -10,10 +10,11 @@ public class ScopeInformation : Interfaces.IScopeInformation
     /// </summary>
     public ScopeInformation()
     {
+        var entryAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
         HostScopeInfo = new Dictionary<string, string>
         {
             {"MachineName", Environment.MachineName },
-            {"EntryPoint", Assembly.GetEntryAssembly().GetName().Name }
+            {"EntryPoint", entryAssemblyName }
         };
     }
 

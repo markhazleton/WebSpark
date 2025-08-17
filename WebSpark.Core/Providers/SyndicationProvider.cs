@@ -20,8 +20,8 @@ namespace WebSpark.Core.Providers
         private readonly IStorageProvider _storageProvider;
 
         private static int _userId;
-        private static string _webRoot;
-        private static Uri _baseUrl;
+        private static string _webRoot = string.Empty;
+        private static Uri _baseUrl = new("http://localhost");
 
         public SyndicationProvider(WebSparkDbContext dbContext, IStorageProvider storageProvider)
         {
@@ -78,7 +78,9 @@ namespace WebSpark.Core.Providers
                     return false;
                 }
 
-                savedPost.Blog = await _dbContext.Blogs.FirstOrDefaultAsync();
+                var firstBlog = await _dbContext.Blogs.FirstOrDefaultAsync();
+                if (firstBlog != null)
+                    savedPost.Blog = firstBlog;
                 return await _dbContext.SaveChangesAsync() > 0;
             }
             catch (Exception ex)
@@ -213,7 +215,9 @@ namespace WebSpark.Core.Providers
                     try
                     {
                         var tag = m.Value;
-                        var src = XElement.Parse(tag).Attribute("href").Value;
+                        var hrefAttr = XElement.Parse(tag).Attribute("href");
+                        if (hrefAttr == null) continue;
+                        var src = hrefAttr.Value;
                         var mdTag = string.Empty;
 
                         foreach (var ext in exts)
@@ -243,7 +247,7 @@ namespace WebSpark.Core.Providers
         async Task<string> GetSlug(string title)
         {
             string slug = title.ToSlug();
-            Post post = await _dbContext.Posts.SingleOrDefaultAsync(p => p.Slug == slug);
+            Post? post = await _dbContext.Posts.SingleOrDefaultAsync(p => p.Slug == slug);
 
             if (post == null)
                 return slug;

@@ -21,7 +21,7 @@ public class StyleService : Interfaces.IStyleProvider
     /// <returns></returns>
     public Models.StyleModel Get(string name)
     {
-        return GetSiteStyles().Where(w => w.name == name).FirstOrDefault();
+        return GetSiteStyles().FirstOrDefault(w => w.name == name) ?? new Models.StyleModel();
     }
     /// <summary>
     /// 

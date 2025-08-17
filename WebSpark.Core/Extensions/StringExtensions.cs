@@ -189,12 +189,12 @@ namespace WebSpark.Core.Extensions
 
         public static string ToLowerInvariant(this string str)
         {
-            return str?.ToLowerInvariant();
+            return str?.ToLowerInvariant() ?? string.Empty;
         }
 
         public static string ToUpperInvariant(this string str)
         {
-            return str?.ToUpperInvariant();
+            return str?.ToUpperInvariant() ?? string.Empty;
         }
 
         public static bool IsNullOrWhiteSpace(this string str)

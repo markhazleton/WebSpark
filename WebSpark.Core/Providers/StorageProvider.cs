@@ -181,12 +181,12 @@ public class StorageProvider : IStorageProvider
             try
             {
                 string jsonString = File.ReadAllText(fileName);
-                settings = JsonSerializer.Deserialize<Models.ThemeSettings>(jsonString);
+                settings = JsonSerializer.Deserialize<Models.ThemeSettings>(jsonString) ?? new Models.ThemeSettings();
             }
             catch (Exception ex)
             {
                 Log.Error($"Error reading theme settings: {ex.Message}");
-                return null;
+                return new Models.ThemeSettings();
             }
         }
 
@@ -205,7 +205,7 @@ public class StorageProvider : IStorageProvider
 
             string jsonString = JsonSerializer.Serialize(settings, options);
 
-            using FileStream createStream = File.Create(fileName);
+            await using FileStream createStream = File.Create(fileName);
             await JsonSerializer.SerializeAsync(createStream, settings, options);
         }
         catch (Exception ex)

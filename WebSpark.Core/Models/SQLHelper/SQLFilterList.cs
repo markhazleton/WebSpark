@@ -13,7 +13,7 @@ public class SQLFilterList : List<SQLHelper.SQLFilterClause>
     public SQLFilterList(IEnumerable<SQLHelper.SQLFilterClause> collection) : base(collection)
     {
     }
-    private string SearchField;
+    private string SearchField = string.Empty;
     private bool FindClauseByField(SQLHelper.SQLFilterClause FilterClause)
     {
         if ((FilterClause.Field ?? string.Empty) == (SearchField ?? string.Empty))
@@ -27,7 +27,7 @@ public class SQLFilterList : List<SQLHelper.SQLFilterClause>
     }
     public List<SQLHelper.SQLFilterClause> FindField(string reqSearchField)
     {
-        SearchField = reqSearchField;
+        SearchField = reqSearchField ?? string.Empty;
         return FindAll(FindClauseByField);
     }
 

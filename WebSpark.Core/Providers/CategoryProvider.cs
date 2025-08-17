@@ -13,36 +13,45 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
         {
             foreach (var pc in db.PostCategories.Include(pc => pc.Category).AsNoTracking())
             {
-                if (!cats.Exists(c => c.Category.Equals(pc.Category.Content, StringComparison.CurrentCultureIgnoreCase)))
+                var catEntity = pc.Category;
+                var catContent = catEntity?.Content;
+                if (string.IsNullOrWhiteSpace(catContent)) continue;
+
+                // case insensitive match (culture aware per original code)
+                if (!cats.Exists(c => c.Category.Equals(catContent, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     cats.Add(new Models.CategoryItem
                     {
                         Selected = false,
                         Id = pc.CategoryId,
-                        Category = pc.Category.Content.ToLower(),
+                        Category = catContent.ToLower(),
                         PostCount = 1,
-                        DateCreated = pc.Category.CreatedDate
+                        DateCreated = catEntity?.CreatedDate ?? DateTime.UtcNow
                     });
                 }
                 else
                 {
                     // update post count
-                    var tmp = cats.Where(c => c.Category.Equals(pc.Category.Content, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-                    tmp.PostCount++;
+                    var tmp = cats.FirstOrDefault(c => c.Category.Equals(catContent, StringComparison.CurrentCultureIgnoreCase));
+                    if (tmp != null)
+                    {
+                        tmp.PostCount++;
+                    }
                 }
             }
         }
         return await Task.FromResult(cats);
     }
 
-    public async Task<List<Models.CategoryItem>> SearchCategories(string term)
+    public async Task<List<Models.CategoryItem>> SearchCategories(string? term)
     {
         var cats = await Categories();
 
-        if (term == "*")
+        if (string.IsNullOrEmpty(term) || term == "*")
             return cats;
 
-        return cats.Where(c => c.Category.ToLower().Contains(term.ToLower())).ToList();
+        var termLower = term.ToLower();
+        return cats.Where(c => c.Category.ToLower().Contains(termLower)).ToList();
     }
 
     public async Task<Models.CategoryItem> GetCategory(int categoryId)
@@ -60,11 +69,13 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
             .ToListAsync());
     }
 
-    private static ICollection<Models.CategoryItem> Create(List<Category> categories)
+    private static ICollection<Models.CategoryItem> Create(IEnumerable<Category?>? categories)
     {
         var cats = new List<Models.CategoryItem>();
+        if (categories == null) return cats;
         foreach (var cat in categories)
         {
+            if (cat == null) continue;
             cats.Add(new Models.CategoryItem
             {
                 Selected = false,
@@ -77,15 +88,16 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
         return cats;
     }
 
-    public async Task<bool> SaveCategory(Models.CategoryItem category)
+    public async Task<bool> SaveCategory(Models.CategoryItem? category)
     {
+        if (category == null) return false;
         //Category existing = await _db.Categories.AsNoTracking()
         //    .Where(c => c.Content.ToLower() == category.Content.ToLower()).FirstOrDefaultAsync();
 
         //if (existing != null)
         //    return false; // already exists category with the same title
 
-        Category dbCategory = await db.Categories.Where(c => c.Id == category.Id).FirstOrDefaultAsync();
+        var dbCategory = await db.Categories.Where(c => c.Id == category.Id).FirstOrDefaultAsync();
         if (dbCategory == null)
             return false;
 
@@ -96,21 +108,26 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
         return await db.SaveChangesAsync() > 0;
     }
 
-    private static Models.CategoryItem Create(Category category)
+    private static Models.CategoryItem Create(Category? category)
     {
-        return
-            new()
-            {
-                Selected = false,
-                Id = category.Id,
-                Category = category.Content,
-                Description = category.Description,
-                DateCreated = category.CreatedDate
-            };
+        if (category == null)
+        {
+            return new Models.CategoryItem();
+        }
+        return new Models.CategoryItem
+        {
+            Selected = false,
+            Id = category.Id,
+            Category = category.Content,
+            Description = category.Description,
+            DateCreated = category.CreatedDate
+        };
     }
-    public async Task<Models.CategoryItem> SaveCategory(string tag)
+    public async Task<Models.CategoryItem> SaveCategory(string? tag)
     {
-        Category category = await db.Categories
+        if (string.IsNullOrWhiteSpace(tag)) return new Models.CategoryItem();
+
+        var category = await db.Categories
             .AsNoTracking()
             .Where(c => c.Content == tag)
             .FirstOrDefaultAsync();
@@ -129,25 +146,25 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
         return Create(category);
     }
 
-    public async Task<bool> AddPostCategory(int postId, string tag)
+    public async Task<bool> AddPostCategory(int postId, string? tag)
     {
-        Category category = Create(await SaveCategory(tag));
+        if (string.IsNullOrWhiteSpace(tag)) return false;
+        var categoryItem = await SaveCategory(tag);
+        if (categoryItem.Id == 0) return false;
+        var category = Create(categoryItem);
 
-        if (category == null)
-            return false;
-
-        Post post = await db.Posts.Where(p => p.Id == postId).FirstOrDefaultAsync();
+        var post = await db.Posts.Where(p => p.Id == postId).FirstOrDefaultAsync();
         if (post == null)
             return false;
 
         if (post.PostCategories == null)
             post.PostCategories = [];
 
-        PostCategory postCategory = await db.PostCategories
-            .AsNoTracking()
-            .Where(pc => pc.CategoryId == category.Id)
-            .Where(pc => pc.PostId == postId)
-            .FirstOrDefaultAsync();
+        PostCategory? postCategory = await db.PostCategories
+                .AsNoTracking()
+                .Where(pc => pc.CategoryId == category.Id)
+                .Where(pc => pc.PostId == postId)
+                .FirstOrDefaultAsync();
 
         if (postCategory == null)
         {
@@ -173,32 +190,39 @@ public class CategoryProvider(WebSparkDbContext db) : Interfaces.ICategoryProvid
         };
     }
 
-    public async Task<bool> SavePostCategories(int postId, List<Models.CategoryItem> categories)
+    public async Task<bool> SavePostCategories(int postId, List<Models.CategoryItem>? categories)
     {
         List<PostCategory> existingPostCategories = await db.PostCategories.AsNoTracking()
             .Where(pc => pc.PostId == postId).ToListAsync();
 
         db.PostCategories.RemoveRange(existingPostCategories);
         await db.SaveChangesAsync();
-        foreach (var cat in categories)
+        if (categories != null)
         {
-            await AddPostCategory(postId, cat.Category);
+            foreach (var cat in categories)
+            {
+                if (cat == null) continue;
+                if (string.IsNullOrWhiteSpace(cat.Category)) continue;
+                await AddPostCategory(postId, cat.Category);
+            }
         }
         return await db.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> RemoveCategory(int categoryId)
     {
-        List<PostCategory> postCategories = await db.PostCategories
+        var postCategories = await db.PostCategories
             .AsNoTracking()
             .Where(pc => pc.CategoryId == categoryId)
             .ToListAsync();
         db.PostCategories.RemoveRange(postCategories);
-
-        Category category = db.Categories
-                    .Where(c => c.Id == categoryId)
-                    .FirstOrDefault();
-        db.Categories.Remove(category);
+        var category = db.Categories
+            .Where(c => c.Id == categoryId)
+            .FirstOrDefault();
+        if (category != null)
+        {
+            db.Categories.Remove(category);
+        }
 
         return await db.SaveChangesAsync() > 0;
     }

@@ -15,7 +15,7 @@ public class SQLFilterClause
         FieldType = myFieldType;
     }
 
-    public string Argument { get; set; }
+    public string Argument { get; set; } = string.Empty;
     public string ClauseConjunction
     {
         get
@@ -39,9 +39,9 @@ public class SQLFilterClause
         }
     }
     public SQLFilterConjunction Conjunction { get; set; }
-    public string Field { get; set; }
+    public string Field { get; set; } = string.Empty;
     public SQLFilterOperator FieldOperator { get; set; }
-    public string FieldType { get; set; }
+    public string FieldType { get; set; } = string.Empty;
     public string Statement
     {
         get

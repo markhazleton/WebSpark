@@ -22,7 +22,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="list"></param>
     /// <returns></returns>
-    private List<RecipeModel> Create(List<Recipe> list)
+    private List<RecipeModel> Create(List<Recipe>? list)
     {
         if (list == null) return [];
         return [.. list.Select(Create).OrderBy(x => x.Name)];
@@ -33,7 +33,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>List&lt;RecipeCategoryModel&gt;.</returns>
-    private List<RecipeCategoryModel> Create(List<RecipeCategory> list)
+    private List<RecipeCategoryModel> Create(List<RecipeCategory>? list)
     {
         if (list == null) return [];
         return [.. list.Select(item => Create(item)).OrderBy(x => x.Name)];
@@ -44,31 +44,32 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="Recipe">The recipe.</param>
     /// <returns>RecipeModel.</returns>
-    private RecipeModel Create(Recipe Recipe)
+    private RecipeModel Create(Recipe? Recipe)
     {
         if (Recipe == null) return new RecipeModel();
+        var r = Recipe; // local non-null alias
 
         return new RecipeModel()
         {
-            DomainID = Recipe.Domain?.Id ?? RecipeConstants.INT_MOM_DomainId,
-            RecipeURL = FormatHelper.GetRecipeURL(Recipe.Name),
-            Id = Recipe.Id,
-            Name = Recipe.Name,
-            Ingredients = Recipe?.Ingredients ?? Recipe.Name,
-            Instructions = Recipe?.Instructions ?? Recipe.Name,
-            Description = Recipe?.Description ?? Recipe.Name,
-            SEO_Keywords = Recipe?.Keywords ?? Recipe.Name,
-            Servings = Recipe.Servings,
-            AuthorNM = Recipe.AuthorName,
-            AverageRating = Recipe.AverageRating,
-            IsApproved = Recipe.IsApproved,
+            DomainID = r.Domain?.Id ?? RecipeConstants.INT_MOM_DomainId,
+            RecipeURL = FormatHelper.GetRecipeURL(r.Name),
+            Id = r.Id,
+            Name = r.Name,
+            Ingredients = r.Ingredients,
+            Instructions = r.Instructions,
+            Description = string.IsNullOrEmpty(r.Description) ? r.Name : r.Description,
+            SEO_Keywords = r.Keywords,
+            Servings = r.Servings,
+            AuthorNM = r.AuthorName,
+            AverageRating = r.AverageRating,
+            IsApproved = r.IsApproved,
             CommentCount = 0,
-            RecipeCategory = Create(Recipe.RecipeCategory),
-            RecipeCategoryID = Recipe?.RecipeCategory?.Id ?? 0,
-            RatingCount = Recipe.RatingCount,
-            ViewCount = Recipe.ViewCount,
-            LastViewDT = Recipe.LastViewDt,
-            ModifiedDT = Recipe.UpdatedDate,
+            RecipeCategory = Create(r.RecipeCategory),
+            RecipeCategoryID = r.RecipeCategory?.Id ?? 0,
+            RatingCount = r.RatingCount,
+            ViewCount = r.ViewCount,
+            LastViewDT = r.LastViewDt,
+            ModifiedDT = r.UpdatedDate,
         };
     }
 
@@ -77,7 +78,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="Recipe">The recipe.</param>
     /// <returns>Recipe.</returns>
-    private Recipe Create(RecipeModel Recipe)
+    private Recipe Create(RecipeModel? Recipe)
     {
         if (Recipe == null) return new Recipe();
 
@@ -86,8 +87,8 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Recipe.DomainID = RecipeConstants.INT_MOM_DomainId;
         }
 
-        var Category = webDomainContext.RecipeCategory.Where(w => w.Id == Recipe.RecipeCategoryID).FirstOrDefault();
-        var Domain = webDomainContext.Domain.Where(w => w.Id == Recipe.DomainID).FirstOrDefault();
+        var Category = webDomainContext.RecipeCategory.FirstOrDefault(w => w.Id == Recipe.RecipeCategoryID);
+        var Domain = webDomainContext.Domain.FirstOrDefault(w => w.Id == Recipe.DomainID);
 
         return new Recipe()
         {
@@ -104,15 +105,16 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             RatingCount = Recipe.RatingCount,
             ViewCount = Recipe.ViewCount,
             LastViewDt = Recipe.LastViewDT,
-            RecipeCategory = Category,
-            Domain = Domain,
+            RecipeCategory = Category ?? new RecipeCategory { Name = Recipe.Name, Comment = Recipe.Name },
+            Domain = Domain ?? new WebSite { Name = Recipe.Name, Title = Recipe.Name },
             Servings = Recipe.Servings,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
         };
     }
-    private static RecipeCategory Create(RecipeCategoryModel s)
+    private static RecipeCategory Create(RecipeCategoryModel? s)
     {
+        if (s == null) return new RecipeCategory();
         return new RecipeCategory()
         {
             DisplayOrder = s.DisplayOrder,
@@ -123,19 +125,22 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
         };
     }
 
-    private List<RecipeImageModel> Create(List<RecipeImage> dbRecipeImage)
+    private List<RecipeImageModel> Create(List<RecipeImage>? dbRecipeImage)
     {
         var recipeImageList = new List<RecipeImageModel>();
+        if (dbRecipeImage == null) return recipeImageList;
         foreach (var dbItem in dbRecipeImage)
         {
+            if (dbItem == null) continue;
             recipeImageList.Add(Create(dbItem));
         }
         return recipeImageList;
     }
 
-    private RecipeImageModel Create(RecipeImage dbItem)
+    private RecipeImageModel Create(RecipeImage? dbItem)
     {
-        var recipeImage = new RecipeImageModel()
+        if (dbItem == null) return new RecipeImageModel();
+        return new RecipeImageModel()
         {
             Id = dbItem.Id,
             Recipe = Create(dbItem.Recipe),
@@ -143,7 +148,6 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             FileDescription = dbItem.FileDescription,
             FileName = dbItem.FileName,
         };
-        return recipeImage;
     }
 
     /// <summary>
@@ -151,7 +155,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="rc">The rc.</param>
     /// <returns>RecipeCategoryModel.</returns>
-    private RecipeCategoryModel Create(RecipeCategory rc, bool LoadRecipes = false)
+    private RecipeCategoryModel Create(RecipeCategory? rc, bool LoadRecipes = false)
     {
         if (rc == null) return new RecipeCategoryModel();
 
@@ -164,7 +168,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Id = rc.Id,
             Name = rc.Name,
             Url = FormatHelper.GetRecipeCategoryURL(rc.Name),
-            Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : []
+            Recipes = LoadRecipes ? Create(rc.Recipe?.ToList()) : []
         };
     }
     /// <summary>
@@ -173,7 +177,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// <param name="list">The list.</param>
     /// <param name="DomainID">The domain identifier.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private List<MenuModel> CreateDomainMenu(List<Recipe> list, int DomainID)
+    private List<MenuModel> CreateDomainMenu(List<Recipe>? list, int DomainID)
     {
         if (list == null) return [];
 
@@ -208,7 +212,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="list">The list.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private static List<MenuModel> CreateMenu(List<Recipe> list)
+    private static List<MenuModel> CreateMenu(List<Recipe>? list)
     {
         if (list == null) return [];
         return [.. list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder)];
@@ -220,7 +224,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="recipe">The recipe.</param>
     /// <returns>MenuModel.</returns>
-    private static MenuModel GetMenuItem(Recipe recipe)
+    private static MenuModel GetMenuItem(Recipe? recipe)
     {
         if (recipe == null) return new MenuModel();
 
@@ -245,7 +249,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// <param name="recipe">The recipe.</param>
     /// <param name="domain">The domain.</param>
     /// <returns>MenuModel.</returns>
-    private static MenuModel GetMenuItem(Recipe recipe, WebSite domain)
+    private static MenuModel GetMenuItem(Recipe? recipe, WebSite? domain)
     {
         if (recipe == null) return new MenuModel();
 
@@ -257,7 +261,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Action = "index",
             Description = recipe.Description,
             Title = recipe.Name,
-            DomainID = domain.Id,
+            DomainID = domain?.Id ?? 0,
             ParentController = "recipe",
             ParentTitle = "Recipe",
             Url = FormatHelper.GetRecipeURL(recipe.Name),
@@ -275,14 +279,14 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// <param name="domain">The domain.</param>
     /// <param name="page">The page.</param>
     /// <returns>MenuModel.</returns>
-    private static MenuModel GetMenuItem(Recipe recipe, WebSite domain, Menu page)
+    private static MenuModel GetMenuItem(Recipe? recipe, WebSite? domain, Menu? page)
     {
         if (recipe == null) return new MenuModel();
 
         return new MenuModel()
         {
             Id = recipe.Id,
-            ParentId = page.Id,
+            ParentId = page?.Id,
             Controller = "recipe",
             ParentController = "recipe",
             ParentTitle = "recipe",
@@ -290,7 +294,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             Description = recipe.Description,
             Title = recipe.Name,
             Url = FormatHelper.GetRecipeURL(recipe.Name),
-            DomainID = domain.Id,
+            DomainID = domain?.Id ?? 0,
             VirtualPath = FormatHelper.GetRecipeURL(recipe.Name),
             Icon = "fa fa-food",
             PageContent = recipe.Description,
@@ -439,7 +443,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     ///// </summary>
     ///// <param name="saveItem">The save item.</param>
     ///// <returns>RecipeCategoryModel.</returns>
-    public List<RecipeCategoryModel> Save(List<RecipeCategoryModel> saveCategories)
+    public List<RecipeCategoryModel> Save(List<RecipeCategoryModel>? saveCategories)
     {
 
         if (saveCategories == null) return [];
@@ -485,7 +489,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     ///// </summary>
     ///// <param name="saveItem">The save item.</param>
     ///// <returns>RecipeCategoryModel.</returns>
-    public IEnumerable<RecipeModel> Save(List<RecipeModel> saveRecipes)
+    public IEnumerable<RecipeModel> Save(List<RecipeModel>? saveRecipes)
     {
 
         if (saveRecipes == null) return new List<RecipeModel>();
@@ -533,7 +537,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
     /// </summary>
     /// <param name="saveItem">The save item.</param>
     /// <returns>RecipeModel.</returns>
-    public RecipeModel Save(RecipeModel saveItem)
+    public RecipeModel Save(RecipeModel? saveItem)
     {
         if (saveItem == null) return new RecipeModel();
         if (saveItem.Id == 0)
@@ -548,9 +552,9 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
             var saveRecipe = webDomainContext.Recipe.Where(w => w.Id == saveItem.Id).Include(i => i.RecipeCategory).FirstOrDefault();
             if (saveRecipe != null)
             {
-                if (saveRecipe.RecipeCategory.Id != saveItem.RecipeCategoryID)
+                if (saveRecipe.RecipeCategory == null || saveRecipe.RecipeCategory.Id != saveItem.RecipeCategoryID)
                 {
-                    saveRecipe.RecipeCategory = webDomainContext.RecipeCategory.Where(w => w.Id == saveItem.RecipeCategoryID).FirstOrDefault();
+                    saveRecipe.RecipeCategory = (webDomainContext.RecipeCategory.FirstOrDefault(w => w.Id == saveItem.RecipeCategoryID) ?? saveRecipe.RecipeCategory)!;
                 }
                 saveRecipe.Name = saveItem.Name;
                 saveRecipe.AuthorName = saveItem.AuthorNM;
@@ -600,11 +604,7 @@ public class RecipeProvider(WebSparkDbContext webDomainContext) : IMenuProvider,
         {
             if (disposing)
             {
-                if (webDomainContext != null)
-                {
-                    webDomainContext.Dispose();
-                    webDomainContext = null;
-                }
+                webDomainContext?.Dispose();
             }
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null

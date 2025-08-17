@@ -71,9 +71,9 @@ public class MenuEditModel : MenuModel
         VirtualPath = menu.VirtualPath;
     }
 
-    public List<LookupModel> Domains { get; set; }
-    public List<LookupModel> Parents { get; set; }
-    public List<LookupModel> Controllers { get; set; }
-    public List<LookupModel> Icons { get; set; }
-    public List<LookupModel> Actions { get; set; }
+    public List<LookupModel> Domains { get; set; } = [];
+    public List<LookupModel> Parents { get; set; } = [];
+    public List<LookupModel> Controllers { get; set; } = [];
+    public List<LookupModel> Icons { get; set; } = [];
+    public List<LookupModel> Actions { get; set; } = [];
 }

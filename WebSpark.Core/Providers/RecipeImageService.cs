@@ -6,7 +6,7 @@ public interface IRecipeImageService
 {
     void AddRecipeImage(Models.RecipeImageModel recipeImageModel);
     void DeleteRecipeImage(int id);
-    Models.RecipeImageModel GetRecipeImageById(int id);
+    Models.RecipeImageModel? GetRecipeImageById(int id);
     IEnumerable<Models.RecipeImageModel> GetRecipeImages();
     void UpdateRecipeImage(Models.RecipeImageModel recipeImageModel);
 }
@@ -15,7 +15,7 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
 {
     private bool disposedValue;
 
-    private static RecipeImage ConvertToEntity(Models.RecipeImageModel recipeImageModel, RecipeImage recipeImage = null)
+    private static RecipeImage ConvertToEntity(Models.RecipeImageModel recipeImageModel, RecipeImage? recipeImage = null)
     {
         recipeImage ??= new RecipeImage();
         recipeImage.FileName = recipeImageModel.FileName;
@@ -37,9 +37,9 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
             ImageData = recipeImage.ImageData,
             Recipe = new Models.RecipeModel
             {
-                Id = recipeImage.Recipe.Id,
-                Name = recipeImage.Recipe.Name,
-                Description = recipeImage.Recipe.Description
+                Id = recipeImage.Recipe?.Id ?? 0,
+                Name = recipeImage.Recipe?.Name ?? string.Empty,
+                Description = recipeImage.Recipe?.Description ?? string.Empty
             }
 
         };
@@ -62,12 +62,11 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
         }
     }
 
-    public Models.RecipeImageModel GetRecipeImageById(int id)
+    public Models.RecipeImageModel? GetRecipeImageById(int id)
     {
         var recipeImage = dbContext.RecipeImage
             .Include(r => r.Recipe)
             .SingleOrDefault(r => r.Id == id);
-
         return recipeImage != null ? ConvertToModel(recipeImage) : null;
     }
 
@@ -77,7 +76,6 @@ public class RecipeImageService(WebSparkDbContext dbContext) : IRecipeImageServi
             .Include(r => r.Recipe)
             .OrderBy(r => r.DisplayOrder)
             .ToList();
-
         return recipeImages.Select(r => ConvertToModel(r));
     }
 

@@ -9,13 +9,13 @@ public class LookupModel
     /// Gets or sets the value.
     /// </summary>
     /// <value>The value.</value>
-    public string Value { get; set; }
+    public string Value { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the text.
     /// </summary>
     /// <value>The text.</value>
-    public string Text { get; set; }
+    public string Text { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is default.

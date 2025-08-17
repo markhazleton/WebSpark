@@ -46,9 +46,9 @@ public class Pager
     public int Older { get; set; }
     public bool ShowOlder { get; set; }
 
-    public string LinkToNewer { get; set; }
-    public string LinkToOlder { get; set; }
+    public string LinkToNewer { get; set; } = string.Empty;
+    public string LinkToOlder { get; set; } = string.Empty;
 
-    public string RouteValue { get; set; }
+    public string RouteValue { get; set; } = string.Empty;
     public int LastPage { get; set; } = 1;
 }

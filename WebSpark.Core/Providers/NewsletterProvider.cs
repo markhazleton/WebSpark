@@ -2,6 +2,7 @@ using WebSpark.Core.Data;
 using WebSpark.Core.Extensions;
 
 namespace WebSpark.Core.Providers;
+
 public interface INewsletterProvider
 {
     Task<List<Subscriber>> GetSubscribers();
@@ -79,7 +80,7 @@ public class NewsletterProvider : INewsletterProvider
                 PostId = postId,
                 CreatedDate = DateTime.UtcNow,
                 Success = success,
-                Post = _db.Posts.Where(p => p.Id == postId).FirstOrDefault()
+                Post = _db.Posts.Where(p => p.Id == postId).FirstOrDefault() ?? new Post()
             };
             _db.Newsletters.Add(newsletter);
         }
@@ -144,7 +145,7 @@ public class NewsletterProvider : INewsletterProvider
                 ToName = mail.ToName,
                 Enabled = mail.Enabled,
                 CreatedDate = DateTime.UtcNow,
-                Blog = _db.Blogs.FirstOrDefault()
+                Blog = _db.Blogs.FirstOrDefault() ?? new Blog()
             };
             _db.MailSettings.Add(newMail);
         }

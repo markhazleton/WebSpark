@@ -9,19 +9,19 @@ public class LinkModel
     /// Gets or sets the href.
     /// </summary>
     /// <value>The href.</value>
-    public string Href { get; set; }
+    public string Href { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the relative.
     /// </summary>
     /// <value>The relative.</value>
-    public string Rel { get; set; }
+    public string Rel { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the method.
     /// </summary>
     /// <value>The method.</value>
-    public string Method { get; set; }
+    public string Method { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is templated.

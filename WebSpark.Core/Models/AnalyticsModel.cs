@@ -10,5 +10,5 @@ public class AnalyticsModel
     public AnalyticsListType DisplayType { get; set; }
     public AnalyticsPeriod DisplayPeriod { get; set; }
 
-    public BarChartModel LatestPostViews { get; set; }
+    public BarChartModel LatestPostViews { get; set; } = new();
 }

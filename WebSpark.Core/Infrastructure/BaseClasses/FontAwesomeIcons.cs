@@ -15,11 +15,15 @@ public static class EnumerationExtension
     {
         // get attributes  
         var field = value.GetType().GetField(value.ToString());
+        if (field == null)
+        {
+            return "Description Not Found";
+        }
         var attributes = field.GetCustomAttributes(false);
 
         // Description is in a hidden Attribute class called DisplayAttribute
         // Not to be confused with DisplayNameAttribute
-        dynamic displayAttribute = null;
+        object? displayAttribute = null;
 
         if (attributes.Any())
         {
@@ -27,7 +31,16 @@ public static class EnumerationExtension
         }
 
         // return description
-        return displayAttribute?.Description ?? "Description Not Found";
+        // use reflection to get Description property if present
+        if (displayAttribute != null)
+        {
+            var prop = displayAttribute.GetType().GetProperty("Description", BindingFlags.Public | BindingFlags.Instance);
+            if (prop != null && prop.GetValue(displayAttribute) is string desc && !string.IsNullOrWhiteSpace(desc))
+            {
+                return desc;
+            }
+        }
+        return "Description Not Found";
     }
 }
 /// <summary>

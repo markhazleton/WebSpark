@@ -27,14 +27,14 @@ public class BlogVM : WebsiteVM
         StyleUrl = website.StyleUrl;
         PostListType = PostListType.Blog;
     }
-    public BlogItem Blog { get; set; }
-    public AuthorItem Author { get; set; } // posts by author
-    public string Category { get; set; } // posts by category
-    public IEnumerable<PostItem> Posts { get; set; }
-    public Pager Pager { get; set; }
+    public BlogItem Blog { get; set; } = new();
+    public AuthorItem Author { get; set; } = new(); // posts by author
+    public string Category { get; set; } = string.Empty; // posts by category
+    public IEnumerable<PostItem> Posts { get; set; } = Array.Empty<PostItem>();
+    public Pager Pager { get; set; } = new(currentPage: 1);
     public PostListType PostListType { get; set; }
-    public PostItem Post { get; set; }
-    public PostItem Older { get; set; }
-    public PostItem Newer { get; set; }
-    public IEnumerable<PostItem> Related { get; set; }
+    public PostItem Post { get; set; } = new();
+    public PostItem Older { get; set; } = new();
+    public PostItem Newer { get; set; } = new();
+    public IEnumerable<PostItem> Related { get; set; } = Array.Empty<PostItem>();
 }

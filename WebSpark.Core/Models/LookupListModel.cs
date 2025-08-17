@@ -9,13 +9,13 @@ public class LookupListModel
     /// Gets or sets the identifier.
     /// </summary>
     /// <value>The identifier.</value>
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the title.
     /// </summary>
     /// <value>The title.</value>
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the items.

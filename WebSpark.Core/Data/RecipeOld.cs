@@ -26,12 +26,12 @@ public class RecipeOld
 
     public int Id { get; set; }
     public int RecipeCategoryID { get; set; }
-    public string RecipeNM { get; set; }
-    public string Description { get; set; }
-    public string AuthorNM { get; set; }
-    public string Ingredients { get; set; }
-    public string Instructions { get; set; }
-    public string IsApproved { get; set; }
+    public string RecipeNM { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string AuthorNM { get; set; } = string.Empty;
+    public string Ingredients { get; set; } = string.Empty;
+    public string Instructions { get; set; } = string.Empty;
+    public string IsApproved { get; set; } = string.Empty;
     public DateTime ModifiedDT { get; set; }
     public int ModifiedID { get; set; }
     public int ViewCount { get; set; }

@@ -8,11 +8,11 @@ namespace WebSpark.Core.Infrastructure.BaseClasses;
 /// </summary>
 public abstract class BasePageModel : PageModel
 {
-    private IDisposable _hostScope;
+    private IDisposable? _hostScope;
     private readonly ILogger _logger;
     private readonly Interfaces.IScopeInformation _scopeInfo;
     private readonly Stopwatch _timer;
-    private IDisposable _userScope;
+    private IDisposable? _userScope;
 
     /// <summary>
     /// 
@@ -26,12 +26,13 @@ public abstract class BasePageModel : PageModel
         _timer = new Stopwatch();
     }
 
-    private static string MaskEmailAddress(string emailAddress)
+    private static string MaskEmailAddress(string? emailAddress)
     {
-        var atIndex = emailAddress?.IndexOf('@');
+        if (string.IsNullOrEmpty(emailAddress)) return string.Empty;
+        var atIndex = emailAddress.IndexOf('@');
         if (atIndex > 1)
         {
-            return $"{emailAddress[0]}{emailAddress[1]}***{emailAddress.Substring(atIndex.Value)}";
+            return $"{emailAddress[0]}{emailAddress[1]}***{emailAddress.Substring(atIndex)}";
         }
         return emailAddress;
     }
@@ -56,14 +57,14 @@ public abstract class BasePageModel : PageModel
     /// <param name="context"></param>
     public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
     {
-        var userDict = new Dictionary<string, string>
+        var userDict = new Dictionary<string, string?>
         {
             { "UserId", context.HttpContext.User.FindFirst("sub")?.Value },
             { "GivenName", context.HttpContext.User.FindFirst("given_name")?.Value },
             { "Email", MaskEmailAddress(context.HttpContext.User.FindFirst("email")?.Value) }
         };
 
-        _userScope = _logger.BeginScope(userDict);
+        _userScope = _logger.BeginScope(userDict!);
         _hostScope = _logger.BeginScope(_scopeInfo.HostScopeInfo);
 
         _timer.Start();

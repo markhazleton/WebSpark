@@ -4,17 +4,18 @@ using System.Drawing;
 using System.Text;
 
 namespace WebSpark.Core.Extensions;
+
 public static partial class Utility
 {
-    public static string wpm_ApplyHTMLFormatting(string strInput)
+    public static string wpm_ApplyHTMLFormatting(string? strInput)
     {
-        strInput = $"~{strInput}";
-        strInput = strInput.Replace(",", "-");
-        strInput = strInput.Replace("'", "&quot;");
-        strInput = strInput.Replace("\"", "&quot;");
-        strInput = strInput.Replace("~", string.Empty);
-        // strInput = Replace(strInput, " " , "_")
-        return strInput;
+        if (string.IsNullOrEmpty(strInput)) return string.Empty;
+        var work = $"~{strInput}";
+        work = work.Replace(",", "-")
+                   .Replace("'", "&quot;")
+                   .Replace("\"", "&quot;")
+                   .Replace("~", string.Empty);
+        return work;
     }
     public static bool wpm_Build301Redirect(string sNewURL)
     {
@@ -22,67 +23,40 @@ public static partial class Utility
         //HttpContext.Current.Response.AddHeader("Location", sNewURL);
         return true;
     }
-    public static bool wpm_CheckForMatch(string StringOne, string StringTwo)
+    public static bool wpm_CheckForMatch(string? StringOne, string? StringTwo)
     {
-        bool bMatch = false;
-        if (StringOne is null | StringTwo is null)
-        {
-            if (StringOne is null & StringTwo is null)
-            {
-                bMatch = true;
-            }
-        }
-        else
-        {
-            // To Make this Easier, let's ignore case and spaces and ampersands and dashes
-            StringOne = StringOne.ToLower();
-            StringOne = StringOne.Replace("/", string.Empty);
-            StringOne = StringOne.Replace(".html", string.Empty);
-            StringOne = StringOne.Replace(".htm", string.Empty);
-            StringOne = StringOne.Replace("&amp;", "&");
-            StringOne = StringOne.Replace("%20", string.Empty);
-            StringOne = StringOne.Replace("-", string.Empty);
-            StringOne = StringOne.Replace(" ", string.Empty);
-            StringOne = StringOne.Replace(".html", string.Empty);
-            StringTwo = StringTwo.ToLower();
-            StringTwo = StringTwo.Replace("/", string.Empty);
-            StringTwo = StringTwo.Replace(".html", string.Empty);
-            StringTwo = StringTwo.Replace(".htm", string.Empty);
-            StringTwo = StringTwo.Replace("%20", string.Empty);
-            StringTwo = StringTwo.Replace(" ", string.Empty);
-            StringTwo = StringTwo.Replace("&amp;", "&");
-            StringTwo = StringTwo.Replace("-", string.Empty);
-            StringTwo = StringTwo.Replace(".html", string.Empty);
-            if ((StringOne ?? string.Empty) == (StringTwo ?? string.Empty))
-            {
-                bMatch = true;
-            }
-            else
-            {
-                bMatch = false;
-            }
-        }
-        return bMatch;
+        if (StringOne is null || StringTwo is null)
+            return StringOne is null && StringTwo is null; // both null => match
+
+        static string Normalize(string value) => value.ToLower()
+            .Replace("/", string.Empty)
+            .Replace(".html", string.Empty)
+            .Replace(".htm", string.Empty)
+            .Replace("&amp;", "&")
+            .Replace("%20", string.Empty)
+            .Replace("-", string.Empty)
+            .Replace(" ", string.Empty);
+
+        return Normalize(StringOne) == Normalize(StringTwo);
     }
-    public static string wpm_ClearLineFeeds(string sTextToCovert)
+    public static string wpm_ClearLineFeeds(string? sTextToCovert)
     {
-        sTextToCovert = sTextToCovert.Replace(Environment.NewLine, string.Empty);
-        sTextToCovert = sTextToCovert.Replace(Environment.NewLine, string.Empty);
-        return sTextToCovert;
+        if (string.IsNullOrEmpty(sTextToCovert)) return string.Empty;
+        return sTextToCovert.Replace(Environment.NewLine, string.Empty);
     }
-    public static string wpm_ConvertRichTextToHTML(string sTextToCovert)
+    public static string wpm_ConvertRichTextToHTML(string? sTextToCovert)
     {
+        if (string.IsNullOrEmpty(sTextToCovert)) return string.Empty;
         var sbReturn = new StringBuilder(WebUtility.HtmlEncode(sTextToCovert));
         sbReturn.Replace("'", "&#39;");
         sbReturn.Replace("  ", " &nbsp;");
         sbReturn.Replace(" & ", " &amp; ");
         sbReturn.Replace(Environment.NewLine, "<br/>");
-        sbReturn.Replace(Environment.NewLine, "<br/>");
         return sbReturn.ToString();
     }
     public static string wpm_DaysInMonth()
     {
-        string wpm_DaysInMonthRet = default;
+        string wpm_DaysInMonthRet = string.Empty;
         int lLngMonth = Thread.CurrentThread.CurrentCulture.Calendar.GetMonth(DateTime.UtcNow);
         switch (lLngMonth)
         {
@@ -111,42 +85,19 @@ public static partial class Utility
         return wpm_DaysInMonthRet;
     } // DaysInMonth()
 
-    public static string wpm_FixInvalidCharacters(string Value)
+    public static string wpm_FixInvalidCharacters(string? Value)
     {
-        if (Value is null)
-        {
-            Value = string.Empty;
-        }
-        else
-        {
-            Value = Value.Trim().ToLower();
-            Value = Value.Replace(" & ", "-and-");
-            Value = Value.Replace("&", "-and-");
-            Value = Value.Replace(" | ", "-and-");
-            Value = Value.Replace("|", "-and-");
-            Value = Value.Replace(",", "-");
-            Value = Value.Replace("/", "-");
-            Value = Value.Replace(@"\", "-");
-            Value = Value.Replace("<", "-");
-            Value = Value.Replace(">", "-");
-            Value = Value.Replace("(", "-");
-            Value = Value.Replace(")", "-");
-            Value = Value.Replace("[", "-");
-            Value = Value.Replace("]", "-");
-            Value = Value.Replace("{", "-");
-            Value = Value.Replace("}", "-");
-            Value = Value.Replace(",", "-");
-            Value = Value.Replace("'", "-");
-            Value = Value.Replace(";", "-");
-            Value = Value.Replace(":", "-");
-            Value = Value.Replace(" ", "-");
-            Value = Value.Replace(Environment.NewLine, " ");
-            Value = Value.Replace(Environment.NewLine, " ");
-        }
-        return Value;
+        if (string.IsNullOrEmpty(Value)) return string.Empty;
+        var work = Value.Trim().ToLower();
+        string[] find = [" & ", "&", " | ", "|", ",", "/", @"\", "<", ">", "(", ")", "[", "]", "{", "}", "'", ";", ":", " "]; // duplicates collapsed
+        foreach (var f in find)
+            work = work.Replace(f, f == "&" || f.Contains(" & ") || f.Contains(" | ") || f == "|" ? "-and-" : "-");
+        work = work.Replace(Environment.NewLine, " ");
+        return work;
     }
-    public static string wpm_FixSingleQuote(string FixString)
+    public static string wpm_FixSingleQuote(string? FixString)
     {
+        if (FixString is null) return string.Empty;
         var strFix = new StringBuilder(FixString);
         strFix.Replace("\"", "&quot;");
         strFix.Replace("''", "&#39;");
@@ -156,7 +107,8 @@ public static partial class Utility
     }
     public static string wpm_FormatDate(DateTime lDtmNow, ref string pStrDate)
     {
-        string wpm_FormatDateRet = default;
+        if (pStrDate is null) pStrDate = string.Empty; // guard input
+        var formatString = pStrDate; // work on local copy
         // Define local variables
         var lObjRegExp = DatePartRegex();
         int lLngHour = Thread.CurrentThread.CurrentCulture.Calendar.GetHour(lDtmNow);
@@ -170,158 +122,157 @@ public static partial class Utility
         // Prepare RegExp object and set parameters
 
         // List each individual match and compare to different date functions
-        foreach (Match lObjMatch in lObjRegExp.Matches(pStrDate))
+        foreach (Match lObjMatch in lObjRegExp.Matches(formatString))
         {
             switch (lObjMatch.Value ?? string.Empty)
             {
                 case "a":
                     {
-                        pStrDate = pStrDate.Replace("a", Strings.Right(lDtmNow.ToString().ToLower(), 2));
+                        formatString = (formatString ?? string.Empty).Replace("a", Strings.Right(lDtmNow.ToString().ToLower(), 2));
                         break;
                     }
                 case "A":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "A", Strings.Right(lDtmNow.ToString().ToUpper(), 2));
+                        formatString = Strings.Replace(formatString, "A", Strings.Right(lDtmNow.ToString().ToUpper(), 2));
                         break;
                     }
                 case "B":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "B", wpm_InternetTime());
+                        formatString = Strings.Replace(formatString, "B", wpm_InternetTime());
                         break;
                     }
                 case "d":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "d", wpm_LeadingZero(ref lLngDay));
+                        formatString = Strings.Replace(formatString, "d", wpm_LeadingZero(ref lLngDay));
                         break;
                     }
                 case "D":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "D", Strings.Left(DateAndTime.WeekdayName(lLngWeekDay), 3));
+                        formatString = Strings.Replace(formatString, "D", Strings.Left(DateAndTime.WeekdayName(lLngWeekDay), 3));
                         break;
                     }
                 case "M":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "M", DateAndTime.MonthName(lLngMonth));
+                        formatString = Strings.Replace(formatString, "M", DateAndTime.MonthName(lLngMonth));
                         break;
                     }
                 case "g":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "g", wpm_FormatHour().ToString());
+                        formatString = Strings.Replace(formatString, "g", wpm_FormatHour().ToString());
                         break;
                     }
                 case "G":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "G", lLngHour.ToString());
+                        formatString = Strings.Replace(formatString, "G", lLngHour.ToString());
                         break;
                     }
                 case "h":
                     {
                         string localwpm_LeadingZero() { int argpStrValue = wpm_FormatHour(); var ret = wpm_LeadingZero(ref argpStrValue); return ret; }
-
-                        pStrDate = Strings.Replace(pStrDate, "h", localwpm_LeadingZero());
+                        formatString = Strings.Replace(formatString, "h", localwpm_LeadingZero());
                         break;
                     }
                 case "H":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "H", wpm_LeadingZero(ref lLngHour));
+                        formatString = Strings.Replace(formatString, "H", wpm_LeadingZero(ref lLngHour));
                         break;
                     }
                 case "i":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "i", wpm_LeadingZero(ref lLngMinute));
+                        formatString = Strings.Replace(formatString, "i", wpm_LeadingZero(ref lLngMinute));
                         break;
                     }
                 case "j":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "j", lLngDay.ToString());
+                        formatString = Strings.Replace(formatString, "j", lLngDay.ToString());
                         break;
                     }
                 case "l":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "l", DateAndTime.WeekdayName(lLngWeekDay));
+                        formatString = Strings.Replace(formatString, "l", DateAndTime.WeekdayName(lLngWeekDay));
                         break;
                     }
                 case "L":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "L", wpm_IsNowLeapYear().ToString());
+                        formatString = Strings.Replace(formatString, "L", wpm_IsNowLeapYear().ToString());
                         break;
                     }
                 case "m":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "m", wpm_LeadingZero(ref lLngMonth));
+                        formatString = Strings.Replace(formatString, "m", wpm_LeadingZero(ref lLngMonth));
                         break;
                     }
                 case var @case when @case == "M":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "M", Strings.Left(DateAndTime.MonthName(lLngMonth), 3));
+                        formatString = Strings.Replace(formatString, "M", Strings.Left(DateAndTime.MonthName(lLngMonth), 3));
                         break;
                     }
                 case "n":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "n", lLngMonth.ToString());
+                        formatString = Strings.Replace(formatString, "n", lLngMonth.ToString());
                         break;
                     }
                 case "r":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "r", string.Format("{0}, {1} {2} {3} {4}:{5}", Strings.Left(DateAndTime.WeekdayName(lLngWeekDay), 3), lLngDay, Strings.Left(DateAndTime.MonthName(lLngMonth), 3), lLngYear, Strings.FormatDateTime(DateAndTime.TimeOfDay, DateFormat.LongTime), wpm_LeadingZero(ref lLngSecond)));
+                        formatString = Strings.Replace(formatString, "r", string.Format("{0}, {1} {2} {3} {4}:{5}", Strings.Left(DateAndTime.WeekdayName(lLngWeekDay), 3), lLngDay, Strings.Left(DateAndTime.MonthName(lLngMonth), 3), lLngYear, Strings.FormatDateTime(DateAndTime.TimeOfDay, DateFormat.LongTime), wpm_LeadingZero(ref lLngSecond)));
                         break;
                     }
                 case "s":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "s", wpm_LeadingZero(ref lLngSecond));
+                        formatString = Strings.Replace(formatString, "s", wpm_LeadingZero(ref lLngSecond));
                         break;
                     }
                 case "S":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "S", wpm_OrdinalSuffix());
+                        formatString = Strings.Replace(formatString, "S", wpm_OrdinalSuffix());
                         break;
                     }
                 case "t":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "t", wpm_DaysInMonth());
+                        formatString = Strings.Replace(formatString, "t", wpm_DaysInMonth());
                         break;
                     }
                 case "U":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "U", DateAndTime.DateDiff(DateInterval.Second, DateAndTime.DateSerial(1970, 1, 1), lDtmNow).ToString());
+                        formatString = Strings.Replace(formatString, "U", DateAndTime.DateDiff(DateInterval.Second, DateAndTime.DateSerial(1970, 1, 1), lDtmNow).ToString());
                         break;
                     }
                 case "w":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "w", (lLngWeekDay - 1).ToString());
+                        formatString = Strings.Replace(formatString, "w", (lLngWeekDay - 1).ToString());
                         break;
                     }
                 case "W":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "W", "1");
+                        formatString = Strings.Replace(formatString, "W", "1");
                         break;
                     }
                 case "Y":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "Y", lLngYear.ToString());
+                        formatString = Strings.Replace(formatString, "Y", lLngYear.ToString());
                         break;
                     }
                 case "y":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "y", Strings.Right(lLngYear.ToString(), 2));
+                        formatString = Strings.Replace(formatString, "y", Strings.Right(lLngYear.ToString(), 2));
                         break;
                     }
                 case "z":
                     {
-                        pStrDate = Strings.Replace(pStrDate, "z", "1");
+                        formatString = Strings.Replace(formatString, "z", "1");
                         break;
                     }
 
                 default:
                     {
-                        pStrDate = $"{pStrDate}";
+                        // no-op
                         break;
                     }
             }
         }
         lObjRegExp = null;
-        wpm_FormatDateRet = pStrDate;
-        return wpm_FormatDateRet;
+        pStrDate = formatString ?? string.Empty; // assign back to ref
+        return pStrDate;
     }
     // Accepts strDate as a valid date/time,
     // strFormat as the output template.
@@ -498,55 +449,34 @@ public static partial class Utility
         }
         return sReturn;
     }
-    public static string wpm_FormatNameForURL(string Name)
+    public static string wpm_FormatNameForURL(string? Name)
     {
-        Name = Strings.Replace(Name.ToLower(), " ", "-");
-        Name = Strings.Replace(Name, "(", "-");
-        Name = Strings.Replace(Name, ")", "-");
-        return Name;
-        // Return FixInvalidCharacters(Name)
+        if (string.IsNullOrEmpty(Name)) return string.Empty;
+        var work = Strings.Replace(Name.ToLower(), " ", "-");
+        work = Strings.Replace(work, "(", "-");
+        work = Strings.Replace(work, ")", "-");
+        return work ?? string.Empty;
     }
-    public static string wpm_FormatPageNameForURL(string PageName)
+    public static string wpm_FormatPageNameForURL(string? PageName)
     {
-        if (PageName is null)
-        {
-            return null;
-        }
-        else
-        {
-            return wpm_FixInvalidCharacters(PageName.ToLower());
-        }
+        if (string.IsNullOrEmpty(PageName)) return string.Empty;
+        return wpm_FixInvalidCharacters(PageName.ToLower());
     }
-    public static string wpm_FormatPageNameLink(string sPageName)
+    public static string wpm_FormatPageNameLink(string? sPageName)
     {
-        string sReturn = string.Empty;
-        if (string.IsNullOrEmpty(Strings.Trim(sPageName)))
-        {
-            sReturn = "<a href=\"/\">Home Page</a>";
-        }
-        else
-        {
-            sReturn = $"<a href=\"{wpm_FormatPageNameURL(sPageName)}\">{sPageName}</a>";
-        }
-        return sReturn.ToLower();
+        if (string.IsNullOrWhiteSpace(sPageName))
+            return "<a href=\"/\">home page</a>";
+        return $"<a href=\"{wpm_FormatPageNameURL(sPageName)}\">{sPageName}</a>".ToLower();
     }
-    public static string wpm_FormatPageNameURL(string sPageName)
+    public static string wpm_FormatPageNameURL(string? sPageName)
     {
-        if (string.IsNullOrEmpty(Strings.Trim(sPageName)))
-        {
-            return "/";
-        }
-        else
-        {
-            return string.Format("/{0}{1}", wpm_FixInvalidCharacters(sPageName), string.Empty);
-        }
+        if (string.IsNullOrWhiteSpace(sPageName)) return "/";
+        return $"/{wpm_FixInvalidCharacters(sPageName)}";
     }
-    public static string wpm_FormatTextEntry(string strEntry)
+    public static string wpm_FormatTextEntry(string? strEntry)
     {
-        if (string.IsNullOrEmpty(strEntry))
-            strEntry = " ";
-        strEntry = Strings.Replace(strEntry, "'", "&#39;");
-        return strEntry;
+        if (string.IsNullOrEmpty(strEntry)) return " ";
+        return Strings.Replace(strEntry, "'", "&#39;") ?? string.Empty;
     }
     public static string wpm_GetCurrentDate()
     {
@@ -614,7 +544,7 @@ public static partial class Utility
         {
             return new DateTime();
         }
-        else if (wpm_IsDate(dbObject.ToString()))
+        else if (wpm_IsDate(dbObject.ToString() ?? string.Empty))
         {
             return Conversions.ToDate(dbObject);
         }
@@ -687,41 +617,22 @@ public static partial class Utility
         string strEntry = string.Empty;
         if (!(dbObject is DBNull | dbObject is null))
         {
-            strEntry = Conversions.ToString(dbObject);
+            strEntry = Conversions.ToString(dbObject) ?? string.Empty;
             if (strEntry == " ")
                 strEntry = string.Empty;
         }
-        return strEntry;
+        return strEntry ?? string.Empty;
     }
     public static string wpm_GetRFC822Date(object dbObject)
     {
-        int offset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.UtcNow).Hours;
-        string timeZone__1 = $"+{offset.ToString().PadLeft(2, '0')}";
-        DateTime myDate;
-        if (dbObject is DBNull)
-        {
-            myDate = DateTime.UtcNow.AddDays(-100);
-        }
-        else
-        {
-            myDate = Conversions.ToDate(dbObject);
-        }
-
-        if (offset < 0)
-        {
-            int i = offset * -1;
-            timeZone__1 = $"-{i.ToString().PadLeft(2, '0')}";
-        }
-        return myDate.ToString($"ddd, dd MMM yyyy HH:mm:ss {timeZone__1.PadRight(5, '0')}");
+        int offset = TimeZoneInfo.Local.GetUtcOffset(DateTime.UtcNow).Hours;
+        var sign = offset >= 0 ? "+" : "-";
+        var abs = Math.Abs(offset).ToString().PadLeft(2, '0');
+        string tz = sign + abs + "00"; // HHmm (minutes assumed 00)
+        DateTime myDate = dbObject is DBNull ? DateTime.UtcNow.AddDays(-100) : Conversions.ToDate(dbObject);
+        return myDate.ToString($"ddd, dd MMM yyyy HH:mm:ss {tz}");
     }
-    public static string wpm_GetStringValue(string myString)
-    {
-        if (myString is DBNull | myString is null)
-        {
-            myString = string.Empty;
-        }
-        return myString;
-    }
+    public static string wpm_GetStringValue(string? myString) => myString ?? string.Empty;
     public static int wpm_HexStringToBase10Int(string hex)
     {
         int base10value = 0;
@@ -771,7 +682,7 @@ public static partial class Utility
         {
             dtDate = DateTime.Parse(strDate);
         }
-        catch (FormatException eFormatException)
+        catch (FormatException)
         {
             // the Parse method failed => the string strDate cannot be converted to a date.
             bValid = false;
@@ -831,50 +742,23 @@ public static partial class Utility
 
         return "th";
     } // OrdinalSuffix()
-    public static string wpm_RemoveHtml(string sContent)
+    public static string wpm_RemoveHtml(string? sContent)
     {
+        if (string.IsNullOrEmpty(sContent)) return string.Empty;
         return Regex.Replace(sContent, "<[^>]*>", string.Empty);
     }
-    public static string wpm_RemoveInvalidCharacters(string Value)
+    public static string wpm_RemoveInvalidCharacters(string? Value)
     {
-        if (Value is null)
-        {
-            Value = string.Empty;
-        }
-        else
-        {
-            Value = Value.Trim().ToLower();
-            Value = Value.Replace(" & ", string.Empty);
-            Value = Value.Replace("&", string.Empty);
-            Value = Value.Replace(" | ", string.Empty);
-            Value = Value.Replace("|", string.Empty);
-            Value = Value.Replace(",", string.Empty);
-            Value = Value.Replace("/", string.Empty);
-            Value = Value.Replace(@"\", string.Empty);
-            Value = Value.Replace("<", string.Empty);
-            Value = Value.Replace(">", string.Empty);
-            Value = Value.Replace("(", string.Empty);
-            Value = Value.Replace(")", string.Empty);
-            Value = Value.Replace("{", string.Empty);
-            Value = Value.Replace("}", string.Empty);
-            Value = Value.Replace("[", string.Empty);
-            Value = Value.Replace("]", string.Empty);
-            Value = Value.Replace(",", string.Empty);
-            Value = Value.Replace("'", string.Empty);
-            Value = Value.Replace(";", string.Empty);
-            Value = Value.Replace(":", string.Empty);
-            Value = Value.Replace("-", string.Empty);
-            Value = Value.Replace(".", string.Empty);
-            Value = Value.Replace("http", string.Empty);
-            Value = Value.Replace(" ", string.Empty);
-            Value = Value.Replace("?", string.Empty);
-            Value = Value.Replace("%22", string.Empty);
-            Value = Value.Replace("=", string.Empty);
-        }
-        return Value;
+        if (string.IsNullOrEmpty(Value)) return string.Empty;
+        var work = Value.Trim().ToLower();
+        string[] find = [" & ", "&", " | ", "|", ",", "/", @"\", "<", ">", "(", ")", "{", "}", "[", "]", "'", ";", ":", "-", ".", "http", " ", "?", "%22", "="];
+        foreach (var f in find)
+            work = work.Replace(f, string.Empty);
+        return work;
     }
-    public static string wpm_RemoveTags(string sContent)
+    public static string wpm_RemoveTags(string? sContent)
     {
+        if (string.IsNullOrEmpty(sContent)) return string.Empty;
         return Regex.Replace(sContent, @"~~(.|\n)+?~~", string.Empty);
     }
 

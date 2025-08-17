@@ -6,7 +6,7 @@ namespace WebSpark.Core.Infrastructure;
 /// </summary>
 public static class LogMessages
 {
-    private static readonly Action<ILogger, string, string, long, Exception> _routePerformance;
+    private static readonly Action<ILogger, string, string, long, Exception?> _routePerformance;
 
     static LogMessages()
     {

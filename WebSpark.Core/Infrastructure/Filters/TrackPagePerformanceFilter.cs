@@ -8,7 +8,7 @@ namespace WebSpark.Core.Infrastructure.Filters
     public class TrackPagePerformanceFilter : IPageFilter
     {
         private readonly ILogger<TrackPagePerformanceFilter> _logger;
-        private Stopwatch _timer;
+        private Stopwatch? _timer;
 
         /// <summary>
         /// TrackPagePerformanceFilter
@@ -34,8 +34,8 @@ namespace WebSpark.Core.Infrastructure.Filters
         /// <param name="context"></param>
         public void OnPageHandlerExecuted(PageHandlerExecutedContext context)
         {
-            _timer.Stop();
-            if (context.Exception == null)
+            _timer?.Stop();
+            if (context.Exception == null && _timer != null)
             {
                 _logger.LogRoutePerformance(context.ActionDescriptor.RelativePath,
                     context.HttpContext.Request.Method,

@@ -23,7 +23,7 @@ public class RecipeModel
     /// <value>The author nm.</value>
     [DisplayName("Author")]
     [Required]
-    public string AuthorNM { get; set; }
+    public string AuthorNM { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the average rating.
@@ -43,27 +43,27 @@ public class RecipeModel
     /// Gets or sets the file description.
     /// </summary>
     /// <value>The file description.</value>
-    public string FileDescription { get; set; }
+    public string FileDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the name of the file.
     /// </summary>
     /// <value>The name of the file.</value>
-    public string FileName { get; set; }
+    public string FileName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the ingredient ds.
     /// </summary>
     /// <value>The ingredient ds.</value>
     [DisplayName("Ingredients")]
-    public string Ingredients { get; set; }
+    public string Ingredients { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the instruction ds.
     /// </summary>
     /// <value>The instruction ds.</value>
     [DisplayName("Instructions")]
-    public string Instructions { get; set; }
+    public string Instructions { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is approved.
@@ -122,7 +122,7 @@ public class RecipeModel
     /// </summary>
     /// <value>The recipe category nm.</value>
     [DisplayName("Category")]
-    public string RecipeCategoryNM { get; set; }
+    public string RecipeCategoryNM { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the recipe ds.
@@ -130,7 +130,7 @@ public class RecipeModel
     /// <value>The recipe ds.</value>
     [DisplayName("Description")]
     [Required]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the recipe identifier.
@@ -144,7 +144,7 @@ public class RecipeModel
     /// <value>The recipe nm.</value>
     [DisplayName("Recipe")]
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the view count.
@@ -157,14 +157,14 @@ public class RecipeModel
     /// Gets or sets the recipe URL.
     /// </summary>
     /// <value>The recipe URL.</value>
-    public string RecipeURL { get; set; }
+    public string RecipeURL { get; set; } = string.Empty;
 
     public List<RecipeImageModel> Images { get; set; } = [];
 
     /// <summary>
     /// Lookup List of Recipe Categories
     /// </summary>
-    public IEnumerable<LookupModel> RecipeCategories { get; set; }
+    public IEnumerable<LookupModel> RecipeCategories { get; set; } = Array.Empty<LookupModel>();
     public int DomainID { get; set; } = RecipeConstants.INT_MOM_DomainId;
-    public string SEO_Keywords { get; set; }
+    public string SEO_Keywords { get; set; } = string.Empty;
 }

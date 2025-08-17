@@ -33,12 +33,12 @@ public abstract class BaseResponse<T>
     /// Gets the message.
     /// </summary>
     /// <value>The message.</value>
-    public string Message { get; private set; }
+    public string Message { get; private set; } = string.Empty;
     /// <summary>
     /// Gets the resource.
     /// </summary>
     /// <value>The resource.</value>
-    public T Resource { get; private set; }
+    public T? Resource { get; private set; }
     /// <summary>
     /// Gets a value indicating whether this <see cref="BaseResponse{T}"/> is success.
     /// </summary>

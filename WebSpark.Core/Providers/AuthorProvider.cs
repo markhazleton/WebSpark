@@ -8,7 +8,7 @@ namespace WebSpark.Core.Providers;
 public interface IAuthorProvider
 {
     Task<List<Author>> GetAuthors();
-    Task<Author> FindByEmail(string email);
+    Task<Author?> FindByEmail(string email);
     Task<bool> Verify(LoginModel model);
     Task<bool> Register(RegisterModel model);
     Task<bool> Add(Author author);
@@ -20,12 +20,12 @@ public interface IAuthorProvider
 public class AuthorProvider : IAuthorProvider
 {
     private readonly WebSparkDbContext _db;
-    private static string _salt;
+    private static string _salt = string.Empty;
 
     public AuthorProvider(WebSparkDbContext db, IConfiguration configuration)
     {
         _db = db;
-        _salt = configuration.GetSection("ControlSpark").GetValue<string>("Salt");
+        _salt = configuration.GetSection("ControlSpark").GetValue<string>("Salt") ?? string.Empty;
     }
 
     public async Task<List<Author>> GetAuthors()
@@ -33,7 +33,7 @@ public class AuthorProvider : IAuthorProvider
         return await _db.Authors.ToListAsync();
     }
 
-    public async Task<Author> FindByEmail(string email)
+    public async Task<Author?> FindByEmail(string email)
     {
         return await Task.FromResult(_db.Authors.Where(a => a.Email == email).FirstOrDefault());
     }
@@ -42,7 +42,7 @@ public class AuthorProvider : IAuthorProvider
     {
         Log.Warning($"Verifying password for {model.Email}");
 
-        Author existing = await Task.FromResult(_db.Authors.Where(a =>
+        Author? existing = await Task.FromResult(_db.Authors.Where(a =>
             a.Email == model.Email).FirstOrDefault());
 
         if (existing == null)

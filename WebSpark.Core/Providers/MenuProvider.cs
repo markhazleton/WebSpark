@@ -8,34 +8,40 @@ namespace WebSpark.Core.Providers;
 public class MenuProvider(WebSparkDbContext webDomainContext)
     : IMenuProvider, IDisposable, IMenuService
 {
-    private static List<Models.MenuModel> Create(List<Menu> list)
+    private static List<Models.MenuModel> Create(List<Menu>? list)
     {
         if (list == null) return [];
         return [.. list.Select(Create).OrderBy(x => x.Title)];
     }
 
-    private static Models.MenuModel Create(Menu menu)
+    private static Models.MenuModel Create(Menu? menu)
     {
         if (menu == null) return new Models.MenuModel();
 
+        var safeTitle = menu.Title ?? string.Empty;
+        var safeUrl = menu.Url ?? string.Empty;
+        var safeController = menu.Controller ?? string.Empty;
+        var safeDescription = menu.Description ?? safeTitle;
+        var safePageContent = menu.PageContent ?? string.Empty;
+        var virtualPath = GetVirtualPath(menu);
         var item = new Models.MenuModel()
         {
             Id = menu.Id,
-            Title = menu.Title,
-            Url = menu.Url,
+            Title = safeTitle,
+            Url = safeUrl,
             Icon = menu.Icon,
             DomainID = menu.Domain?.Id ?? 0,
-            DomainName = menu.Domain?.Name,
-            Description = menu.Description ?? menu.Title,
-            Controller = menu.Controller,
+            DomainName = menu.Domain?.Name ?? string.Empty,
+            Description = safeDescription,
+            Controller = safeController,
             Action = menu.Action?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
             Argument = menu.Argument?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty,
             ParentId = menu.Parent?.Id,
-            ParentController = menu.Parent?.Controller,
-            ParentTitle = menu.Parent?.Title,
+            ParentController = menu.Parent?.Controller ?? string.Empty,
+            ParentTitle = menu.Parent?.Title ?? string.Empty,
             DisplayOrder = menu.DisplayOrder,
-            PageContent = menu.PageContent,
-            VirtualPath = GetVirtualPath(menu)
+            PageContent = safePageContent,
+            VirtualPath = virtualPath
         };
 
         item.Url = string.IsNullOrEmpty(item.Url)
@@ -45,14 +51,18 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
         return item;
     }
 
-    private static string GetVirtualPath(Menu menu)
+    private static string GetVirtualPath(Menu? menu)
     {
-        return menu.Parent != null
-            ? $"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{menu.Action.ToLower(CultureInfo.CurrentCulture)}"
-            : menu.Action.ToLower(CultureInfo.CurrentCulture);
+        if (menu == null) return string.Empty;
+        var action = menu.Action?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty;
+        if (menu.Parent?.Action == null)
+        {
+            return action;
+        }
+        return $"{menu.Parent.Action.ToLower(CultureInfo.CurrentCulture)}/{action}";
     }
 
-    private Menu Create(Models.MenuModel menu)
+    private Menu Create(Models.MenuModel? menu)
     {
         if (menu == null) return new Menu();
         var dbMenu = new Menu()
@@ -65,14 +75,14 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
             Action = menu.Action,
             Argument = menu.Argument,
             DisplayOrder = menu.DisplayOrder,
-            PageContent = menu.PageContent,
+            PageContent = menu.PageContent ?? string.Empty,
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
             UpdatedID = 99,
             CreatedID = 99,
         };
         var dbDomain = webDomainContext.Domain.Where(w => w.Id == menu.DomainID).FirstOrDefault();
-        dbMenu.Domain = dbDomain;
+        if (dbDomain != null) dbMenu.Domain = dbDomain; // keep Domain unset if not found
 
         var parentMenu = webDomainContext.Menu.Where(w => w.Id == menu.ParentId).FirstOrDefault();
         if (parentMenu != null)
@@ -108,9 +118,7 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
     public async Task<MenuEditModel> GetMenuEditAsync(int Id)
     {
         var menuList = webDomainContext.Menu.Include(i => i.Domain).ToList();
-        var returnMenu = new MenuEditModel(Create(menuList.Where(w => w.Id == Id).FirstOrDefault()));
-        if (returnMenu == null)
-            returnMenu = new MenuEditModel();
+        var returnMenu = new MenuEditModel(Create(menuList.FirstOrDefault(w => w.Id == Id)));
 
         returnMenu.Parents = Create(menuList.Where(w => w.Parent == null).ToList()).Select(s => new Models.LookupModel() { Value = s.Id.ToString(), Text = s.Title }).ToList();
         returnMenu.Parents.Insert(0, new Models.LookupModel() { Value = string.Empty, Text = "None" });
@@ -122,8 +130,6 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
     public async Task<Models.MenuModel> GetMenuItemAsync(int Id)
     {
         var returnMenu = Create(await webDomainContext.Set<Menu>().Where(w => w.Id == Id).Include(i => i.Domain).FirstOrDefaultAsync());
-        if (returnMenu == null)
-            returnMenu = new Models.MenuModel();
         return returnMenu;
     }
 
@@ -133,8 +139,6 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
             .FirstOrDefault());
-        returnMenu ??= new Models.MenuModel();
-
         return returnMenu;
     }
 
@@ -149,44 +153,40 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
 
     public List<Models.MenuModel> GetSiteMenu(int DomainId)
     {
-        return Create(webDomainContext.Menu.Where(w => w.Domain.Id == DomainId)
+        return Create(webDomainContext.Menu.Where(w => w.Domain != null && w.Domain.Id == DomainId)
             .Include(i => i.Parent)
             .Include(i => i.Domain)
             .OrderBy(o => o.DisplayOrder)
             .ToList());
     }
 
-    public List<Models.MenuModel> Save(List<Models.MenuModel> saveMenus)
+    public List<Models.MenuModel> Save(List<Models.MenuModel>? saveMenus)
     {
-        if (saveMenus == null)
-        {
-            return null;
-        }
+        if (saveMenus == null) return [];
 
         var returnMenus = new List<Models.MenuModel>();
         var curMenus = GetMenuList();
 
         foreach (var menuItem in saveMenus)
         {
+            if (menuItem == null) continue;
             menuItem.ParentId = null;
 
-            var curMenu = curMenus.Where(w => w.DomainID == menuItem.DomainID).Where(w => w.Title == menuItem.Title).FirstOrDefault();
+            var curMenu = curMenus.FirstOrDefault(w => w.DomainID == menuItem.DomainID && w.Title == menuItem.Title);
             if (curMenu == null)
             {
-                menuItem.Id = curMenu == null ? 0 : curMenu.Id;
+                menuItem.Id = 0;
                 menuItem.ParentId = null;
-                Save(menuItem);
+                var saved = Save(menuItem);
+                if (saved != null) returnMenus.Add(saved);
             }
         }
         return returnMenus;
     }
 
-    public Models.MenuModel Save(Models.MenuModel saveItem)
+    public Models.MenuModel Save(Models.MenuModel? saveItem)
     {
-        if (saveItem == null)
-        {
-            return null;
-        }
+        if (saveItem == null) return new Models.MenuModel();
 
         if (saveItem.Id == 0)
         {
@@ -206,8 +206,8 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
         {
             try
             {
-                var dbMenu = webDomainContext.Menu.Where(w => w.Id == saveItem.Id).FirstOrDefault();
-                var parentMenu = webDomainContext.Menu.Where(w => w.Id == saveItem.ParentId).FirstOrDefault();
+                var dbMenu = webDomainContext.Menu.FirstOrDefault(w => w.Id == saveItem.Id);
+                var parentMenu = webDomainContext.Menu.FirstOrDefault(w => w.Id == saveItem.ParentId);
 
                 if (dbMenu != null)
                 {
@@ -218,7 +218,7 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
                     dbMenu.Argument = saveItem.Argument;
                     dbMenu.Icon = saveItem.Icon;
                     dbMenu.Url = saveItem.Url;
-                    dbMenu.PageContent = saveItem.PageContent;
+                    dbMenu.PageContent = saveItem.PageContent ?? dbMenu.PageContent;
                     dbMenu.DisplayOrder = saveItem.DisplayOrder;
                     dbMenu.Parent = parentMenu;
 
@@ -247,12 +247,12 @@ public class MenuProvider(WebSparkDbContext webDomainContext)
 
     public async Task<bool> DeleteMenuAsync(int Id)
     {
-        var dbMenu = webDomainContext.Menu.Where(w => w.Id == Id).FirstOrDefault();
+        var dbMenu = webDomainContext.Menu.FirstOrDefault(w => w.Id == Id);
         if (dbMenu != null)
         {
             try
             {
-                var childMenu = webDomainContext.Menu.Where(w => w.Parent.Id == Id);
+                var childMenu = webDomainContext.Menu.Where(w => w.Parent != null && w.Parent.Id == Id);
                 foreach (var child in childMenu)
                 {
                     child.Parent = null;

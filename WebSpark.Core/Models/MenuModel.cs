@@ -13,7 +13,7 @@ public class MenuModel
     /// </summary>
     /// <value>The action.</value>
     [JsonPropertyName("action")]
-    public string Action { get; set; }
+    public string Action { get; set; } = string.Empty;
     /// <summary>
     /// Gets or sets the Api Url.
     /// </summary>
@@ -33,7 +33,7 @@ public class MenuModel
     /// </summary>
     /// <value>The controller.</value>
     [JsonPropertyName("controller")]
-    public string Controller { get; set; }
+    public string Controller { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the description.
@@ -45,6 +45,7 @@ public class MenuModel
     [Required]
     [DataType(DataType.MultilineText)]
     public string Description { get; set; }
+    = string.Empty;
 
     /// <summary>
     /// KeyWords
@@ -95,7 +96,7 @@ public class MenuModel
     /// </summary>
     /// <value>The icon.</value>
     [JsonPropertyName("icon")]
-    public string Icon { get; set; }
+    public string Icon { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the identifier.
@@ -174,6 +175,7 @@ public class MenuModel
     [StringLength(100, ErrorMessage = "Max length is 100.")]
     [Required]
     public string Title { get; set; }
+    = string.Empty;
 
     /// <summary>
     /// Gets or sets the URL.
@@ -183,7 +185,7 @@ public class MenuModel
     [StringLength(100, ErrorMessage = "Max length is 100.")]
     [Required]
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the virtual path.

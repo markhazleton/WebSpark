@@ -45,7 +45,7 @@ public class MailKitProvider : IEmailProvider
         return await Task.FromResult(true);
     }
 
-    private static SmtpClient GetClient(Data.MailSetting settings)
+    private static SmtpClient? GetClient(Data.MailSetting settings)
     {
         try
         {

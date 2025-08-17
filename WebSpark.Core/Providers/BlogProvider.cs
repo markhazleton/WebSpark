@@ -16,8 +16,9 @@ public class BlogProvider : Interfaces.IBlogProvider, IDisposable
 
     public async Task<Models.BlogItem> GetBlogItem()
     {
-        var blog = await _db.Blogs.AsNoTracking().OrderBy(b => b.Id).FirstAsync();
-        blog.Theme = blog.Theme.ToLower();
+        var blog = await _db.Blogs.AsNoTracking().OrderBy(b => b.Id).FirstOrDefaultAsync();
+        if (blog == null) return new Models.BlogItem();
+        blog.Theme = blog.Theme?.ToLower() ?? string.Empty;
         return new Models.BlogItem
         {
             Title = blog.Title,
@@ -28,8 +29,8 @@ public class BlogProvider : Interfaces.IBlogProvider, IDisposable
             SocialFields = [],
             Cover = string.IsNullOrEmpty(blog.Cover) ? Models.Constants.DefaultCover : blog.Cover,
             Logo = string.IsNullOrEmpty(blog.Logo) ? Models.Constants.DefaultLogo : blog.Logo,
-            HeaderScript = blog.HeaderScript,
-            FooterScript = blog.FooterScript,
+            HeaderScript = blog.HeaderScript ?? string.Empty,
+            FooterScript = blog.FooterScript ?? string.Empty,
             values = await GetValues(blog.Theme)
         };
     }
@@ -41,19 +42,20 @@ public class BlogProvider : Interfaces.IBlogProvider, IDisposable
 
     private Models.BlogItem Create(Blog blog)
     {
+        if (blog == null) return new Models.BlogItem();
         return new Models.BlogItem
         {
             Title = blog.Title,
             Description = blog.Description,
-            Theme = blog.Theme,
+            Theme = blog.Theme ?? string.Empty,
             IncludeFeatured = blog.IncludeFeatured,
             ItemsPerPage = blog.ItemsPerPage,
             SocialFields = [],
             Cover = string.IsNullOrEmpty(blog.Cover) ? Models.Constants.DefaultCover : blog.Cover,
             Logo = string.IsNullOrEmpty(blog.Logo) ? Models.Constants.DefaultLogo : blog.Logo,
-            HeaderScript = blog.HeaderScript,
-            FooterScript = blog.FooterScript,
-            values = GetValues(blog.Theme).Result
+            HeaderScript = blog.HeaderScript ?? string.Empty,
+            FooterScript = blog.FooterScript ?? string.Empty,
+            values = GetValues(blog.Theme ?? string.Empty).Result
         };
     }
 

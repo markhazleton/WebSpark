@@ -15,7 +15,7 @@ public class ApplicationStatus
     public List<string> Messages { get; set; } = [];
 
     [JsonPropertyName("region")]
-    public string Region { get; set; } = Environment.GetEnvironmentVariable("Region") ?? Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME");
+    public string Region { get; set; } = (Environment.GetEnvironmentVariable("Region") ?? Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME")) ?? string.Empty;
 
     [JsonPropertyName("status")]
     public ServiceStatus Status { get; set; } = ServiceStatus.Online;
@@ -25,11 +25,10 @@ public class ApplicationStatus
 
     public ApplicationStatus() { }
 
-    public ApplicationStatus(Assembly assembly)
+    public ApplicationStatus(Assembly? assembly)
     {
-
         var oVer = assembly?.GetName().Version;
-        BuildDate = GetBuildDate(assembly);
+        BuildDate = GetBuildDate(assembly ?? Assembly.GetExecutingAssembly());
         BuildVersion = new BuildVersion()
         {
             MajorVersion = oVer?.Major ?? 0,

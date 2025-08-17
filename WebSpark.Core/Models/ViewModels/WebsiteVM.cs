@@ -12,61 +12,61 @@ public class WebsiteVM : IBaseViewModel
     /// <summary>
     /// Current Style
     /// </summary>
-    public string CurrentStyle { get; set; }
-    public string FooterScript { get; set; }
-    public string HeaderScript { get; set; }
+    public string CurrentStyle { get; set; } = string.Empty;
+    public string FooterScript { get; set; } = string.Empty;
+    public string HeaderScript { get; set; } = string.Empty;
     /// <summary>
     /// Gets the menu.
     /// </summary>
     /// <value>The menu.</value>
     [JsonPropertyName("menus")]
-    public List<MenuModel> Menu { get; set; }
+    public List<MenuModel> Menu { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the meta description.
     /// </summary>
     /// <value>The meta description.</value>
     [JsonPropertyName("meta_description")]
-    public string MetaDescription { get; set; }
+    public string MetaDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the meta keywords.
     /// </summary>
     /// <value>The meta keywords.</value>
     [JsonPropertyName("meta_keywords")]
-    public string MetaKeywords { get; set; }
-    public string PageCanonical { get; set; }
+    public string MetaKeywords { get; set; } = string.Empty;
+    public string PageCanonical { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the page title.
     /// </summary>
     /// <value>The page title.</value>
     [JsonPropertyName("page_title")]
-    public string PageTitle { get; set; }
-    public string SiteName { get; set; }
+    public string PageTitle { get; set; } = string.Empty;
+    public string SiteName { get; set; } = string.Empty;
     /// <summary>
     /// Gets or sets the site URL.
     /// </summary>
     /// <value>The site URL.</value>
     [JsonPropertyName("site_url")]
-    public Uri SiteUrl { get; set; }
+    public Uri SiteUrl { get; set; } = new("http://localhost");
     /// <summary>
     /// Gets The List of Themes
     /// </summary>
-    public IEnumerable<StyleModel> StyleList { get; set; }
+    public IEnumerable<StyleModel> StyleList { get; set; } = Array.Empty<StyleModel>();
 
     /// <summary>
     /// Gets or sets the theme URL.
     /// </summary>
     /// <value>The site URL.</value>
     [JsonPropertyName("style_url")]
-    public Uri StyleUrl { get; set; }
+    public Uri StyleUrl { get; set; } = new("http://localhost/style.css");
 
 
     /// <summary>
     /// Gets or sets the website code
     /// </summary>
-    public string Template { get; set; }
+    public string Template { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the website identifier.
@@ -80,14 +80,14 @@ public class WebsiteVM : IBaseViewModel
     /// </summary>
     /// <value>The name of the site.</value>
     [JsonPropertyName("website_name")]
-    public string WebsiteName { get; set; }
+    public string WebsiteName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the website theme.
     /// </summary>
     /// <value>The website theme.</value>
     [JsonPropertyName("website_style")]
-    public string WebsiteStyle { get; set; }
+    public string WebsiteStyle { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the website theme.

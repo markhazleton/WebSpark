@@ -13,16 +13,15 @@ public static class MenuHelpers
     /// <param name="html">The HTML.</param>
     /// <param name="theModel">The model.</param>
     /// <returns>List&lt;LinkModel&gt;.</returns>
-    public static List<Models.LinkModel> GetBreadCrumb(this HtmlHelper html, WebsiteVM theModel)
+    public static List<Models.LinkModel> GetBreadCrumb(this HtmlHelper? html, WebsiteVM? theModel)
     {
         var myList = new List<Models.LinkModel>();
         var myMenu = new Models.MenuModel();
+        if (html == null || theModel == null) return myList;
 
-        if (html == null) return myList;
-
-        var curPath = html.ViewContext.HttpContext.Request.Path.Value
+        var curPath = html.ViewContext.HttpContext.Request.Path.Value?
             .ToLower(CultureInfo.CurrentCulture)
-            .Split('/');
+            .Split('/') ?? [];
         foreach (var path in curPath.Where(w => !w.Equals("index", StringComparison.CurrentCultureIgnoreCase)))
         {
             if (string.Compare(path.Trim().ToLower(CultureInfo.CurrentCulture),
@@ -42,23 +41,23 @@ public static class MenuHelpers
                     myMenu = theModel
                     .Menu
                         .Where(w => w.DomainID == theModel.WebsiteId)
-                        .Where(w => (w.Action.ToLower(CultureInfo.CurrentCulture).Trim() ==
+                        .Where(w => ((w.Action?.ToLower(CultureInfo.CurrentCulture).Trim() ?? string.Empty) ==
                                 path.ToLower(CultureInfo.CurrentCulture).Trim()) ||
-                            w.Controller.ToLower(CultureInfo.CurrentCulture).Trim() ==
+                            (w.Controller?.ToLower(CultureInfo.CurrentCulture).Trim() ?? string.Empty) ==
                             path.ToLower(CultureInfo.CurrentCulture).Trim())
                         .FirstOrDefault();
                     if (myMenu != null)
                     {
                         if (myList.Where(w => w.Method == myMenu.Title).FirstOrDefault() == null)
                         {
-                            myList.Add(new Models.LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title });
+                            myList.Add(new Models.LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title ?? string.Empty });
                         }
                     }
                 }
             }
         }
 
-        var localPath = html.ViewContext.HttpContext.Request.Path.Value.ToLower(CultureInfo.CurrentCulture);
+        var localPath = html.ViewContext.HttpContext.Request.Path.Value?.ToLower(CultureInfo.CurrentCulture) ?? string.Empty;
         myMenu = theModel.Menu
             .Where(w => w.DomainID == theModel.WebsiteId)
             .Where(w => $"/{w.Url}" == localPath)
@@ -67,7 +66,7 @@ public static class MenuHelpers
         {
             if (myList.Where(w => w.Method == myMenu.Title).FirstOrDefault() == null)
             {
-                myList.Add(new Models.LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title });
+                myList.Add(new Models.LinkModel() { Href = $"/{myMenu.Url}", Method = myMenu.Title ?? string.Empty });
             }
         }
         return myList;

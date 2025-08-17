@@ -20,25 +20,25 @@ public class WebDataGrid
     /// Gets or sets the title.
     /// </summary>
     /// <value>The title.</value>
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the detail path.
     /// </summary>
     /// <value>The detail path.</value>
-    public string DetailPath { get; set; }
+    public string DetailPath { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the name of the detail key.
     /// </summary>
     /// <value>The name of the detail key.</value>
-    public string DetailKeyName { get; set; }
+    public string DetailKeyName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the name of the detail field.
     /// </summary>
     /// <value>The name of the detail field.</value>
-    public string DetailFieldName { get; set; }
+    public string DetailFieldName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the index of the detail key grid.
@@ -56,7 +56,7 @@ public class WebDataGrid
     /// Gets or sets the display name of the detail.
     /// </summary>
     /// <value>The display name of the detail.</value>
-    public string DetailDisplayName { get; set; }
+    public string DetailDisplayName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the grid columns.
@@ -89,19 +89,19 @@ public class WebDataGrid
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the display name.
         /// </summary>
         /// <value>The display name.</value>
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the name of the source.
         /// </summary>
         /// <value>The name of the source.</value>
-        public string SourceName { get; set; }
+        public string SourceName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the format.
@@ -126,13 +126,13 @@ public class WebDataGrid
         /// Gets or sets the link path.
         /// </summary>
         /// <value>The link path.</value>
-        public string LinkPath { get; set; }
+        public string LinkPath { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the name of the link key.
         /// </summary>
         /// <value>The name of the link key.</value>
-        public string LinkKeyName { get; set; }
+        public string LinkKeyName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the index of the link key.
@@ -144,7 +144,7 @@ public class WebDataGrid
         /// Gets or sets the name of the link text.
         /// </summary>
         /// <value>The name of the link text.</value>
-        public string LinkTextName { get; set; }
+        public string LinkTextName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the index of the link text.
@@ -168,20 +168,20 @@ public class WebDataGrid
         /// Gets or sets the thumbnail path.
         /// </summary>
         /// <value>The thumbnail path.</value>
-        public string ThumbnailPath { get; set; }
+        public string ThumbnailPath { get; set; } = string.Empty;
 
         //public string DataType { get; set; }
         /// <summary>
         /// Gets or sets the minimum value.
         /// </summary>
         /// <value>The minimum value.</value>
-        public string MinValue { get; set; }
+        public string MinValue { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the maximum value.
         /// </summary>
         /// <value>The maximum value.</value>
-        public string MaxValue { get; set; }
+        public string MaxValue { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the unique values.
@@ -193,13 +193,13 @@ public class WebDataGrid
         /// Gets or sets the most common.
         /// </summary>
         /// <value>The most common.</value>
-        public string MostCommon { get; set; }
+        public string MostCommon { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the least common.
         /// </summary>
         /// <value>The least common.</value>
-        public string LeastCommon { get; set; }
+        public string LeastCommon { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the column values.
@@ -254,14 +254,14 @@ public class WebDataGrid
                 {
                     try
                     {
-                        MaxValue = (from x in ColDictionary orderby Convert.ToDecimal(x.Key) descending select x.Key).FirstOrDefault();
+                        MaxValue = (from x in ColDictionary orderby Convert.ToDecimal(x.Key) descending select x.Key).FirstOrDefault() ?? string.Empty;
                     }
                     catch
                     {
                     }
                     try
                     {
-                        MinValue = (from x in ColDictionary orderby Convert.ToDecimal(x.Key) ascending select x.Key).FirstOrDefault();
+                        MinValue = (from x in ColDictionary orderby Convert.ToDecimal(x.Key) ascending select x.Key).FirstOrDefault() ?? string.Empty;
                     }
                     catch
                     {
@@ -269,8 +269,8 @@ public class WebDataGrid
                 }
                 else
                 {
-                    MaxValue = (from x in ColDictionary orderby x.Key descending select x.Key).FirstOrDefault();
-                    MinValue = (from x in ColDictionary orderby x.Key ascending select x.Key).FirstOrDefault();
+                    MaxValue = (from x in ColDictionary orderby x.Key descending select x.Key).FirstOrDefault() ?? string.Empty;
+                    MinValue = (from x in ColDictionary orderby x.Key ascending select x.Key).FirstOrDefault() ?? string.Empty;
                 }
                 MostCommon = (from x in ColDictionary
                               orderby x.Value ascending
@@ -474,7 +474,7 @@ public class WebDataGrid
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string name { get; set; }
+        public string name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the value.
@@ -570,7 +570,7 @@ public class WebDataGrid
     /// <returns>System.String.</returns>
     private string FormatHeaderColumn(string myColName)
     {
-        string newColumnName = null;
+        string newColumnName = myColName;
         switch (Models.WebDataGrid.StrFun.Right(myColName, 2))
         {
             case "NM":
@@ -614,9 +614,9 @@ public class WebDataGrid
     /// <returns>System.String.</returns>
     public string GetPropertyValue(object obj, Models.WebDataGrid.GridColumn myCol)
     {
-        Type objType = default(Type);
-        PropertyInfo pInfo = default(PropertyInfo);
-        object PropValue = new();
+        Type? objType = null;
+        PropertyInfo? pInfo = null;
+        object? PropValue = null;
         if (myCol.Name.Contains("."))
         {
             List<string> PropertyNameArray = myCol.Name.Split('.').ToList();
@@ -627,11 +627,13 @@ public class WebDataGrid
                 {
                     objType = obj.GetType();
                     pInfo = objType.GetProperty(PropertyNameArray[0]);
-                    PropValue = pInfo.GetValue(obj, BindingFlags.GetProperty, null, null, null);
-
-                    objType = PropValue.GetType();
-                    pInfo = objType.GetProperty(PropertyNameArray[1]);
-                    PropValue = pInfo.GetValue(PropValue, BindingFlags.GetProperty, null, null, null);
+                    PropValue = pInfo?.GetValue(obj, BindingFlags.GetProperty, null, null, null);
+                    if (PropValue != null)
+                    {
+                        objType = PropValue.GetType();
+                        pInfo = objType.GetProperty(PropertyNameArray[1]);
+                        PropValue = pInfo?.GetValue(PropValue, BindingFlags.GetProperty, null, null, null);
+                    }
                 }
                 catch
                 {
@@ -649,33 +651,33 @@ public class WebDataGrid
                 switch (myCol.Format)
                 {
                     case Models.WebDataGrid.DisplayFormat.ShortDate:
-                        if (DateTime.TryParse(pInfo.GetValue(obj, BindingFlags.GetProperty, null, null, null)
-                            .ToString(),
+                        if (DateTime.TryParse(pInfo?.GetValue(obj, BindingFlags.GetProperty, null, null, null)
+                            ?.ToString(),
                                              out myDateValue))
                         {
                             PropValue = myDateValue.Date.ToString("yyyy-MM-dd");
                         }
                         else
                         {
-                            PropValue = pInfo.GetValue(obj, BindingFlags.GetProperty, null, null, null);
+                            PropValue = pInfo?.GetValue(obj, BindingFlags.GetProperty, null, null, null) ?? string.Empty;
                         }
                         break;
 
                     case Models.WebDataGrid.DisplayFormat.LongDate:
-                        if (DateTime.TryParse(pInfo.GetValue(obj, BindingFlags.GetProperty, null, null, null)
-                            .ToString(),
+                        if (DateTime.TryParse(pInfo?.GetValue(obj, BindingFlags.GetProperty, null, null, null)
+                            ?.ToString(),
                                              out myDateValue))
                         {
                             PropValue = myDateValue.ToString("yyyy-MM-dd:HH.mm");
                         }
                         else
                         {
-                            PropValue = pInfo.GetValue(obj, BindingFlags.GetProperty, null, null, null);
+                            PropValue = pInfo?.GetValue(obj, BindingFlags.GetProperty, null, null, null) ?? string.Empty;
                         }
                         break;
 
                     default:
-                        PropValue = pInfo.GetValue(obj, BindingFlags.GetProperty, null, null, null);
+                        PropValue = pInfo?.GetValue(obj, BindingFlags.GetProperty, null, null, null) ?? string.Empty;
                         break;
                 }
             }
@@ -683,15 +685,11 @@ public class WebDataGrid
             {
                 PropValue = string.Empty;
             }
-            if (PropValue == null)
-            {
-                PropValue = string.Empty;
-            }
+            // PropValue defaulted above
         }
 
-        PropValue = ClearLineFeeds(PropValue.ToString());
-
-        return PropValue.ToString();
+        PropValue = ClearLineFeeds(PropValue?.ToString() ?? string.Empty);
+        return PropValue.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -973,23 +971,27 @@ public class WebDataGrid
     /// <returns>System.String.</returns>
     private static string QuoteCSVValue(Models.WebDataGrid.GridColumn col, object value)
     {
-        var valType = value.GetType();
+        if (value == null)
+        {
+            return string.Empty;
+        }
+        var stringValue = value.ToString() ?? string.Empty;
         switch (col.Format)
         {
             case Models.WebDataGrid.DisplayFormat.Currency:
-                return value.ToString();
+                return stringValue;
 
             case Models.WebDataGrid.DisplayFormat.Float:
-                return value.ToString();
+                return stringValue;
 
             case Models.WebDataGrid.DisplayFormat.Percent:
-                return value.ToString();
+                return stringValue;
 
             case Models.WebDataGrid.DisplayFormat.Number:
-                return value.ToString();
+                return stringValue;
 
             case Models.WebDataGrid.DisplayFormat.ShortDate:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
             //if (((DateTime)value).TimeOfDay.TotalSeconds == 0)
             //{
             //    return String.Concat("\"", ((DateTime)value).ToShortDateString().Replace("\"", "\"\""), "\"");
@@ -999,7 +1001,7 @@ public class WebDataGrid
             //    return String.Concat("\"", ((DateTime)value).ToString().Replace("\"", "\"\""), "\"");
             //}
             case Models.WebDataGrid.DisplayFormat.LongDate:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
             //if (((DateTime)value).TimeOfDay.TotalSeconds == 0)
             //{
             //    return String.Concat("\"", ((DateTime)value).ToShortDateString().Replace("\"", "\"\""), "\"");
@@ -1009,19 +1011,19 @@ public class WebDataGrid
             //    return String.Concat("\"", ((DateTime)value).ToString().Replace("\"", "\"\""), "\"");
             //}
             case Models.WebDataGrid.DisplayFormat.Thumbnail:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
 
             case Models.WebDataGrid.DisplayFormat.Link:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
 
             case Models.WebDataGrid.DisplayFormat.Hidden:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
 
             case Models.WebDataGrid.DisplayFormat.Text:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
 
             default:
-                return string.Concat("\"", value.ToString().Replace("\"", "\"\""), "\"");
+                return string.Concat("\"", stringValue.Replace("\"", "\"\""), "\"");
         }
     }
 

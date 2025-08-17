@@ -20,7 +20,7 @@ public class WebsiteModel
     /// <value>The domain ds.</value>
     [Required]
     [StringLength(250)]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     /// <summary>
     /// Gets or sets the website identifier.
     /// </summary>
@@ -54,7 +54,7 @@ public class WebsiteModel
     /// <value>The domain nm.</value>
     [Required]
     [StringLength(50)]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the gallery folder.
@@ -63,12 +63,12 @@ public class WebsiteModel
     [Required]
     [StringLength(20)]
     [Display(Name = "Site Name")]
-    public string SiteName { get; set; }
+    public string SiteName { get; set; } = string.Empty;
     /// <summary>
     /// Name of the Style
     /// </summary>
     [Display(Name = "Site Style")]
-    public string SiteStyle { get; set; }
+    public string SiteStyle { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the website code.
@@ -77,11 +77,11 @@ public class WebsiteModel
     [Required]
     [StringLength(20)]
     [Display(Name = "Site Template")]
-    public string SiteTemplate { get; set; }
+    public string SiteTemplate { get; set; } = string.Empty;
     /// <summary>
     /// Link to API for this website
     /// </summary>
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether [use bread crumb URL].
@@ -101,7 +101,7 @@ public class WebsiteModel
     /// <value>The domain title.</value>
     [Required]
     [StringLength(250)]
-    public string WebsiteTitle { get; set; }
+    public string WebsiteTitle { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the domain URL.
@@ -109,7 +109,7 @@ public class WebsiteModel
     /// <value>The domain URL.</value>
     [Required]
     [StringLength(250)]
-    public string WebsiteUrl { get; set; }
+    public string WebsiteUrl { get; set; } = string.Empty;
 
     /// <summary>
     /// Is this a recipe site?

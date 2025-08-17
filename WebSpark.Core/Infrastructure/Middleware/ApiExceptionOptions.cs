@@ -9,9 +9,9 @@ public class ApiExceptionOptions
     /// <summary>
     /// 
     /// </summary>
-    public Action<HttpContext, Exception, ApiError> AddResponseDetails { get; set; }
+    public Action<HttpContext, Exception, ApiError> AddResponseDetails { get; set; } = (_, _, _) => { };
     /// <summary>
     /// 
     /// </summary>
-    public Func<Exception, LogLevel> DetermineLogLevel { get; set; }
+    public Func<Exception, LogLevel> DetermineLogLevel { get; set; } = _ => LogLevel.Error;
 }

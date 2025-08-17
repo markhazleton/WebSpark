@@ -38,14 +38,14 @@ public class SeedDatabase : IDisposable
             momPage));
         Mom.Menus.Add(WebsiteHelper.GetMenuPage(
             "Bootswatch",
-            null,
+            string.Empty,
             FontAwesomeIcons.cog,
             momPage,
             "Bootswatch"));
 
         Mom.Menus.Add(WebsiteHelper.GetMenuPage(
             "Recipe",
-            null,
+            string.Empty,
             FontAwesomeIcons.bolt,
             null,
             "Recipe"));
@@ -98,7 +98,7 @@ public class SeedDatabase : IDisposable
                 "# Welcome to **Project Mechanics**\n```    \n this is a code example  \n```\n## Have a Great Day!"));
         var parentPage = projectMechanics.Menus.Where(w => w.Title == "TexEcon").FirstOrDefault();
         projectMechanics.Menus.Add(WebsiteHelper.GetMenuPage("Mark Hazleton", "# Mark Hazleton \n ## ", FontAwesomeIcons.chevron, parentPage));
-        projectMechanics.Menus.Add(WebsiteHelper.GetMenuPage("Bootswatch", null, FontAwesomeIcons.cog, parentPage, "Bootswatch"));
+        projectMechanics.Menus.Add(WebsiteHelper.GetMenuPage("Bootswatch", string.Empty, FontAwesomeIcons.cog, parentPage, "Bootswatch"));
         var i = 1;
         foreach (var page in projectMechanics.Menus)
         {
@@ -127,7 +127,7 @@ public class SeedDatabase : IDisposable
         var parentPage = Texecon.Menus.Where(w => w.Title == "TexEcon").FirstOrDefault();
         Texecon.Menus.Add(WebsiteHelper.GetMenuPage("Mark Hazleton", "# Mark Hazleton \n ## ", FontAwesomeIcons.chevron, parentPage));
         Texecon.Menus.Add(WebsiteHelper.GetMenuPage("Jared Hazleton", "# Jared Hazleton \n ## Economist, Educator, [Author](https://www.goodreads.com/author/show/1405162.Jared_E_Hazleton) \n \n > Jared Earl Hazleton was born on September 12, 1937 in Oklahoma City, Oklahoma, United States to Alfred Larson and Myrtle Frances Hazleton.  \n ### Education \n - Bachelor of Business Administration, University Oklahoma, Norman, 1959. \n - Doctor of Philosophy in Economics, Rice University, Houston, 1961. \n \n ### Career \n - Recipient, John W. Gardner Award, Rice University, 1965", FontAwesomeIcons.chevron, parentPage));
-        Texecon.Menus.Add(WebsiteHelper.GetMenuPage("Bootswatch", null, FontAwesomeIcons.cog, parentPage, "Bootswatch"));
+        Texecon.Menus.Add(WebsiteHelper.GetMenuPage("Bootswatch", string.Empty, FontAwesomeIcons.cog, parentPage, "Bootswatch"));
 
         Texecon.Menus.Add(WebsiteHelper.GetMenuPage("Texas", "# Texas  \n > The Lone Star State  \n > The Friendly State  \n \n <br/>   ![Texas](https://upload.wikimedia.org/wikipedia/commons/a/ad/Texas_in_United_States.svg)  ", FontAwesomeIcons.heart));
         parentPage = Texecon.Menus.Where(w => w.Title == "Texas").FirstOrDefault();
@@ -184,13 +184,18 @@ public class SeedDatabase : IDisposable
 
             // var jsonFilePath = @"~\site\mom\RecipeList.json";
             var json = File.ReadAllText(jsonFilePath);
-            var recipeOlds = JsonSerializer.Deserialize<List<RecipeOld>>(json);
-            RecipeCategory cat;
+            var recipeOlds = JsonSerializer.Deserialize<List<RecipeOld>>(json) ?? new List<RecipeOld>();
             foreach (var item in recipeOlds)
             {
-                cat = _context.RecipeCategory.Where(w => w.Id == item.RecipeCategoryID).FirstOrDefault();
-                _context.Recipe.Add(item.GetRecipe(Mom, cat));
-                _context.SaveChanges();
+                if (item == null) continue;
+                var cat = _context.RecipeCategory.FirstOrDefault(w => w.Id == item.RecipeCategoryID);
+                if (cat == null) continue;
+                var newRecipe = item.GetRecipe(Mom, cat);
+                if (newRecipe != null)
+                {
+                    _context.Recipe.Add(newRecipe);
+                    _context.SaveChanges();
+                }
             }
         }
         catch (Exception ex)
@@ -245,10 +250,10 @@ public class SeedDatabase : IDisposable
                 AnalyticsPeriod = 5,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
-                FooterScript = null,
-                HeaderScript = null,
+                FooterScript = string.Empty,
+                HeaderScript = string.Empty,
                 Cover = "data/2/2022/5/DSC00279.JPG",
-                Logo = null,
+                Logo = string.Empty,
                 CreatedID = 1,
                 UpdatedID = 1,
                 Authors = [markAuthor],

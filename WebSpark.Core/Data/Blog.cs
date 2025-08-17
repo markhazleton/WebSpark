@@ -3,11 +3,11 @@ namespace WebSpark.Core.Data;
 public class Blog : BaseEntity
 {
     [StringLength(160)]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     [StringLength(450)]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     [StringLength(160)]
-    public string Theme { get; set; }
+    public string Theme { get; set; } = string.Empty;
     public bool IncludeFeatured { get; set; }
     public int ItemsPerPage { get; set; }
     [StringLength(160)]
@@ -20,6 +20,6 @@ public class Blog : BaseEntity
     public string? FooterScript { get; set; }
     public int AnalyticsListType { get; set; }
     public int AnalyticsPeriod { get; set; }
-    public List<Post> Posts { get; set; }
-    public List<Author> Authors { get; set; }
+    public List<Post> Posts { get; set; } = new();
+    public List<Author> Authors { get; set; } = new();
 }

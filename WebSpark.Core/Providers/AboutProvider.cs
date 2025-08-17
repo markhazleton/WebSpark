@@ -19,7 +19,7 @@ public class AboutProvider : IAboutProvider
     public async Task<Models.AboutModel> GetAboutModel()
     {
         var model = new Models.AboutModel();
-        model.DatabaseProvider = _db.Database.ProviderName;
+        model.DatabaseProvider = _db.Database?.ProviderName ?? string.Empty;
         model.OperatingSystem = RuntimeInformation.OSDescription;
         try
         {
@@ -28,11 +28,11 @@ public class AboutProvider : IAboutProvider
         }
         catch
         {
-            model.Version = typeof(AboutProvider)
-                   .GetTypeInfo()
-                   .Assembly
-                   .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                   .InformationalVersion;
+            var attr = typeof(AboutProvider)
+                .GetTypeInfo()
+                .Assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+            model.Version = attr?.InformationalVersion ?? string.Empty;
 
         }
 

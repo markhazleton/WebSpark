@@ -2,9 +2,9 @@ namespace WebSpark.Core.Models;
 
 public class AboutModel
 {
-    public string Version { get; set; }
-    public string OperatingSystem { get; set; }
-    public string DatabaseProvider { get; set; }
-    public BuildVersion Build { get; set; }
+    public string Version { get; set; } = string.Empty;
+    public string OperatingSystem { get; set; } = string.Empty;
+    public string DatabaseProvider { get; set; } = string.Empty;
+    public BuildVersion Build { get; set; } = null!;
 }
 

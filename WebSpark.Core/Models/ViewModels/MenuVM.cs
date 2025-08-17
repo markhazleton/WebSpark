@@ -14,6 +14,7 @@ namespace WebSpark.Core.Models.ViewModels
         public MenuVM()
         {
             Item = new MenuModel();
+            ItemCollection = [];
         }
 
         /// <summary>
@@ -52,6 +53,6 @@ namespace WebSpark.Core.Models.ViewModels
         /// Gets the item collection.
         /// </summary>
         /// <value>The item collection.</value>
-        public List<MenuModel> ItemCollection { get; }
+        public List<MenuModel> ItemCollection { get; } = [];
     }
 }

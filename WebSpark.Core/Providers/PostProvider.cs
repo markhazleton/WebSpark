@@ -3,12 +3,13 @@ using WebSpark.Core.Extensions;
 using WebSpark.Core.Models;
 
 namespace WebSpark.Core.Providers;
+
 public interface IPostProvider
 {
     Task<List<Post>> GetPosts(PublishedStatus filter, PostType postType);
     Task<List<Post>> SearchPosts(string term);
-    Task<Post> GetPostById(int id);
-    Task<Post> GetPostBySlug(string slug);
+    Task<Post?> GetPostById(int id);
+    Task<Post?> GetPostBySlug(string slug);
     Task<string> GetSlugFromTitle(string title);
     Task<bool> Add(Post post);
     Task<bool> Update(Post post);
@@ -120,7 +121,7 @@ public class PostProvider : IPostProvider
         return await Task.Run(() => posts.Skip(skip).Take(pager.ItemsPerPage).ToList());
     }
 
-    public async Task<Post> GetPostById(int id)
+    public async Task<Post?> GetPostById(int id)
     {
         return await _db.Posts.Where(p => p.Id == id).FirstOrDefaultAsync();
     }
@@ -159,8 +160,8 @@ public class PostProvider : IPostProvider
             Id = first.Id,
             DisplayName = first.DisplayName,
             Email = first.Email,
-            Avatar = first.Avatar,
-            Bio = first.Bio,
+            Avatar = first.Avatar ?? string.Empty,
+            Bio = first.Bio ?? string.Empty,
             IsAdmin = first.IsAdmin,
             DateCreated = first.CreatedDate,
             DateUpdated = first.UpdatedDate
@@ -211,7 +212,7 @@ public class PostProvider : IPostProvider
         }
     }
 
-    public async Task<Post> GetPostBySlug(string slug)
+    public async Task<Post?> GetPostBySlug(string slug)
     {
         return await _db.Posts.Where(p => p.Slug == slug).FirstOrDefaultAsync();
     }
