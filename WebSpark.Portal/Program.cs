@@ -369,6 +369,17 @@ app.Use(async (context, next) =>
     connectSrc = connectSrc.Distinct().ToList();
     imgSrc = imgSrc.Distinct().ToList();
 
+    // Allow embedding YouTube videos (iframe) and required thumbnail domains
+    var frameSrc = new List<string>
+    {
+        "'self'",
+        "https://www.youtube.com",
+        "https://www.youtube-nocookie.com"
+    };
+    // YouTube thumbnails
+    if (!imgSrc.Contains("https://i.ytimg.com")) imgSrc.Add("https://i.ytimg.com");
+    imgSrc = imgSrc.Distinct().ToList();
+
     var csp = string.Join("; ", new[]
     {
         $"default-src 'self'",
@@ -377,6 +388,7 @@ app.Use(async (context, next) =>
         $"img-src {string.Join(' ', imgSrc)}",
         $"font-src {string.Join(' ', fontSrc)}",
         $"connect-src {string.Join(' ', connectSrc)}",
+    $"frame-src {string.Join(' ', frameSrc)}",
         "frame-ancestors 'none'",
         "object-src 'none'",
         "base-uri 'self'",

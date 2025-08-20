@@ -51,7 +51,7 @@ public class TriviaMatchService(
         }
         catch (Exception ex)
         {
-            logger.LogError("CreateQuestionFromTriviaQuestion:Exception", ex);
+            logger.LogError(ex, "CreateQuestionFromTriviaQuestion:Exception");
 
         }
         return results;
